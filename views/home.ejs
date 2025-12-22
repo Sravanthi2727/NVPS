@@ -1,0 +1,112 @@
+<!-- HERO -->
+<section class="hero vh-100 d-flex align-items-center text-center px-4">
+  <!-- 3D Coffee Beans Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="container hero-content">
+    <img src="/assets/logo-icon.png" class="hero-logo mb-4" />
+
+    <h1 class="hero-title">
+      Bold Coffee,<br />Cozy Experience
+    </h1>
+
+    <p class="hero-subtitle">
+      India’s first Robusta-only café blending coffee, art & technology.
+    </p>
+
+    <div class="hero-cta mt-4">
+      <a href="#signature" class="btn btn-gold">Explore Robusta</a>
+      <button class="btn btn-outline-light">AI Coffee Discovery</button>
+    </div>
+  </div>
+</section>
+
+<!-- WHY ROBUSTA -->
+<section class="why-robusta-section">
+  <div class="container">
+    <div class="why-robusta-box">
+      <span class="why-eyebrow">WHY ROBUSTA</span>
+
+      <h2 class="why-title">
+        India’s First<br />
+        <span>Robusta-Only Coffee Experience</span>
+      </h2>
+
+      <p class="why-text">
+        Robusta is bold, intense, and unapologetically powerful — yet often
+        overlooked. With nearly <strong>2× the caffeine</strong>, deeper body,
+        and earthy chocolate notes, Robusta delivers a stronger, more
+        energizing cup.
+      </p>
+
+      <p class="why-text muted">
+        At <strong>Rabuste</strong>, we are redefining Indian coffee culture by
+        placing Robusta at the center — building a premium grab-and-go café
+        that celebrates strength, character, and bold flavor.
+      </p>
+
+      <a href="/about" class="why-cta">View More →</a>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNATURE ROBUSTA -->
+<section id="signature" class="section-soft">
+  <div class="container">
+    <span class="intro-eyebrow">OUR COFFEE</span>
+    <h2 class="section-title">Signature Robusta</h2>
+
+    <div class="row g-4 mt-3">
+      <% coffeeMenu.forEach(c => { %>
+        <div class="col-md-6">
+          <div class="signature-card">
+            <img src="<%= c.image %>" class="signature-icon" />
+            <div>
+              <h6 class="signature-title"><%= c.title %></h6>
+              <span class="signature-price">₹<%= c.price %></span>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- COFFEE × ART -->
+<section class="section-soft">
+  <div class="container art-section">
+    <span class="intro-eyebrow">ART & CULTURE</span>
+    <h2 class="section-title">Coffee × Art</h2>
+    <p class="section-text">
+      Our café doubles as a micro art gallery — showcasing fine art,
+      independent artists, and creative stories beside every cup.
+    </p>
+    <a href="/art" class="view-link">View Art</a>
+  </div>
+</section>
+
+<!-- WORKSHOPS -->
+<section class="section-soft">
+  <div class="container art-section">
+    <span class="intro-eyebrow">EXPERIENCES</span>
+    <h2 class="section-title">Workshops</h2>
+    <p class="section-text">
+      Coffee tastings, brewing sessions, art workshops, and
+      community-driven experiences.
+    </p>
+    <a href="/workshops" class="view-link">View Workshops</a>
+  </div>
+</section>
+
+<!-- FRANCHISE -->
+<section class="section-soft">
+  <div class="container art-section">
+    <span class="intro-eyebrow">BUSINESS</span>
+    <h2 class="section-title">Franchise with Rabuste</h2>
+    <p class="section-text">
+      A scalable grab-and-go café model blending Robusta coffee,
+      culture, and technology.
+    </p>
+    <a href="/franchise" class="btn btn-outline-light mt-3">Franchise Enquiry</a>
+  </div>
+</section>
