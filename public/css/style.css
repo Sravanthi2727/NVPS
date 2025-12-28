@@ -27,15 +27,15 @@ body::before {
   inset: 0;
   background: radial-gradient(
     circle at top,
-    rgba(0,0,0,0.45),
-    rgba(0,0,0,0.8)
+    rgba(0, 0, 0, 0.45),
+    rgba(0, 0, 0, 0.8)
   );
   z-index: -2;
 }
 
 /* ================= GLOBAL COFFEE BEANS ================= */
-/* 
-#global-beans-canvas {
+
+/* #global-beans-canvas {
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -43,12 +43,39 @@ body::before {
   pointer-events: none;
   z-index: 1; /* below content, above backgrounds */
 /* } */
+*/
+/* ================= HERO BEANS ONLY ================= */
 
+/* #bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+
+  z-index: 1; /* above background, below text */
+/* } */ */
+
+.video-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
 
 /* ================= HERO ================= */
 
 .hero {
   position: relative;
+  overflow: hidden;
+  background: black;
+  /* Ensure the background image path is correct or use a full URL */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85)),
+    url("/assets/coffee-bg.png");
+  background-size: cover;
+  background-position: center;
 }
 
 .hero-content {
@@ -58,20 +85,57 @@ body::before {
 
 .hero-logo {
   width: 80px;
-  filter: drop-shadow(0 6px 20px rgba(214,164,90,0.45));
+  filter: drop-shadow(0 6px 20px rgba(214, 164, 90, 0.45));
 }
 
 .hero-title {
   font-family: "Playfair Display", serif;
   font-size: 3rem;
   line-height: 1.2;
-  text-shadow: 0 10px 40px rgba(0,0,0,0.75);
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.75);
 }
 
 .hero-subtitle {
   max-width: 520px;
   margin: 12px auto 0;
   color: var(--muted);
+}
+
+.hero {
+  position: relative;
+  overflow: hidden; /* Prevents video from spilling out */
+  background: #000; /* Fallback color */
+}
+
+.hero-video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: 0; /* Behind everything */
+  transform: translate(-50%, -50%);
+  object-fit: cover; /* Acts like background-size: cover */
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55); /* Darkens the video */
+  z-index: 1; /* Above video, below text */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2; /* Above the video and overlay */
+}
+
+/* Ensure the logo and text pop */
+.hero-logo {
+  max-width: 120px;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
 }
 
 /* CTA */
@@ -99,17 +163,17 @@ body::before {
   border: none;
   color: #111;
   font-weight: 600;
-  box-shadow: 0 12px 30px rgba(214,164,90,0.35);
+  box-shadow: 0 12px 30px rgba(214, 164, 90, 0.35);
 }
 
 .btn-outline-light {
-  border: 1px solid rgba(255,255,255,0.5);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   background: transparent;
   color: #fff;
 }
 
 .btn-outline-light:hover {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* ================= WHY ROBUSTA ================= */
@@ -121,10 +185,10 @@ body::before {
 .why-robusta-box {
   max-width: 760px;
   padding: 42px;
-  background: rgba(18,14,10,0.88);
+  background: rgba(18, 14, 10, 0.88);
   backdrop-filter: blur(16px);
   border-radius: 24px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.65);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65);
 }
 
 @media (max-width: 768px) {
@@ -140,7 +204,7 @@ body::before {
 .why-eyebrow {
   font-size: 0.75rem;
   letter-spacing: 3px;
-  color: rgba(214,164,90,0.8);
+  color: rgba(214, 164, 90, 0.8);
 }
 
 .why-title {
@@ -158,7 +222,7 @@ body::before {
 
 .why-text {
   line-height: 1.7;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .why-text.muted {
@@ -188,8 +252,8 @@ section {
   padding: 80px 0;
   background: linear-gradient(
     180deg,
-    rgba(255,255,255,0.03),
-    rgba(0,0,0,0.05)
+    rgba(255, 255, 255, 0.03),
+    rgba(0, 0, 0, 0.05)
   );
 }
 
@@ -204,7 +268,7 @@ section {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(214,164,90,0.35),
+    rgba(214, 164, 90, 0.35),
     transparent
   );
 }
@@ -243,7 +307,7 @@ section {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.65);
+  background: rgba(0, 0, 0, 0.65);
   z-index: 0;
 }
 
@@ -252,7 +316,6 @@ section {
   z-index: 2;
 }
 
-
 /* ================= SIGNATURE ROBUSTA (IMAGE CARDS) ================= */
 
 .signature-image-card {
@@ -260,7 +323,7 @@ section {
   border-radius: 26px;
   overflow: hidden;
   height: 320px;
-  box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
   transition: transform 0.4s ease;
 }
 
@@ -280,11 +343,7 @@ section {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(0,0,0,0.15),
-    rgba(0,0,0,0.75)
-  );
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.75));
 }
 
 /* Text overlay */
@@ -313,7 +372,6 @@ section {
   font-weight: 600;
 }
 
-
 /* ================= ART ================= */
 
 .art-section {
@@ -328,21 +386,12 @@ section {
   top: 6px;
   bottom: 6px;
   width: 3px;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    var(--gold),
-    transparent
-  );
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
   opacity: 0.6;
 }
 
 .art-overlay-box {
-  background: linear-gradient(
-    180deg,
-    rgba(0,0,0,0.65),
-    rgba(0,0,0,0.35)
-  );
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.35));
   padding: 36px;
   border-radius: 20px;
   backdrop-filter: blur(6px);
@@ -353,8 +402,8 @@ section {
 .art-card {
   background: linear-gradient(
     135deg,
-    rgba(20,20,20,0.9),
-    rgba(8,8,8,0.95)
+    rgba(20, 20, 20, 0.9),
+    rgba(8, 8, 8, 0.95)
   );
   border-radius: 24px;
   overflow: hidden;
@@ -393,12 +442,12 @@ section {
 }
 
 .coffee-tag.bold {
-  background: rgba(214,164,90,0.15);
+  background: rgba(214, 164, 90, 0.15);
   color: var(--gold);
 }
 
 .coffee-tag.creative {
-  background: rgba(180,120,90,0.15);
+  background: rgba(180, 120, 90, 0.15);
 }
 
 /* ================= GOLD SECTION ACCENT ================= */
@@ -415,16 +464,9 @@ section {
   top: 12px;
   bottom: 12px;
   width: 3px;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    var(--gold),
-    transparent
-  );
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
   opacity: 0.75;
 }
-
-
 
 /* ================= LINKS ================= */
 
@@ -452,7 +494,7 @@ section {
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   transition: background 0.3s ease, padding 0.3s ease;
 }
 
@@ -465,7 +507,7 @@ section {
 
 /* Links */
 .navbar-nav .nav-link {
-  color: rgba(255,255,255,0.85) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
   font-size: 0.85rem;
   position: relative;
   padding: 6px 4px;
@@ -494,7 +536,7 @@ section {
 
 /* Franchise pill button */
 .navbar-nav .btn {
-  border: 1px solid rgba(214,164,90,0.6);
+  border: 1px solid rgba(214, 164, 90, 0.6);
   color: var(--gold) !important;
   font-size: 0.8rem;
   padding: 6px 16px;
@@ -504,7 +546,7 @@ section {
 .navbar-nav .btn:hover {
   background: var(--gold);
   color: #111 !important;
-  box-shadow: 0 6px 20px rgba(214,164,90,0.35);
+  box-shadow: 0 6px 20px rgba(214, 164, 90, 0.35);
 }
 
 /* Mobile */
@@ -515,7 +557,7 @@ section {
   }
 
   .navbar-collapse {
-    background: rgba(0,0,0,0.85);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(12px);
     border-radius: 16px;
     padding: 20px;
@@ -531,12 +573,11 @@ section {
   }
 }
 
-
 /* ================= FOOTER ================= */
 
 .footer-section {
   padding: 60px 0 40px;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
 }
 
 .footer-brand {
@@ -564,13 +605,13 @@ section {
 
 .footer-copy {
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* ================= WORKSHOPS ================= */
 
 .workshop-card {
-  background: rgba(15,15,15,0.9);
+  background: rgba(15, 15, 15, 0.9);
   border-radius: 22px;
   padding: 16px;
   height: 100%;
@@ -604,12 +645,12 @@ section {
 .franchise-card {
   background: linear-gradient(
     135deg,
-    rgba(20,20,20,0.95),
-    rgba(8,8,8,0.95)
+    rgba(20, 20, 20, 0.95),
+    rgba(8, 8, 8, 0.95)
   );
   border-radius: 24px;
   padding: 28px;
-  box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
 }
 
 .franchise-card h5 {
@@ -643,7 +684,7 @@ section {
 .hero-video-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.65);
+  background: rgba(0, 0, 0, 0.65);
   z-index: 1;
 }
 
@@ -670,30 +711,19 @@ section {
 } */
 
 .why-robusta-section {
-  background-image: url(
-    https://images.unsplash.com/photo-1509042239860-f550ce710b93
-  );
+  background-image: url(https://images.unsplash.com/photo-1509042239860-f550ce710b93);
 }
 
 .signature-section {
-  background-image: url(
-    https://images.unsplash.com/photo-1507133750040-4a8f57021571
-  );
+  background-image: url(https://images.unsplash.com/photo-1507133750040-4a8f57021571);
 }
 
 .art-section {
-  background-image: url(
-    https://images.unsplash.com/photo-1541963463532-d68292c34b19
-  );
+  background-image: url(https://images.unsplash.com/photo-1541963463532-d68292c34b19);
 }
 .workshops-section {
-  background-image: url(
-    https://images.unsplash.com/photo-1521305916504-4a1121188589
-  );
+  background-image: url(https://images.unsplash.com/photo-1521305916504-4a1121188589);
 }
 .franchise-section {
-  background-image: url(
-    https://images.unsplash.com/photo-1521737604893-d14cc237f11d
-  );
+  background-image: url(https://images.unsplash.com/photo-1521737604893-d14cc237f11d);
 }
-

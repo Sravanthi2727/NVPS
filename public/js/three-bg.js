@@ -1,60 +1,52 @@
-const canvas = document.getElementById("global-beans-canvas");
+const canvas = document.getElementById("bg-canvas");
 
 if (canvas && window.THREE) {
-
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(
     75,
-    window.innerWidth / window.innerHeight,
+    canvas.clientWidth / canvas.clientHeight,
     0.1,
     1000
   );
-  camera.position.z = 6;
+  camera.position.z = 7;
 
   const renderer = new THREE.WebGLRenderer({
     canvas,
-    alpha: true
+    alpha: true,
   });
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const loader = new THREE.TextureLoader();
-
-  // ✅ LOCAL COFFEE BEAN PNG
-  const beanTexture = loader.load(
-    "/assets/bean.png",
-    () => console.log("Bean texture loaded"),
-    undefined,
-    err => console.error("Bean texture error", err)
-  );
+  const beanTexture = loader.load("/assets/bean.png");
 
   const beans = [];
-  const COUNT = window.innerWidth < 768 ? 22 : 36;
+  const COUNT = window.innerWidth < 768 ? 30 : 46;
 
   for (let i = 0; i < COUNT; i++) {
     const material = new THREE.SpriteMaterial({
       map: beanTexture,
       transparent: true,
-      opacity: Math.random() * 0.4 + 0.45
+      opacity: Math.random() * 0.15 + 0.35,
     });
 
     const bean = new THREE.Sprite(material);
 
     bean.position.set(
-      (Math.random() - 0.5) * 10,
-      Math.random() * 6 - 3,
-      Math.random() * 2
+      (Math.random() - 0.5) * 18,
+      (Math.random() - 0.5) * 12,
+      (Math.random() - 0.5) * 6
     );
 
-    const scale = Math.random() * 0.45 + 0.25;
+    const scale = Math.random() * 0.35 + 0.25;
     bean.scale.set(scale, scale, 1);
 
     bean.userData = {
-      speed: Math.random() * 0.008 + 0.004,
-      rotation: (Math.random() - 0.5) * 0.04,
-      drift: Math.random() * 0.002
+      speed: Math.random() * 0.004 + 0.002,
+      drift: Math.random() * 0.004,
+      rotation: (Math.random() - 0.5) * 0.01,
     };
 
     scene.add(bean);
@@ -64,14 +56,14 @@ if (canvas && window.THREE) {
   function animate() {
     requestAnimationFrame(animate);
 
-    beans.forEach(bean => {
-      bean.position.y -= bean.userData.speed;
+    beans.forEach((bean) => {
+      bean.position.y += bean.userData.speed;
       bean.position.x += Math.sin(Date.now() * 0.001) * bean.userData.drift;
       bean.material.rotation += bean.userData.rotation;
 
-      if (bean.position.y < -3) {
-        bean.position.y = 3;
-        bean.position.x = (Math.random() - 0.5) * 10;
+      if (bean.position.y > 6) {
+        bean.position.y = -6;
+        bean.position.x = (Math.random() - 0.5) * 14;
       }
     });
 
@@ -81,8 +73,8 @@ if (canvas && window.THREE) {
   animate();
 
   window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    camera.aspect = canvas.clientWidth / canvas.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
   });
 }
