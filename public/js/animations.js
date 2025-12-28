@@ -1,0 +1,28 @@
+gsap.registerPlugin(ScrollTrigger);
+
+gsap.from(".hero-logo", { opacity: 0, y: -20, duration: 0.8 });
+gsap.from(".hero-title", { opacity: 0, y: 40, duration: 1, delay: 0.3 });
+gsap.from(".hero-subtitle", { opacity: 0, y: 20, duration: 0.8, delay: 0.6 });
+gsap.from(".hero-cta", { opacity: 0, y: 20, duration: 0.8, delay: 0.9 });
+
+gsap.from(".why-robusta-box", {
+  scrollTrigger: { trigger: ".why-robusta-section", start: "top 80%" },
+  opacity: 0,
+  y: 50,
+  duration: 1
+});
+
+gsap.from(".signature-card", {
+  scrollTrigger: { trigger: "#signature", start: "top 80%" },
+  opacity: 0,
+  y: 30,
+  stagger: 0.2,
+  duration: 0.8
+});
+
+gsap.from(".art-section", {
+  scrollTrigger: { trigger: ".art-section", start: "top 85%" },
+  opacity: 0,
+  y: 30,
+  duration: 0.8
+});
