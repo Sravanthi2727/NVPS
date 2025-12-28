@@ -26,3 +26,49 @@ gsap.from(".art-section", {
   y: 30,
   duration: 0.8
 });
+
+/* ================= COFFEE VIDEO SECTION ================= */
+
+gsap.from(".coffee-video", {
+  scrollTrigger: {
+    trigger: ".coffee-video-section",
+    start: "top 80%",
+  },
+  opacity: 0,
+  scale: 1.05,
+  duration: 1.4,
+  ease: "power2.out"
+});
+
+gsap.from(".coffee-video-content .intro-eyebrow", {
+  scrollTrigger: {
+    trigger: ".coffee-video-section",
+    start: "top 75%",
+  },
+  opacity: 0,
+  y: 20,
+  duration: 0.6,
+  delay: 0.2
+});
+
+gsap.from(".coffee-video-content .section-title", {
+  scrollTrigger: {
+    trigger: ".coffee-video-section",
+    start: "top 75%",
+  },
+  opacity: 0,
+  y: 30,
+  duration: 0.8,
+  delay: 0.35
+});
+
+gsap.from(".coffee-video-content .section-text", {
+  scrollTrigger: {
+    trigger: ".coffee-video-section",
+    start: "top 75%",
+  },
+  opacity: 0,
+  y: 30,
+  duration: 0.8,
+  delay: 0.55
+});

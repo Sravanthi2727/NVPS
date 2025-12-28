@@ -1,4 +1,4 @@
-const canvas = document.getElementById("bg-canvas");
+const canvas = document.getElementById("global-beans-canvas");
 
 if (canvas && window.THREE) {
 

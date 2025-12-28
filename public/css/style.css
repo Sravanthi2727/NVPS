@@ -21,6 +21,7 @@ body {
 
 /* Global dark overlay */
 body::before {
+  display: none;
   content: "";
   position: fixed;
   inset: 0;
@@ -32,16 +33,17 @@ body::before {
   z-index: -2;
 }
 
-/* ================= CANVAS ================= */
-
-#bg-canvas {
+/* ================= GLOBAL COFFEE BEANS ================= */
+/* 
+#global-beans-canvas {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  z-index: -1;
-}
+  z-index: 1; /* below content, above backgrounds */
+/* } */
+
 
 /* ================= HERO ================= */
 
@@ -177,6 +179,10 @@ body::before {
 
 /* ================= GENERIC SECTIONS ================= */
 
+section {
+  scroll-margin-top: 100px; /* navbar height */
+}
+
 .section-soft {
   position: relative;
   padding: 80px 0;
@@ -223,6 +229,29 @@ body::before {
   max-width: 520px;
   color: var(--muted);
 }
+
+/* ================= SECTION BASE ================= */
+
+.section-bg {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.section-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 0;
+}
+
+.section-bg > .container {
+  position: relative;
+  z-index: 2;
+}
+
 
 /* ================= SIGNATURE ROBUSTA (IMAGE CARDS) ================= */
 
@@ -372,6 +401,31 @@ body::before {
   background: rgba(180,120,90,0.15);
 }
 
+/* ================= GOLD SECTION ACCENT ================= */
+
+.with-gold-accent {
+  position: relative;
+  padding-left: 26px;
+}
+
+.with-gold-accent::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--gold),
+    transparent
+  );
+  opacity: 0.75;
+}
+
+
+
 /* ================= LINKS ================= */
 
 .view-link {
@@ -392,23 +446,91 @@ body::before {
 
 /* ================= NAVBAR ================= */
 
+/* ================= NAVBAR (FINAL STYLING) ================= */
+
 .navbar {
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.3s ease, padding 0.3s ease;
 }
 
+/* Brand */
 .navbar-brand {
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
-.nav-link {
+/* Links */
+.navbar-nav .nav-link {
   color: rgba(255,255,255,0.85) !important;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  position: relative;
+  padding: 6px 4px;
+  transition: color 0.25s ease;
 }
 
-.nav-link:hover {
+/* Gold underline hover */
+.navbar-nav .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
   color: var(--gold) !important;
 }
+
+.navbar-nav .nav-link:hover::after {
+  width: 100%;
+}
+
+/* Franchise pill button */
+.navbar-nav .btn {
+  border: 1px solid rgba(214,164,90,0.6);
+  color: var(--gold) !important;
+  font-size: 0.8rem;
+  padding: 6px 16px;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .btn:hover {
+  background: var(--gold);
+  color: #111 !important;
+  box-shadow: 0 6px 20px rgba(214,164,90,0.35);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .navbar {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .navbar-collapse {
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 12px;
+  }
+
+  .navbar-nav {
+    gap: 14px;
+  }
+
+  .navbar-nav .nav-link::after {
+    display: none;
+  }
+}
+
 
 /* ================= FOOTER ================= */
 
@@ -444,3 +566,134 @@ body::before {
   font-size: 0.75rem;
   color: rgba(255,255,255,0.4);
 }
+
+/* ================= WORKSHOPS ================= */
+
+.workshop-card {
+  background: rgba(15,15,15,0.9);
+  border-radius: 22px;
+  padding: 16px;
+  height: 100%;
+  transition: transform 0.35s ease;
+}
+
+.workshop-card:hover {
+  transform: translateY(-8px);
+}
+
+.workshop-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-bottom: 14px;
+}
+
+.workshop-card h6 {
+  font-family: "Playfair Display", serif;
+  margin-bottom: 6px;
+}
+
+.workshop-card p {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ================= FRANCHISE ================= */
+
+.franchise-card {
+  background: linear-gradient(
+    135deg,
+    rgba(20,20,20,0.95),
+    rgba(8,8,8,0.95)
+  );
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+}
+
+.franchise-card h5 {
+  font-family: "Playfair Display", serif;
+  margin-bottom: 10px;
+}
+
+.franchise-card p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: black;
+}
+
+/* Video */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Overlay */
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 1;
+}
+
+/* Beans */
+#bg-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Content */
+.hero-content {
+  position: relative;
+  z-index: 3;
+}
+
+/* .hero {
+  background-image: url(
+    https://images.unsplash.com/photo-1511920170033-f8396924c348
+  );
+  background-size: cover;
+  background-position: center;
+} */
+
+.why-robusta-section {
+  background-image: url(
+    https://images.unsplash.com/photo-1509042239860-f550ce710b93
+  );
+}
+
+.signature-section {
+  background-image: url(
+    https://images.unsplash.com/photo-1507133750040-4a8f57021571
+  );
+}
+
+.art-section {
+  background-image: url(
+    https://images.unsplash.com/photo-1541963463532-d68292c34b19
+  );
+}
+.workshops-section {
+  background-image: url(
+    https://images.unsplash.com/photo-1521305916504-4a1121188589
+  );
+}
+.franchise-section {
+  background-image: url(
+    https://images.unsplash.com/photo-1521737604893-d14cc237f11d
+  );
+}
+
