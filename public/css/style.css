@@ -72,8 +72,8 @@ body::before {
   overflow: hidden;
   background: black;
   /* Ensure the background image path is correct or use a full URL */
-  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85)),
-    url("/assets/coffee-bg.png");
+  /* background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85)),
+    url("/assets/coffee-bg.png"); */
   background-size: cover;
   background-position: center;
 }
@@ -101,12 +101,16 @@ body::before {
   color: var(--muted);
 }
 
+/* vedio */
+/* ================= HERO ================= */
+
 .hero {
   position: relative;
-  overflow: hidden; /* Prevents video from spilling out */
-  background: #000; /* Fallback color */
+  overflow: hidden;
+  background: #000; /* fallback if video fails */
 }
 
+/* VIDEO BACKGROUND */
 .hero-video-bg {
   position: absolute;
   top: 50%;
@@ -115,27 +119,36 @@ body::before {
   min-height: 100%;
   width: auto;
   height: auto;
-  z-index: 0; /* Behind everything */
   transform: translate(-50%, -50%);
-  object-fit: cover; /* Acts like background-size: cover */
+  object-fit: cover;
+  z-index: 0;
+  /* filter: brightness(0.9) contrast(1.1); */
 }
 
+/* DARK OVERLAY */
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55); /* Darkens the video */
-  z-index: 1; /* Above video, below text */
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
 }
 
+/* CONTENT ABOVE VIDEO */
 .hero-content {
   position: relative;
-  z-index: 2; /* Above the video and overlay */
+  z-index: 2;
+}
+
+/* LOGO */
+.hero-logo {
+  width: 90px;
+  filter: drop-shadow(0 6px 20px rgba(214, 164, 90, 0.45));
 }
 
 /* Ensure the logo and text pop */
 .hero-logo {
   max-width: 120px;
-  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
 }
 
 /* CTA */
