@@ -1,13 +1,33 @@
 <!-- HERO -->
 <section class="hero vh-100 d-flex align-items-center text-center px-4">
-  <!-- 3D Coffee Beans Canvas -->
-  <canvas id="bg-canvas"></canvas>
+  
+  <!-- VIDEO BACKGROUND -->
+  <video
+    class="hero-video-bg"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+  >
+    <source src="/assets/bg.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
 
+  <!-- DARK OVERLAY -->
+  <div class="hero-overlay"></div>
+
+  <!-- HERO CONTENT -->
   <div class="container hero-content">
-    <img src="/assets/logo-icon.png" class="hero-logo mb-4" />
+    <img
+      src="/assets/logo-icon.png"
+      class="hero-logo mb-4"
+      alt="Rabuste Logo"
+    />
 
     <h1 class="hero-title">
-      Bold Coffee,<br />Cozy Experience
+      Bold Coffee,<br />
+      Cozy Experience
     </h1>
 
     <p class="hero-subtitle">
@@ -15,15 +35,17 @@
     </p>
 
     <div class="hero-cta mt-4">
-      <a href="#signature" class="btn btn-gold">Explore Robusta</a>
+      <a href="#robusta" class="btn btn-gold">Explore Robusta</a>
       <button class="btn btn-outline-light">AI Coffee Discovery</button>
     </div>
   </div>
+
 </section>
 
+
 <!-- WHY ROBUSTA -->
-<section class="why-robusta-section">
-  <div class="container">
+<section id="robusta" class="why-robusta-section setion-bg">
+  <div class="container d-flex justify-content-center">
     <div class="why-robusta-box">
       <span class="why-eyebrow">WHY ROBUSTA</span>
 
@@ -33,80 +55,185 @@
       </h2>
 
       <p class="why-text">
-        Robusta is bold, intense, and unapologetically powerful — yet often
-        overlooked. With nearly <strong>2× the caffeine</strong>, deeper body,
-        and earthy chocolate notes, Robusta delivers a stronger, more
-        energizing cup.
+        Robusta is bold, intense, and unapologetically powerful. With nearly
+        <strong>2× the caffeine</strong>, deeper body, and earthy chocolate
+        notes, it delivers a stronger, more energizing cup.
       </p>
 
       <p class="why-text muted">
-        At <strong>Rabuste</strong>, we are redefining Indian coffee culture by
-        placing Robusta at the center — building a premium grab-and-go café
-        that celebrates strength, character, and bold flavor.
+        At <strong>Rabuste</strong>, we place Robusta at the center — redefining
+        Indian coffee culture through strength and simplicity.
       </p>
 
-      <a href="/about" class="why-cta">View More →</a>
+      <a href="#" class="why-cta">View More →</a>
     </div>
   </div>
 </section>
 
+<!-- COFFEE VIDEO EXPERIENCE -->
+<!-- <section class="coffee-video-section"> -->
+  <!-- <div class="video-container">
+    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/AGDGZfsQ2fk?autoplay=1&mute=1&loop=1&playlist=AGDGZfsQ2fk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div> -->
+
+  <!-- <div class="coffee-video-overlay"></div>
+
+  <div class="coffee-video-content text-center">
+    <span class="intro-eyebrow">THE EXPERIENCE</span>
+    <h2 class="section-title">Where Robusta Comes Alive</h2>
+    <p class="section-text mx-auto">
+      Watch Robusta beans roast, crackle, and transform — bold flavor begins
+      long before the first sip.
+    </p>
+  </div>
+</section> -->
+
 <!-- SIGNATURE ROBUSTA -->
-<section id="signature" class="section-soft">
-  <div class="container">
+<section id="signature" class="section-soft section-bg">
+  <div class="container with-gold-accent">
     <span class="intro-eyebrow">OUR COFFEE</span>
     <h2 class="section-title">Signature Robusta</h2>
 
-    <div class="row g-4 mt-3">
-      <% coffeeMenu.forEach(c => { %>
-        <div class="col-md-6">
-          <div class="signature-card">
-            <img src="<%= c.image %>" class="signature-icon" />
-            <div>
-              <h6 class="signature-title"><%= c.title %></h6>
-              <span class="signature-price">₹<%= c.price %></span>
-            </div>
+    <div class="row g-4 mt-4">
+      <div class="col-md-6">
+        <div class="signature-image-card">
+          <img
+            src="https://images.unsplash.com/photo-1509042239860-f550ce710b93"
+          />
+          <div class="signature-overlay">
+            <h5>Bold Robusta Shot</h5>
+            <p>High caffeine · Earthy · Intense</p>
+            <span class="price">₹120</span>
           </div>
         </div>
-      <% }) %>
+      </div>
+
+      <div class="col-md-6">
+        <div class="signature-image-card">
+          <img
+            src="https://images.unsplash.com/photo-1511920170033-f8396924c348"
+          />
+          <div class="signature-overlay">
+            <h5>Dark Cocoa Brew</h5>
+            <p>Chocolate notes · Smooth finish</p>
+            <span class="price">₹150</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- COFFEE × ART -->
-<section class="section-soft">
-  <div class="container art-section">
+<section id="art" class="section-soft section-bg">
+  <div class="container art-section art-overlay-box with-gold-accent">
     <span class="intro-eyebrow">ART & CULTURE</span>
     <h2 class="section-title">Coffee × Art</h2>
-    <p class="section-text">
-      Our café doubles as a micro art gallery — showcasing fine art,
-      independent artists, and creative stories beside every cup.
-    </p>
-    <a href="/art" class="view-link">View Art</a>
+
+    <div class="row g-4 mt-4">
+      <div class="col-md-6">
+        <div class="art-card">
+          <img
+            src="https://images.unsplash.com/photo-1541963463532-d68292c34b19"
+          />
+          <div class="art-info">
+            <h5>Midnight Roast</h5>
+            <p class="artist">Bold abstract tones</p>
+            <span class="coffee-tag bold">Pairs with Bold Robusta</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="art-card">
+          <img
+            src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+          />
+          <div class="art-info">
+            <h5>Cocoa Silence</h5>
+            <p class="artist">Warm minimal textures</p>
+            <span class="coffee-tag creative"
+              >Pairs with Dark Cocoa Robusta</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- WORKSHOPS -->
-<section class="section-soft">
-  <div class="container art-section">
+<section id="workshops" class="section-soft section-bg">
+  <div class="container with-gold-accent">
     <span class="intro-eyebrow">EXPERIENCES</span>
     <h2 class="section-title">Workshops</h2>
-    <p class="section-text">
-      Coffee tastings, brewing sessions, art workshops, and
-      community-driven experiences.
-    </p>
-    <a href="/workshops" class="view-link">View Workshops</a>
+
+    <div class="row g-4 mt-4">
+      <div class="col-md-4">
+        <div class="workshop-card">
+          <img
+            src="https://images.unsplash.com/photo-1511920170033-f8396924c348"
+          />
+          <h6>Coffee Tasting</h6>
+          <p>Explore Robusta flavors and strength.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="workshop-card">
+          <img
+            src="https://images.unsplash.com/photo-1509042239860-f550ce710b93"
+          />
+          <h6>Brewing Sessions</h6>
+          <p>Hands-on Robusta brewing techniques.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="workshop-card">
+          <img
+            src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620"
+          />
+          <h6>Art & Creativity</h6>
+          <p>Community-driven art experiences.</p>
+        </div>
+      </div>
+    </div>
+
+    <a href="#" class="view-link mt-4 d-inline-block">View Workshops</a>
   </div>
 </section>
 
 <!-- FRANCHISE -->
-<section class="section-soft">
-  <div class="container art-section">
-    <span class="intro-eyebrow">BUSINESS</span>
-    <h2 class="section-title">Franchise with Rabuste</h2>
-    <p class="section-text">
-      A scalable grab-and-go café model blending Robusta coffee,
-      culture, and technology.
-    </p>
-    <a href="/franchise" class="btn btn-outline-light mt-3">Franchise Enquiry</a>
+<section id="franchise" class="section-soft section-bg">
+  <div class="container with-gold-accent">
+    <div class="row align-items-center g-5">
+      <div class="col-md-7">
+        <span class="intro-eyebrow">BUSINESS</span>
+        <h2 class="section-title">Franchise with Rabuste</h2>
+
+        <p class="section-text">
+          A scalable grab-and-go café model built around bold Robusta coffee,
+          culture, and technology.
+        </p>
+
+        <p class="section-text">
+          Designed for compact spaces and high repeat value.
+        </p>
+      </div>
+
+      <div class="col-md-5">
+        <div class="franchise-card">
+          <h5>Become a Rabuste Partner</h5>
+          <p>
+            Join a focused café concept with strong brand recall and operational
+            simplicity.
+          </p>
+          <a href="#" class="btn btn-outline-light w-100">
+            Franchise Enquiry
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>

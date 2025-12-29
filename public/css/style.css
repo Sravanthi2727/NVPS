@@ -5,55 +5,77 @@
   --muted: rgba(245, 242, 238, 0.7);
 }
 
-/* ================= GLOBAL BACKGROUND ================= */
+/* ================= GLOBAL ================= */
+
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-  color: var(--text);
-  /* Background will be loaded via lazy loading */
-  background-color: #3C2415; /* Fallback color */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  color: var(--text); 
+  background: #000;
+  overflow-x: hidden;
 }
 
-/* Optimized background loading */
-body.bg-loaded {
-  background-image: url("/assets/coffee-bg.jpeg");
-}
-
-/* WebP support */
-body.webp-support.bg-loaded {
-  background-image: url("/assets/coffee-bg.webp");
-}
-
-/* dark overlay for entire page */
+ 
 body::before {
+  display: none;
   content: "";
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: radial-gradient(
+    circle at top,
+    rgba(0, 0, 0, 0.45),
+    rgba(0, 0, 0, 0.8)
+  );
   z-index: -2;
 }
 
-/* ================= COFFEE BEANS CANVAS ================= */
+/* ================= GLOBAL COFFEE BEANS ================= */
 
-#bg-canvas {
+/* #global-beans-canvas {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  z-index: -1;
-  opacity: 0.85;
+  z-index: 1; /* below content, above backgrounds */
+/* } */
+*/
+/* ================= HERO BEANS ONLY ================= */
+
+/* #bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+
+  z-index: 1; /* above background, below text */
+/* } */ */
+
+.video-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 }
 
 /* ================= HERO ================= */
 
 .hero {
   position: relative;
+  overflow: hidden;
+  background: black;
+  /* Ensure the background image path is correct or use a full URL */
+  /* background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85)),
+    url("/assets/coffee-bg.png"); */
+  background-size: cover;
+  background-position: center;
 }
 
 .hero-content {
@@ -63,21 +85,73 @@ body::before {
 
 .hero-logo {
   width: 80px;
+  filter: drop-shadow(0 6px 20px rgba(214, 164, 90, 0.45));
 }
 
 .hero-title {
   font-family: "Playfair Display", serif;
   font-size: 3rem;
   line-height: 1.2;
-  text-shadow: 0 10px 40px rgba(0,0,0,0.7);
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.75);
 }
 
 .hero-subtitle {
   max-width: 520px;
-  margin: 0 auto;
+  margin: 12px auto 0;
   color: var(--muted);
 }
 
+/* vedio */
+/* ================= HERO ================= */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: #000; /* fallback if video fails */
+}
+
+/* VIDEO BACKGROUND */
+.hero-video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  z-index: 0;
+  /* filter: brightness(0.9) contrast(1.1); */
+}
+
+/* DARK OVERLAY */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+/* CONTENT ABOVE VIDEO */
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* LOGO */
+.hero-logo {
+  width: 90px;
+  filter: drop-shadow(0 6px 20px rgba(214, 164, 90, 0.45));
+}
+
+/* Ensure the logo and text pop */
+.hero-logo {
+  max-width: 120px;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+}
+
+/* CTA */
 .hero-cta {
   display: flex;
   flex-direction: column;
@@ -87,22 +161,32 @@ body::before {
 
 .hero-cta .btn {
   min-width: 260px;
-  padding: 14px 30px;
+  padding: 14px 32px;
   border-radius: 999px;
+  transition: all 0.3s ease;
 }
 
-/* buttons */
+.hero-cta .btn:hover {
+  transform: translateY(-3px);
+}
+
+/* Buttons */
 .btn-gold {
   background: linear-gradient(135deg, var(--gold-soft), var(--gold));
   border: none;
   color: #111;
-  box-shadow: 0 12px 30px rgba(214,164,90,0.35);
+  font-weight: 600;
+  box-shadow: 0 12px 30px rgba(214, 164, 90, 0.35);
 }
 
 .btn-outline-light {
-  border: 1px solid rgba(255,255,255,0.5);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   background: transparent;
   color: #fff;
+}
+
+.btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* ================= WHY ROBUSTA ================= */
@@ -113,17 +197,27 @@ body::before {
 
 .why-robusta-box {
   max-width: 760px;
-  padding: 52px;
-  background: rgba(18,14,10,0.88);
+  padding: 42px;
+  background: rgba(18, 14, 10, 0.88);
   backdrop-filter: blur(16px);
   border-radius: 24px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.65);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65);
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.4rem;
+  }
+
+  .why-robusta-box {
+    padding: 32px 24px;
+  }
 }
 
 .why-eyebrow {
-  letter-spacing: 3px;
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.6);
+  letter-spacing: 3px;
+  color: rgba(214, 164, 90, 0.8);
 }
 
 .why-title {
@@ -135,9 +229,18 @@ body::before {
   color: var(--gold);
 }
 
+.why-content {
+  margin-top: 18px;
+}
+
 .why-text {
   line-height: 1.7;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.why-text.muted {
+  font-size: 0.95rem;
+  opacity: 0.75;
 }
 
 .why-text strong {
@@ -151,20 +254,52 @@ body::before {
   text-decoration: none;
 }
 
-/* ================= SECTIONS ================= */
+/* ================= GENERIC SECTIONS ================= */
+
+section {
+  scroll-margin-top: 100px; /* navbar height */
+}
 
 .section-soft {
+  position: relative;
   padding: 80px 0;
   background: linear-gradient(
     180deg,
-    rgba(255,255,255,0.03),
-    rgba(0,0,0,0.05)
+    rgba(255, 255, 255, 0.03),
+    rgba(0, 0, 0, 0.05)
+  );
+}
+
+/* Divider */
+.section-soft::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(214, 164, 90, 0.35),
+    transparent
   );
 }
 
 .section-title {
   font-family: "Playfair Display", serif;
   font-size: 2rem;
+  position: relative;
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 2px;
+  margin-top: 10px;
+  background: var(--gold);
+  opacity: 0.6;
 }
 
 .section-text {
@@ -172,29 +307,178 @@ body::before {
   color: var(--muted);
 }
 
-/* ================= SIGNATURE ================= */
+/* ================= SECTION BASE ================= */
 
-.signature-card {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 28px;
-  background: radial-gradient(circle at top, #151515, #0b0b0b);
-  border-radius: 22px;
-  transition: 0.35s;
+.section-bg {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.signature-card:hover {
+.section-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 0;
+}
+
+.section-bg > .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* ================= SIGNATURE ROBUSTA (IMAGE CARDS) ================= */
+
+.signature-image-card {
+  position: relative;
+  border-radius: 26px;
+  overflow: hidden;
+  height: 320px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+  transition: transform 0.4s ease;
+}
+
+.signature-image-card:hover {
+  transform: translateY(-8px);
+}
+
+.signature-image-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.05) saturate(1.1);
+}
+
+/* Dark overlay */
+.signature-image-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.75));
+}
+
+/* Text overlay */
+.signature-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  z-index: 2;
+}
+
+.signature-overlay h5 {
+  font-family: "Playfair Display", serif;
+  margin-bottom: 6px;
+}
+
+.signature-overlay p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.signature-overlay .price {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* ================= ART ================= */
+
+.art-section {
+  position: relative;
+  padding-left: 18px;
+}
+
+.art-section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  opacity: 0.6;
+}
+
+.art-overlay-box {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.35));
+  padding: 36px;
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+}
+
+/* Art cards */
+
+.art-card {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 20, 20, 0.9),
+    rgba(8, 8, 8, 0.95)
+  );
+  border-radius: 24px;
+  overflow: hidden;
+  transition: 0.35s ease;
+}
+
+.art-card:hover {
   transform: translateY(-6px);
 }
 
-.signature-icon {
-  width: 64px;
-  opacity: 0.85;
+.art-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
 }
 
-.signature-price {
+.art-info {
+  padding: 20px;
+}
+
+.art-info h5 {
+  margin-bottom: 4px;
+}
+
+.artist {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.coffee-tag {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.75rem;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.coffee-tag.bold {
+  background: rgba(214, 164, 90, 0.15);
   color: var(--gold);
+}
+
+.coffee-tag.creative {
+  background: rgba(180, 120, 90, 0.15);
+}
+
+/* ================= GOLD SECTION ACCENT ================= */
+
+.with-gold-accent {
+  position: relative;
+  padding-left: 26px;
+}
+
+.with-gold-accent::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  opacity: 0.75;
 }
 
 /* ================= LINKS ================= */
@@ -213,4 +497,246 @@ body::before {
 
 .view-link:hover::after {
   transform: translateX(6px);
+}
+
+/* ================= NAVBAR ================= */
+
+/* ================= NAVBAR (FINAL STYLING) ================= */
+
+.navbar {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.3s ease, padding 0.3s ease;
+}
+
+/* Brand */
+.navbar-brand {
+  letter-spacing: 3px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Links */
+.navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 0.85rem;
+  position: relative;
+  padding: 6px 4px;
+  transition: color 0.25s ease;
+}
+
+/* Gold underline hover */
+.navbar-nav .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--gold) !important;
+}
+
+.navbar-nav .nav-link:hover::after {
+  width: 100%;
+}
+
+/* Franchise pill button */
+.navbar-nav .btn {
+  border: 1px solid rgba(214, 164, 90, 0.6);
+  color: var(--gold) !important;
+  font-size: 0.8rem;
+  padding: 6px 16px;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .btn:hover {
+  background: var(--gold);
+  color: #111 !important;
+  box-shadow: 0 6px 20px rgba(214, 164, 90, 0.35);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .navbar {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .navbar-collapse {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 12px;
+  }
+
+  .navbar-nav {
+    gap: 14px;
+  }
+
+  .navbar-nav .nav-link::after {
+    display: none;
+  }
+}
+
+/* ================= FOOTER ================= */
+
+.footer-section {
+  padding: 60px 0 40px;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.footer-brand {
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+.footer-text {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 20px 0;
+}
+
+.footer-links a {
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.footer-copy {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ================= WORKSHOPS ================= */
+
+.workshop-card {
+  background: rgba(15, 15, 15, 0.9);
+  border-radius: 22px;
+  padding: 16px;
+  height: 100%;
+  transition: transform 0.35s ease;
+}
+
+.workshop-card:hover {
+  transform: translateY(-8px);
+}
+
+.workshop-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-bottom: 14px;
+}
+
+.workshop-card h6 {
+  font-family: "Playfair Display", serif;
+  margin-bottom: 6px;
+}
+
+.workshop-card p {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ================= FRANCHISE ================= */
+
+.franchise-card {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 20, 20, 0.95),
+    rgba(8, 8, 8, 0.95)
+  );
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+}
+
+.franchise-card h5 {
+  font-family: "Playfair Display", serif;
+  margin-bottom: 10px;
+}
+
+.franchise-card p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: black;
+}
+
+/* Video */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Overlay */
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1;
+}
+
+/* Beans */
+#bg-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Content */
+.hero-content {
+  position: relative;
+  z-index: 3;
+}
+
+/* .hero {
+  background-image: url(
+    https://images.unsplash.com/photo-1511920170033-f8396924c348
+  );
+  background-size: cover;
+  background-position: center;
+} */
+
+.why-robusta-section {
+  background-image: url(https://images.unsplash.com/photo-1509042239860-f550ce710b93);
+}
+
+.signature-section {
+  background-image: url(https://images.unsplash.com/photo-1507133750040-4a8f57021571);
+}
+
+.art-section {
+  background-image: url(https://images.unsplash.com/photo-1541963463532-d68292c34b19);
+}
+.workshops-section {
+  background-image: url(https://images.unsplash.com/photo-1521305916504-4a1121188589);
+}
+.franchise-section {
+  background-image: url(https://images.unsplash.com/photo-1521737604893-d14cc237f11d);
 }

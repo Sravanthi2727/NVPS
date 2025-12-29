@@ -10,6 +10,10 @@ app.set("layout", "layouts/boilerplate");
 
 app.use(express.static("public"));
 
+// const artRoutes = require("./routes/art");
+// app.use("/art", artRoutes);
+
+
 app.get("/", (req, res) => {
   res.render("home", {
     coffeeMenu: [
