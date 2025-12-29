@@ -19,4 +19,26 @@ app.get("/", (req, res) => {
   });
 });
 
+// Franchise page route
+app.get("/franchise", (req, res) => {
+  res.render("franchise", {
+    title: "Franchise Opportunities - Partner with Rabuste Coffee",
+    description: "Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and $75K-$150K investment range. Apply today.",
+    keywords: "coffee franchise, robusta coffee franchise, cafe franchise opportunities, premium coffee business, franchise investment, coffee shop franchise, artisanal coffee franchise",
+    ogTitle: "Franchise Opportunities - Partner with Rabuste Coffee",
+    ogDescription: "Join the bold coffee revolution. Premium Robusta-only franchise with proven business model, comprehensive support, and strong ROI potential. Investment from $75K-$150K.",
+    ogType: "website",
+    ogUrl: "https://rabustecoffee.com/franchise",
+    ogImage: "/assets/coffee-bg.jpeg",
+    canonicalUrl: "https://rabustecoffee.com/franchise",
+    investmentRanges: [
+      "$50K - $75K",
+      "$75K - $100K", 
+      "$100K - $150K",
+      "$150K - $200K",
+      "$200K+"
+    ]
+  });
+});
+
 app.listen(3000, () => console.log("Server running"));

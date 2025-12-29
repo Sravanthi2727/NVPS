@@ -11,12 +11,22 @@ body {
   margin: 0;
   font-family: "Inter", sans-serif;
   color: var(--text);
-
-  background-image: url("/assets/coffee-bg.jpeg");
+  /* Background will be loaded via lazy loading */
+  background-color: #3C2415; /* Fallback color */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+}
+
+/* Optimized background loading */
+body.bg-loaded {
+  background-image: url("/assets/coffee-bg.jpeg");
+}
+
+/* WebP support */
+body.webp-support.bg-loaded {
+  background-image: url("/assets/coffee-bg.webp");
 }
 
 /* dark overlay for entire page */
