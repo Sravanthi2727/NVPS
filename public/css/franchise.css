@@ -3999,6 +3999,617 @@ section.revealed {
   transform: translateY(0);
 }
 
+/* ================= DARK THEME FRANCHISE PAGE ================= */
+
+/* Hero Section Dark Theme */
+.franchise-hero-dark {
+  background: #000;
+  color: #F5F1EB;
+  padding: 120px 20px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.franchise-hero-content-dark {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.franchise-hero-title-dark {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: #F5F1EB;
+  margin-bottom: 24px;
+  line-height: 1.2;
+}
+
+.franchise-hero-subtitle-dark {
+  font-family: "Inter", sans-serif;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(245, 241, 235, 0.8);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.franchise-hero-cta-dark {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.btn-franchise-primary-dark {
+  background: linear-gradient(135deg, #D4AF37 0%, #E3B873 100%);
+  color: #3C2415;
+  padding: 18px 40px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.0625rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-franchise-primary-dark:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+  color: #3C2415;
+}
+
+/* Form Section Dark Theme */
+.franchise-form-section-dark {
+  background: #000;
+  color: #F5F1EB;
+  padding: 80px 20px;
+  position: relative;
+}
+
+.franchise-form-header-dark {
+  text-align: center;
+  margin-bottom: 48px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.franchise-form-title-dark {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: #F5F1EB;
+  margin-bottom: 16px;
+}
+
+.franchise-form-subtitle-dark {
+  font-family: "Inter", sans-serif;
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  color: rgba(245, 241, 235, 0.8);
+  line-height: 1.6;
+}
+
+.franchise-form-container-dark {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.franchise-form-dark {
+  background: rgba(60, 36, 21, 0.3);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  padding: 40px 32px;
+  backdrop-filter: blur(10px);
+}
+
+.franchise-form-group-dark {
+  margin-bottom: 24px;
+}
+
+.franchise-form-label-dark {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: #F5F1EB;
+  margin-bottom: 8px;
+}
+
+.franchise-form-input-dark,
+.franchise-form-select-dark,
+.franchise-form-textarea-dark {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(245, 241, 235, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  color: #F5F1EB;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.franchise-form-input-dark:focus,
+.franchise-form-select-dark:focus,
+.franchise-form-textarea-dark:focus {
+  outline: none;
+  border-color: #D4AF37;
+  background: rgba(245, 241, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.franchise-form-input-dark::placeholder,
+.franchise-form-textarea-dark::placeholder {
+  color: rgba(245, 241, 235, 0.5);
+}
+
+.franchise-form-textarea-dark {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.franchise-form-counter-dark {
+  font-size: 0.875rem;
+  color: rgba(245, 241, 235, 0.6);
+  margin-top: 8px;
+  text-align: right;
+}
+
+.franchise-form-checkbox-group-dark {
+  margin-bottom: 24px;
+}
+
+.franchise-form-checkbox-wrapper-dark {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.franchise-form-checkbox-dark {
+  margin-top: 4px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #D4AF37;
+}
+
+.franchise-form-checkbox-label-dark {
+  font-family: "Inter", sans-serif;
+  font-size: 0.9375rem;
+  color: rgba(245, 241, 235, 0.9);
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.franchise-form-error-dark {
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  margin-top: 6px;
+  min-height: 20px;
+}
+
+.franchise-form-submit-dark {
+  margin-top: 32px;
+}
+
+.btn-franchise-submit-dark {
+  width: 100%;
+  background: linear-gradient(135deg, #D4AF37 0%, #E3B873 100%);
+  color: #3C2415;
+  padding: 18px 40px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.0625rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-franchise-submit-dark:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+}
+
+.btn-franchise-submit-dark:active {
+  transform: translateY(0);
+}
+
+.franchise-form-success-dark {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(34, 139, 34, 0.1);
+  border: 1px solid rgba(34, 139, 34, 0.3);
+  border-radius: 12px;
+  margin-top: 24px;
+}
+
+.franchise-form-success-icon-dark {
+  margin-bottom: 20px;
+}
+
+.franchise-form-success-title-dark {
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #F5F1EB;
+  margin-bottom: 16px;
+}
+
+.franchise-form-success-message-dark {
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  color: rgba(245, 241, 235, 0.9);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.franchise-form-success-next-dark {
+  font-family: "Inter", sans-serif;
+  font-size: 0.9375rem;
+  color: rgba(245, 241, 235, 0.8);
+  line-height: 1.6;
+}
+
+.franchise-form-success-link-dark {
+  color: #D4AF37;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.franchise-form-success-link-dark:hover {
+  color: #E3B873;
+}
+
+/* Responsive Dark Theme */
+@media (max-width: 768px) {
+  .franchise-hero-dark {
+    padding: 80px 20px 60px;
+  }
+  
+  .franchise-form-dark {
+    padding: 32px 24px;
+  }
+  
+  .franchise-hero-cta-dark {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .btn-franchise-primary-dark {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ================= ABOUT PAGE ENHANCED STYLING ================= */
+
+/* About Page Container */
+.about-page {
+  background: #000;
+  color: #F5F1EB;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Enhanced Hero Section for About Page */
+.about-page .franchise-hero-dark {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #000 0%, #1a0f0a 100%);
+}
+
+.about-page .franchise-hero-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.about-page .franchise-hero-content-dark {
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-page .franchise-hero-title-dark {
+  background: linear-gradient(135deg, #F5F1EB 0%, #D4AF37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+.about-page .franchise-hero-subtitle-dark {
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+}
+
+.about-page .franchise-hero-cta-dark {
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
+}
+
+/* Enhanced Section Styling for About Page */
+.about-page .franchise-benefits,
+.about-page .franchise-business-model,
+.about-page .franchise-support,
+.about-page .franchise-qualification {
+  position: relative;
+  padding: 100px 0;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-page .franchise-benefits.animate-in,
+.about-page .franchise-business-model.animate-in,
+.about-page .franchise-support.animate-in,
+.about-page .franchise-qualification.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Enhanced Card Animations */
+.about-page .franchise-benefit-card,
+.about-page .franchise-support-card {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.about-page .franchise-benefit-card.animate-in,
+.about-page .franchise-support-card.animate-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Staggered Animation Delays */
+.about-page .franchise-benefit-card:nth-child(1) { transition-delay: 0.1s; }
+.about-page .franchise-benefit-card:nth-child(2) { transition-delay: 0.15s; }
+.about-page .franchise-benefit-card:nth-child(3) { transition-delay: 0.2s; }
+.about-page .franchise-benefit-card:nth-child(4) { transition-delay: 0.25s; }
+.about-page .franchise-benefit-card:nth-child(5) { transition-delay: 0.3s; }
+.about-page .franchise-benefit-card:nth-child(6) { transition-delay: 0.35s; }
+
+.about-page .franchise-support-card:nth-child(1) { transition-delay: 0.1s; }
+.about-page .franchise-support-card:nth-child(2) { transition-delay: 0.15s; }
+.about-page .franchise-support-card:nth-child(3) { transition-delay: 0.2s; }
+.about-page .franchise-support-card:nth-child(4) { transition-delay: 0.25s; }
+.about-page .franchise-support-card:nth-child(5) { transition-delay: 0.3s; }
+.about-page .franchise-support-card:nth-child(6) { transition-delay: 0.35s; }
+
+/* Enhanced Hover Effects */
+.about-page .franchise-benefit-card:hover,
+.about-page .franchise-support-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+.about-page .franchise-benefit-card:hover .franchise-benefit-icon,
+.about-page .franchise-support-card:hover .franchise-support-icon {
+  transform: scale(1.15) rotate(5deg);
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+}
+
+/* Icon Animation */
+.about-page .franchise-benefit-icon,
+.about-page .franchise-support-icon {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+/* Business Model Section Enhanced */
+.about-page .franchise-business-model-visual {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-page .franchise-business-model-visual.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.about-page .franchise-business-model-info {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-page .franchise-business-model-info.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.about-page .franchise-business-model-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-page .franchise-business-model-item.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.about-page .franchise-business-model-item:nth-child(1) { transition-delay: 0.1s; }
+.about-page .franchise-business-model-item:nth-child(2) { transition-delay: 0.2s; }
+.about-page .franchise-business-model-item:nth-child(3) { transition-delay: 0.3s; }
+.about-page .franchise-business-model-item:nth-child(4) { transition-delay: 0.4s; }
+
+.about-page .franchise-business-model-item:hover {
+  transform: translateY(-5px);
+  padding-left: 10px;
+  border-left: 3px solid #D4AF37;
+}
+
+/* Qualification Section Enhanced */
+.about-page .franchise-qualification-item {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-page .franchise-qualification-item.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.about-page .franchise-qualification-item:nth-child(1) { transition-delay: 0.1s; }
+.about-page .franchise-qualification-item:nth-child(2) { transition-delay: 0.2s; }
+.about-page .franchise-qualification-item:nth-child(3) { transition-delay: 0.3s; }
+.about-page .franchise-qualification-item:nth-child(4) { transition-delay: 0.4s; }
+
+.about-page .franchise-qualification-check {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-page .franchise-qualification-item:hover .franchise-qualification-check {
+  transform: scale(1.2) rotate(5deg);
+}
+
+/* Button Enhancements */
+.about-page .btn-franchise-primary,
+.about-page .btn-franchise-primary-dark {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-page .btn-franchise-primary::before,
+.about-page .btn-franchise-primary-dark::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.about-page .btn-franchise-primary:hover::before,
+.about-page .btn-franchise-primary-dark:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.about-page .btn-franchise-primary:hover,
+.about-page .btn-franchise-primary-dark:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4);
+}
+
+/* Section Headers Animation */
+.about-page .franchise-benefits-header,
+.about-page .franchise-support-header,
+.about-page .franchise-qualification-header,
+.about-page .franchise-business-model-header {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-page .franchise-benefits-header.animate-in,
+.about-page .franchise-support-header.animate-in,
+.about-page .franchise-qualification-header.animate-in,
+.about-page .franchise-business-model-header.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Smooth Scroll Behavior */
+.about-page {
+  scroll-behavior: smooth;
+}
+
+/* Performance Optimizations */
+.about-page * {
+  will-change: auto;
+}
+
+.about-page .franchise-benefit-card,
+.about-page .franchise-support-card,
+.about-page .franchise-business-model-item,
+.about-page .franchise-qualification-item {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .about-page * {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .about-page .franchise-benefit-card,
+  .about-page .franchise-support-card,
+  .about-page .franchise-business-model-item,
+  .about-page .franchise-qualification-item {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+  .about-page .franchise-benefits,
+  .about-page .franchise-business-model,
+  .about-page .franchise-support,
+  .about-page .franchise-qualification {
+    padding: 60px 0;
+  }
+  
+  .about-page .franchise-hero-dark {
+    padding: 80px 20px 50px;
+  }
+  
+  .about-page .franchise-benefit-card:hover,
+  .about-page .franchise-support-card:hover {
+    transform: translateY(-5px) scale(1.01);
+  }
+}
+
+/* Future-proof CSS Variables */
+.about-page {
+  --about-animation-duration: 0.6s;
+  --about-animation-delay: 0.1s;
+  --about-hover-scale: 1.02;
+  --about-hover-translate: -10px;
+  --about-shadow-color: rgba(212, 175, 55, 0.2);
+}
+
+/* Enhanced Gradient Backgrounds */
+.about-page .franchise-benefits::before {
+  opacity: 0.15;
+  background-blend-mode: overlay;
+}
+
+.about-page .franchise-support::before {
+  opacity: 0.15;
+  background-blend-mode: overlay;
+}
+
 .franchise-benefit-card,
 .franchise-support-card,
 .franchise-business-model-item,
@@ -4030,5 +4641,499 @@ section.revealed {
   
   .scroll-progress {
     display: none;
+  }
+}
+
+/* ================= ABOUT PAGE CREAM DESIGN ================= */
+
+.about-page-cream {
+  background: var(--franchise-cream);
+  color: var(--franchise-text-dark);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Hero Section */
+.about-hero-section {
+  background: var(--franchise-cream);
+  padding: 120px 20px 80px;
+  text-align: center;
+  position: relative;
+}
+
+.about-hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-hero-title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--franchise-coffee-brown);
+  margin-bottom: 24px;
+  line-height: 1.2;
+}
+
+.about-hero-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  color: var(--franchise-coffee-brown);
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.about-hero-description {
+  font-family: "Inter", sans-serif;
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  color: var(--franchise-text-dark);
+  opacity: 0.8;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Story Section */
+.about-story-section {
+  background: var(--franchise-cream);
+  padding: 80px 20px;
+  position: relative;
+}
+
+.about-story-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.about-story-text {
+  padding-right: 40px;
+}
+
+.about-section-title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--franchise-coffee-brown);
+  margin-bottom: 24px;
+  line-height: 1.2;
+}
+
+.about-story-paragraph {
+  font-family: "Inter", sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: var(--franchise-text-dark);
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+.about-story-visual {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.about-story-card {
+  background: var(--franchise-cream);
+  border: 2px solid rgba(60, 36, 21, 0.1);
+  border-radius: 12px;
+  padding: 32px 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--franchise-shadow);
+}
+
+.about-story-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px var(--franchise-shadow);
+  border-color: var(--franchise-gold);
+}
+
+.about-story-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.about-story-card h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--franchise-coffee-brown);
+  margin-bottom: 8px;
+}
+
+.about-story-card p {
+  font-family: "Inter", sans-serif;
+  font-size: 0.9375rem;
+  color: var(--franchise-text-dark);
+  opacity: 0.8;
+}
+
+/* Team Section */
+.about-team-section {
+  background: var(--franchise-cream);
+  padding: 100px 20px;
+  position: relative;
+}
+
+.about-section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.about-section-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 1.125rem;
+  color: var(--franchise-text-dark);
+  opacity: 0.8;
+  margin-top: 16px;
+}
+
+.about-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-team-card {
+  background: var(--franchise-cream);
+  border: 1px solid rgba(60, 36, 21, 0.1);
+  border-radius: 16px;
+  padding: 40px 32px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px var(--franchise-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-team-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--franchise-gold), var(--franchise-coffee-brown));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.about-team-card:hover::before {
+  transform: scaleX(1);
+}
+
+.about-team-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px var(--franchise-shadow);
+  border-color: var(--franchise-gold);
+}
+
+.about-team-image {
+  margin-bottom: 24px;
+}
+
+.about-team-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--franchise-gold), var(--franchise-coffee-brown));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--franchise-cream);
+  border: 4px solid var(--franchise-cream);
+  box-shadow: 0 4px 16px var(--franchise-shadow);
+  transition: all 0.3s ease;
+}
+
+.about-team-card:hover .about-team-avatar {
+  transform: scale(1.1);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+}
+
+.about-team-name {
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--franchise-coffee-brown);
+  margin-bottom: 8px;
+}
+
+.about-team-role {
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--franchise-gold);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.about-team-bio {
+  font-family: "Inter", sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--franchise-text-dark);
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+.about-team-social {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.about-social-link {
+  font-family: "Inter", sans-serif;
+  font-size: 0.875rem;
+  color: var(--franchise-coffee-brown);
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 1px solid rgba(60, 36, 21, 0.2);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.about-social-link:hover {
+  background: var(--franchise-coffee-brown);
+  color: var(--franchise-cream);
+  border-color: var(--franchise-coffee-brown);
+  transform: translateY(-2px);
+}
+
+/* Development Team Section */
+.about-dev-section {
+  background: var(--franchise-cream);
+  padding: 100px 20px;
+  position: relative;
+}
+
+.about-dev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-dev-card {
+  background: var(--franchise-cream);
+  border: 1px solid rgba(60, 36, 21, 0.1);
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--franchise-shadow);
+  position: relative;
+}
+
+.about-dev-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 28px var(--franchise-shadow);
+  border-color: var(--franchise-gold);
+}
+
+.about-dev-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--franchise-coffee-brown), var(--franchise-gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--franchise-cream);
+  border: 3px solid var(--franchise-cream);
+  box-shadow: 0 4px 12px var(--franchise-shadow);
+  transition: all 0.3s ease;
+}
+
+.about-dev-card:hover .about-dev-avatar {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.about-dev-name {
+  font-family: "Playfair Display", serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--franchise-coffee-brown);
+  margin-bottom: 8px;
+}
+
+.about-dev-role {
+  font-family: "Inter", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--franchise-gold);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.875rem;
+}
+
+.about-dev-bio {
+  font-family: "Inter", sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--franchise-text-dark);
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+.about-dev-skills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.about-skill-tag {
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  background: rgba(60, 36, 21, 0.1);
+  color: var(--franchise-coffee-brown);
+  border-radius: 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.about-dev-card:hover .about-skill-tag {
+  background: var(--franchise-gold);
+  color: var(--franchise-cream);
+  transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .about-story-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .about-story-text {
+    padding-right: 0;
+  }
+  
+  .about-story-visual {
+    grid-template-columns: 1fr;
+  }
+  
+  .about-team-grid,
+  .about-dev-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-hero-section {
+    padding: 80px 20px 60px;
+  }
+  
+  .about-story-section,
+  .about-team-section,
+  .about-dev-section {
+    padding: 60px 20px;
+  }
+  
+  .about-team-grid,
+  .about-dev-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .about-story-visual {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* About Page Animations */
+.about-page-cream section {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-page-cream section.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.about-team-card,
+.about-dev-card,
+.about-story-card {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-team-card.animate-in,
+.about-dev-card.animate-in,
+.about-story-card.animate-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.about-section-header {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-section-header.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered animations */
+.about-team-card:nth-child(1) { transition-delay: 0.1s; }
+.about-team-card:nth-child(2) { transition-delay: 0.2s; }
+.about-team-card:nth-child(3) { transition-delay: 0.3s; }
+
+.about-dev-card:nth-child(1) { transition-delay: 0.1s; }
+.about-dev-card:nth-child(2) { transition-delay: 0.15s; }
+.about-dev-card:nth-child(3) { transition-delay: 0.2s; }
+.about-dev-card:nth-child(4) { transition-delay: 0.25s; }
+
+.about-story-card:nth-child(1) { transition-delay: 0.1s; }
+.about-story-card:nth-child(2) { transition-delay: 0.2s; }
+.about-story-card:nth-child(3) { transition-delay: 0.3s; }
+
+/* Performance optimization */
+.about-team-card,
+.about-dev-card,
+.about-story-card {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .about-page-cream section,
+  .about-team-card,
+  .about-dev-card,
+  .about-story-card,
+  .about-section-header {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

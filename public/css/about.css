@@ -1,0 +1,791 @@
+/**
+ * About Us Page Styles
+ * Rabuste Coffee - About page specific styling
+ */
+
+/* CSS Variables for About Page - Matching Main Website */
+:root {
+  --about-bg: #000;
+  --about-text: #f5f2ee;
+  --about-gold: #d6a45a;
+  --about-gold-soft: #e3b873;
+  --about-muted: rgba(245, 242, 238, 0.7);
+  --about-card-bg: rgba(18, 14, 10, 0.88);
+  --about-border: rgba(255, 255, 255, 0.1);
+  --about-shadow: rgba(0, 0, 0, 0.5);
+  --about-hover-shadow: rgba(214, 164, 90, 0.2);
+}
+
+/* About Page Container */
+.about-page-cream {
+  background: var(--about-bg) !important;
+  min-height: 100vh;
+  color: var(--about-text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Hero Section */
+.about-hero-section {
+  padding: 120px 0 80px;
+  text-align: center;
+  background: var(--about-bg);
+  position: relative;
+}
+
+.about-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--about-text);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.75);
+}
+
+.about-hero-subtitle {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--about-text);
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.about-hero-description {
+  font-size: 1.1rem;
+  color: var(--about-muted);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Story Section */
+.about-story-section {
+  padding: 80px 0;
+  background: var(--about-bg);
+}
+
+.about-story-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.about-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--about-text);
+  margin-bottom: 2rem;
+  line-height: 1.3;
+}
+
+.about-story-paragraph {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--about-muted);
+  margin-bottom: 1.5rem;
+}
+
+.about-story-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.about-story-card {
+  background: var(--about-card-bg);
+  backdrop-filter: blur(16px);
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--about-border);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--about-shadow);
+}
+
+.about-story-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px var(--about-shadow);
+  border-color: var(--about-gold);
+}
+
+.about-story-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.about-story-card h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--about-text);
+  margin-bottom: 5px;
+}
+
+.about-story-card p {
+  color: var(--about-muted);
+  font-weight: 500;
+}
+
+/* Team Section */
+.about-team-section {
+  padding: 80px 0;
+  background: var(--about-bg);
+}
+
+.about-section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.about-section-subtitle {
+  font-size: 1.2rem;
+  color: var(--about-muted);
+  margin-top: 1rem;
+}
+
+.about-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 40px;
+}
+
+.about-team-card {
+  background: var(--about-card-bg);
+  backdrop-filter: blur(16px);
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid var(--about-border);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--about-shadow);
+}
+
+.about-team-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px var(--about-hover-shadow);
+  border-color: var(--about-gold);
+}
+
+.about-team-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--about-gold-soft), var(--about-gold));
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 auto 20px;
+  box-shadow: 0 4px 12px rgba(214, 164, 90, 0.3);
+}
+
+.about-team-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--about-text);
+  margin-bottom: 5px;
+}
+
+.about-team-role {
+  font-size: 1rem;
+  color: var(--about-gold);
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.about-team-bio {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--about-muted);
+  margin-bottom: 20px;
+}
+
+.about-team-social {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.about-social-link {
+  color: var(--about-text);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: 1px solid var(--about-border);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.about-social-link:hover {
+  background: var(--about-gold);
+  color: #111;
+  border-color: var(--about-gold);
+}
+
+/* Development Team Section */
+.about-dev-section {
+  padding: 80px 0;
+  background: var(--about-bg);
+}
+
+.about-dev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.about-dev-card {
+  background: var(--about-card-bg);
+  backdrop-filter: blur(16px);
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--about-border);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--about-shadow);
+}
+
+.about-dev-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px var(--about-shadow);
+  border-color: var(--about-gold);
+}
+
+.about-dev-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--about-gold-soft), var(--about-gold));
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 auto 15px;
+  box-shadow: 0 4px 12px rgba(214, 164, 90, 0.3);
+}
+
+.about-dev-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--about-text);
+  margin-bottom: 5px;
+}
+
+.about-dev-role {
+  font-size: 0.9rem;
+  color: var(--about-gold);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.about-dev-bio {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--about-muted);
+  margin-bottom: 15px;
+}
+
+.about-dev-skills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.about-skill-tag {
+  background: var(--about-gold);
+  color: #111;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Franchise Sections - Card-based Design */
+.franchise-benefits,
+.franchise-business-model,
+.franchise-support,
+.franchise-qualification {
+  background: var(--about-bg);
+  padding: 80px 0;
+}
+
+.franchise-benefits {
+  background: var(--about-bg);
+}
+
+.franchise-business-model {
+  background: var(--about-bg);
+}
+
+.franchise-support {
+  background: var(--about-bg);
+}
+
+.franchise-qualification {
+  background: var(--about-bg);
+}
+
+/* Section Headers */
+.franchise-benefits-header,
+.franchise-business-model-header,
+.franchise-support-header,
+.franchise-qualification-header {
+  text-align: center;
+  margin-bottom: 60px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.franchise-benefits-title,
+.franchise-business-model-title,
+.franchise-support-title,
+.franchise-qualification-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--about-text);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.franchise-benefits-subtitle,
+.franchise-business-model-subtitle,
+.franchise-support-subtitle,
+.franchise-qualification-subtitle {
+  font-size: 1.125rem;
+  color: var(--about-muted);
+  line-height: 1.6;
+}
+
+/* Card-based Design for Benefits */
+.franchise-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.franchise-benefit-card {
+  background: var(--about-card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--about-border);
+  border-radius: 16px;
+  padding: 32px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--about-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.franchise-benefit-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--about-shadow);
+  border-color: var(--about-gold);
+}
+
+.franchise-benefit-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.franchise-benefit-icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.franchise-benefit-icon svg path,
+.franchise-benefit-icon svg circle,
+.franchise-benefit-icon svg rect {
+  fill: var(--about-gold);
+}
+
+.franchise-benefit-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--about-text);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.franchise-benefit-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--about-muted);
+  margin: 0;
+}
+
+/* Card-based Design for Business Model */
+.franchise-business-model-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.franchise-business-model-visual {
+  display: none; /* Hide visual illustration for card-based design */
+}
+
+.franchise-business-model-info {
+  width: 100%;
+}
+
+.franchise-business-model-header {
+  text-align: center;
+  margin-bottom: 60px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.franchise-business-model-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.franchise-business-model-item {
+  background: var(--about-card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--about-border);
+  border-radius: 16px;
+  padding: 32px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--about-shadow);
+}
+
+.franchise-business-model-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--about-shadow);
+  border-color: var(--about-gold);
+}
+
+.franchise-business-model-item-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--about-gold);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.franchise-business-model-item-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--about-muted);
+  margin: 0;
+}
+
+.franchise-business-model-cta {
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* Card-based Design for Support */
+.franchise-support-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.franchise-support-card {
+  background: var(--about-card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--about-border);
+  border-radius: 16px;
+  padding: 32px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--about-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.franchise-support-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--about-shadow);
+  border-color: var(--about-gold);
+}
+
+.franchise-support-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.franchise-support-icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.franchise-support-icon svg path,
+.franchise-support-icon svg circle,
+.franchise-support-icon svg rect {
+  fill: var(--about-gold);
+}
+
+.franchise-support-title-card {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--about-text);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.franchise-support-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--about-muted);
+  margin: 0;
+}
+
+/* Card-based Design for Qualification */
+.franchise-qualification-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto 40px;
+}
+
+.franchise-qualification-item {
+  background: var(--about-card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--about-border);
+  border-radius: 16px;
+  padding: 32px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--about-shadow);
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.franchise-qualification-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--about-shadow);
+  border-color: var(--about-gold);
+}
+
+.franchise-qualification-check {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.franchise-qualification-content {
+  flex: 1;
+}
+
+.franchise-qualification-item-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--about-text);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.franchise-qualification-item-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--about-muted);
+  margin: 0;
+}
+
+.franchise-qualification-cta {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.franchise-qualification-encouragement {
+  font-size: 1.125rem;
+  color: var(--about-muted);
+  margin-bottom: 24px;
+}
+
+/* Scroll Animations for Cards */
+.franchise-benefit-card,
+.franchise-support-card,
+.franchise-business-model-item,
+.franchise-qualification-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.franchise-benefit-card.revealed,
+.franchise-support-card.revealed,
+.franchise-business-model-item.revealed,
+.franchise-qualification-item.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Smooth transitions */
+.franchise-benefit-card,
+.franchise-support-card,
+.franchise-business-model-item,
+.franchise-qualification-item {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Disable animations for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .franchise-benefit-card,
+  .franchise-support-card,
+  .franchise-business-model-item,
+  .franchise-qualification-item {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Button Styles */
+.btn {
+  display: inline-block;
+  padding: 12px 30px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-franchise-primary {
+  background: linear-gradient(135deg, var(--about-gold-soft), var(--about-gold));
+  color: #111;
+  font-weight: 600;
+  box-shadow: 0 12px 30px rgba(214, 164, 90, 0.35);
+}
+
+.btn-franchise-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(214, 164, 90, 0.45);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .about-hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .about-hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .about-story-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .about-team-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .about-dev-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  
+  .container {
+    padding: 0 15px;
+  }
+  
+  .about-section-title {
+    font-size: 2rem;
+  }
+
+  /* Franchise sections responsive */
+  .franchise-benefits-title,
+  .franchise-business-model-title,
+  .franchise-support-title,
+  .franchise-qualification-title {
+    font-size: 2rem;
+  }
+
+  .franchise-benefits-grid,
+  .franchise-support-grid,
+  .franchise-business-model-details,
+  .franchise-qualification-checklist {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .franchise-benefit-card,
+  .franchise-support-card,
+  .franchise-business-model-item,
+  .franchise-qualification-item {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-hero-title {
+    font-size: 2rem;
+  }
+  
+  .about-hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .about-team-card,
+  .about-dev-card {
+    padding: 25px;
+  }
+  
+  .about-story-card {
+    padding: 20px;
+  }
+
+  .franchise-benefits-title,
+  .franchise-business-model-title,
+  .franchise-support-title,
+  .franchise-qualification-title {
+    font-size: 1.75rem;
+  }
+
+  .franchise-benefit-card,
+  .franchise-support-card,
+  .franchise-business-model-item,
+  .franchise-qualification-item {
+    padding: 20px;
+  }
+
+  .franchise-benefit-title,
+  .franchise-support-title-card,
+  .franchise-business-model-item-title {
+    font-size: 1.25rem;
+  }
+}

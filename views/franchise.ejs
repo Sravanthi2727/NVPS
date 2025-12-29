@@ -1,4 +1,4 @@
-<!-- Franchise Page Template -->
+<!-- Franchise Page Template - Simplified Dark Theme -->
 
 <!-- Structured Data (JSON-LD) -->
 <script type="application/ld+json">
@@ -70,30 +70,31 @@
 }
 </script>
 
-<!-- Include franchise-specific CSS in head for proper loading order -->
+<!-- Include franchise-specific CSS -->
 <link rel="stylesheet" href="/css/franchise.css">
 <style>
-  /* Immediate override for franchise page */
-  body.bg-dark { background: #3C2415 !important; }
+  /* Dark theme override for franchise page */
+  body.bg-dark { background: #000 !important; }
   body.text-light { color: #F5F1EB !important; }
+  .franchise-page { background: #000 !important; min-height: 100vh; color: #F5F1EB; }
 </style>
 
-<div class="franchise-page" itemscope itemtype="https://schema.org/WebPage" style="background: #3C2415 !important; min-height: 100vh; color: #F5F1EB;">
+<div class="franchise-page" itemscope itemtype="https://schema.org/WebPage" style="background: #000 !important; min-height: 100vh; color: #F5F1EB;">
   <!-- Skip Links for Accessibility -->
   <a href="#main-content" class="skip-link">Skip to main content</a>
   <a href="#franchise-form" class="skip-link">Skip to franchise form</a>
 
   <!-- Hero Section -->
-  <header class="franchise-hero" role="banner" aria-labelledby="hero-title" itemscope itemtype="https://schema.org/WPHeader" data-bg-src="/assets/coffee-bg.jpeg" data-bg-webp-src="/assets/coffee-bg.webp">
+  <header class="franchise-hero-dark" role="banner" aria-labelledby="hero-title" itemscope itemtype="https://schema.org/WPHeader">
     <div class="container">
-      <div class="franchise-hero-content text-center">
-        <h1 id="hero-title" class="franchise-hero-title" itemprop="headline">Partner with a Bold Coffee Revolution.</h1>
-        <p class="franchise-hero-subtitle" itemprop="description">Build a profitable café experience rooted in Robusta coffee, art, and community.</p>
-        <nav class="franchise-hero-cta" role="navigation" aria-label="Primary actions">
-          <a href="#franchise-form" class="btn btn-franchise-primary" aria-describedby="apply-description">Apply for Franchise</a>
+      <div class="franchise-hero-content-dark text-center">
+        <h1 id="hero-title" class="franchise-hero-title-dark" itemprop="headline">Franchise with Rabuste</h1>
+        <p class="franchise-hero-subtitle-dark" itemprop="description">A scalable grab-and-go café model built around bold Robusta coffee, culture, and technology.</p>
+        <p class="franchise-hero-subtitle-dark" itemprop="description">Designed for compact spaces and high repeat value.</p>
+        <nav class="franchise-hero-cta-dark" role="navigation" aria-label="Primary actions">
+          <a href="#franchise-form" class="btn btn-franchise-primary-dark" aria-describedby="apply-description">Apply for Franchise</a>
           <span id="apply-description" class="sr-only">Navigate to the franchise application form</span>
-          <a href="#" class="btn btn-franchise-secondary" aria-describedby="download-description">Download Franchise Deck</a>
-          <span id="download-description" class="sr-only">Download detailed franchise information packet</span>
+          <a href="/about" class="btn btn-franchise-primary-dark" style="background: rgba(212, 175, 55, 0.2); border: 1px solid #D4AF37; color: #D4AF37; margin-left: 12px;">Learn More About Us</a>
         </nav>
       </div>
     </div>
@@ -102,444 +103,87 @@
   <!-- Main Content -->
   <main id="main-content" role="main" itemprop="mainContentOfPage">
 
-  <!-- Benefits Section -->
-  <section class="franchise-benefits" aria-labelledby="benefits-title" itemscope itemtype="https://schema.org/ItemList">
-    <div class="container">
-      <header class="franchise-benefits-header">
-        <h2 id="benefits-title" class="franchise-benefits-title" itemprop="name">Why Partner with Rabuste Coffee?</h2>
-        <p class="franchise-benefits-subtitle" itemprop="description">Discover the unique advantages that set our franchise apart</p>
-      </header>
-      <div class="franchise-benefits-grid" role="list" aria-label="Franchise benefits">
-        <!-- Benefit Card 1: Robusta-only Positioning -->
-        <article class="franchise-benefit-card" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/Thing">
-          <div class="franchise-benefit-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Robusta coffee bean icon">
-              <path d="M24 4C19.6 4 16 7.6 16 12C16 16.4 19.6 20 24 20C28.4 20 32 16.4 32 12C32 7.6 28.4 4 24 4ZM24 16C21.8 16 20 14.2 20 12C20 9.8 21.8 8 24 8C26.2 8 28 9.8 28 12C28 14.2 26.2 16 24 16Z" fill="#3C2415"/>
-              <path d="M36 22H12C10.9 22 10 22.9 10 24V40C10 41.1 10.9 42 12 42H36C37.1 42 38 41.1 38 40V24C38 22.9 37.1 22 36 22ZM34 38H14V26H34V38Z" fill="#3C2415"/>
-              <circle cx="24" cy="32" r="4" fill="#3C2415"/>
-            </svg>
-          </div>
-          <h3 class="franchise-benefit-title" itemprop="name">Robusta-Only Unique Positioning</h3>
-          <p class="franchise-benefit-description" itemprop="description">Stand out in a crowded market with our exclusive focus on premium Robusta beans, offering a bold, distinctive coffee experience that customers can't find elsewhere.</p>
-        </article>
-
-        <!-- Benefit Card 2: Compact Café Model -->
-        <article class="franchise-benefit-card" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/Thing">
-          <div class="franchise-benefit-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Compact cafe layout icon">
-              <path d="M6 6V42H42V6H6ZM38 38H10V10H38V38Z" fill="#3C2415"/>
-              <path d="M14 14H34V18H14V14Z" fill="#3C2415"/>
-              <path d="M14 22H26V26H14V22Z" fill="#3C2415"/>
-              <path d="M14 30H22V34H14V30Z" fill="#3C2415"/>
-              <path d="M30 22H34V34H30V22Z" fill="#3C2415"/>
-            </svg>
-          </div>
-          <h3 class="franchise-benefit-title" itemprop="name">Compact Café Model</h3>
-          <p class="franchise-benefit-description" itemprop="description">Maximize profitability with our efficient 500-1200 sq ft format. Lower overhead costs and faster setup times mean quicker returns on your investment.</p>
-        </article>
-
-        <!-- Benefit Card 3: Low Operational Complexity -->
-        <article class="franchise-benefit-card" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/Thing">
-          <div class="franchise-benefit-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Simple operations icon">
-              <path d="M24 4L6 16V32L24 44L42 32V16L24 4ZM24 8.84L36.32 18L24 27.16L11.68 18L24 8.84ZM10 21.84L22 30V39.16L10 30V21.84ZM26 39.16V30L38 21.84V30L26 39.16Z" fill="#3C2415"/>
-            </svg>
-          </div>
-          <h3 class="franchise-benefit-title" itemprop="name">Low Operational Complexity</h3>
-          <p class="franchise-benefit-description" itemprop="description">Streamlined operations with simplified menu, efficient workflows, and comprehensive training systems. Focus on quality and customer experience, not complex processes.</p>
-        </article>
-
-        <!-- Benefit Card 4: Strong Brand Storytelling -->
-        <article class="franchise-benefit-card" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/Thing">
-          <div class="franchise-benefit-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Brand storytelling icon">
-              <path d="M12 4C10.9 4 10 4.9 10 6V42C10 43.1 10.9 44 12 44H36C37.1 44 38 43.1 38 42V6C38 4.9 37.1 4 36 4H12ZM14 8H34V40H14V8Z" fill="#3C2415"/>
-              <path d="M18 12H30V16H18V12Z" fill="#3C2415"/>
-              <path d="M18 20H30V22H18V20Z" fill="#3C2415"/>
-              <path d="M18 26H26V28H18V26Z" fill="#3C2415"/>
-              <path d="M18 32H30V34H18V32Z" fill="#3C2415"/>
-            </svg>
-          </div>
-          <h3 class="franchise-benefit-title" itemprop="name">Strong Brand Storytelling</h3>
-          <p class="franchise-benefit-description" itemprop="description">Leverage our compelling narrative around Robusta heritage, artisanal craft, and community connection. A brand story that resonates and builds customer loyalty.</p>
-        </article>
-
-        <!-- Benefit Card 5: Community & Experience Focus -->
-        <article class="franchise-benefit-card" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/Thing">
-          <div class="franchise-benefit-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Community connection icon">
-              <circle cx="16" cy="16" r="6" fill="#3C2415"/>
-              <circle cx="32" cy="16" r="6" fill="#3C2415"/>
-              <circle cx="24" cy="32" r="6" fill="#3C2415"/>
-              <path d="M16 24C12.7 24 10 26.7 10 30V36H22V30C22 26.7 19.3 24 16 24Z" fill="#3C2415"/>
-              <path d="M32 24C28.7 24 26 26.7 26 30V36H38V30C38 26.7 35.3 24 32 24Z" fill="#3C2415"/>
-              <path d="M24 40C20.7 40 18 42.7 18 46V48H30V46C30 42.7 27.3 40 24 40Z" fill="#3C2415"/>
-            </svg>
-          </div>
-          <h3 class="franchise-benefit-title" itemprop="name">Community & Experience Focus</h3>
-          <p class="franchise-benefit-description" itemprop="description">More than just coffee - create a cultural hub with art workshops, community events, and meaningful connections that drive customer engagement and loyalty.</p>
-        </article>
-
-        <!-- Benefit Card 6: High Repeat Customer Potential -->
-        <article class="franchise-benefit-card" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/Thing">
-          <div class="franchise-benefit-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Customer loyalty icon">
-              <path d="M24 4C13 4 4 13 4 24C4 35 13 44 24 44C35 44 44 35 44 24C44 13 35 4 24 4ZM24 40C15.2 40 8 32.8 8 24C8 15.2 15.2 8 24 8C32.8 8 40 15.2 40 24C40 32.8 32.8 40 24 40Z" fill="#3C2415"/>
-              <path d="M34 18L22 30L14 22L16.4 19.6L22 25.2L31.6 15.6L34 18Z" fill="#3C2415"/>
-            </svg>
-          </div>
-          <h3 class="franchise-benefit-title" itemprop="name">High Repeat Customer Potential</h3>
-          <p class="franchise-benefit-description" itemprop="description">Build a loyal customer base with our unique Robusta experience, community programming, and consistent quality that keeps customers coming back daily.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- Business Model Section -->
-  <section class="franchise-business-model" aria-labelledby="business-model-title" itemscope itemtype="https://schema.org/Service">
-    <div class="container">
-      <div class="franchise-business-model-content">
-        <div class="franchise-business-model-visual">
-          <figure class="franchise-cafe-illustration">
-            <svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="cafe-illustration-title">
-              <title id="cafe-illustration-title">Rabuste Coffee Café Illustration</title>
-              <!-- Minimalist Café Illustration -->
-              <!-- Building Structure -->
-              <rect x="40" y="80" width="240" height="120" fill="#F5F1EB" stroke="#3C2415" stroke-width="2"/>
-              
-              <!-- Roof -->
-              <polygon points="30,80 160,40 290,80" fill="#3C2415"/>
-              
-              <!-- Door -->
-              <rect x="140" y="140" width="40" height="60" fill="#3C2415"/>
-              <circle cx="170" cy="170" r="2" fill="#D4AF37"/>
-              
-              <!-- Windows -->
-              <rect x="70" y="110" width="40" height="40" fill="#FFFFFF" stroke="#3C2415" stroke-width="1"/>
-              <rect x="210" y="110" width="40" height="40" fill="#FFFFFF" stroke="#3C2415" stroke-width="1"/>
-              
-              <!-- Window Frames -->
-              <line x1="90" y1="110" x2="90" y2="150" stroke="#3C2415" stroke-width="1"/>
-              <line x1="70" y1="130" x2="110" y2="130" stroke="#3C2415" stroke-width="1"/>
-              <line x1="230" y1="110" x2="230" y2="150" stroke="#3C2415" stroke-width="1"/>
-              <line x1="210" y1="130" x2="250" y2="130" stroke="#3C2415" stroke-width="1"/>
-              
-              <!-- Signage -->
-              <rect x="100" y="60" width="120" height="20" fill="#D4AF37"/>
-              <text x="160" y="73" text-anchor="middle" fill="#3C2415" font-family="Arial, sans-serif" font-size="12" font-weight="bold">RABUSTE COFFEE</text>
-              
-              <!-- Coffee Cup Icon -->
-              <circle cx="160" cy="100" r="8" fill="#3C2415"/>
-              <ellipse cx="160" cy="98" rx="6" ry="2" fill="#F5F1EB"/>
-              
-              <!-- Steam Lines -->
-              <path d="M155 92 Q155 88 157 88 Q157 84 155 84" stroke="#3C2415" stroke-width="1" fill="none"/>
-              <path d="M160 92 Q160 88 162 88 Q162 84 160 84" stroke="#3C2415" stroke-width="1" fill="none"/>
-              <path d="M165 92 Q165 88 167 88 Q167 84 165 84" stroke="#3C2415" stroke-width="1" fill="none"/>
-              
-              <!-- Ground/Sidewalk -->
-              <rect x="0" y="200" width="320" height="40" fill="#E8E4DE"/>
-              
-              <!-- Small decorative elements -->
-              <circle cx="60" cy="220" r="3" fill="#3C2415" opacity="0.3"/>
-              <circle cx="260" cy="220" r="3" fill="#3C2415" opacity="0.3"/>
-            </svg>
-          </figure>
-        </div>
-        
-        <div class="franchise-business-model-info">
-          <header class="franchise-business-model-header">
-            <h2 id="business-model-title" class="franchise-business-model-title" itemprop="name">A Proven Business Model</h2>
-            <p class="franchise-business-model-subtitle" itemprop="description">Designed for profitability and scalability in today's market</p>
-          </header>
-          
-          <div class="franchise-business-model-details">
-            <article class="franchise-business-model-item" itemscope itemtype="https://schema.org/Thing">
-              <h3 class="franchise-business-model-item-title" itemprop="name">Grab-and-Go Café Format</h3>
-              <p class="franchise-business-model-item-description" itemprop="description">Streamlined operations focused on quality coffee, light food, and community experiences. Perfect for busy urban locations with high foot traffic.</p>
-            </article>
-            
-            <article class="franchise-business-model-item" itemscope itemtype="https://schema.org/Thing">
-              <h3 class="franchise-business-model-item-title" itemprop="name">Compact Space Requirements</h3>
-              <p class="franchise-business-model-item-description" itemprop="description">Efficient 500-1,200 sq ft footprint maximizes revenue per square foot while minimizing overhead costs and setup complexity.</p>
-            </article>
-            
-            <article class="franchise-business-model-item" itemscope itemtype="https://schema.org/Thing">
-              <h3 class="franchise-business-model-item-title" itemprop="name">Prime Location Strategy</h3>
-              <p class="franchise-business-model-item-description" itemprop="description">Target high-traffic urban areas, business districts, and cultural neighborhoods where our unique Robusta positioning resonates with discerning customers.</p>
-            </article>
-            
-            <article class="franchise-business-model-item" itemscope itemtype="https://schema.org/Thing">
-              <h3 class="franchise-business-model-item-title" itemprop="name">Investment & ROI</h3>
-              <p class="franchise-business-model-item-description" itemprop="description">Initial investment range of $75K-$150K with projected break-even within 12-18 months. Strong unit economics driven by premium positioning and operational efficiency.</p>
-            </article>
-          </div>
-          
-          <div class="franchise-business-model-cta">
-            <a href="#franchise-form" class="btn btn-franchise-primary">Get Investment Details</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Brand Support Section -->
-  <section class="franchise-support" aria-labelledby="support-title" itemscope itemtype="https://schema.org/ItemList">
-    <div class="container">
-      <header class="franchise-support-header">
-        <h2 id="support-title" class="franchise-support-title" itemprop="name">Comprehensive Brand Support</h2>
-        <p class="franchise-support-subtitle" itemprop="description">Everything you need to succeed, from day one to long-term growth</p>
-      </header>
-      
-      <div class="franchise-support-grid">
-        <!-- Support Card 1: Brand Identity & Design System -->
-        <article class="franchise-support-card" itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
-          <div class="franchise-support-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Brand identity design icon">
-              <path d="M24 4C19.6 4 16 7.6 16 12C16 16.4 19.6 20 24 20C28.4 20 32 16.4 32 12C32 7.6 28.4 4 24 4ZM24 16C21.8 16 20 14.2 20 12C20 9.8 21.8 8 24 8C26.2 8 28 9.8 28 12C28 14.2 26.2 16 24 16Z" fill="#3C2415"/>
-              <path d="M36 22H12C10.9 22 10 22.9 10 24V40C10 41.1 10.9 42 12 42H36C37.1 42 38 41.1 38 40V24C38 22.9 37.1 22 36 22ZM34 38H14V26H34V38Z" fill="#3C2415"/>
-              <rect x="18" y="30" width="12" height="2" fill="#D4AF37"/>
-              <rect x="18" y="34" width="8" height="2" fill="#D4AF37"/>
-            </svg>
-          </div>
-          <h3 class="franchise-support-title-card" itemprop="name">Brand Identity & Design System</h3>
-          <p class="franchise-support-description" itemprop="description">Complete visual identity package including logos, color palettes, typography guidelines, and store design templates to ensure consistent brand experience.</p>
-        </article>
-
-        <!-- Support Card 2: Coffee Sourcing & Training -->
-        <article class="franchise-support-card" itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
-          <div class="franchise-support-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Coffee training and sourcing icon">
-              <path d="M12 8C10.9 8 10 8.9 10 10V38C10 39.1 10.9 40 12 40H36C37.1 40 38 39.1 38 38V10C38 8.9 37.1 8 36 8H12ZM14 12H34V36H14V12Z" fill="#3C2415"/>
-              <circle cx="20" cy="18" r="3" fill="#D4AF37"/>
-              <circle cx="28" cy="18" r="3" fill="#D4AF37"/>
-              <circle cx="24" cy="26" r="3" fill="#D4AF37"/>
-              <path d="M18 30H30V32H18V30Z" fill="#3C2415"/>
-              <path d="M6 14C4.9 14 4 14.9 4 16V32C4 33.1 4.9 34 6 34H8V14H6Z" fill="#3C2415"/>
-              <path d="M40 14V34H42C43.1 34 44 33.1 44 32V16C44 14.9 43.1 14 42 14H40Z" fill="#3C2415"/>
-            </svg>
-          </div>
-          <h3 class="franchise-support-title-card" itemprop="name">Coffee Sourcing & Training</h3>
-          <p class="franchise-support-description" itemprop="description">Direct access to premium Robusta suppliers, comprehensive barista training programs, and ongoing quality control support to maintain our signature coffee experience.</p>
-        </article>
-
-        <!-- Support Card 3: Menu & Pricing Guidance -->
-        <article class="franchise-support-card" itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
-          <div class="franchise-support-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Menu and pricing guidance icon">
-              <path d="M8 6C6.9 6 6 6.9 6 8V40C6 41.1 6.9 42 8 42H40C41.1 42 42 41.1 42 40V8C42 6.9 41.1 6 40 6H8ZM10 10H38V38H10V10Z" fill="#3C2415"/>
-              <path d="M14 14H34V16H14V14Z" fill="#D4AF37"/>
-              <path d="M14 20H28V22H14V20Z" fill="#3C2415"/>
-              <path d="M14 26H30V28H14V26Z" fill="#3C2415"/>
-              <path d="M14 32H26V34H14V32Z" fill="#3C2415"/>
-              <path d="M30 20H34V22H30V20Z" fill="#D4AF37"/>
-              <path d="M32 26H34V28H32V26Z" fill="#D4AF37"/>
-              <path d="M28 32H34V34H28V32Z" fill="#D4AF37"/>
-            </svg>
-          </div>
-          <h3 class="franchise-support-title-card" itemprop="name">Menu & Pricing Guidance</h3>
-          <p class="franchise-support-description" itemprop="description">Proven menu offerings optimized for profitability, regional pricing strategies, and seasonal menu updates to maximize revenue and customer satisfaction.</p>
-        </article>
-
-        <!-- Support Card 4: Art & Workshop Integration -->
-        <article class="franchise-support-card" itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
-          <div class="franchise-support-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Art and workshop integration icon">
-              <path d="M24 4L6 12V36L24 44L42 36V12L24 4ZM24 8.84L36.32 15L24 21.16L11.68 15L24 8.84ZM10 18.84L22 25V39.16L10 33V18.84ZM26 39.16V25L38 18.84V33L26 39.16Z" fill="#3C2415"/>
-              <path d="M20 28L24 32L28 28L24 24L20 28Z" fill="#D4AF37"/>
-            </svg>
-          </div>
-          <h3 class="franchise-support-title-card" itemprop="name">Art & Workshop Integration</h3>
-          <p class="franchise-support-description" itemprop="description">Curated art programming, workshop facilitation guides, and community event templates to create the cultural hub experience that differentiates Rabuste Coffee.</p>
-        </article>
-
-        <!-- Support Card 5: Tech & AI-Enabled Insights -->
-        <article class="franchise-support-card" itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
-          <div class="franchise-support-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Technology and AI insights icon">
-              <rect x="6" y="10" width="36" height="24" rx="2" fill="#3C2415"/>
-              <rect x="10" y="14" width="28" height="16" fill="#F5F1EB"/>
-              <circle cx="16" cy="20" r="2" fill="#D4AF37"/>
-              <circle cx="24" cy="20" r="2" fill="#D4AF37"/>
-              <circle cx="32" cy="20" r="2" fill="#D4AF37"/>
-              <path d="M12 24H36V26H12V24Z" fill="#3C2415"/>
-              <path d="M12 28H28V30H12V28Z" fill="#3C2415"/>
-              <path d="M18 36H30C31.1 36 32 36.9 32 38V42H16V38C16 36.9 16.9 36 18 36Z" fill="#3C2415"/>
-              <rect x="20" y="38" width="8" height="2" fill="#D4AF37"/>
-            </svg>
-          </div>
-          <h3 class="franchise-support-title-card" itemprop="name">Tech & AI-Enabled Insights</h3>
-          <p class="franchise-support-description" itemprop="description">Point-of-sale systems, customer analytics, inventory management tools, and AI-powered business insights to optimize operations and drive growth.</p>
-        </article>
-
-        <!-- Support Card 6: Marketing & Launch Support -->
-        <article class="franchise-support-card" itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
-          <div class="franchise-support-icon" aria-hidden="true">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Marketing and launch support icon">
-              <path d="M8 8C6.9 8 6 8.9 6 10V38C6 39.1 6.9 40 8 40H40C41.1 40 42 39.1 42 38V10C42 8.9 41.1 8 40 8H8ZM10 12H38V36H10V12Z" fill="#3C2415"/>
-              <path d="M14 16L24 22L34 16V32L24 26L14 32V16Z" fill="#D4AF37"/>
-              <circle cx="24" cy="24" r="3" fill="#3C2415"/>
-              <path d="M4 20H8V28H4V20Z" fill="#3C2415"/>
-              <path d="M40 20H44V28H40V20Z" fill="#3C2415"/>
-            </svg>
-          </div>
-          <h3 class="franchise-support-title-card" itemprop="name">Marketing & Launch Support</h3>
-          <p class="franchise-support-description" itemprop="description">Grand opening campaigns, digital marketing templates, social media strategies, and ongoing promotional support to build awareness and drive customer acquisition.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- Partner Qualification Section -->
-  <section class="franchise-qualification" aria-labelledby="qualification-title" itemscope itemtype="https://schema.org/ItemList">
-    <div class="container">
-      <header class="franchise-qualification-header">
-        <h2 id="qualification-title" class="franchise-qualification-title" itemprop="name">Are You Ready to Join Our Coffee Revolution?</h2>
-        <p class="franchise-qualification-subtitle" itemprop="description">We're looking for passionate partners who share our vision. See if you're a great fit for the Rabuste Coffee family.</p>
-      </header>
-      
-      <div class="franchise-qualification-checklist" role="list" aria-label="Partner qualification criteria">
-        <article class="franchise-qualification-item" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/Thing">
-          <div class="franchise-qualification-check" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Checkmark">
-              <circle cx="12" cy="12" r="10" fill="#228B22"/>
-              <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="franchise-qualification-content">
-            <h3 class="franchise-qualification-item-title" itemprop="name">Passion for Coffee & Culture</h3>
-            <p class="franchise-qualification-item-description" itemprop="description">You appreciate the artistry of exceptional coffee and believe in creating spaces where community and culture thrive together.</p>
-          </div>
-        </article>
-
-        <article class="franchise-qualification-item" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/Thing">
-          <div class="franchise-qualification-check" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Checkmark">
-              <circle cx="12" cy="12" r="10" fill="#228B22"/>
-              <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="franchise-qualification-content">
-            <h3 class="franchise-qualification-item-title" itemprop="name">Entrepreneur/Investor Mindset</h3>
-            <p class="franchise-qualification-item-description" itemprop="description">You're ready to invest in a proven business model and have the drive to build something meaningful in your community.</p>
-          </div>
-        </article>
-
-        <article class="franchise-qualification-item" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/Thing">
-          <div class="franchise-qualification-check" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Checkmark">
-              <circle cx="12" cy="12" r="10" fill="#228B22"/>
-              <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="franchise-qualification-content">
-            <h3 class="franchise-qualification-item-title" itemprop="name">Willingness to Follow Brand Standards</h3>
-            <p class="franchise-qualification-item-description" itemprop="description">You understand the value of consistency and are excited to uphold the Rabuste Coffee experience that customers love.</p>
-          </div>
-        </article>
-
-        <article class="franchise-qualification-item" role="listitem" itemprop="itemListElement" itemscope itemtype="https://schema.org/Thing">
-          <div class="franchise-qualification-check" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Checkmark">
-              <circle cx="12" cy="12" r="10" fill="#228B22"/>
-              <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="franchise-qualification-content">
-            <h3 class="franchise-qualification-item-title" itemprop="name">Community-Oriented Approach</h3>
-            <p class="franchise-qualification-item-description" itemprop="description">You believe in building genuine connections and see your café as more than a business—it's a gathering place for your neighborhood.</p>
-          </div>
-        </article>
-      </div>
-      
-      <div class="franchise-qualification-cta">
-        <p class="franchise-qualification-encouragement">Sound like you? We'd love to learn more about your vision.</p>
-        <a href="#franchise-form" class="btn btn-franchise-primary">Start Your Application</a>
-      </div>
-    </div>
-  </section>
-
   <!-- Enquiry Form Section -->
-  <section class="franchise-form-section" id="franchise-form" aria-labelledby="form-title" itemscope itemtype="https://schema.org/ContactPage">
+  <section class="franchise-form-section-dark" id="franchise-form" aria-labelledby="form-title" itemscope itemtype="https://schema.org/ContactPage">
     <div class="container">
-      <header class="franchise-form-header">
-        <h2 id="form-title" class="franchise-form-title" itemprop="name">Start Your Franchise Journey</h2>
-        <p class="franchise-form-subtitle" itemprop="description">Ready to bring Rabuste Coffee to your community? Tell us about your vision and we'll guide you through the next steps.</p>
+      <header class="franchise-form-header-dark">
+        <h2 id="form-title" class="franchise-form-title-dark" itemprop="name">Start Your Franchise Journey</h2>
+        <p class="franchise-form-subtitle-dark" itemprop="description">Ready to bring Rabuste Coffee to your community? Tell us about your vision and we'll guide you through the next steps.</p>
       </header>
       
-      <div class="franchise-form-container">
-        <form class="franchise-form" id="franchiseEnquiryForm" novalidate itemscope itemtype="https://schema.org/ContactForm">
+      <div class="franchise-form-container-dark">
+        <form class="franchise-form-dark" id="franchiseEnquiryForm" novalidate itemscope itemtype="https://schema.org/ContactForm">
           <!-- Full Name Field -->
-          <div class="franchise-form-group">
-            <label for="fullName" class="franchise-form-label">Full Name *</label>
+          <div class="franchise-form-group-dark">
+            <label for="fullName" class="franchise-form-label-dark">Full Name *</label>
             <input 
               type="text" 
               id="fullName" 
               name="fullName" 
-              class="franchise-form-input" 
+              class="franchise-form-input-dark" 
               placeholder="Enter your full name"
               required
               aria-describedby="fullName-error"
               itemprop="name"
             >
-            <div class="franchise-form-error" id="fullName-error" role="alert"></div>
+            <div class="franchise-form-error-dark" id="fullName-error" role="alert"></div>
           </div>
 
           <!-- Email Field -->
-          <div class="franchise-form-group">
-            <label for="email" class="franchise-form-label">Email Address *</label>
+          <div class="franchise-form-group-dark">
+            <label for="email" class="franchise-form-label-dark">Email Address *</label>
             <input 
               type="email" 
               id="email" 
               name="email" 
-              class="franchise-form-input" 
+              class="franchise-form-input-dark" 
               placeholder="your.email@example.com"
               required
               aria-describedby="email-error"
               itemprop="email"
             >
-            <div class="franchise-form-error" id="email-error" role="alert"></div>
+            <div class="franchise-form-error-dark" id="email-error" role="alert"></div>
           </div>
 
           <!-- Phone Field -->
-          <div class="franchise-form-group">
-            <label for="phone" class="franchise-form-label">Phone Number *</label>
+          <div class="franchise-form-group-dark">
+            <label for="phone" class="franchise-form-label-dark">Phone Number *</label>
             <input 
               type="tel" 
               id="phone" 
               name="phone" 
-              class="franchise-form-input" 
+              class="franchise-form-input-dark" 
               placeholder="(555) 123-4567"
               required
               aria-describedby="phone-error"
               itemprop="telephone"
             >
-            <div class="franchise-form-error" id="phone-error" role="alert"></div>
+            <div class="franchise-form-error-dark" id="phone-error" role="alert"></div>
           </div>
 
           <!-- City & State Field -->
-          <div class="franchise-form-group">
-            <label for="cityState" class="franchise-form-label">City & State *</label>
+          <div class="franchise-form-group-dark">
+            <label for="cityState" class="franchise-form-label-dark">City & State *</label>
             <input 
               type="text" 
               id="cityState" 
               name="cityState" 
-              class="franchise-form-input" 
+              class="franchise-form-input-dark" 
               placeholder="e.g., Austin, TX"
               required
               aria-describedby="cityState-error"
               itemprop="addressLocality"
             >
-            <div class="franchise-form-error" id="cityState-error" role="alert"></div>
+            <div class="franchise-form-error-dark" id="cityState-error" role="alert"></div>
           </div>
 
           <!-- Investment Range Field -->
-          <div class="franchise-form-group">
-            <label for="investmentRange" class="franchise-form-label">Investment Range *</label>
+          <div class="franchise-form-group-dark">
+            <label for="investmentRange" class="franchise-form-label-dark">Investment Range *</label>
             <select 
               id="investmentRange" 
               name="investmentRange" 
-              class="franchise-form-select" 
+              class="franchise-form-select-dark" 
               required
               aria-describedby="investmentRange-error"
             >
@@ -548,46 +192,46 @@
                 <option value="<%= range %>"><%= range %></option>
               <% }); %>
             </select>
-            <div class="franchise-form-error" id="investmentRange-error" role="alert"></div>
+            <div class="franchise-form-error-dark" id="investmentRange-error" role="alert"></div>
           </div>
 
           <!-- Message Field -->
-          <div class="franchise-form-group">
-            <label for="message" class="franchise-form-label">Tell Us About Your Vision</label>
+          <div class="franchise-form-group-dark">
+            <label for="message" class="franchise-form-label-dark">Tell Us About Your Vision</label>
             <textarea 
               id="message" 
               name="message" 
-              class="franchise-form-textarea" 
+              class="franchise-form-textarea-dark" 
               placeholder="Share your experience, goals, and what excites you about bringing Rabuste Coffee to your community..."
               rows="4"
               maxlength="500"
               aria-describedby="message-counter"
               itemprop="message"
             ></textarea>
-            <div class="franchise-form-counter" id="message-counter">0 / 500 characters</div>
+            <div class="franchise-form-counter-dark" id="message-counter">0 / 500 characters</div>
           </div>
 
           <!-- Acknowledgment Checkbox -->
-          <div class="franchise-form-group franchise-form-checkbox-group">
-            <div class="franchise-form-checkbox-wrapper">
+          <div class="franchise-form-group-dark franchise-form-checkbox-group-dark">
+            <div class="franchise-form-checkbox-wrapper-dark">
               <input 
                 type="checkbox" 
                 id="acknowledgment" 
                 name="acknowledgment" 
-                class="franchise-form-checkbox" 
+                class="franchise-form-checkbox-dark" 
                 required
                 aria-describedby="acknowledgment-error"
               >
-              <label for="acknowledgment" class="franchise-form-checkbox-label">
+              <label for="acknowledgment" class="franchise-form-checkbox-label-dark">
                 I understand this is a premium Robusta-only concept and I'm interested in learning more about the unique positioning and requirements.
               </label>
             </div>
-            <div class="franchise-form-error" id="acknowledgment-error" role="alert"></div>
+            <div class="franchise-form-error-dark" id="acknowledgment-error" role="alert"></div>
           </div>
 
           <!-- Submit Button -->
-          <div class="franchise-form-submit">
-            <button type="submit" class="btn-franchise-submit" id="submitButton">
+          <div class="franchise-form-submit-dark">
+            <button type="submit" class="btn-franchise-submit-dark" id="submitButton">
               <span class="btn-text">Start My Franchise Journey</span>
               <span class="btn-loading" style="display: none;">
                 <svg class="btn-spinner" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -602,103 +246,27 @@
           </div>
 
           <!-- Success Message -->
-          <div class="franchise-form-success" id="successMessage" style="display: none;" role="alert" aria-live="polite">
-            <div class="franchise-form-success-icon" aria-hidden="true">
+          <div class="franchise-form-success-dark" id="successMessage" style="display: none;" role="alert" aria-live="polite">
+            <div class="franchise-form-success-icon-dark" aria-hidden="true">
               <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="24" cy="24" r="20" fill="#228B22"/>
                 <path d="M16 24L21 29L32 18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <h3 class="franchise-form-success-title">Thank You for Your Interest!</h3>
-            <p class="franchise-form-success-message">
+            <h3 class="franchise-form-success-title-dark">Thank You for Your Interest!</h3>
+            <p class="franchise-form-success-message-dark">
               We've received your franchise enquiry and are excited about the possibility of partnering with you. 
               Our franchise development team will review your information and contact you within 2 business days to discuss the next steps.
             </p>
-            <p class="franchise-form-success-next">
-              In the meantime, feel free to <a href="#" class="franchise-form-success-link">download our franchise deck</a> 
-              to learn more about the Rabuste Coffee opportunity.
+            <p class="franchise-form-success-next-dark">
+              In the meantime, feel free to <a href="/about" class="franchise-form-success-link-dark">learn more about us</a> 
+              to discover the Rabuste Coffee opportunity.
             </p>
           </div>
         </form>
       </div>
     </div>
   </section>
-
-  <!-- Footer CTA Section -->
-  <footer class="franchise-footer-cta" role="contentinfo" itemscope itemtype="https://schema.org/WPFooter">
-    <div class="container">
-      <div class="franchise-footer-content">
-        <div class="franchise-footer-message">
-          <h2 class="franchise-footer-title">Ready to Build Something Extraordinary?</h2>
-          <p class="franchise-footer-subtitle">
-            Join a community of passionate entrepreneurs who are redefining coffee culture, one cup at a time. 
-            Your journey to owning a premium Robusta café starts with a single conversation.
-          </p>
-          <div class="franchise-footer-highlights">
-            <div class="franchise-footer-highlight">
-              <span class="franchise-footer-highlight-icon">🚀</span>
-              <span class="franchise-footer-highlight-text">Proven Business Model</span>
-            </div>
-            <div class="franchise-footer-highlight">
-              <span class="franchise-footer-highlight-icon">🤝</span>
-              <span class="franchise-footer-highlight-text">Comprehensive Support</span>
-            </div>
-            <div class="franchise-footer-highlight">
-              <span class="franchise-footer-highlight-icon">☕</span>
-              <span class="franchise-footer-highlight-text">Unique Market Position</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="franchise-footer-cta-buttons">
-          <a href="#franchise-form" class="btn btn-franchise-primary btn-franchise-large">
-            Start Your Application Today
-          </a>
-          <p class="franchise-footer-cta-note">
-            <strong>Limited Territories Available</strong><br>
-            Secure your market before someone else does
-          </p>
-        </div>
-      </div>
-      
-      <div class="franchise-footer-bottom">
-        <div class="franchise-footer-contact">
-          <h3 class="franchise-footer-contact-title">Questions? We're Here to Help</h3>
-          <div class="franchise-footer-contact-info">
-            <a href="mailto:franchise@rabuste.com" class="franchise-footer-contact-link">
-              <span class="franchise-footer-contact-icon">📧</span>
-              franchise@rabuste.com
-            </a>
-            <a href="tel:+1-555-RABUSTE" class="franchise-footer-contact-link">
-              <span class="franchise-footer-contact-icon">📞</span>
-              1-555-RABUSTE (722-8783)
-            </a>
-          </div>
-        </div>
-        
-        <nav class="franchise-footer-nav" aria-label="Footer navigation">
-          <ul class="franchise-footer-nav-list">
-            <li><a href="/" class="franchise-footer-nav-link">Home</a></li>
-            <li><a href="#franchise-hero" class="franchise-footer-nav-link">About Franchise</a></li>
-            <li><a href="#franchise-benefits" class="franchise-footer-nav-link">Benefits</a></li>
-            <li><a href="#franchise-support" class="franchise-footer-nav-link">Support</a></li>
-            <li><a href="#franchise-form" class="franchise-footer-nav-link">Apply Now</a></li>
-          </ul>
-        </nav>
-        
-        <div class="franchise-footer-legal">
-          <p class="franchise-footer-copyright">
-            © 2024 Rabuste Coffee. All rights reserved.
-          </p>
-          <div class="franchise-footer-legal-links">
-            <a href="/privacy" class="franchise-footer-legal-link">Privacy Policy</a>
-            <a href="/terms" class="franchise-footer-legal-link">Terms of Service</a>
-            <a href="/franchise-disclosure" class="franchise-footer-legal-link">Franchise Disclosure</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer>
 
   </main>
 

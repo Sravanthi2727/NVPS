@@ -45,4 +45,15 @@ app.get("/franchise", (req, res) => {
   });
 });
 
+// About Us page route
+app.get("/about", (req, res) => {
+  res.render("about", {
+    title: "About Us - Rabuste Coffee",
+    description: "Learn about Rabuste Coffee - our story, leadership team, development team, and franchise opportunities.",
+    keywords: "about rabuste coffee, team, founders, developers, franchise, coffee company",
+    additionalCSS: `<link rel="stylesheet" href="/css/about.css">`,
+    additionalJS: `<script src="/js/about-animations.js"></script>`
+  });
+});
+
 app.listen(3000, () => console.log("Server running"));
