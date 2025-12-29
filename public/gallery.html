@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="warm">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Rabuste Coffee</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/themes.css">
+</head>
+<body>
+     <!-- Hero Section -->
+    <section class="hero-section position-relative overflow-hidden">
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(rgba(139, 69, 19, 0.7), rgba(139, 69, 19, 0.5)), url('assets/photowall.jpeg') center/cover; z-index: -1;"></div>
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-12 text-center">
+                    <div class="animate-fadeInUp">
+                        
+                        <img src="assets/logo-icon.png" alt="Rabuste Coffee Logo" style="display:block; margin:0 auto 20px auto; width:95px;">
+
+                        <h1 class="font-playfair display-1 fw-bold mb-4 text-white">
+                            Our Gallery
+                        </h1>
+
+                        <p class="lead mb-5 fs-4 text-white">
+                            Discover the warm, aesthetic beauty of our brown-themed café through these moments
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Filters -->
+    <section class="py-4" style="background: var(--light);">
+        <div class="container">
+            <div class="text-center">
+                <div class="btn-group" role="group">
+                    <!-- <button type="button" >All</button> -->
+                    <a href="#" class="btn btn-outline-coffee">All</a>
+                    <a href="#" class="btn btn-outline-coffee">Interior</a>
+                    <a href="#" class="btn btn-outline-coffee">Coffee</a>
+                    <a href="#" class="btn btn-outline-coffee">Food</a>
+                    <a href="#" class="btn btn-outline-coffee">Atmosphere</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+<!-- Gallery Grid -->
+    <section class="py-5" style="background: var(--secondary);">
+        <div class="container py-5">
+            <div class="gallery-container">
+                <!-- Interior Images -->
+                <div class="gallery-item" data-category="interior">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Cozy Interior" class="img-fluid">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h5 class="fw-bold">Cozy Interior</h5>
+                            <p class="mb-0">Our warm, brown-themed seating area</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="coffee">
+                    <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Signature Espresso" class="img-fluid">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h5 class="fw-bold">Signature Espresso</h5>
+                            <p class="mb-0">Rich, bold flavor in every cup</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="atmosphere">
+                    <img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Morning Atmosphere" class="img-fluid">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h5 class="fw-bold">Morning Vibes</h5>
+                            <p class="mb-0">Perfect start to your day</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="coffee">
+                    <img src="https://images.unsplash.com/photo-1568649929103-28ffbad879ee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Iced Latte" class="img-fluid">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h5 class="fw-bold">Iced Brown Latte</h5>
+                            <p class="mb-0">Refreshing and creamy</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="interior">
+                    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Counter Area" class="img-fluid">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h5 class="fw-bold">Coffee Counter</h5>
+                            <p class="mb-0">Where the magic happens</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="food">
+                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Pastries" class="img-fluid">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h5 class="fw-bold">Fresh Pastries</h5>
+                            <p class="mb-0">Perfect with your coffee</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="coffee">
+                    <img src="https://images.unsplash.com/photo-1580933073521-dc49d428b1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Mocha" class="img-fluid">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h5 class="fw-bold">Mocha Delight</h5>
+                            <p class="mb-0">Chocolate meets coffee</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="atmosphere">
+                    <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Evening Ambiance" class="img-fluid">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h5 class="fw-bold">Evening Ambiance</h5>
+                            <p class="mb-0">Warm lighting, cozy feeling</p>
+                        </div>
+                    </div>
+                </div>
+                  </div>
+        </div>
+    </section>
+
+<!-- Call to Action -->
+    <section class="py-5" style="background: var(--light);">
+        <div class="container py-5">
+            <div class="text-center">
+                <h2 class="font-playfair fs-1 fw-bold mb-4" style="color: var(--primary);">
+                    Experience It Yourself
+                </h2>
+                <p class="lead mb-4" style="color: var(--text);">
+                    Come visit us and create your own beautiful moments at Rabuste Coffee
+                </p>
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                    <a href="#" class="btn btn-coffee btn-lg">
+                        <i class="fas fa-map-marker-alt me-2"></i>Visit Us Today
+                    </a>
+                    <a href="#" class="btn btn-outline-coffee btn-lg">
+                        <i class="fas fa-coffee me-2"></i>View Our Menu
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+   
+
+
+  <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="js/theme.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gallery filtering
+            const filterBtns = document.querySelectorAll('.btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter');
+
+                    galleryItems.forEach(item => {
+                        if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                            item.style.display = 'block';
+                            setTimeout(() => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'scale(1)';
+                            }, 10);
+                        } else {
+                            item.style.opacity = '0';
+                            item.style.transform = 'scale(0.8)';
+                            setTimeout(() => {
+                                item.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+
+            // Initialize gallery items
+            galleryItems.forEach(item => {
+                item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            });
+
+            // Back to top button
+            const backToTopBtn = document.getElementById('back-to-top');
+            
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.style.opacity = '1';
+                    backToTopBtn.style.visibility = 'visible';
+                } else {
+                    backToTopBtn.style.opacity = '0';
+                    backToTopBtn.style.visibility = 'hidden';
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // Animation on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-fadeInUp').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
+
+</body>
+</html>
