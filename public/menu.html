@@ -9,12 +9,272 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/style.css">
+     <style>
+        :root {
+            --gold: #d6a45a;
+            --gold-soft: #e3b873;
+            --text: #f5f2ee;
+            --muted: rgba(245, 242, 238, 0.7);
+            --dark: #0a0a0a;
+            --darker: #000;
+        }
+        body {
+            background-color: var(--darker);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+        /* Navigation */
+        .navbar {
+            background: rgba(10, 10, 10, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(214, 164, 90, 0.2);
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--gold) !important;
+            font-size: 1.5rem;
+        }
+        .nav-link {
+            color: var(--text) !important;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--gold) !important;
+        }
+        .nav-link.active:after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gold);
+        }
+        /* Menu Sections */
+        .menu-section {
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .menu-section:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(214, 164, 90, 0.3), transparent);
+        }
+        .menu-section h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+        .menu-section h2:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold), transparent);
+        }
+        /* Menu Items */
+        .menu-item {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(214, 164, 90, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .menu-item:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gold);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(214, 164, 90, 0.4);
+        }
+        .menu-item:hover:before {
+            transform: scaleY(1);
+        }
+        .menu-item h5 {
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .menu-item p {
+            color: var(--muted);
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        .price-tag {
+            background: var(--gold);
+            color: #000;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        /* Filter Buttons */
+        .menu-filters {
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 0.5rem 1.5rem;
+            margin: 0.25rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(214, 164, 90, 0.3);
+        }
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            padding: 8rem 0 4rem;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), 
+                        url('assets/menu images/grounded powder.jpeg') center/cover;
+        }
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        .hero-section p {
+            font-size: 1.2rem;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 1rem auto 0;
+        }
+        /* Footer */
+        .footer-section {
+            background: #0a0a0a;
+            padding: 3rem 0;
+            border-top: 1px solid rgba(214, 164, 90, 0.2);
+            margin-top: 3rem;
+        }
+        .footer-brand {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        .footer-text {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+        .footer-links {
+            margin-bottom: 1.5rem;
+        }
+        .footer-links a {
+            color: var(--text);
+            margin: 0 1rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .footer-copy {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 6rem 0 3rem;
+            }
+            
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+            
+            .menu-filters {
+                flex-wrap: wrap;
+            }
+            
+            .filter-btn {
+                padding: 0.4rem 1rem;
+                font-size: 0.75rem;
+                margin: 0.2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<!-- Hero Section -->
-    <section class="hero-section position-relative overflow-hidden">
-        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(rgba(139, 69, 19, 0.7), rgba(139, 69, 19, 0.5)), url('assets/menu images/grounded\ powder.jpeg') center/cover; ;"></div>
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark px-3 py-3">
         <div class="container">
+            <a class="navbar-brand fw-bold" href="/">RABUSTE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#rabusteNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="rabusteNav">
+                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="menu.html">Menu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gallery.html">Gallery</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+<!-- Hero Section -->
+    <section class="hero-section text-center">
+    
+    <video autoplay muted loop playsinline class="bg-video">
+        <source src="assets/video menu.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="video-overlay"></div>
+    <div class="container position-relative" style="z-index: 2;">
             <div class="row align-items-center min-vh-100">
                 <div class="col-12 text-center">
                     <div class="animate-fadeInUp">
@@ -34,28 +294,26 @@
     </section>
 
     <!-- Menu Categories -->
-    <section class="py-4" style="background: var(--light);">
-        <div class="container">
+   <section class="py-5" style="background: var(--secondary);" id="menu-wrapper">
+        <div class="container mt-5">
             <div class="text-center">
-                <div class="btn-group flex-wrap" role="group">
-                    <button type="button" class="filter-btn active" data-filter="all">All Items</button>
-                    <button type="button" class="filter-btn" data-filter="robusta-cold">Robusta Cold</button>
-                    <button type="button" class="filter-btn" data-filter="robusta-hot">Robusta Hot</button>
-                    <button type="button" class="filter-btn" data-filter="blend-cold">Blend Cold</button>
-                    <button type="button" class="filter-btn" data-filter="blend-hot">Blend Hot</button>
-                    <button type="button" class="filter-btn" data-filter="manual-brew">Manual Brew</button>
-                    <button type="button" class="filter-btn" data-filter="shakes-tea">Shakes & Tea</button>
-                    <button type="button" class="filter-btn" data-filter="food">Food</button>
+               <div class="btn-group flex-wrap menu-filters" role="group" id="menu-filters">
+                    <a href="#all" class="filter-btn active" data-filter="all">All Items</a>
+                    <a href="#cold" class="filter-btn" data-filter="cold">Cold</a>
+                    <a href="#hot" class="filter-btn" data-filter="hot">Hot</a>
+                    <a href="#manual-brew" class="filter-btn" data-filter="manual-brew">Manual Brew</a>
+                    <a href="#shakes-tea" class="filter-btn" data-filter="shakes-tea">Shakes & Tea</a>
+                    <a href="#food" class="filter-btn" data-filter="food">Food</a>
                 </div>
             </div>
         </div>
     </section>
-
+    <main class="container py-5" id="menu-content">
     <!-- Menu Items -->
     <section class="py-5" style="background: var(--secondary);">
         <div class="container py-5">
             <!-- Robusta Specialty Coffee - Cold -->
-            <div class="menu-section" data-category="robusta-cold">
+            <div class="menu-section" data-category="cold">
                 <h2 class="font-playfair fs-2 fw-bold mb-5 text-center" style="color: var(--primary);">
                     <i class="fas fa-snowflake me-3"></i>Robusta Specialty Coffee - Cold
                 </h2>
@@ -63,64 +321,84 @@
                 <!-- Non-Milk Based -->
                 <h4 class="font-playfair fw-bold mb-4" style="color: var(--primary);">Non-Milk Based</h4>
                 <div class="row g-4 mb-5">
-                   <div class="col-lg-6 menu-col right-col">
+                   <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Iced Americano</h5>
                                     <p class="text-muted mb-2 small">Bold Robusta espresso with chilled water</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹160</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">                        </div>
+                        </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                        <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Iced Espresso</h5>
                                     <p class="text-muted mb-2 small">Pure Robusta espresso shot over ice</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/iced-espresso.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹130</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">                        </div>
+                            <div>
+                    
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Espresso Tonic/Ginger Ale/Orange</h5>
                                     <p class="text-muted mb-2 small">Robusta espresso with tonic, ginger ale, or orange</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/Cold Brew Tonic Ginger Ale Orange.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">                        </div>
+                            
+                        </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Espresso Red Bull</h5>
                                     <p class="text-muted mb-2 small">Energy boost with Robusta espresso and Red Bull</p>
                                 </div>
+                                 <div>
+                                    <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹290</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">                        </div>
+                           
+                        </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Cranberry Tonic</h5>
                                     <p class="text-muted mb-2 small">Refreshing cranberry and tonic combination</p>
                                 </div>
+                                 <div>
+                                <img src="assets/menu images/cranberry tonic.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹270</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">  
+                             
                         </div>
                     </div>
                 </div>
@@ -128,140 +406,170 @@
                 <!-- Milk Based -->
                 <h4 class="font-playfair fw-bold mb-4" style="color: var(--primary);">Milk Based</h4>
                 <div class="row g-4">
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Iced Latte</h5>
                                     <p class="text-muted mb-2 small">Smooth Robusta espresso with cold milk</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹220</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">  
+                              
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                        <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Affogato</h5>
                                     <p class="text-muted mb-2 small">Vanilla ice cream drowned in hot Robusta espresso</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/affogato cold blend.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Classic Frappe</h5>
                                     <p class="text-muted mb-2 small">Blended iced Robusta coffee with milk</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/cassic frappe.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Hazelnut</h5>
                                     <p class="text-muted mb-2 small">Robusta coffee with rich hazelnut flavor</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/hazelnut cold blend.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹260</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Caramel</h5>
                                     <p class="text-muted mb-2 small">Sweet caramel meets bold Robusta</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/Caramel-Iced-blend.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹260</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Mocha</h5>
                                     <p class="text-muted mb-2 small">Perfect blend of Robusta and chocolate</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/iced-mocha-blend.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹270</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Biscoff</h5>
                                     <p class="text-muted mb-2 small">Robusta with creamy Biscoff cookie flavor</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/biscoff cold blend.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹270</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Vietnamese</h5>
                                     <p class="text-muted mb-2 small">Traditional Vietnamese style with condensed milk</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/Vietnamese-Iced-Coffee.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹240</span>
                             </div>
-                            <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Café Suda</h5>
                                     <p class="text-muted mb-2 small">Signature Robusta blend with special preparation</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/Cafe-suda.png" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6  menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Robco</h5>
                                     <p class="text-muted mb-2 small">Premium Robusta specialty creation</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/robco.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹290</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Robusta Specialty Coffee - Hot -->
-            <div class="menu-section mt-5" data-category="robusta-hot">
+            <div class="menu-section mt-5" data-category="hot">
                 <h2 class="font-playfair fs-2 fw-bold mb-5 text-center" style="color: var(--primary);">
                     <i class="fas fa-fire me-3"></i>Robusta Specialty Coffee - Hot
                 </h2>
@@ -269,29 +577,35 @@
                 <!-- Non-Milk Based -->
                 <h4 class="font-playfair fw-bold mb-4" style="color: var(--primary);">Non-Milk Based</h4>
                 <div class="row g-4 mb-5">
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Hot Americano</h5>
                                     <p class="text-muted mb-2 small">Classic hot Robusta with hot water</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/hot americano.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹150</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Hot Espresso</h5>
                                     <p class="text-muted mb-2 small">Pure, intense Robusta espresso shot</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/hot espresso.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹130</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                 </div>
@@ -299,55 +613,67 @@
                 <!-- Milk Based -->
                 <h4 class="font-playfair fw-bold mb-4" style="color: var(--primary);">Milk Based</h4>
                 <div class="row g-4">
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Hot Latte</h5>
                                     <p class="text-muted mb-2 small">Smooth Robusta with steamed milk</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/Blend Hot latte.jpeg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹190</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Hot Flat White</h5>
                                     <p class="text-muted mb-2 small">Strong Robusta with microfoam milk</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/hot flat white.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹180</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Hot Cappuccino</h5>
                                     <p class="text-muted mb-2 small">Traditional cappuccino with Robusta espresso</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/cappuccino.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹180</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Robusta Hot Mocha</h5>
                                     <p class="text-muted mb-2 small">Rich chocolate and Robusta combination</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/mocha.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹230</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                 </div>
@@ -358,7 +684,7 @@
     <!-- Blend Coffee - Cold -->
     <section class="py-5" style="background: var(--light);">
         <div class="container py-5">
-            <div class="menu-section" data-category="blend-cold">
+            <div class="menu-section" data-category="cold">
                 <h2 class="font-playfair fs-2 fw-bold mb-5 text-center" style="color: var(--primary);">
                     <i class="fas fa-snowflake me-3"></i>Blend Coffee - Cold
                 </h2>
@@ -366,68 +692,83 @@
                 <!-- Non-Milk Based -->
                 <h4 class="font-playfair fw-bold mb-4" style="color: var(--primary);">Non-Milk Based</h4>
                 <div class="row g-4 mb-5">
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                        <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Iced Americano</h5>
                                     <p class="text-muted mb-2 small">Classic blend espresso with chilled water</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/iced-americano.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹150</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Iced Espresso</h5>
                                     <p class="text-muted mb-2 small">Pure blend espresso shot over ice</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/iced-espresso.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹120</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Iced Espresso Tonic/Ginger Ale/Orange</h5>
                                     <p class="text-muted mb-2 small">Blend espresso with tonic, ginger ale, or orange</p>
                                 </div>
-                                <span class="price-tag ms-3">₹230</span>
+                                 <div>
+                                <img src="assets/menu images/espresso.jpg" class="menu-hover-img"> 
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                                    <span class="price-tag ms-3">₹230</span>
+                            </div>
+                              
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Iced Espresso Red Bull</h5>
                                     <p class="text-muted mb-2 small">Energy boost with blend espresso and Red Bull</p>
                                 </div>
+                                 <div>
+                                <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹270</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Cranberry Tonic</h5>
                                     <p class="text-muted mb-2 small">Refreshing cranberry and tonic combination</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/cranberry tonic.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                 </div>
@@ -435,94 +776,115 @@
                 <!-- Milk Based -->
                 <h4 class="font-playfair fw-bold mb-4" style="color: var(--primary);">Milk Based</h4>
                 <div class="row g-4">
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                        <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Iced Latte</h5>
                                     <p class="text-muted mb-2 small">Smooth blend espresso with cold milk</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/latte.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹210</span>
                             </div>
-                            <img src="assets/menu images/iced latte.jpeg" class="menu-hover-img">  
+                             
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Affogato</h5>
                                     <p class="text-muted mb-2 small">Vanilla ice cream drowned in hot blend espresso</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/affogato cold blend.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹240</span>
                             </div>
-                            <img src="assets/menu images/affogato.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Classic Frappe</h5>
                                     <p class="text-muted mb-2 small">Blended iced blend coffee with milk</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/cassic frappe.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹240</span>
                             </div>
-                            <img src="assets/menu images/classic frappe.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Hazelnut</h5>
                                     <p class="text-muted mb-2 small">Blend coffee with rich hazelnut flavor</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/hazelnut cold blend.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
-                            <img src="assets/menu images/hazelnut.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Caramel</h5>
                                     <p class="text-muted mb-2 small">Sweet caramel meets smooth blend</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/Caramel-Iced-blend.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
-                            <img src="assets/menu images/caramel.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Mocha</h5>
                                     <p class="text-muted mb-2 small">Perfect blend of coffee and chocolate</p>
                                 </div>
-                                <span class="price-tag ms-3">₹260</span>
+                                <div>
+                                <img src="assets/menu images/iced-mocha-blend.jpg" class="menu-hover-img"> 
                             </div>
-                            <img src="assets/menu images/mocha.jpeg" class="menu-hover-img">  
+                                    <span class="price-tag ms-3">₹260</span>
+                            </div>
+                             
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Biscoff</h5>
                                     <p class="text-muted mb-2 small">Blend coffee with creamy Biscoff cookie flavor</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/biscoff cold blend.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹260</span>
                             </div>
-                            <img src="assets/menu images/biscoff.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                 </div>
@@ -533,7 +895,7 @@
     <!-- Blend Coffee - Hot -->
     <section class="py-5" style="background: var(--secondary);">
         <div class="container py-5">
-            <div class="menu-section" data-category="blend-hot">
+            <div class="menu-section" data-category="hot">
                 <h2 class="font-playfair fs-2 fw-bold mb-5 text-center" style="color: var(--primary);">
                     <i class="fas fa-fire me-3"></i>Blend Coffee - Hot
                 </h2>
@@ -541,29 +903,35 @@
                 <!-- Non-Milk Based -->
                 <h4 class="font-playfair fw-bold mb-4" style="color: var(--primary);">Non-Milk Based</h4>
                 <div class="row g-4 mb-5">
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Hot Americano</h5>
                                     <p class="text-muted mb-2 small">Classic hot blend with hot water</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/hot americano.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹140</span>
                             </div>
-                            <img src="assets/menu images/hot americano.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Hot Espresso</h5>
                                     <p class="text-muted mb-2 small">Pure blend espresso shot</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/hot espresso.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹120</span>
                             </div>
-                            <img src="assets/menu images/hot espresso.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                 </div>
@@ -571,55 +939,67 @@
                 <!-- Milk Based -->
                 <h4 class="font-playfair fw-bold mb-4" style="color: var(--primary);">Milk Based</h4>
                 <div class="row g-4">
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Hot Latte</h5>
                                     <p class="text-muted mb-2 small">Smooth blend with steamed milk</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/Blend Hot latte.jpeg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹180</span>
                             </div>
-                            <img src="assets/menu images/hot latte.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Hot Flat White</h5>
                                     <p class="text-muted mb-2 small">Strong blend with microfoam milk</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/hot flat white.webp" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹170</span>
                             </div>
-                            <img src="assets/menu images/hot flat white.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col left-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Hot Cappuccino</h5>
                                     <p class="text-muted mb-2 small">Traditional cappuccino with blend espresso</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/cappuccino.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹170</span>
                             </div>
-                            <img src="assets/menu images/hot cappuccino.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                     
-                    <div class="col-lg-6 menu-col right-col">
+                    <div class="col-lg-6">
                         <div class="menu-item position-relative">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Hot Mocha</h5>
                                     <p class="text-muted mb-2 small">Rich chocolate and blend combination</p>
                                 </div>
+                                <div>
+                                <img src="assets/menu images/mocha.jpg" class="menu-hover-img"> 
+                            </div>
                                 <span class="price-tag ms-3">₹220</span>
                             </div>
-                            <img src="assets/menu images/hot mocha.jpeg" class="menu-hover-img">  
+                            
                         </div>
                     </div>
                 </div>
@@ -634,81 +1014,99 @@
                 <i class="fas fa-coffee me-3"></i>Manual Brew - Robusta Peaberry Special
             </h2>
             <div class="row g-4">
-                <div class="col-lg-6 menu-col left-col">
+                <div class="col-lg-6">
                     <div class="menu-item position-relative">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
                                 <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Classic Cold Brew</h5>
                                 <p class="text-muted mb-2 small">Slow-brewed Robusta peaberry for 12+ hours</p>
                             </div>
+                            <div>
+                                <img src="assets/menu images/cold brew.jpg" class="menu-hover-img"> 
+                            </div>
                             <span class="price-tag ms-3">₹220-230</span>
                         </div>
-                        <img src="assets/menu images/classic cold brew.jpeg" class="menu-hover-img">  
+                        
                     </div>
                 </div>
                 
-                <div class="col-lg-6 menu-col right-col">
+                <div class="col-lg-6">
                    <div class="menu-item position-relative">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
                                 <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Cold Brew Tonic/Ginger Ale/Orange</h5>
                                 <p class="text-muted mb-2 small">Cold brew with refreshing mixers</p>
                             </div>
+                            <div>
+                                <img src="assets/menu images/Cold Brew Tonic Ginger Ale Orange.webp" class="menu-hover-img"> 
+                            </div>
                             <span class="price-tag ms-3">₹270</span>
                         </div>
-                        <img src="assets/menu images/cold brew tonic.jpeg" class="menu-hover-img">  
+                        
                     </div>
                 </div>
                 
-                <div class="col-lg-6 menu-col left-col">
+                <div class="col-lg-6">
                     <div class="menu-item position-relative">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
                                 <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Cold Brew Red Bull</h5>
                                 <p class="text-muted mb-2 small">Ultimate energy combination</p>
                             </div>
+                            <div>
+                                <img src="assets/menu images/cold brew redbull.webp" class="menu-hover-img"> 
+                            </div>
                             <span class="price-tag ms-3">₹290</span>
                         </div>
-                        <img src="assets/menu images/cold brew red bull.jpeg" class="menu-hover-img">  
+                        
                     </div>
                 </div>
                 
-                <div class="col-lg-6 menu-col right-col">
+                <div class="col-lg-6">
                     <div class="menu-item position-relative">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
                                 <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">V60 Pour Over (Hot)</h5>
                                 <p class="text-muted mb-2 small">Precision brewing method for pure flavor</p>
                             </div>
+                            <div>
+                                <img src="assets/menu images/v60 pour over.webp" class="menu-hover-img"> 
+                            </div>
                             <span class="price-tag ms-3">₹220</span>
                         </div>
-                        <img src="assets/menu images/v60 pour over hot.jpeg" class="menu-hover-img">  
+                        
                     </div>
                 </div>
                 
-                <div class="col-lg-6 menu-col left-col">
+                <div class="col-lg-6">
                     <div class="menu-item position-relative">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
                                 <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">V60 Pour Over (Cold)</h5>
                                 <p class="text-muted mb-2 small">Chilled precision brewing</p>
                             </div>
+                            <div>
+                                <img src="assets/menu images/v60 pour over.webp" class="menu-hover-img"> 
+                            </div>
                             <span class="price-tag ms-3">₹230-240</span>
                         </div>
-                        <img src="assets/menu images/v60 pour over cold.jpeg" class="menu-hover-img">  
+                          
                     </div>
                 </div>
                 
-                <div class="col-lg-6 menu-col right-col">
+                <div class="col-lg-6">
                     <div class="menu-item position-relative">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
                                 <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Cranberry Cold Brew Tonic</h5>
                                 <p class="text-muted mb-2 small">Signature cold brew with cranberry tonic</p>
                             </div>
+                            <div>
+                                <img src="assets/menu images/cold tea.jpg" class="menu-hover-img"> 
+                            </div>
                             <span class="price-tag ms-3">₹280</span>
                         </div>
-                        <img src="assets/menu images/cranberry cold brew tonic.jpeg" class="menu-hover-img">  
+                        
                     </div>
                 </div>
             </div>
@@ -719,47 +1117,56 @@
     <section class="py-5 menu-section" style="background: var(--secondary);" data-category="shakes-tea">
         <div class="container py-5">
             <div class="row">
-                <div class="col-lg-6 menu-col left-col">
+                <div class="col-lg-6">
                     <h3 class="font-playfair fs-3 fw-bold mb-4 text-center" style="color: var(--primary);"> 
                         <i class="fas fa-blender me-2"></i>Shakes
                     </h3>
                     <div class="row g-3">
-                        <div class="col-12 menu-col left-col">
+                        <div class="col-12">
                             <div class="menu-item position-relative">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div class="flex-grow-1">
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Chocolate Shake</h5>
                                         <p class="text-muted mb-2 small">Rich chocolate milkshake</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/chocolate shake.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹220</span>
                                 </div>
-                                    <img src="assets/menu images/chocolate shake.jpeg" class="menu-hover-img">  
+                                    
                             </div>
                         </div>
                         
-                        <div class="col-12 menu-col right-col">
+                        <div class="col-12">
                             <div class="menu-item position-relative">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div class="flex-grow-1">
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Biscoff Shake</h5>
                                         <p class="text-muted mb-2 small">Creamy Biscoff cookie milkshake</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/biscoff shake.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹250</span>
                                 </div>
-                                    <img src="assets/menu images/biscoff shake.jpeg" class="menu-hover-img">  
+                                    
                             </div>
                         </div>
                         
-                        <div class="col-12 menu-col left-col">
+                        <div class="col-12">
                             <div class="menu-item position-relative">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div class="flex-grow-1">
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Nutella Shake</h5>
                                         <p class="text-muted mb-2 small">Indulgent Nutella milkshake</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/nutella shake.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹260</span>
                                 </div>
-                                    <img src="assets/menu images/nutella shake.jpeg" class="menu-hover-img">  
+                                    
                             </div>
                         </div>
                     </div>
@@ -777,22 +1184,28 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Lemon Ice Tea</h5>
                                         <p class="text-muted mb-2 small">Refreshing lemon-infused iced tea</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/lemon ice tea.jpg" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹210</span>
                                 </div>
-                                    <img src="assets/menu images/lemonice tea.jpeg" class="menu-hover-img">  
+                                    
                             </div>
                         </div>
                         
-                        <div class="col-12 menu-col left-col">
+                        <div class="col-12">
                             <div class="menu-item position-relative">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div class="flex-grow-1">
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Peach Ice Tea</h5>
                                         <p class="text-muted mb-2 small">Sweet peach-flavored iced tea</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/peach ice tea.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹210</span>
                                 </div>
-                                <img src="assets/menu images/peachice tea.jpeg" class="menu-hover-img">  
+                                    
                             </div>
                         </div>
                         
@@ -803,9 +1216,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Ginger Fizz</h5>
                                         <p class="text-muted mb-2 small">Spicy ginger with fizzy water</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/ginger fizz.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹250</span>
                                 </div>
-                                <img src="assets/menu images/ginger fizz.jpeg" class="menu-hover-img">  
+                                    
                             </div>
                         </div>
                         
@@ -816,9 +1232,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Classic Orange Mint</h5>
                                         <p class="text-muted mb-2 small">Fresh orange with mint leaves</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/classic orange mint.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹250</span>
                                 </div>
-                                <img src="assets/menu images/classicorange mint.jpeg" class="menu-hover-img">  
+                                 
                             </div>
                         </div>
                     </div>
@@ -845,9 +1264,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Fries</h5>
                                         <p class="text-muted mb-2 small">Crispy golden french fries</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/frenchfries.jpeg" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹150</span>
                                 </div>
-                                <img src="assets/menu images/frenchfries.jpeg" class="menu-hover-img">  
+                                
                             </div>
                         </div>
                         
@@ -858,9 +1280,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Potato Wedges</h5>
                                         <p class="text-muted mb-2 small">Seasoned potato wedges</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/potato wedges.jpeg" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹170</span>
                                 </div>
-                                <img src="assets/menu images/potato wedges.jpeg" class="menu-hover-img">  
+                                
                             </div>
                         </div>
                         
@@ -871,9 +1296,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Veg Nuggets</h5>
                                         <p class="text-muted mb-2 small">Crispy vegetarian nuggets</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/veg nuggets.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹190</span>
                                 </div>
-                                <img src="assets/menu images/vegnuggets.jpeg" class="menu-hover-img">  
+                                
                             </div>
                         </div>
                         
@@ -884,9 +1312,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Pizza</h5>
                                         <p class="text-muted mb-2 small">Personal size pizza</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/pizza.jpeg" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹300</span>
                                 </div>
-                                <img src="assets/menu images/pizza.jpeg" class="menu-hover-img">  
+                                
                             </div>
                         </div>
                     </div>
@@ -902,9 +1333,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Plain Bagel</h5>
                                         <p class="text-muted mb-2 small">Fresh baked bagel</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/plain bagel.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹100</span>
                                 </div>
-                                <img src="assets/menu images/plain bagel.jpeg" class="menu-hover-img">  
+                                 
                             </div>
                         </div>
                         
@@ -915,9 +1349,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Cream Cheese Bagel</h5>
                                         <p class="text-muted mb-2 small">Bagel with cream cheese spread</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/cream cheese bagel.jpg" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹150</span>
                                 </div>
-                                <img src="assets/menu images/creamcheese bagel.jpeg" class="menu-hover-img">  
+                                
                             </div>
                         </div>
                         
@@ -928,9 +1365,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Jalapeño Cheese Bagel</h5>
                                         <p class="text-muted mb-2 small">Spicy jalapeño with cheese</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/jalopino bagel.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹200</span>
                                 </div>
-                                <img src="assets/menu images/jalapenocheese bagel.jpeg" class="menu-hover-img">  
+                                
                             </div>
                         </div>
                         
@@ -941,9 +1381,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Pesto Bagel</h5>
                                         <p class="text-muted mb-2 small">Bagel with fresh pesto spread</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/pesto bagel.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹230</span>
                                 </div>
-                                <img src="assets/menu images/pestobagel.jpeg" class="menu-hover-img">  
+                                
                             </div>
                         </div>
                         
@@ -954,9 +1397,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Butter Croissant</h5>
                                         <p class="text-muted mb-2 small">Flaky buttery croissant</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/butter croissant.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹150</span>
                                 </div>
-                                <img src="assets/menu images/butter croissant.jpeg" class="menu-hover-img">  
+                                
                             </div>
                         </div>
                         
@@ -967,9 +1413,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Nutella Croissant</h5>
                                         <p class="text-muted mb-2 small">Croissant filled with Nutella</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/nutella croissant.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹200</span>
                                 </div>
-                                <img src="assets/menu images/nutellacroissant.jpeg" class="menu-hover-img">  
+                                
                             </div>
                         </div>
                         
@@ -980,9 +1429,12 @@
                                         <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);">Cream Cheese Croissant</h5>
                                         <p class="text-muted mb-2 small">Croissant with cream cheese filling</p>
                                     </div>
+                                    <div>
+                                        <img src="assets/menu images/cream chese croissant.webp" class="menu-hover-img"> 
+                                    </div>
                                     <span class="price-tag ms-3">₹240</span>
                                 </div>
-                                <img src="assets/menu images/creammcheese croissant.jpeg" class="menu-hover-img">  
+                                
                             </div>
                         </div>
                     </div>
@@ -1025,7 +1477,19 @@
             </div>
         </div>
     </section>
-
+</main>
+    <footer class="footer-section text-center">
+        <div class="container">
+            <h5 class="footer-brand">RABUSTE</h5>
+            <p class="footer-text">Bold Robusta coffee · Art · Culture · Technology</p>
+            <div class="footer-links">
+                <a href="#"><i class="fab fa-instagram me-1"></i> Instagram</a>
+                <a href="#"><i class="fas fa-calendar-alt me-1"></i> Workshops</a>
+                <a href="#"><i class="fas fa-store me-1"></i> Franchise</a>
+            </div>
+            <p class="footer-copy">© 2025 Rabuste Coffee. All rights reserved.</p>
+        </div>
+    </footer>
      <!-- Back to Top Button -->
     <button id="back-to-top" class="position-fixed bottom-0 end-0 m-4 btn btn-coffee rounded-circle p-3 shadow-lg" style="opacity: 0; visibility: hidden; transition: all 0.3s ease;">
         <i class="fas fa-arrow-up"></i>
@@ -1037,85 +1501,150 @@
     <!-- Custom Scripts -->
     <script src="js/theme.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Menu filtering
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            const menuSections = document.querySelectorAll('.menu-section');
-
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Remove active class from all buttons
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    // Add active class to clicked button
-                    this.classList.add('active');
-
-                    const filter = this.getAttribute('data-filter');
-
-                    menuSections.forEach(section => {
-                        if (filter === 'all' || section.getAttribute('data-category') === filter) {
-                            section.style.display = 'block';
-                            setTimeout(() => {
-                                section.style.opacity = '1';
-                                section.style.transform = 'translateY(0)';
-                            }, 10);
-                        } else {
-                            section.style.opacity = '0';
-                            section.style.transform = 'translateY(20px)';
-                            setTimeout(() => {
-                                section.style.display = 'none';
-                            }, 300);
-                        }
-                    });
-                });
-            });
-
-            // Initialize menu sections
-            menuSections.forEach(section => {
-                section.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            });
-
-            // Back to top button
-            const backToTopBtn = document.getElementById('back-to-top');
-            
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    backToTopBtn.style.opacity = '1';
-                    backToTopBtn.style.visibility = 'visible';
-                } else {
-                    backToTopBtn.style.opacity = '0';
-                    backToTopBtn.style.visibility = 'hidden';
-                }
-            });
-            
-            backToTopBtn.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-
-            // Animation on scroll
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-
-            document.querySelectorAll('.animate-fadeInUp').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
-                el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                observer.observe(el);
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    // Cache DOM elements
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const menuSections = document.querySelectorAll('.menu-section');
+    const menuWrapper = document.getElementById('menu-wrapper');
+    let isAnimating = false;
+    
+    // Initialize menu sections - hide all initially
+    function initMenuSections() {
+        menuSections.forEach(section => {
+            section.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.display = 'none';
         });
-    </script>
+    }
+    
+    // Filter menu items
+    function filterMenu(filter) {
+        if (isAnimating) return;
+        isAnimating = true;
+        
+        // Update active button
+        filterButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-filter') === filter);
+        });
+        
+        // Show/hide sections
+        let visibleSections = 0;
+        menuSections.forEach(section => {
+            const sectionCategory = section.getAttribute('data-category');
+            if (filter === 'all' || sectionCategory === filter) {
+                section.style.display = 'block';
+                // Force reflow
+                void section.offsetHeight;
+                // Animate in
+                section.style.opacity = '1';
+                section.style.transform = 'translateY(0)';
+                visibleSections++;
+            } else {
+                // Animate out
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.display = 'none';
+                }, 300);
+            }
+        });
+        
+        // Update URL without scrolling
+        const newUrl = filter === 'all' 
+            ? window.location.pathname + window.location.search
+            : `${window.location.pathname}${window.location.search}#${filter}`;
+        
+        // Use replaceState to avoid adding to history
+        history.replaceState({ filter }, '', newUrl);
+        
+        // Reset animation lock
+        setTimeout(() => {
+            isAnimating = false;
+        }, 350);
+    }
+    
+    // Handle filter button clicks
+    function handleFilterClick(e) {
+        e.preventDefault();
+        const filter = this.getAttribute('data-filter');
+        const currentFilter = document.querySelector('.filter-btn.active')?.getAttribute('data-filter');
+        
+        // Don't re-filter if clicking the same filter
+        if (filter === currentFilter) return;
+        
+        filterMenu(filter);
+        
+        // Only scroll if needed
+        const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+        if (scrollPosition > 300) {
+            const headerOffset = 100;
+            const elementPosition = menuWrapper.offsetTop;
+            const offsetPosition = elementPosition - headerOffset;
+            
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    }
+    
+    // Handle initial page load
+    function handleInitialLoad() {
+        const hash = window.location.hash.replace('#', '');
+        const validFilters = Array.from(filterButtons).map(btn => btn.getAttribute('data-filter'));
+        
+        if (hash && validFilters.includes(hash)) {
+            filterMenu(hash);
+        } else {
+            // Show all sections by default
+            menuSections.forEach(section => {
+                section.style.display = 'block';
+                // Force reflow
+                void section.offsetHeight;
+                section.style.opacity = '1';
+                section.style.transform = 'translateY(0)';
+            });
+        }
+    }
+    
+    // Initialize
+    initMenuSections();
+    
+    // Set up event listeners
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', handleFilterClick);
+    });
+    
+    // Handle browser back/forward
+    window.addEventListener('popstate', function(e) {
+        const filter = e.state ? e.state.filter : 'all';
+        filterMenu(filter);
+    });
+    
+    // Initial load
+    handleInitialLoad();
+    
+    // Back to top button
+    const backToTopBtn = document.getElementById('back-to-top');
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            backToTopBtn.style.opacity = '1';
+            backToTopBtn.style.visibility = 'visible';
+        } else {
+            backToTopBtn.style.opacity = '0';
+            backToTopBtn.style.visibility = 'hidden';
+        }
+    });
+    
+    backToTopBtn.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
 </body>
 </html>
