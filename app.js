@@ -1,13 +1,45 @@
-const express = require('express');
-const app = express();
-const path = require('path');
-const expressLayouts = require('express-ejs-layouts');
+const express = require("express");
+const expressLayouts = require("express-ejs-layouts");
+const session = require("express-session");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
-// Set view engine to EJS
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-app.set('layout', 'layouts/main');
+require("dotenv").config();
+const path = require('path');
+
+const app = express();
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL
+    },
+    (accessToken, refreshToken, profile, done) => {
+      return done(null, profile);
+    }
+  )
+);
+
+app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "change_me",
+    resave: false,
+    saveUninitialized: false
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static("public"));
 app.use(expressLayouts);
+
+app.set("layout", "layouts/boilerplate");
 
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -31,8 +63,7 @@ app.get('/', (req, res) => {
     ogType: 'website',
     ogUrl: 'https://rabustecoffee.com',
     ogImage: '/assets/coffee-bg.jpeg',
-    canonicalUrl: 'https://rabustecoffee.com',
-    layout: 'layouts/main'
+    canonicalUrl: 'https://rabustecoffee.com'
   });
 });
 
@@ -70,8 +101,7 @@ app.get('/about', (req, res) => {
     ogImage: '/assets/coffee-bg.jpeg',
     canonicalUrl: 'https://rabustecoffee.com/about',
     additionalCSS: '<link rel="stylesheet" href="/css/about.css">',
-    additionalJS: '<script src="/js/about-animations.js"></script>',
-    layout: 'layouts/main'
+    additionalJS: '<script src="/js/about-animations.js"></script>'
   });
 });
 
@@ -94,33 +124,74 @@ app.get('/franchise', (req, res) => {
       '$100K - $150K',
       '$150K - $200K',
       '$200K+'
-    ],
-    layout: 'layouts/main'
+    ]
+  });
+});
+
+app.get('/workshops', (req, res) => {
+  res.render('workshops');
+});
+
+app.get("/signin", (req, res) => {
+  res.render("signin", {
+    additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`
+  });
+});
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"]
+  })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/signin" }),
+  (req, res) => {
+    res.redirect("/");
+  }
+);
+
+app.post("/signin", (req, res) => {
+  res.redirect("/");
+});
+
+app.get("/signup", (req, res) => {
+  res.render("signup", {
+    additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`
+  });
+});
+
+app.post("/signup", (req, res) => {
+  const { password, confirmPassword } = req.body;
+  if (password !== confirmPassword) {
+    return res.status(400).render("signup", {
+      additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`,
+      error: "Passwords do not match."
+    });
+  }
+
+  res.redirect("/signin");
+});
+
+app.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    res.redirect("/");
   });
 });
 
 // 404 Handler - Must be after all other routes
 app.use((req, res) => {
-  res.status(404).render('404', {
-    title: 'Page Not Found - Rabuste Coffee',
-    currentPage: '/404',
-    description: 'The page you are looking for does not exist.',
-    layout: 'layouts/main'
-  });
+  res.status(404).send('Page Not Found');
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).render('error', {
-    title: 'Something went wrong - Rabuste Coffee',
-    message: 'We\'re experiencing some technical difficulties. Please try again later.',
-    layout: 'layouts/main'
-  });
+  res.status(500).send('Something went wrong');
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server running on port ${port}`));
