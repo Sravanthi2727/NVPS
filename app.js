@@ -420,6 +420,24 @@ app.post("/signup", async (req, res, next) => {
   }
 });
 
+// Authentication middleware
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/signin');
+}
+
+// Dashboard route
+app.get('/dashboard', ensureAuthenticated, (req, res) => {
+  res.render('dashboard', {
+    title: 'My Dashboard - Rabuste Coffee',
+    description: 'Manage your wishlist, cart, workshop registrations, and requests at Rabuste Coffee.',
+    currentPage: '/dashboard',
+    user: req.user
+  });
+});
+
 app.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
