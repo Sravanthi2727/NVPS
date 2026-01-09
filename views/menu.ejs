@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="warm">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Menu - Rabuste Coffee' %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/themes.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        :root {
+            --gold: #d6a45a;
+            --gold-soft: #e3b873;
+            --text: #f5f2ee;
+            --muted: rgba(245, 242, 238, 0.7);
+            --dark: #0a0a0a;
+            --darker: #000;
+        }
+        body {
+            background-color: var(--darker);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+        .navbar {
+            background: rgba(10, 10, 10, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(214, 164, 90, 0.2);
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--gold) !important;
+            font-size: 1.5rem;
+        }
+        .nav-link {
+            color: var(--text) !important;
+            font-weight: 400;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--gold) !important;
+        }
+        .menu-section {
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .menu-section:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(214, 164, 90, 0.3), transparent);
+        }
+        .menu-item {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(214, 164, 90, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(214, 164, 90, 0.4);
+        }
+        .menu-item h5 {
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .price-tag {
+            background: var(--gold);
+            color: #000;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 0.5rem 1.5rem;
+            margin: 0.25rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+        }
+        .hero-section {
+            position: relative;
+            padding: 8rem 0 4rem;
+        }
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .menu-hover-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark px-3 py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">RABUSTE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#rabusteNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="rabusteNav">
+                <ul class="navbar-nav gap-3">
+                    <li class="nav-item"><a class="nav-link active" href="/menu">Menu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/gallery">Art Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/workshops">Workshops</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/signin">Sign In</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/signup">Sign Up</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-light px-3 rounded-pill" href="/franchise">Franchise</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section text-center">
+        <video autoplay muted loop playsinline class="bg-video" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+            <source src="/assets/video menu.mp4" type="video/mp4">
+        </video>
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-12 text-center">
+                    <img src="/assets/logo-icon.png" alt="Rabuste Coffee Logo" style="display:block; margin:0 auto 20px auto; width:120px;">
+                    <h1 class="font-playfair display-1 fw-bold mb-4 text-white">Our Menu</h1>
+                    <p class="lead mb-5 fs-4 text-white">Discover our carefully crafted selection of premium coffee and delicious treats</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5" style="background: var(--secondary);" id="menu-wrapper">
+        <div class="container mt-5">
+            <div class="text-center">
+                <div class="btn-group flex-wrap menu-filters" role="group" id="menu-filters">
+                    <a href="#all" class="filter-btn active" data-filter="all">All Items</a>
+                    <a href="#cold" class="filter-btn" data-filter="cold">Cold</a>
+                    <a href="#hot" class="filter-btn" data-filter="hot">Hot</a>
+                    <a href="#manual-brew" class="filter-btn" data-filter="manual-brew">Manual Brew</a>
+                    <a href="#shakes-tea" class="filter-btn" data-filter="shakes-tea">Shakes & Tea</a>
+                    <a href="#food" class="filter-btn" data-filter="food">Food</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container py-5" id="menu-content">
+        <% 
+        const categoryNames = {
+            'cold': 'Cold Coffee',
+            'hot': 'Hot Coffee',
+            'manual-brew': 'Manual Brew',
+            'shakes-tea': 'Shakes & Tea',
+            'food': 'Food Menu'
+        };
+        const subCategoryNames = {
+            'robusta-cold-non-milk': 'Non-Milk Based',
+            'robusta-cold-milk': 'Milk Based',
+            'robusta-hot-non-milk': 'Non-Milk Based',
+            'robusta-hot-milk': 'Milk Based',
+            'blend-cold-non-milk': 'Non-Milk Based',
+            'blend-cold-milk': 'Milk Based',
+            'blend-hot-non-milk': 'Non-Milk Based',
+            'blend-hot-milk': 'Milk Based',
+            'cold-brew': 'Cold Brew',
+            'pour-over': 'Pour Over',
+            'shakes': 'Shakes',
+            'cold-tea': 'Cold Tea',
+            'snacks-sides': 'Snacks & Sides',
+            'bagels-croissants': 'Bagels & Croissants'
+        };
+        %>
+        
+        <% if (typeof menuItems !== 'undefined' && Object.keys(menuItems).length > 0) { %>
+            <% Object.keys(menuItems).forEach(category => { %>
+                <section class="py-5 menu-section" style="background: var(--secondary);" data-category="<%= category %>">
+                    <div class="container py-5">
+                        <h2 class="font-playfair fs-2 fw-bold mb-5 text-center" style="color: var(--primary);">
+                            <i class="fas fa-<%= category === 'cold' ? 'snowflake' : category === 'hot' ? 'fire' : category === 'manual-brew' ? 'coffee' : category === 'shakes-tea' ? 'blender' : 'utensils' %> me-3"></i>
+                            <%= categoryNames[category] || category %>
+                        </h2>
+                        
+                        <% Object.keys(menuItems[category]).forEach(subCategory => { %>
+                            <h4 class="font-playfair fw-bold mb-4" style="color: var(--primary);">
+                                <%= subCategoryNames[subCategory] || subCategory %>
+                            </h4>
+                            <div class="row g-4 mb-5">
+                                <% menuItems[category][subCategory].forEach(item => { %>
+                                    <div class="col-lg-6">
+                                        <div class="menu-item position-relative">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="flex-grow-1">
+                                                    <h5 class="font-playfair fw-bold mb-2" style="color: var(--primary);"><%= item.name %></h5>
+                                                    <% if (item.description) { %>
+                                                        <p class="text-muted mb-2 small"><%= item.description %></p>
+                                                    <% } %>
+                                                </div>
+                                                <% if (item.image) { %>
+                                                    <div>
+                                                        <img src="<%= item.image.startsWith('/') ? item.image : '/assets/menu images/' + item.image %>" class="menu-hover-img" alt="<%= item.name %>">
+                                                    </div>
+                                                <% } %>
+                                                <span class="price-tag ms-3">₹<%= item.price %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% }); %>
+                    </div>
+                </section>
+            <% }); %>
+        <% } else { %>
+            <div class="text-center py-5">
+                <p class="text-muted">No menu items available at the moment.</p>
+            </div>
+        <% } %>
+    </main>
+
+    <footer class="footer-section py-5" style="background: #0a0a0a; border-top: 1px solid rgba(214, 164, 90, 0.2);">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="footer-brand mb-3" style="font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.8rem;">RABUSTE</h2>
+                    <p class="footer-text mb-4" style="color: var(--muted);">Bold Robusta coffee · Art · Culture · Technology</p>
+                    <p class="footer-copy mb-0" style="color: var(--muted); font-size: 0.9rem;">&copy; 2025 Rabuste Coffee. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/theme.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const menuSections = document.querySelectorAll('.menu-section');
+            
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const filter = this.getAttribute('data-filter');
+                    
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    menuSections.forEach(section => {
+                        const sectionCategory = section.getAttribute('data-category');
+                        if (filter === 'all' || sectionCategory === filter) {
+                            section.style.display = 'block';
+                        } else {
+                            section.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

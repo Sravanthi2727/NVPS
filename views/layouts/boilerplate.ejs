@@ -30,12 +30,12 @@
     <%- include("../partials/footer") %>
 
     <!-- GSAP -->
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" onerror="console.warn('GSAP failed to load'); window.gsap = null;"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" onerror="console.warn('ScrollTrigger failed to load');"></script>
     <script src="/js/animations.js"></script>
 
     <!-- THREE.JS (MUST COME BEFORE three-bg.js) -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js" onerror="console.warn('Three.js failed to load'); window.THREE = null;"></script>
 
     <!-- THREE BACKGROUND -->
     <script src="/js/three-bg.js"></script>
