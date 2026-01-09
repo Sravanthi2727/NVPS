@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Workshops At Rabuste</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/workshops.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="#hero">Home</a>
+  <a href="#upcoming">Upcoming</a>
+  <a href="#past">Past</a>
+  <a href="#register">Register</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <h1 class="hero-title">Workshops At Rabuste</h1>
+  <p class="hero-subtitle">Where Creativity Meets Caffeine</p>
+  <div class="particles"></div>
+</section>
+
+<!-- INTRO CARD -->
+<section class="intro">
+  <div class="intro-card">
+    <h2>About Workshops at Rabuste</h2>
+    <p>
+      Workshops at Rabuste are intimate, hands-on creative sessions curated
+      around art, coffee, and mindful making. Each workshop is designed to
+      bring people together — to learn, create, and slow down over coffee.
+    </p>
+
+    <p class="intro-muted">
+      From coffee brewing and latte art to printmaking and illustration,
+      every session is guided by experienced artists and creators.
+    </p>
+
+    <a href="#upcoming" class="intro-btn">Explore Upcoming Workshops</a>
+  </div>
+</section>
+
+
+
+<section class="why-register">
+  <div class="why-card">
+
+    <h2>What Makes a Rabuste Workshop Special</h2>
+    <p class="why-subtitle">
+      Thoughtfully curated sessions where creativity, coffee, and community meet.
+    </p>
+
+    <div class="why-grid">
+
+      <!-- 1. Workshop Previews -->
+      <div class="why-mini">
+        <h3>Workshop Previews</h3>
+        <p>
+          A rotating mix of art, craft, and coffee-focused sessions designed to
+          help you slow down and create intentionally.
+        </p>
+      </div>
+
+      <!-- 2. Next Workshop Highlight -->
+      <div class="why-mini highlight">
+        <h3>Next Workshop</h3>
+        <p class="highlight-title">Advanced Coffee Brewing</p>
+        <span class="highlight-date">18 Feb 2026</span>
+        <p class="highlight-note">
+          Our closest upcoming session — limited seats available.
+        </p>
+      </div>
+
+      <!-- 3. Who It’s For -->
+      <div class="why-mini">
+        <h3>Who It’s For</h3>
+        <p>
+          Curious beginners, creative explorers, coffee lovers, and anyone
+          looking for a calm, hands-on experience.
+        </p>
+      </div>
+
+      <!-- 4. What You’ll Take Home -->
+      <div class="why-mini">
+        <h3>What You’ll Take Home</h3>
+        <p>
+          New skills, something you’ve made with your hands, and a slower,
+          more mindful memory of the day.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- UPCOMING WORKSHOP -->
+<!-- UPCOMING -->
+<section id="upcoming">
+  <h2>Upcoming Workshops</h2>
+
+  <div class="grid upcoming-grid">
+
+    <!-- Advanced Coffee Brewing -->
+    <div class="workshop-card">
+      <div class="workshop-img">
+        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93"
+             alt="Advanced Coffee Brewing">
+      </div>
+
+      <div class="workshop-content">
+        <h3>Advanced Coffee Brewing</h3>
+        <div class="meta">📅 18 Feb 2026</div>
+        <div class="countdown" data-date="2026-02-18"></div>
+
+        <button class="register-btn"
+          onclick="openRegister('Advanced Coffee Brewing','18 Feb 2026')">
+          Register
+        </button>
+      </div>
+    </div>
+
+    <!-- Watercolor Techniques -->
+    <div class="workshop-card">
+      <div class="workshop-img">
+        <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f"
+             alt="Watercolor Techniques">
+      </div>
+
+      <div class="workshop-content">
+        <h3>Watercolor Techniques</h3>
+        <div class="meta">📅 3 Mar 2026</div>
+        <div class="countdown" data-date="2026-03-03"></div>
+
+        <button class="register-btn"
+          onclick="openRegister('Watercolor Techniques','3 Mar 2026')">
+          Register
+        </button>
+      </div>
+    </div>
+
+    <!-- Modern Calligraphy -->
+    <div class="workshop-card">
+      <div class="workshop-img">
+        <img src="assets/workshops/upcoming/modern-calligraphy.jpg"
+             alt="Modern Calligraphy">
+      </div>
+
+      <div class="workshop-content">
+        <h3>Modern Calligraphy</h3>
+        <div class="meta">📅 20 Mar 2026</div>
+        <div class="countdown" data-date="2026-03-20"></div>
+
+        <button class="register-btn"
+          onclick="openRegister('Modern Calligraphy','20 Mar 2026')">
+          Register
+        </button>
+      </div>
+    </div>
+
+    <!-- Beginner Pottery -->
+    <div class="workshop-card">
+      <div class="workshop-img">
+        <img src="assets/workshops/upcoming/pottery.jpg"
+             alt="Beginner Pottery">
+      </div>
+
+      <div class="workshop-content">
+        <h3>Beginner Pottery</h3>
+        <div class="meta">📅 5 Apr 2026</div>
+        <div class="countdown" data-date="2026-04-05"></div>
+
+        <button class="register-btn"
+          onclick="openRegister('Beginner Pottery','5 Apr 2026')">
+          Register
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PAST -->
+<section id="past">
+  <h2>Past Workshops</h2>
+
+  <div class="grid">
+
+    <!-- Coffee Art Workshop -->
+    <div class="card clickable"
+      onclick="openGallery([
+        'assets/workshops/coffee-art/1.jpg',
+        'assets/workshops/coffee-art/3.jpg',
+        'assets/workshops/coffee-art/4.jpg'
+      ])">
+      <img src="assets/workshops/coffee-art/2.jpg" alt="Coffee Art Workshop">
+
+      <div class="card-content">
+        <h3>Coffee Art Workshop</h3>
+
+        <div class="meta">
+          <span class="meta-item">☕ Latte Art</span>
+          <span class="dot">·</span>
+          <span class="meta-item">Hands-on</span>
+        </div>
+
+        <p class="card-desc">
+          Guided session focused on <span class="highlight">precision</span>
+          and creative coffee techniques.
+        </p>
+      </div>
+    </div>
+
+    <!-- Lino Cut Art Workshop -->
+    <div class="card clickable"
+      onclick="openGallery([
+        'assets/workshops/lino-cut/1.jpg',
+        'assets/workshops/lino-cut/4.jpg',
+        'assets/workshops/lino-cut/3.jpg'
+      ])">
+      <img src="assets/workshops/lino-cut/2.jpg" alt="Lino Cut Art Workshop">
+
+      <div class="card-content">
+        <h3>Lino Cut Art Workshop</h3>
+
+        <div class="meta">
+          <span class="meta-item">🖨️ Printmaking</span>
+          <span class="dot">·</span>
+          <span class="meta-item">Beginner-friendly</span>
+        </div>
+
+        <p class="card-desc">
+          Explore traditional printmaking through
+          <span class="highlight">intentional</span> mark-making.
+        </p>
+      </div>
+    </div>
+
+    <!-- Ganesha Making Workshop -->
+    <div class="card clickable"
+      onclick="openGallery([
+        'https://images.unsplash.com/photo-1609334761843-3a62c88a5f7a',
+        'https://images.unsplash.com/photo-1602223116515-1a0c1e6b2b9a',
+        'https://images.unsplash.com/photo-1567598508481-65934c7f19c6'
+      ])">
+      <img src="assets/workshops/ganesha-making/1.jpg"
+           alt="Ganesha Making Workshop">
+
+      <div class="card-content">
+        <h3>Ganesha Making Workshop</h3>
+
+        <div class="meta">
+          <span class="meta-item">🪔 Clay Modelling</span>
+          <span class="dot">·</span>
+          <span class="meta-item">Guided Session</span>
+        </div>
+
+        <p class="card-desc">
+          A mindful sculpting experience rooted in
+          <span class="highlight">tradition</span> and creativity.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="community-signup">
+
+  <div class="community-grid">
+
+    <!-- LEFT : COMMUNITY -->
+    <div class="community-left">
+      <h2>Our Community</h2>
+
+      <p class="community-text">
+        More than workshops, these are shared afternoons.
+        Moments of slowing down, creating together,
+        and feeling at home in a space filled with warmth.
+      </p>
+
+      <div class="community-images">
+        <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348" alt="Coffee moment">
+        <img src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0" alt="Creative space">
+      </div>
+
+      <p class="community-quote">
+        “More than workshops, these are shared afternoons.”
+      </p>
+    </div>
+
+    <!-- GOLD DIVIDER -->
+    <div class="gold-divider"></div>
+
+    <!-- RIGHT : EMAIL -->
+    <div class="community-right">
+      <h2>Stay in Touch</h2>
+
+      <p class="community-text">
+        Be the first to know about upcoming sessions,
+        new workshops, and special community events.
+      </p>
+
+      <form class="email-form">
+        <input type="email" placeholder="Your email address" required>
+        <button type="submit">Notify Me</button>
+      </form>
+
+      <p class="email-note">
+        No spam. Just thoughtful updates, when it matters.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- REGISTRATION MODAL -->
+<div class="modal" id="registerModal" onclick="closeRegister()">
+  <div class="modal-content form-modal" onclick="event.stopPropagation()">
+    <h3>Workshop Registration</h3>
+
+    <form id="registerForm">
+      <input id="workshopName" readonly>
+      <input id="workshopDate" readonly>
+
+      <input placeholder="Your Name" required>
+      <input type="email" placeholder="Email" required>
+      <input type="tel" placeholder="Phone Number" required>
+
+      <button type="submit">Confirm Registration</button>
+    </form>
+  </div>
+</div>
+
+<!-- GALLERY MODAL -->
+<div class="modal" id="galleryModal" onclick="closeGallery()">
+  <div class="modal-content gallery" id="galleryContent"
+       onclick="event.stopPropagation()">
+  </div>
+</div>
+
+<script src="/js/workshops.js"></script>
+</body>
+</html>
