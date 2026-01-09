@@ -1,9 +1,13 @@
-const navbar = document.querySelector(".navbar");
-
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 40) {
-    navbar.style.background = "rgba(0,0,0,0.75)";
-  } else {
-    navbar.style.background = "rgba(0,0,0,0.45)";
-  }
-});
+ // Only scroll if needed
+        const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+        if (scrollPosition > 300) {
+            const headerOffset = 100;
+            const elementPosition = menuWrapper.offsetTop;
+            const offsetPosition = elementPosition - headerOffset;
+            
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    

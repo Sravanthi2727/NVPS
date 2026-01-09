@@ -1,17 +1,304 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="warm">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gallery - Rabuste Coffee</title>
+    <title>Art Gallery - Rabuste Coffee</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/themes.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --gold: #d6a45a;
+            --gold-soft: #e3b873;
+            --text: #f5f2ee;
+            --muted: rgba(245, 242, 238, 0.7);
+            --dark: #0a0a0a;
+            --darker: #000;
+        }
+
+        body {
+            background-color: var(--darker);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(10, 10, 10, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(214, 164, 90, 0.2);
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--gold) !important;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text) !important;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--gold) !important;
+        }
+
+        .nav-link.active:after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gold);
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            padding: 6rem 0;
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .section-title h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            color: var(--muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(214, 164, 90, 0.2);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(214, 164, 90, 0.2);
+            border-color: var(--gold);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.05);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 2rem 1.5rem 1.5rem;
+            color: white;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .art-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .art-artist {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .art-price {
+            font-weight: 600;
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+
+        .btn-gold {
+            background-color: var(--gold);
+            color: #000;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gold:hover {
+            background-color: var(--gold-soft);
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(214, 164, 90, 0.3);
+        }
+
+        /* Categories */
+        .category-filter {
+            margin-bottom: 3rem;
+            justify-content: center;
+        }
+
+        .category-btn {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 0.5rem 1.5rem;
+            margin: 0.25rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+        }
+
+        /* Footer */
+        .footer-section {
+            background: #0a0a0a;
+            padding: 4rem 0 2rem;
+            border-top: 1px solid rgba(214, 164, 90, 0.2);
+        }
+
+        .footer-brand {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .footer-text {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text);
+            margin: 0 1rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .social-links {
+            margin-bottom: 2rem;
+        }
+
+        .social-links a {
+            color: var(--text);
+            font-size: 1.2rem;
+            margin: 0 0.75rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--gold);
+        }
+
+        .footer-copy {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(214, 164, 90, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .gallery-section {
+                padding: 4rem 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .category-filter {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 </head>
 <body>
-     <!-- Hero Section -->
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">RABUSTE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+           <div class="collapse navbar-collapse justify-content-end" id="rabusteNav">
+                <ul class="navbar-nav gap-3 align-items-center">
+            
+                    <li class="nav-item">
+                        <a class="nav-link" href="menu.html">Menu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="gallery.html">Art Gallery</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#workshops">Workshops</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light px-3 rounded-pill" href="/franchise">Franchise</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
     <section class="hero-section position-relative overflow-hidden">
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(rgba(139, 69, 19, 0.7), rgba(139, 69, 19, 0.5)), url('assets/photowall.jpeg') center/cover; z-index: -1;"></div>
         <div class="container">
@@ -34,231 +321,221 @@
         </div>
     </section>
 
-    <!-- Gallery Filters -->
-    <section class="py-4" style="background: var(--light);">
+            <!-- Category Filter -->
+            <div class="d-flex flex-wrap category-filter">
+                <button class="category-btn active" data-filter="all">All Artworks</button>
+                <button class="category-btn" data-filter="painting">Paintings</button>
+                <button class="category-btn" data-filter="photography">Photography</button>
+                <button class="category-btn" data-filter="sculpture">Sculptures</button>
+                <button class="category-btn" data-filter="digital">Digital Art</button>
+            </div>
+
+            <!-- Art Grid -->
+            <div class="row">
+                <!-- Artwork 1 -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="painting">
+                    <div class="gallery-item">
+                        <img src="assets/gallery/art1.jpg" alt="Abstract Painting" class="gallery-img">
+                        <div class="gallery-overlay">
+                            <h3 class="art-title">Golden Horizon</h3>
+                            <span class="art-artist">By Sarah Johnson</span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="art-price">$450</span>
+                                <button class="btn btn-gold">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Artwork 2 -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="photography">
+                    <div class="gallery-item">
+                        <img src="assets/photowall.jpeg" alt="Urban Photography" class="gallery-img">
+                        <div class="gallery-overlay">
+                            <h3 class="art-title">City Lights</h3>
+                            <span class="art-artist">By Michael Chen</span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="art-price">$320</span>
+                                <button class="btn btn-gold">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Artwork 3 -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="sculpture">
+                    <div class="gallery-item">
+                        <img src="assets/gallery/art3.jpg" alt="Clay Sculpture" class="gallery-img">
+                        <div class="gallery-overlay">
+                            <h3 class="art-title">Eternal Flow</h3>
+                            <span class="art-artist">By Elena Rodriguez</span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="art-price">$780</span>
+                                <button class="btn btn-gold">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add more artworks following the same pattern -->
+                <!-- Artwork 4 -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="digital">
+                    <div class="gallery-item">
+                        <img src="assets/gallery/art4.jpg" alt="Digital Art" class="gallery-img">
+                        <div class="gallery-overlay">
+                            <h3 class="art-title">Digital Dreams</h3>
+                            <span class="art-artist">By Alex Turner</span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="art-price">$290</span>
+                                <button class="btn btn-gold">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Artwork 5 -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="painting">
+                    <div class="gallery-item">
+                        <img src="assets/gallery/art5.jpg" alt="Oil Painting" class="gallery-img">
+                        <div class="gallery-overlay">
+                            <h3 class="art-title">Mountain Serenity</h3>
+                            <span class="art-artist">By James Wilson</span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="art-price">$520</span>
+                                <button class="btn btn-gold">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Artwork 6 -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="photography">
+                    <div class="gallery-item">
+                        <img src="assets/gallery/art6.jpg" alt="Nature Photography" class="gallery-img">
+                        <div class="gallery-overlay">
+                            <h3 class="art-title">Wilderness</h3>
+                            <span class="art-artist">By Olivia Parker</span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="art-price">$380</span>
+                                <button class="btn btn-gold">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <footer class="footer-section py-5">
         <div class="container">
-            <div class="text-center">
-                <div class="btn-group" role="group">
-                    <!-- <button type="button" >All</button> -->
-                    <a href="#" class="btn btn-outline-coffee">All</a>
-                    <a href="#" class="btn btn-outline-coffee">Interior</a>
-                    <a href="#" class="btn btn-outline-coffee">Coffee</a>
-                    <a href="#" class="btn btn-outline-coffee">Food</a>
-                    <a href="#" class="btn btn-outline-coffee">Atmosphere</a>
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="footer-brand mb-3">RABUSTE</h2>
+                    
+                    <p class="footer-text mb-4">
+                        Bold Robusta coffee · Art · Culture · Technology
+                    </p>
+
+                    <div class="footer-links d-flex flex-wrap justify-content-center gap-4 mb-4">
+                        <a href="https://www.instagram.com/mindsettlerbypb/" target="_blank" rel="noopener noreferrer" class="footer-link">
+                            <i class="fab fa-instagram me-2"></i>Instagram
+                        </a>
+                        <a href="/#workshops" class="footer-link">
+                            <i class="fas fa-palette me-2"></i>Workshops
+                        </a>
+                        <a href="/about" class="footer-link">
+                            <i class="fas fa-info-circle me-2"></i>About Us
+                        </a>
+                        <a href="/franchise" class="footer-link">
+                            <i class="fas fa-store me-2"></i>Franchise
+                        </a>
+                        
+                    </div>
+
+                    
+
+                    <p class="footer-copy mb-0">
+                        &copy; <span class="current-year">2025</span> Rabuste Coffee. All rights reserved.
+                    </p>
+                    
+                    <div class="footer-legal mt-3">
+                        <a href="/privacy" class="legal-link me-3">Privacy Policy</a>
+                        <a href="/terms" class="legal-link">Terms of Service</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
-    
-<!-- Gallery Grid -->
-    <section class="py-5" style="background: var(--secondary);">
-        <div class="container py-5">
-            <div class="gallery-container">
-                <!-- Interior Images -->
-                <div class="gallery-item" data-category="interior">
-                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                         alt="Cozy Interior" class="img-fluid">
-                    <div class="gallery-overlay">
-                        <div>
-                            <h5 class="fw-bold">Cozy Interior</h5>
-                            <p class="mb-0">Our warm, brown-themed seating area</p>
-                        </div>
-                    </div>
-                </div>
+    </footer>
+     <!-- Back to Top Button -->
+    <button id="back-to-top" class="position-fixed bottom-0 end-0 m-4 btn btn-coffee rounded-circle p-3 shadow-lg" style="opacity: 0; visibility: hidden; transition: all 0.3s ease;color:white; background-color:var(--gold) ;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
-                <div class="gallery-item" data-category="coffee">
-                    <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                         alt="Signature Espresso" class="img-fluid">
-                    <div class="gallery-overlay">
-                        <div>
-                            <h5 class="fw-bold">Signature Espresso</h5>
-                            <p class="mb-0">Rich, bold flavor in every cup</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="gallery-item" data-category="atmosphere">
-                    <img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                         alt="Morning Atmosphere" class="img-fluid">
-                    <div class="gallery-overlay">
-                        <div>
-                            <h5 class="fw-bold">Morning Vibes</h5>
-                            <p class="mb-0">Perfect start to your day</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="gallery-item" data-category="coffee">
-                    <img src="https://images.unsplash.com/photo-1568649929103-28ffbad879ee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                         alt="Iced Latte" class="img-fluid">
-                    <div class="gallery-overlay">
-                        <div>
-                            <h5 class="fw-bold">Iced Brown Latte</h5>
-                            <p class="mb-0">Refreshing and creamy</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="gallery-item" data-category="interior">
-                    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                         alt="Counter Area" class="img-fluid">
-                    <div class="gallery-overlay">
-                        <div>
-                            <h5 class="fw-bold">Coffee Counter</h5>
-                            <p class="mb-0">Where the magic happens</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="gallery-item" data-category="food">
-                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                         alt="Pastries" class="img-fluid">
-                    <div class="gallery-overlay">
-                        <div>
-                            <h5 class="fw-bold">Fresh Pastries</h5>
-                            <p class="mb-0">Perfect with your coffee</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="gallery-item" data-category="coffee">
-                    <img src="https://images.unsplash.com/photo-1580933073521-dc49d428b1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                         alt="Mocha" class="img-fluid">
-                    <div class="gallery-overlay">
-                        <div>
-                            <h5 class="fw-bold">Mocha Delight</h5>
-                            <p class="mb-0">Chocolate meets coffee</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="gallery-item" data-category="atmosphere">
-                    <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                         alt="Evening Ambiance" class="img-fluid">
-                    <div class="gallery-overlay">
-                        <div>
-                            <h5 class="fw-bold">Evening Ambiance</h5>
-                            <p class="mb-0">Warm lighting, cozy feeling</p>
-                        </div>
-                    </div>
-                </div>
-                  </div>
-        </div>
-    </section>
-
-<!-- Call to Action -->
-    <section class="py-5" style="background: var(--light);">
-        <div class="container py-5">
-            <div class="text-center">
-                <h2 class="font-playfair fs-1 fw-bold mb-4" style="color: var(--primary);">
-                    Experience It Yourself
-                </h2>
-                <p class="lead mb-4" style="color: var(--text);">
-                    Come visit us and create your own beautiful moments at Rabuste Coffee
-                </p>
-                <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-                    <a href="#" class="btn btn-coffee btn-lg">
-                        <i class="fas fa-map-marker-alt me-2"></i>Visit Us Today
-                    </a>
-                    <a href="#" class="btn btn-outline-coffee btn-lg">
-                        <i class="fas fa-coffee me-2"></i>View Our Menu
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-   
-
-
-  <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom Scripts -->
-    <script src="js/theme.js"></script>
-
+    <!-- Added this script for the current year -->
     <script>
+        document.querySelector('.current-year').textContent = new Date().getFullYear();
+    </script>
+
+    <!-- Added this style for hover effects -->
+    <style>
+        .footer-links a:hover {
+                color: var(--gold) !important;
+        }
+        .footer-links a:hover span:last-child {
+                transform: scaleX(1);
+                transform-origin: left;
+        }
+        .social-links a:hover {
+                color: var(--gold) !important;
+                transform: translateY(-3px);
+        }
+    </style>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple filter functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Gallery filtering
-            const filterBtns = document.querySelectorAll('.btn');
-            const galleryItems = document.querySelectorAll('.gallery-item');
-
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Remove active class from all buttons
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    // Add active class to clicked button
+            const filterButtons = document.querySelectorAll('.category-btn');
+            const galleryItems = document.querySelectorAll('[data-category]');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
-
+                    
                     const filter = this.getAttribute('data-filter');
-
+                    
+                    // Filter items
                     galleryItems.forEach(item => {
                         if (filter === 'all' || item.getAttribute('data-category') === filter) {
                             item.style.display = 'block';
-                            setTimeout(() => {
-                                item.style.opacity = '1';
-                                item.style.transform = 'scale(1)';
-                            }, 10);
                         } else {
-                            item.style.opacity = '0';
-                            item.style.transform = 'scale(0.8)';
-                            setTimeout(() => {
-                                item.style.display = 'none';
-                            }, 300);
+                            item.style.display = 'none';
                         }
                     });
                 });
             });
 
-            // Initialize gallery items
-            galleryItems.forEach(item => {
-                item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            });
-
-            // Back to top button
-            const backToTopBtn = document.getElementById('back-to-top');
-            
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    backToTopBtn.style.opacity = '1';
-                    backToTopBtn.style.visibility = 'visible';
-                } else {
-                    backToTopBtn.style.opacity = '0';
-                    backToTopBtn.style.visibility = 'hidden';
-                }
-            });
-            
-            backToTopBtn.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-
-            // Animation on scroll
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-
-            document.querySelectorAll('.animate-fadeInUp').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
-                el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                observer.observe(el);
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
-    </script>
 
+         // Only scroll if needed
+        const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+        if (scrollPosition > 300) {
+            const headerOffset = 100;
+            const elementPosition = menuWrapper.offsetTop;
+            const offsetPosition = elementPosition - headerOffset;
+            
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    </script>
 </body>
 </html>
