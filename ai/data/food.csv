@@ -1,0 +1,12 @@
+food_id,name,type,price
+1,Fries,savory,150
+2,Potato Wedges,savory,170
+3,Veg Nuggets,savory,190
+4,Pizza,savory,300
+5,Bagel,bakery,100
+6,Cream Cheese Bagel,bakery,150
+7,Jalapeno Cheese Bagel,bakery,200
+8,Pesto Bagel,bakery,230
+9,Butter Croissant,bakery,150
+10,Nutella Croissant,bakery,200
+11,Cream Cheese Croissant,bakery,240
