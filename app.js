@@ -5,6 +5,7 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 require("dotenv").config();
+const path = require('path');
 
 const app = express();
 
@@ -38,6 +39,8 @@ app.use(passport.session());
 app.use(express.static("public"));
 app.use(expressLayouts);
 
+app.set("layout", "layouts/boilerplate");
+
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -60,8 +63,7 @@ app.get('/', (req, res) => {
     ogType: 'website',
     ogUrl: 'https://rabustecoffee.com',
     ogImage: '/assets/coffee-bg.jpeg',
-    canonicalUrl: 'https://rabustecoffee.com',
-    layout: 'layouts/main'
+    canonicalUrl: 'https://rabustecoffee.com'
   });
 });
 
@@ -99,8 +101,7 @@ app.get('/about', (req, res) => {
     ogImage: '/assets/coffee-bg.jpeg',
     canonicalUrl: 'https://rabustecoffee.com/about',
     additionalCSS: '<link rel="stylesheet" href="/css/about.css">',
-    additionalJS: '<script src="/js/about-animations.js"></script>',
-    layout: 'layouts/main'
+    additionalJS: '<script src="/js/about-animations.js"></script>'
   });
 });
 
@@ -123,29 +124,12 @@ app.get('/franchise', (req, res) => {
       '$100K - $150K',
       '$150K - $200K',
       '$200K+'
-    ],
-    layout: 'layouts/main'
+    ]
   });
 });
 
-// 404 Handler - Must be after all other routes
-app.use((req, res) => {
-  res.status(404).render('404', {
-    title: 'Page Not Found - Rabuste Coffee',
-    currentPage: '/404',
-    description: 'The page you are looking for does not exist.',
-    layout: 'layouts/main'
-  });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).render('error', {
-    title: 'Something went wrong - Rabuste Coffee',
-    message: 'We\'re experiencing some technical difficulties. Please try again later.',
-    layout: 'layouts/main'
-  });
+app.get('/workshops', (req, res) => {
+  res.render('workshops');
 });
 
 app.get("/signin", (req, res) => {
@@ -196,6 +180,17 @@ app.get("/logout", (req, res, next) => {
     if (err) return next(err);
     res.redirect("/");
   });
+});
+
+// 404 Handler - Must be after all other routes
+app.use((req, res) => {
+  res.status(404).send('Page Not Found');
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong');
 });
 
 const port = process.env.PORT || 3000;
