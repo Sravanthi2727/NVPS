@@ -30,9 +30,13 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET || "change_me",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+      sameSite: "lax"   // THIS FIXES GOOGLE OAUTH
+    }
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static("public"));

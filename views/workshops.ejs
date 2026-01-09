@@ -108,83 +108,39 @@
   <h2>Upcoming Workshops</h2>
 
   <div class="grid upcoming-grid">
+      <% if (typeof upcomingWorkshops !== 'undefined' && upcomingWorkshops.length > 0) { %>
+      <% upcomingWorkshops.forEach(workshop => { %>
+        <div class="workshop-card">
+          <div class="workshop-img">
+            <img src="<%= workshop.image || 'https://images.unsplash.com/photo-1509042239860-f550ce710b93' %>"
+                 alt="<%= workshop.title %>"
+                 onerror="this.src='https://images.unsplash.com/photo-1509042239860-f550ce710b93'">
+          </div>
 
-    <!-- Advanced Coffee Brewing -->
-    <div class="workshop-card">
-      <div class="workshop-img">
-        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93"
-             alt="Advanced Coffee Brewing">
+          <div class="workshop-content">
+            <h3><%= workshop.title %></h3>
+            <% 
+              const workshopDate = new Date(workshop.date);
+              const formattedDate = workshopDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+            %>
+            <div class="meta">📅 <%= formattedDate %></div>
+            <div class="countdown" data-date="<%= workshopDate.toISOString().split('T')[0] %>"></div>
+            <% if (workshop.description) { %>
+              <p class="workshop-desc"><%= workshop.description %></p>
+            <% } %>
+
+            <button class="register-btn"
+              onclick="openRegister('<%= workshop.title %>','<%= formattedDate %>')">
+              Register
+            </button>
+          </div>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <div class="text-center py-5">
+        <p class="text-muted">No upcoming workshops at the moment. Check back soon!</p>
       </div>
-
-      <div class="workshop-content">
-        <h3>Advanced Coffee Brewing</h3>
-        <div class="meta">📅 18 Feb 2026</div>
-        <div class="countdown" data-date="2026-02-18"></div>
-
-        <button class="register-btn"
-          onclick="openRegister('Advanced Coffee Brewing','18 Feb 2026')">
-          Register
-        </button>
-      </div>
-    </div>
-
-    <!-- Watercolor Techniques -->
-    <div class="workshop-card">
-      <div class="workshop-img">
-        <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f"
-             alt="Watercolor Techniques">
-      </div>
-
-      <div class="workshop-content">
-        <h3>Watercolor Techniques</h3>
-        <div class="meta">📅 3 Mar 2026</div>
-        <div class="countdown" data-date="2026-03-03"></div>
-
-        <button class="register-btn"
-          onclick="openRegister('Watercolor Techniques','3 Mar 2026')">
-          Register
-        </button>
-      </div>
-    </div>
-
-    <!-- Modern Calligraphy -->
-    <div class="workshop-card">
-      <div class="workshop-img">
-        <img src="assets/workshops/upcoming/modern-calligraphy.jpg"
-             alt="Modern Calligraphy">
-      </div>
-
-      <div class="workshop-content">
-        <h3>Modern Calligraphy</h3>
-        <div class="meta">📅 20 Mar 2026</div>
-        <div class="countdown" data-date="2026-03-20"></div>
-
-        <button class="register-btn"
-          onclick="openRegister('Modern Calligraphy','20 Mar 2026')">
-          Register
-        </button>
-      </div>
-    </div>
-
-    <!-- Beginner Pottery -->
-    <div class="workshop-card">
-      <div class="workshop-img">
-        <img src="assets/workshops/upcoming/pottery.jpg"
-             alt="Beginner Pottery">
-      </div>
-
-      <div class="workshop-content">
-        <h3>Beginner Pottery</h3>
-        <div class="meta">📅 5 Apr 2026</div>
-        <div class="countdown" data-date="2026-04-05"></div>
-
-        <button class="register-btn"
-          onclick="openRegister('Beginner Pottery','5 Apr 2026')">
-          Register
-        </button>
-      </div>
-    </div>
-
+    <% } %>
   </div>
 </section>
 
@@ -193,83 +149,48 @@
   <h2>Past Workshops</h2>
 
   <div class="grid">
+    <% if (typeof pastWorkshops !== 'undefined' && pastWorkshops.length > 0) { %>
+      <% pastWorkshops.forEach(workshop => { %>
+        <% 
+          const galleryImages = (workshop.galleryImages && workshop.galleryImages.length > 0) 
+            ? workshop.galleryImages 
+            : [workshop.image || 'https://images.unsplash.com/photo-1509042239860-f550ce710b93'];
+        %>
+        <div class="card clickable"
+          data-gallery='<%- JSON.stringify(galleryImages) %>'
+          onclick="openGallery(JSON.parse(this.getAttribute('data-gallery')))">
+          <img src="<%= workshop.image || 'https://images.unsplash.com/photo-1509042239860-f550ce710b93' %>" 
+               alt="<%= workshop.title %>"
+               onerror="this.src='https://images.unsplash.com/photo-1509042239860-f550ce710b93'">
 
-    <!-- Coffee Art Workshop -->
-    <div class="card clickable"
-      onclick="openGallery([
-        'assets/workshops/coffee-art/1.jpg',
-        'assets/workshops/coffee-art/3.jpg',
-        'assets/workshops/coffee-art/4.jpg'
-      ])">
-      <img src="assets/workshops/coffee-art/2.jpg" alt="Coffee Art Workshop">
+          <div class="card-content">
+            <h3><%= workshop.title %></h3>
 
-      <div class="card-content">
-        <h3>Coffee Art Workshop</h3>
+            <div class="meta">
+              <% if (workshop.category) { %>
+                <span class="meta-item"><%= workshop.category %></span>
+                <% if (workshop.meta && workshop.meta.level) { %>
+                  <span class="dot">·</span>
+                  <span class="meta-item"><%= workshop.meta.level %></span>
+                <% } %>
+              <% } else { %>
+                <span class="meta-item">Workshop</span>
+              <% } %>
+            </div>
 
-        <div class="meta">
-          <span class="meta-item">☕ Latte Art</span>
-          <span class="dot">·</span>
-          <span class="meta-item">Hands-on</span>
+            <% if (workshop.description) { %>
+              <p class="card-desc">
+                <%= workshop.description %>
+              </p>
+            <% } %>
+          </div>
         </div>
-
-        <p class="card-desc">
-          Guided session focused on <span class="highlight">precision</span>
-          and creative coffee techniques.
-        </p>
+      <% }); %>
+    <% } else { %>
+      <div class="text-center py-5">
+        <p class="text-muted">No past workshops to display.</p>
       </div>
-    </div>
-
-    <!-- Lino Cut Art Workshop -->
-    <div class="card clickable"
-      onclick="openGallery([
-        'assets/workshops/lino-cut/1.jpg',
-        'assets/workshops/lino-cut/4.jpg',
-        'assets/workshops/lino-cut/3.jpg'
-      ])">
-      <img src="assets/workshops/lino-cut/2.jpg" alt="Lino Cut Art Workshop">
-
-      <div class="card-content">
-        <h3>Lino Cut Art Workshop</h3>
-
-        <div class="meta">
-          <span class="meta-item">🖨️ Printmaking</span>
-          <span class="dot">·</span>
-          <span class="meta-item">Beginner-friendly</span>
-        </div>
-
-        <p class="card-desc">
-          Explore traditional printmaking through
-          <span class="highlight">intentional</span> mark-making.
-        </p>
-      </div>
-    </div>
-
-    <!-- Ganesha Making Workshop -->
-    <div class="card clickable"
-      onclick="openGallery([
-        'https://images.unsplash.com/photo-1609334761843-3a62c88a5f7a',
-        'https://images.unsplash.com/photo-1602223116515-1a0c1e6b2b9a',
-        'https://images.unsplash.com/photo-1567598508481-65934c7f19c6'
-      ])">
-      <img src="assets/workshops/ganesha-making/1.jpg"
-           alt="Ganesha Making Workshop">
-
-      <div class="card-content">
-        <h3>Ganesha Making Workshop</h3>
-
-        <div class="meta">
-          <span class="meta-item">🪔 Clay Modelling</span>
-          <span class="dot">·</span>
-          <span class="meta-item">Guided Session</span>
-        </div>
-
-        <p class="card-desc">
-          A mindful sculpting experience rooted in
-          <span class="highlight">tradition</span> and creativity.
-        </p>
-      </div>
-    </div>
-
+    <% } %>
   </div>
 </section>
 
