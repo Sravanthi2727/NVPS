@@ -1,0 +1,50 @@
+<section class="auth-wrapper">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-5">
+        <div class="auth-card">
+          <div class="text-center mb-4">
+            <img src="/assets/logo-icon.png" class="auth-logo" alt="Rabuste Logo" />
+            <h1 class="auth-title mt-3">Sign Up</h1>
+            <p class="auth-subtitle">Create your Rabuste account.</p>
+          </div>
+
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger mb-3" role="alert"><%= error %></div>
+          <% } %>
+
+          <a href="/auth/google" class="btn btn-outline-light w-100 mb-3">Continue with Google</a>
+
+          <form method="POST" action="/signup" class="auth-form">
+            <div class="mb-3">
+              <label class="form-label">Full Name</label>
+              <input class="form-control auth-input" type="text" name="name" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input class="form-control auth-input" type="email" name="email" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input class="form-control auth-input" type="password" name="password" minlength="6" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Confirm Password</label>
+              <input class="form-control auth-input" type="password" name="confirmPassword" minlength="6" required />
+            </div>
+
+            <button type="submit" class="btn btn-gold w-100">Create Account</button>
+          </form>
+
+          <div class="text-center mt-3">
+            <span class="auth-muted">Already have an account?</span>
+            <a class="view-link" href="/signin">Sign in</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

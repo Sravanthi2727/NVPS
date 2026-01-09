@@ -1,9 +1,40 @@
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
+const session = require("express-session");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+
+require("dotenv").config();
 
 const app = express();
 
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL
+    },
+    (accessToken, refreshToken, profile, done) => {
+      return done(null, profile);
+    }
+  )
+);
+
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "change_me",
+    resave: false,
+    saveUninitialized: false
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static("public"));
 app.use(expressLayouts);
 app.set("layout", "layouts/boilerplate");
@@ -65,14 +96,67 @@ app.get("/about", (req, res) => {
   }
 });
 
+app.get("/signin", (req, res) => {
+  console.log("Sign in route handler called");
+  res.render("signin", {
+    additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`
+  });
+});
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"]
+  })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/signin" }),
+  (req, res) => {
+    res.redirect("/");
+  }
+);
+
+app.post("/signin", (req, res) => {
+  res.redirect("/");
+});
+
+app.get("/signup", (req, res) => {
+  console.log("Sign up route handler called");
+  res.render("signup", {
+    additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`
+  });
+});
+
+app.post("/signup", (req, res) => {
+  const { password, confirmPassword } = req.body;
+  if (password !== confirmPassword) {
+    return res.status(400).render("signup", {
+      additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`,
+      error: "Passwords do not match."
+    });
+  }
+
+  res.redirect("/signin");
+});
+
+app.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    res.redirect("/");
+  });
+});
+
 // Catch-all route for debugging
 app.use((req, res) => {
   console.log(`404 - Route not found: ${req.method} ${req.path}`);
   res.status(404).send(`Route not found: ${req.method} ${req.path}`);
 });
 
-app.listen(3000, () => {
-  console.log("Debug server running on port 3000");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Debug server running on port ${port}`);
   console.log("Registered routes:");
   app._router.stack.forEach((middleware) => {
     if (middleware.route) {
