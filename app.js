@@ -179,8 +179,7 @@ app.get('/menu', async (req, res) => {
       ogUrl: 'https://rabustecoffee.com/menu',
       ogImage: '/assets/coffee-bg.jpeg',
       canonicalUrl: 'https://rabustecoffee.com/menu',
-      menuItems: groupedMenu,
-      layout: false
+      menuItems: groupedMenu
     });
   } catch (error) {
     console.error('Menu route error:', error);
@@ -205,8 +204,7 @@ app.get('/gallery', async (req, res) => {
       ogUrl: 'https://rabustecoffee.com/gallery',
       ogImage: '/assets/photowall.jpeg',
       canonicalUrl: 'https://rabustecoffee.com/gallery',
-      artworks: artworks,
-      layout: false
+      artworks: artworks
     });
   } catch (error) {
     console.error('Gallery route error:', error);
