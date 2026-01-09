@@ -56,4 +56,8 @@ app.get("/about", (req, res) => {
   });
 });
 
+app.get('/workshops', (req, res) => {
+  res.render('workshops');
+});
+
 app.listen(3000, () => console.log("Server running"));
