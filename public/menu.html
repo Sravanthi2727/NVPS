@@ -241,26 +241,27 @@
 <body>
     <nav class="navbar navbar-expand-lg fixed-top navbar-dark px-3 py-3">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">RABUSTE</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#rabusteNav">
+            <a class="navbar-brand" href="/">RABUSTE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#rabusteNav" aria-controls="rabusteNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="rabusteNav">
-                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
+                <ul class="navbar-nav gap-3 align-items-center">
+                    
                     <li class="nav-item">
                         <a class="nav-link active" href="menu.html">Menu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="gallery.html">Gallery</a>
+                        <a class="nav-link" href="gallery.html">Art Gallery</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
+                        <a class="nav-link" href="/#workshops">Workshops</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
+                        <a class="nav-link" href="/about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light px-3 rounded-pill" href="/franchise">Franchise</a>
                     </li>
                 </ul>
             </div>
@@ -1478,20 +1479,45 @@
         </div>
     </section>
 </main>
-    <footer class="footer-section text-center">
+    <footer class="footer-section py-5">
         <div class="container">
-            <h5 class="footer-brand">RABUSTE</h5>
-            <p class="footer-text">Bold Robusta coffee · Art · Culture · Technology</p>
-            <div class="footer-links">
-                <a href="#"><i class="fab fa-instagram me-1"></i> Instagram</a>
-                <a href="#"><i class="fas fa-calendar-alt me-1"></i> Workshops</a>
-                <a href="#"><i class="fas fa-store me-1"></i> Franchise</a>
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="footer-brand mb-3">RABUSTE</h2>
+                    
+                    <p class="footer-text mb-4">
+                        Bold Robusta coffee · Art · Culture · Technology
+                    </p>
+
+                    <div class="footer-links d-flex flex-wrap justify-content-center gap-4 mb-4">
+                        <a href="https://www.instagram.com/mindsettlerbypb/" target="_blank" rel="noopener noreferrer" class="footer-link">
+                            <i class="fab fa-instagram me-2"></i>Instagram
+                        </a>
+                        <a href="/#workshops" class="footer-link">
+                            <i class="fas fa-palette me-2"></i>Workshops
+                        </a>
+                        <a href="/about" class="footer-link">
+                            <i class="fas fa-info-circle me-2"></i>About Us
+                        </a>
+                        <a href="/franchise" class="footer-link">
+                            <i class="fas fa-store me-2"></i>Franchise
+                        </a>
+                    </div>
+                    
+                    <p class="footer-copy mb-0">
+                        &copy; <span class="current-year">2025</span> Rabuste Coffee. All rights reserved.
+                    </p>
+                    
+                    <div class="footer-legal mt-3">
+                        <a href="/privacy" class="legal-link me-3">Privacy Policy</a>
+                        <a href="/terms" class="legal-link">Terms of Service</a>
+                    </div>
+                </div>
             </div>
-            <p class="footer-copy">© 2025 Rabuste Coffee. All rights reserved.</p>
         </div>
     </footer>
      <!-- Back to Top Button -->
-    <button id="back-to-top" class="position-fixed bottom-0 end-0 m-4 btn btn-coffee rounded-circle p-3 shadow-lg" style="opacity: 0; visibility: hidden; transition: all 0.3s ease;">
+    <button id="back-to-top" class="position-fixed bottom-0 end-0 m-4 btn btn-coffee rounded-circle p-3 shadow-lg" style="opacity: 0; visibility: hidden; transition: all 0.3s ease;color:white; background-color:var(--gold) ;">
         <i class="fas fa-arrow-up"></i>
     </button>
 
