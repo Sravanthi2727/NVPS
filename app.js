@@ -182,6 +182,149 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
+// Admin routes
+app.get("/admin", (req, res) => {
+  res.render("admin/dashboard", {
+    title: 'Admin Dashboard - Rabuste Coffee',
+    description: 'Admin dashboard for managing cart requests, workshop requests, and user accounts.',
+    currentPage: '/admin',
+    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+    additionalJS: '<script src="/js/admin.js"></script>'
+  });
+});
+
+app.get("/admin/cart-requests", (req, res) => {
+  // Mock data - replace with actual database queries
+  const cartRequests = [
+    {
+      id: 1,
+      customerName: 'John Doe',
+      email: 'john@example.com',
+      items: ['Robusta Blend', 'Espresso Shot'],
+      total: 25.50,
+      status: 'pending',
+      date: '2024-01-08'
+    },
+    {
+      id: 2,
+      customerName: 'Jane Smith',
+      email: 'jane@example.com',
+      items: ['Cold Brew', 'Pastry'],
+      total: 18.75,
+      status: 'completed',
+      date: '2024-01-07'
+    }
+  ];
+  
+  res.render("admin/cart-requests", {
+    title: 'Cart Requests - Admin Dashboard',
+    description: 'Manage customer cart requests and orders.',
+    currentPage: '/admin/cart-requests',
+    cartRequests,
+    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+    additionalJS: '<script src="/js/admin.js"></script>'
+  });
+});
+
+app.get("/admin/workshop-requests", (req, res) => {
+  // Mock data - replace with actual database queries
+  const workshopRequests = [
+    {
+      id: 1,
+      customerName: 'Alice Johnson',
+      email: 'alice@example.com',
+      workshop: 'Coffee Brewing Basics',
+      date: '2024-01-15',
+      participants: 2,
+      status: 'pending',
+      requestDate: '2024-01-08'
+    },
+    {
+      id: 2,
+      customerName: 'Bob Wilson',
+      email: 'bob@example.com',
+      workshop: 'Latte Art Masterclass',
+      date: '2024-01-20',
+      participants: 1,
+      status: 'approved',
+      requestDate: '2024-01-07'
+    }
+  ];
+  
+  res.render("admin/workshop-requests", {
+    title: 'Workshop Requests - Admin Dashboard',
+    description: 'Manage workshop booking requests and schedules.',
+    currentPage: '/admin/workshop-requests',
+    workshopRequests,
+    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+    additionalJS: '<script src="/js/admin.js"></script>'
+  });
+});
+
+app.get("/admin/users", (req, res) => {
+  // Mock data - replace with actual database queries
+  const users = [
+    {
+      id: 1,
+      name: 'John Doe',
+      email: 'john@example.com',
+      role: 'customer',
+      joinDate: '2024-01-01',
+      status: 'active'
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      email: 'jane@example.com',
+      role: 'customer',
+      joinDate: '2024-01-02',
+      status: 'active'
+    },
+    {
+      id: 3,
+      name: 'Admin User',
+      email: 'admin@rabustecoffee.com',
+      role: 'admin',
+      joinDate: '2023-12-01',
+      status: 'active'
+    }
+  ];
+  
+  res.render("admin/users", {
+    title: 'User Management - Admin Dashboard',
+    description: 'Manage user accounts, roles, and permissions.',
+    currentPage: '/admin/users',
+    users,
+    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+    additionalJS: '<script src="/js/admin.js"></script>'
+  });
+});
+
+// Admin API routes for handling requests
+app.post("/admin/cart-requests/:id/update", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  // Update cart request status in database
+  console.log(`Updating cart request ${id} to status: ${status}`);
+  res.redirect("/admin/cart-requests");
+});
+
+app.post("/admin/workshop-requests/:id/update", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  // Update workshop request status in database
+  console.log(`Updating workshop request ${id} to status: ${status}`);
+  res.redirect("/admin/workshop-requests");
+});
+
+app.post("/admin/users/:id/update", (req, res) => {
+  const { id } = req.params;
+  const { role, status } = req.body;
+  // Update user role/status in database
+  console.log(`Updating user ${id} - role: ${role}, status: ${status}`);
+  res.redirect("/admin/users");
+});
+
 // 404 Handler - Must be after all other routes
 app.use((req, res) => {
   res.status(404).send('Page Not Found');
@@ -193,5 +336,5 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something went wrong');
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, () => console.log(`Server running on port ${port}`));
