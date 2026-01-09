@@ -524,7 +524,7 @@ html {
 }
 
 /* Ensure theme toggle button is visible */
-#theme-toggle {
+/* #theme-toggle {
   background: none;
   border: none;
   cursor: pointer;
@@ -535,7 +535,7 @@ html {
 
 #theme-toggle:hover {
   transform: rotate(30deg);
-}
+} */
 
 /* Make sure your navigation is fixed at the top */
 #navbar {
