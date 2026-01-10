@@ -50,6 +50,20 @@ app.use(express.urlencoded({ extended: true }));
 const Wishlist = require('./models/Wishlist');
 const Cart = require('./models/Cart');
 const Request = require('./models/Request');
+const Order = require('./models/Order');
+
+// Controllers
+const adminController = require('./src/controllers/adminController');
+
+// Admin middleware
+function ensureAdmin(req, res, next) {
+  // Simple admin check - in production, implement proper admin authentication
+  // For now, just check if user is authenticated
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ success: false, message: 'Admin access required' });
+}
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
@@ -739,12 +753,18 @@ app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
 
 app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
   try {
-    const { itemId, name, price } = req.body;
+    const { itemId, name, price, image } = req.body;
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
     
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if item already exists in wishlist
+    const existingItem = user.wishlist.find(item => item.itemId === itemId);
+    if (existingItem) {
+      return res.json({ success: false, message: 'Item already in wishlist' });
     }
 
     console.log('User before wishlist update:', {
@@ -754,7 +774,7 @@ app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
     });
 
     // Create wishlist item and add to wishlist array
-    const wishlistItem = { itemId, name, price };
+    const wishlistItem = { itemId, name, price, image };
     user.wishlist.push(wishlistItem);
     
     console.log('Wishlist item to add:', wishlistItem);
@@ -777,7 +797,7 @@ app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
   }
 });
 
-app.delete('/api/wishlist/:id', ensureAuthenticated, async (req, res) => {
+app.delete('/api/wishlist/:itemId', ensureAuthenticated, async (req, res) => {
   try {
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
@@ -786,7 +806,7 @@ app.delete('/api/wishlist/:id', ensureAuthenticated, async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    user.wishlist.pull({ _id: req.params.id });
+    user.wishlist.pull({ itemId: req.params.itemId });
     await user.save();
     res.json({ success: true, message: 'Item removed from wishlist' });
   } catch (error) {
@@ -814,6 +834,16 @@ app.post('/api/cart', ensureAuthenticated, async (req, res) => {
     
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if item already exists in cart
+    const existingItem = user.cart.find(item => item.itemId === itemId);
+    if (existingItem) {
+      // Update quantity instead of adding duplicate
+      existingItem.quantity += (quantity || 1);
+      user.markModified('cart');
+      await user.save();
+      return res.json({ success: true, message: 'Item quantity updated' });
     }
 
     console.log('User before cart update:', {
@@ -846,7 +876,7 @@ app.post('/api/cart', ensureAuthenticated, async (req, res) => {
   }
 });
 
-app.delete('/api/cart/:id', ensureAuthenticated, async (req, res) => {
+app.delete('/api/cart/:itemId', ensureAuthenticated, async (req, res) => {
   try {
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
@@ -855,7 +885,7 @@ app.delete('/api/cart/:id', ensureAuthenticated, async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    user.cart.pull({ _id: req.params.id });
+    user.cart.pull({ itemId: req.params.itemId });
     await user.save();
     res.json({ success: true, message: 'Item removed from cart' });
   } catch (error) {
@@ -994,12 +1024,18 @@ app.post('/api/wishlist/add', async (req, res) => {
       return res.status(401).json({ success: false, message: 'Please login first' });
     }
 
-    const { itemId, name, price } = req.body;
+    const { itemId, name, price, image } = req.body;
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
     
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if item already exists in wishlist
+    const existingItem = user.wishlist.find(item => item.itemId === itemId);
+    if (existingItem) {
+      return res.json({ success: false, message: 'Item already in wishlist' });
     }
 
     console.log('User before wishlist update:', {
@@ -1009,7 +1045,7 @@ app.post('/api/wishlist/add', async (req, res) => {
     });
 
     // Create wishlist item and add to wishlist array
-    const wishlistItem = { itemId, name, price };
+    const wishlistItem = { itemId, name, price, image };
     user.wishlist.push(wishlistItem);
     
     console.log('Wishlist item to add:', wishlistItem);
@@ -1049,6 +1085,38 @@ app.get('/api/wishlist/count', async (req, res) => {
   }
 });
 
+app.patch('/api/cart/:itemId', ensureAuthenticated, async (req, res) => {
+  try {
+    const { quantity } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const item = user.cart.find(item => item.itemId === req.params.itemId);
+    if (!item) {
+      return res.status(404).json({ success: false, message: 'Item not found in cart' });
+    }
+
+    if (quantity <= 0) {
+      // Remove item if quantity is 0 or less
+      user.cart.pull({ itemId: req.params.itemId });
+    } else {
+      // Update quantity
+      item.quantity = quantity;
+    }
+
+    user.markModified('cart');
+    await user.save();
+    res.json({ success: true, message: 'Cart quantity updated' });
+  } catch (error) {
+    console.error('Cart quantity update error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 app.delete('/api/cart/remove/:itemId', async (req, res) => {
   try {
     if (!req.isAuthenticated()) {
@@ -1070,6 +1138,116 @@ app.delete('/api/cart/remove/:itemId', async (req, res) => {
   } catch (error) {
     console.error('Cart remove error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// Checkout API - Convert cart to order
+app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (!user.cart || user.cart.length === 0) {
+      return res.status(400).json({ success: false, message: 'Cart is empty' });
+    }
+
+    // Calculate total amount
+    const totalAmount = user.cart.reduce((total, item) => {
+      return total + (item.price * item.quantity);
+    }, 0);
+
+    // Create new order
+    const newOrder = new Order({
+      userId: user._id,
+      customerName: user.name || user.displayName,
+      customerEmail: user.email,
+      items: user.cart.map(item => ({
+        itemId: item.itemId,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        quantity: item.quantity
+      })),
+      totalAmount: totalAmount,
+      status: 'pending'
+    });
+
+    // Save order
+    await newOrder.save();
+
+    // Clear user's cart
+    user.cart = [];
+    await user.save();
+
+    console.log('Order created:', {
+      orderId: newOrder._id,
+      customer: user.name || user.displayName,
+      email: user.email,
+      totalAmount: totalAmount,
+      itemCount: newOrder.items.length
+    });
+
+    res.json({ 
+      success: true, 
+      message: 'Order placed successfully!',
+      orderId: newOrder._id,
+      totalAmount: totalAmount
+    });
+
+  } catch (error) {
+    console.error('Checkout error:', error);
+    res.status(500).json({ success: false, message: 'Failed to place order. Please try again.' });
+  }
+});
+
+// Admin: Get all orders
+app.get('/api/admin/orders', ensureAdmin, async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate('userId', 'name email')
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, orders });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch orders' });
+  }
+});
+
+// Admin: Update order status
+app.post('/api/admin/orders/:id/status', ensureAdmin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const orderId = req.params.id;
+
+    if (!['pending', 'completed', 'cancelled'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status' });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      { status: status },
+      { new: true }
+    ).populate('userId', 'name email');
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    console.log('Order status updated:', {
+      orderId: order._id,
+      newStatus: status,
+      customer: order.customerName
+    });
+
+    res.json({ success: true, order });
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    res.status(500).json({ success: false, message: 'Failed to update order status' });
   }
 });
 
@@ -1127,84 +1305,15 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-// Admin routes
-app.get("/admin", (req, res) => {
-  res.render("admin/dashboard", {
-    title: 'Admin Dashboard - Rabuste Coffee',
-    description: 'Admin dashboard for managing cart requests, workshop requests, and user accounts.',
-    currentPage: '/admin',
-    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-    additionalJS: '<script src="/js/admin.js"></script>'
-  });
-});
+// Import admin routes
+const adminRoutes = require('./src/routes/adminRoutes');
 
-app.get("/admin/cart-requests", (req, res) => {
-  // Mock data - replace with actual database queries
-  const cartRequests = [
-    {
-      id: 1,
-      customerName: 'John Doe',
-      email: 'john@example.com',
-      items: ['Robusta Blend', 'Espresso Shot'],
-      total: 25.50,
-      status: 'pending',
-      date: '2024-01-08'
-    },
-    {
-      id: 2,
-      customerName: 'Jane Smith',
-      email: 'jane@example.com',
-      items: ['Cold Brew', 'Pastry'],
-      total: 18.75,
-      status: 'completed',
-      date: '2024-01-07'
-    }
-  ];
-  
-  res.render("admin/cart-requests", {
-    title: 'Cart Requests - Admin Dashboard',
-    description: 'Manage customer cart requests and orders.',
-    currentPage: '/admin/cart-requests',
-    cartRequests,
-    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-    additionalJS: '<script src="/js/admin.js"></script>'
-  });
-});
+// Use admin routes
+app.use('/admin', adminRoutes);
 
-app.get("/admin/workshop-requests", (req, res) => {
-  // Mock data - replace with actual database queries
-  const workshopRequests = [
-    {
-      id: 1,
-      customerName: 'Alice Johnson',
-      email: 'alice@example.com',
-      workshop: 'Coffee Brewing Basics',
-      date: '2024-01-15',
-      participants: 2,
-      status: 'pending',
-      requestDate: '2024-01-08'
-    },
-    {
-      id: 2,
-      customerName: 'Bob Wilson',
-      email: 'bob@example.com',
-      workshop: 'Latte Art Masterclass',
-      date: '2024-01-20',
-      participants: 1,
-      status: 'approved',
-      requestDate: '2024-01-07'
-    }
-  ];
-  
-  res.render("admin/workshop-requests", {
-    title: 'Workshop Requests - Admin Dashboard',
-    description: 'Manage workshop booking requests and schedules.',
-    currentPage: '/admin/workshop-requests',
-    workshopRequests,
-    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-    additionalJS: '<script src="/js/admin.js"></script>'
-  });
-});
+
+
+
 
 app.get("/admin/users", (req, res) => {
   // Mock data - replace with actual database queries
@@ -1246,13 +1355,7 @@ app.get("/admin/users", (req, res) => {
 });
 
 // Admin API routes for handling requests
-app.post("/admin/cart-requests/:id/update", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  // Update cart request status in database
-  console.log(`Updating cart request ${id} to status: ${status}`);
-  res.redirect("/admin/cart-requests");
-});
+app.post("/admin/cart-requests/:id/update", adminController.updateCartRequest);
 
 app.post("/admin/workshop-requests/:id/update", (req, res) => {
   const { id } = req.params;

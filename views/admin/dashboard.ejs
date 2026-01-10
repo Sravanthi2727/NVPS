@@ -356,66 +356,33 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><span class="badge bg-info">Cart</span></td>
-                                    <td>
-                                        <strong>John Doe</strong><br>
-                                        <small style="color: #ccc;">john@example.com</small>
-                                    </td>
-                                    <td>Robusta Blend, Espresso Shot</td>
-                                    <td>Jan 8, 2024</td>
-                                    <td><span class="badge bg-warning">Pending</span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-success">Workshop</span></td>
-                                    <td>
-                                        <strong>Alice Johnson</strong><br>
-                                        <small style="color: #ccc;">alice@example.com</small>
-                                    </td>
-                                    <td>Coffee Brewing Basics</td>
-                                    <td>Jan 8, 2024</td>
-                                    <td><span class="badge bg-warning">Pending</span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-primary">Art</span></td>
-                                    <td>
-                                        <strong>Mike Wilson</strong><br>
-                                        <small style="color: #ccc;">mike@example.com</small>
-                                    </td>
-                                    <td>Coffee Bean Painting</td>
-                                    <td>Jan 8, 2024</td>
-                                    <td><span class="badge bg-warning">Pending</span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-info">Cart</span></td>
-                                    <td>
-                                        <strong>Jane Smith</strong><br>
-                                        <small style="color: #ccc;">jane@example.com</small>
-                                    </td>
-                                    <td>Cold Brew, Pastry</td>
-                                    <td>Jan 7, 2024</td>
-                                    <td><span class="badge bg-success">Completed</span></td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                <% if (typeof recentActivity !== 'undefined' && recentActivity.length > 0) { %>
+                                    <% recentActivity.forEach(activity => { %>
+                                        <tr>
+                                            <td><span class="badge bg-info"><%= activity.type %></span></td>
+                                            <td>
+                                                <strong><%= activity.customer %></strong><br>
+                                                <small style="color: #ccc;"><%= activity.email %></small>
+                                            </td>
+                                            <td><%= activity.details %></td>
+                                            <td><%= activity.date %></td>
+                                            <td>
+                                                <span class="badge <%= activity.status === 'pending' ? 'bg-warning' : activity.status === 'completed' ? 'bg-success' : 'bg-danger' %>">
+                                                    <%= activity.status.charAt(0).toUpperCase() + activity.status.slice(1) %>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center" style="color: #ccc;">No recent activity</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>

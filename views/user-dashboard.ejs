@@ -246,14 +246,22 @@
     <!-- Sidebar -->
     <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
       <div class="position-sticky pt-3">
+        <!-- User Profile Section -->
+        <div class="text-center mb-4">
+          <div class="mb-3">
+            <i class="bi bi-person-circle" style="font-size: 3rem; color: #d6a45a;"></i>
+          </div>
+          <h5 style="color: #f5f2ee; font-weight: 600;"><%= currentUser.name %></h5>
+          <p style="color: #ccc; font-size: 0.9rem; margin: 0;"><%= currentUser.email %></p>
+          <span class="badge" style="background-color: #d6a45a; color: #000;">
+            <%= currentUser.isOAuthUser ? 'Google User' : 'Registered User' %>
+          </span>
+        </div>
+        
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <div></div>
-        <h1 class="h2 dashboard-title" style="color: #d6a45a; font-weight: 700; font-family: 'Playfair Display', serif; text-shadow: 0 0 10px rgba(214, 164, 90, 0.3);">User Dashboard</h1>
+        <h1 class="h2 dashboard-title" style="color: #d6a45a; font-weight: 700; font-family: 'Playfair Display', serif; text-shadow: 0 0 10px rgba(214, 164, 90, 0.3);">Dashboard</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
-          <!-- <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-          </div> -->
-         
         </div>
       </div>
         <ul class="nav flex-column">
@@ -286,13 +294,9 @@
       <div class="tab-content">
         <!-- Wishlist Tab -->
         <div class="tab-pane fade show active" id="wishlist">
-          <h3 style="color: #d6a45a; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px rgba(214, 164, 90, 0.2);">My Art Wishlist</h3>
+          <h3 style="color: #d6a45a; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px rgba(214, 164, 90, 0.2);">My Wishlist</h3>
           <div class="row" id="wishlistItems">
             <!-- Wishlist items will be dynamically loaded here -->
-            <div class="col-12 text-center py-5">
-              <p style="color: #ffffff; font-size: 0.85rem; margin-bottom: 15px; font-weight: 500;">No items in your wishlist yet.</p>
-              <a href="/gallery" class="btn" style="background-color: #d6a45a; border: none; color: #000;">Browse Gallery</a>
-            </div>
           </div>
         </div>
 
@@ -301,10 +305,6 @@
           <h3 style="color: #d6a45a; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px rgba(214, 164, 90, 0.2);">My Cart</h3>
           <div class="row" id="cartItems">
             <!-- Cart items will be dynamically loaded here -->
-            <div class="col-12 text-center py-5">
-              <p style="color: #ffffff; font-size: 0.85rem; margin-bottom: 15px; font-weight: 500;">Your cart is empty.</p>
-              <a href="/menu" class="btn" style="background-color: #d6a45a; border: none; color: #000;">View Menu</a>
-            </div>
           </div>
         </div>
 
@@ -313,10 +313,6 @@
           <h3 style="color: #d6a45a; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px rgba(214, 164, 90, 0.2);">Registered Workshops</h3>
           <div class="row" id="workshopItems">
             <!-- Workshop items will be dynamically loaded here -->
-            <div class="col-12 text-center py-5">
-              <p style="color: #ffffff; font-size: 0.85rem; margin-bottom: 15px; font-weight: 500;">Discover your creative potential</p>
-              <a href="/workshops" class="btn" style="background-color: #d6a45a; border: none; color: #000;">Browse Workshops</a>
-            </div>
           </div>
         </div>
 
@@ -325,12 +321,6 @@
           <h3 style="color: #d6a45a; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px rgba(214, 164, 90, 0.2);">My Requests</h3>
           <div class="row" id="requestItems">
             <!-- Request items will be dynamically loaded here -->
-            <div class="col-12 text-center py-5">
-              <p style="color: #ffffff; font-size: 0.85rem; margin-bottom: 15px; font-weight: 500;">Start your creative journey with us</p>
-              <button type="button" class="btn" style="background-color: #d6a45a; border: none; color: #000;" data-bs-toggle="modal" data-bs-target="#newRequestModal">
-          Submit Request
-        </button>
-            </div>
           </div>
         </div>
       </div>
@@ -354,15 +344,6 @@
               <option value="">Select request type...</option>
               <option value="sell-art">Sell Art</option>
               <option value="conduct-workshop">Conduct Workshop</option>
-            </select>
-          </div>
-          
-          <div class="mb-3">
-            <label for="browseDropdown" class="form-label" style="color: #f5f2ee;">Browse</label>
-            <select class="form-select" id="browseDropdown" onchange="redirectToPage()" style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
-              <option value="">Go to...</option>
-              <option value="/gallery">Art Gallery</option>
-              <option value="/workshops">Workshops</option>
             </select>
           </div>
           
@@ -407,34 +388,6 @@ async function fetchWishlist() {
   }
 }
 
-async function addToWishlist(item) {
-  try {
-    const response = await fetch('/api/wishlist', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(item)
-    });
-    return await response.json();
-  } catch (error) {
-    console.error('Error adding to wishlist:', error);
-    return { success: false };
-  }
-}
-
-async function removeFromWishlist(id) {
-  try {
-    const response = await fetch(`/api/wishlist/${id}`, {
-      method: 'DELETE'
-    });
-    return await response.json();
-  } catch (error) {
-    console.error('Error removing from wishlist:', error);
-    return { success: false };
-  }
-}
-
 async function fetchCart() {
   try {
     const response = await fetch('/api/cart');
@@ -442,34 +395,6 @@ async function fetchCart() {
   } catch (error) {
     console.error('Error fetching cart:', error);
     return [];
-  }
-}
-
-async function addToCart(item) {
-  try {
-    const response = await fetch('/api/cart', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(item)
-    });
-    return await response.json();
-  } catch (error) {
-    console.error('Error adding to cart:', error);
-    return { success: false };
-  }
-}
-
-async function removeFromCart(id) {
-  try {
-    const response = await fetch(`/api/cart/${id}`, {
-      method: 'DELETE'
-    });
-    return await response.json();
-  } catch (error) {
-    console.error('Error removing from cart:', error);
-    return { success: false };
   }
 }
 
@@ -483,22 +408,6 @@ async function fetchWorkshops() {
   }
 }
 
-async function registerForWorkshop(workshop) {
-  try {
-    const response = await fetch('/api/workshops', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(workshop)
-    });
-    return await response.json();
-  } catch (error) {
-    console.error('Error registering for workshop:', error);
-    return { success: false };
-  }
-}
-
 async function fetchRequests() {
   try {
     const response = await fetch('/api/requests');
@@ -509,164 +418,6 @@ async function fetchRequests() {
   }
 }
 
-async function submitRequest(request) {
-  try {
-    const response = await fetch('/api/requests', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(request)
-    });
-    return await response.json();
-  } catch (error) {
-    console.error('Error submitting request:', error);
-    return { success: false };
-  }
-}
-
-function redirectToPage() {
-  const dropdown = document.getElementById('browseDropdown');
-  const selectedValue = dropdown.value;
-  
-  if (selectedValue) {
-    window.location.href = selectedValue;
-  }
-}
-
-document.addEventListener('DOMContentLoaded', async function() {
-  // Load dashboard data from API
-  const wishlist = await fetchWishlist();
-  const cart = await fetchCart();
-  const workshops = await fetchWorkshops();
-  const requests = await fetchRequests();
-
-  renderWishlist(wishlist);
-  renderCart(cart);
-  renderWorkshops(workshops);
-  renderRequests(requests);
-
-  // Handle request type change
-  const requestTypeSelect = document.getElementById('requestType');
-  if (requestTypeSelect) {
-    requestTypeSelect.addEventListener('change', function() {
-      const artDetails = document.getElementById('artDetails');
-      const workshopDetails = document.getElementById('workshopDetails');
-      
-      if (this.value === 'sell-art') {
-        artDetails.style.display = 'block';
-        workshopDetails.style.display = 'none';
-      } else if (this.value === 'conduct-workshop') {
-        artDetails.style.display = 'none';
-        workshopDetails.style.display = 'block';
-      } else {
-        artDetails.style.display = 'none';
-        workshopDetails.style.display = 'none';
-      }
-    });
-  }
-
-  // Handle form submission
-  const form = document.getElementById('requestForm');
-  if (form) {
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const requestType = document.getElementById('requestType').value;
-      const title = document.getElementById('requestTitle').value;
-      const description = document.getElementById('requestDescription').value;
-      
-      if (!requestType || !title || !description) {
-        alert('Please fill in all required fields');
-        return;
-      }
-      
-      const request = {
-        type: requestType,
-        title: title,
-        description: description,
-        status: 'pending',
-        createdAt: new Date().toISOString()
-      };
-      
-      const result = await submitRequest(request);
-      if (result.success) {
-        alert('Request submitted successfully!');
-        form.reset();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('newRequestModal'));
-        modal.hide();
-        
-        // Refresh requests list
-        const updatedRequests = await fetchRequests();
-        renderRequests(updatedRequests);
-      } else {
-        alert('Error submitting request. Please try again.');
-      }
-    });
-  }
-
-  // Handle submit button
-  const submitButton = document.getElementById('submitRequest');
-  if (submitButton) {
-    submitButton.addEventListener('click', async function() {
-      const requestType = document.getElementById('requestType').value;
-      const title = document.getElementById('requestTitle').value;
-      const description = document.getElementById('requestDescription').value;
-      
-      if (!requestType || !title || !description) {
-        alert('Please fill in all required fields');
-        return;
-      }
-      
-      const request = {
-        type: requestType,
-        title: title,
-        description: description,
-        status: 'pending',
-        createdAt: new Date().toISOString()
-      };
-      
-      const result = await submitRequest(request);
-      if (result.success) {
-        alert('Request submitted successfully!');
-        document.getElementById('requestForm').reset();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('newRequestModal'));
-        modal.hide();
-        
-        // Refresh requests list
-        const updatedRequests = await fetchRequests();
-        renderRequests(updatedRequests);
-      } else {
-        alert('Error submitting request. Please try again.');
-      }
-    });
-  }
-});
-
-function loadWishlist() {
-  // Load wishlist from localStorage
-  const wishlistItems = JSON.parse(localStorage.getItem('wishlist')) || [];
-  renderWishlist(wishlistItems);
-}
-
-function loadCart() {
-  // Load cart from localStorage
-  const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-  renderCart(cartItems);
-}
-
-function loadWorkshops() {
-  // Load workshop registrations from localStorage
-  const registrations = JSON.parse(localStorage.getItem('workshopRegistrations')) || [];
-  renderWorkshops(registrations);
-}
-
-function loadRequests() {
-  // Load requests from localStorage
-  const requests = JSON.parse(localStorage.getItem('requests')) || [];
-  renderRequests(requests);
-}
-
 function renderWishlist(items) {
   const container = document.getElementById('wishlistItems');
   
@@ -674,7 +425,7 @@ function renderWishlist(items) {
     container.innerHTML = `
       <div class="col-12 text-center py-5">
         <p style="color: #ffffff; font-size: 0.85rem; margin-bottom: 15px; font-weight: 500;">No items in your wishlist yet.</p>
-        <a href="/gallery" class="btn" style="background-color: #d6a45a; border: none; color: #000;">Browse Gallery</a>
+        <a href="/menu" class="btn" style="background-color: #d6a45a; border: none; color: #000;">Browse Menu</a>
       </div>
     `;
     return;
@@ -683,13 +434,12 @@ function renderWishlist(items) {
   container.innerHTML = items.map(item => `
     <div class="col-md-4 mb-4">
       <div class="card">
-        <img src="${item.image}" class="card-img-top" alt="${item.title}">
+        ${item.image ? `<img src="${item.image}" class="card-img-top" alt="${item.name}">` : `<div class="bg-secondary rounded-top" style="height: 200px; display: flex; align-items: center; justify-content: center;"><i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i></div>`}
         <div class="card-body">
-          <h5 class="card-title">${item.title}</h5>
-          <p class="card-text">by ${item.artist}</p>
-          <p class="card-text"><strong>${item.price}</strong></p>
-          <button class="btn" style="background-color: #d6a45a; border: none; color: #000;">Purchase</button>
-          <button class="btn btn-outline-danger btn-sm" onclick="removeFromWishlist(${item.id})">Remove</button>
+          <h5 class="card-title">${item.name}</h5>
+          <p class="card-text">Price: $${item.price}</p>
+          <button class="btn btn-sm" style="background-color: #d6a45a; border: none; color: #000;" onclick="moveToCart('${item.itemId}', '${item.name}', ${item.price})">Move to Cart</button>
+          <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeFromWishlist('${item.itemId}')">Remove</button>
         </div>
       </div>
     </div>
@@ -702,7 +452,7 @@ function renderCart(items) {
   if (items.length === 0) {
     container.innerHTML = `
       <div class="col-12 text-center py-5">
-        <p style="color: #ffffff; font-size: 0.85rem; margin-bottom: 15px; font-weight: 500;">Your cart is empty.</p>
+        <p style="color: #ffffff; font-size: 0.85rem; margin-weight: 500;">Your cart is empty.</p>
         <a href="/menu" class="btn" style="background-color: #d6a45a; border: none; color: #000;">View Menu</a>
       </div>
     `;
@@ -718,24 +468,24 @@ function renderCart(items) {
           <div class="card-body">
             <div class="row align-items-center">
               <div class="col-md-2">
-                <img src="${item.image}" class="img-fluid rounded" alt="${item.name}">
+                ${item.image ? `<img src="${item.image}" class="img-fluid rounded" alt="${item.name}">` : `<div class="bg-secondary rounded" style="width: 100%; height: 80px;"></div>`}
               </div>
               <div class="col-md-4">
                 <h5>${item.name}</h5>
-                <p>${item.price} each</p>
+                <p>$${item.price} each</p>
               </div>
               <div class="col-md-3">
                 <div class="input-group">
-                  <button class="btn btn-outline-secondary" onclick="updateQuantity(${item.id}, -1)">-</button>
+                  <button class="btn btn-outline-secondary" onclick="updateQuantity('${item.itemId}', -1)">-</button>
                   <input type="number" class="form-control text-center" value="${item.quantity}" min="1" readonly>
-                  <button class="btn btn-outline-secondary" onclick="updateQuantity(${item.id}, 1)">+</button>
+                  <button class="btn btn-outline-secondary" onclick="updateQuantity('${item.itemId}', 1)">+</button>
                 </div>
               </div>
               <div class="col-md-2">
-                <h5>${(item.price * item.quantity).toFixed(2)}</h5>
+                <h5>$${(item.price * item.quantity).toFixed(2)}</h5>
               </div>
               <div class="col-md-1">
-                <button class="btn btn-outline-danger" onclick="removeFromCart(${item.id})">
+                <button class="btn btn-outline-danger" onclick="removeFromCart('${item.itemId}')">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
@@ -752,10 +502,10 @@ function renderCart(items) {
         <div class="card-body">
           <div class="row">
             <div class="col-md-8">
-              <h4 style="color: #d6a45a; font-weight: bold;">Total: ${total.toFixed(2)}</h4>
+              <h4 style="color: #d6a45a; font-weight: bold;">Total: $${total.toFixed(2)}</h4>
             </div>
             <div class="col-md-4 text-end">
-              <button class="btn" style="background-color: #d6a45a; border: none; color: #000;">Proceed to Checkout</button>
+              <button class="btn" id="checkoutBtn" style="background-color: #d6a45a; border: none; color: #000;" onclick="proceedToCheckout()">Proceed to Checkout</button>
             </div>
           </div>
         </div>
@@ -833,91 +583,244 @@ function renderRequests(requests) {
   `).join('');
 }
 
-function removeFromWishlist(itemId) {
-  // Get current wishlist
-  let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-  
-  // Remove item
-  wishlist = wishlist.filter(item => item.id !== itemId);
-  
-  // Save to localStorage
-  localStorage.setItem('wishlist', JSON.stringify(wishlist));
-  
-  // Reload display
-  loadWishlist();
+async function removeFromWishlist(itemId) {
+  try {
+    const response = await fetch(`/api/wishlist/${itemId}`, {
+      method: 'DELETE'
+    });
+    const result = await response.json();
+    if (result.success) {
+      // Refresh wishlist
+      const wishlist = await fetchWishlist();
+      renderWishlist(wishlist);
+    }
+  } catch (error) {
+    console.error('Error removing from wishlist:', error);
+  }
 }
 
-function removeFromCart(itemId) {
-  // Get current cart
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-  
-  // Remove item
-  cart = cart.filter(item => item.id !== itemId);
-  
-  // Save to localStorage
-  localStorage.setItem('cart', JSON.stringify(cart));
-  
-  // Reload display
-  loadCart();
+async function removeFromCart(itemId) {
+  try {
+    const response = await fetch(`/api/cart/${itemId}`, {
+      method: 'DELETE'
+    });
+    const result = await response.json();
+    if (result.success) {
+      // Refresh cart
+      const cart = await fetchCart();
+      renderCart(cart);
+    }
+  } catch (error) {
+    console.error('Error removing from cart:', error);
+  }
 }
 
-function updateQuantity(itemId, change) {
-  // Get current cart
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-  
-  // Find and update item
-  const item = cart.find(item => item.id === itemId);
-  if (item) {
-    item.quantity += change;
-    if (item.quantity <= 0) {
-      removeFromCart(itemId);
+async function moveToCart(itemId, name, price) {
+  try {
+    // First add to cart
+    const response = await fetch('/api/cart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ itemId, name, price, quantity: 1 })
+    });
+    const result = await response.json();
+    
+    if (result.success) {
+      // Then remove from wishlist
+      await removeFromWishlist(itemId);
+      // Refresh cart
+      const cart = await fetchCart();
+      renderCart(cart);
+    } else {
+      console.error('Failed to add to cart:', result.message);
+    }
+  } catch (error) {
+    console.error('Error moving to cart:', error);
+  }
+}
+
+async function updateQuantity(itemId, change) {
+  try {
+    console.log('Updating quantity for item:', itemId, 'change:', change);
+    
+    // Get current cart to find the item
+    const cart = await fetchCart();
+    const item = cart.find(item => item.itemId === itemId);
+    
+    if (!item) {
+      console.error('Item not found in cart:', itemId);
       return;
     }
     
-    // Save to localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
+    const newQuantity = item.quantity + change;
+    console.log('New quantity:', newQuantity);
     
-    // Reload display
-    loadCart();
+    if (newQuantity <= 0) {
+      // Remove item if quantity is 0 or less
+      await removeFromCart(itemId);
+    } else {
+      // Update quantity
+      const response = await fetch(`/api/cart/${itemId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ quantity: newQuantity })
+      });
+      
+      const result = await response.json();
+      console.log('Update result:', result);
+      
+      if (result.success) {
+        // Refresh cart
+        const updatedCart = await fetchCart();
+        renderCart(updatedCart);
+      } else {
+        console.error('Failed to update quantity:', result.message);
+      }
+    }
+  } catch (error) {
+    console.error('Error updating quantity:', error);
   }
 }
 
-function submitRequest() {
-  const type = document.getElementById('requestType').value;
-  const title = document.getElementById('requestTitle').value;
-  const description = document.getElementById('requestDescription').value;
-  
-  const requestData = {
-    id: Date.now(), // Simple ID generation
-    type,
-    title,
-    description,
-    submittedDate: new Date().toISOString().split('T')[0],
-    status: 'pending'
-  };
+document.addEventListener('DOMContentLoaded', async function() {
+  // Load dashboard data from API
+  const wishlist = await fetchWishlist();
+  const cart = await fetchCart();
+  const workshops = await fetchWorkshops();
+  const requests = await fetchRequests();
 
-  if (type === 'sell-art') {
-    requestData.price = document.getElementById('artPrice').value;
-  } else if (type === 'conduct-workshop') {
-    requestData.preferredDate = document.getElementById('workshopDate').value;
+  renderWishlist(wishlist);
+  renderCart(cart);
+  renderWorkshops(workshops);
+  renderRequests(requests);
+
+  // Handle request type change
+  const requestTypeSelect = document.getElementById('requestType');
+  if (requestTypeSelect) {
+    requestTypeSelect.addEventListener('change', function() {
+      const artDetails = document.getElementById('artDetails');
+      const workshopDetails = document.getElementById('workshopDetails');
+      
+      if (this.value === 'sell-art') {
+        artDetails.style.display = 'block';
+        workshopDetails.style.display = 'none';
+      } else if (this.value === 'conduct-workshop') {
+        artDetails.style.display = 'none';
+        workshopDetails.style.display = 'block';
+      } else {
+        artDetails.style.display = 'none';
+        workshopDetails.style.display = 'none';
+      }
+    });
   }
 
-  // Get current requests from localStorage
-  let requests = JSON.parse(localStorage.getItem('requests')) || [];
-  
-  // Add new request
-  requests.push(requestData);
-  
-  // Save to localStorage
-  localStorage.setItem('requests', JSON.stringify(requests));
-  
-  // Close modal and reset form
-  const modal = bootstrap.Modal.getInstance(document.getElementById('newRequestModal'));
-  modal.hide();
-  document.getElementById('requestForm').reset();
-  
-  // Reload requests
-  loadRequests();
+  // Handle form submission
+  const form = document.getElementById('requestForm');
+  if (form) {
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const requestType = document.getElementById('requestType').value;
+      const title = document.getElementById('requestTitle').value;
+      const description = document.getElementById('requestDescription').value;
+      
+      if (!requestType || !title || !description) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      const request = {
+        type: requestType,
+        title: title,
+        description: description,
+        status: 'pending',
+        submittedDate: new Date().toISOString().split('T')[0]
+      };
+      
+      if (requestType === 'sell-art') {
+        request.price = document.getElementById('artPrice').value;
+      } else if (requestType === 'conduct-workshop') {
+        request.preferredDate = document.getElementById('workshopDate').value;
+      }
+
+      const result = await submitRequest(request);
+      if (result.success) {
+        alert('Request submitted successfully!');
+        form.reset();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('newRequestModal'));
+        modal.hide();
+        
+        // Refresh requests list
+        const updatedRequests = await fetchRequests();
+        renderRequests(updatedRequests);
+      } else {
+        alert('Error submitting request. Please try again.');
+      }
+    });
+  }
+
+  // Handle submit button
+  const submitButton = document.getElementById('submitRequest');
+  if (submitButton) {
+    submitButton.addEventListener('click', async function() {
+      const requestType = document.getElementById('requestType').value;
+      const title = document.getElementById('requestTitle').value;
+      const description = document.getElementById('requestDescription').value;
+      
+      if (!requestType || !title || !description) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      const request = {
+        type: requestType,
+        title: title,
+        description: description,
+        status: 'pending',
+        submittedDate: new Date().toISOString().split('T')[0]
+      };
+      
+      if (requestType === 'sell-art') {
+        request.price = document.getElementById('artPrice').value;
+      } else if (requestType === 'conduct-workshop') {
+        request.preferredDate = document.getElementById('workshopDate').value;
+      }
+
+      const result = await submitRequest(request);
+      if (result.success) {
+        alert('Request submitted successfully!');
+        document.getElementById('requestForm').reset();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('newRequestModal'));
+        modal.hide();
+        
+        // Refresh requests list
+        const updatedRequests = await fetchRequests();
+        renderRequests(updatedRequests);
+      } else {
+        alert('Error submitting request. Please try again.');
+      }
+    });
+  }
+});
+
+async function submitRequest(request) {
+  try {
+    const response = await fetch('/api/requests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error submitting request:', error);
+    return { success: false };
+  }
 }
 </script>
 
