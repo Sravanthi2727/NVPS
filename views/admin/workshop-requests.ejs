@@ -401,6 +401,141 @@
                 display: inline-block !important;
             }
         }
+
+        /* Workshop Creation Steps */
+        .workshop-creation-steps {
+            margin-bottom: 2rem !important;
+        }
+
+        .step-item {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            position: relative !important;
+            flex: 1 !important;
+        }
+
+        .step-circle {
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50% !important;
+            background: #333 !important;
+            color: #ccc !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.5rem !important;
+            transition: all 0.3s ease !important;
+            border: 2px solid #333 !important;
+        }
+
+        .step-item.active .step-circle {
+            background: #d6a45a !important;
+            color: #000 !important;
+            border-color: #d6a45a !important;
+        }
+
+        .step-item.completed .step-circle {
+            background: #27ae60 !important;
+            color: #fff !important;
+            border-color: #27ae60 !important;
+        }
+
+        .step-label {
+            font-size: 0.85rem !important;
+            color: #ccc !important;
+            text-align: center !important;
+            transition: color 0.3s ease !important;
+        }
+
+        .step-item.active .step-label {
+            color: #d6a45a !important;
+            font-weight: 600 !important;
+        }
+
+        .step-item.completed .step-label {
+            color: #27ae60 !important;
+        }
+
+        .step-line {
+            height: 2px !important;
+            background: #333 !important;
+            flex: 1 !important;
+            margin: 0 1rem !important;
+            margin-top: 20px !important;
+            transition: background 0.3s ease !important;
+        }
+
+        .step-line.completed {
+            background: #27ae60 !important;
+        }
+
+        /* Workshop Steps */
+        .workshop-step {
+            display: none !important;
+        }
+
+        .workshop-step.active {
+            display: block !important;
+            animation: fadeIn 0.3s ease-in-out !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Form Enhancements */
+        .form-control:focus, .form-select:focus {
+            border-color: #d6a45a !important;
+            box-shadow: 0 0 0 0.2rem rgba(214, 164, 90, 0.25) !important;
+        }
+
+        .form-check-input:checked {
+            background-color: #d6a45a !important;
+            border-color: #d6a45a !important;
+        }
+
+        .form-check-input:focus {
+            border-color: #d6a45a !important;
+            box-shadow: 0 0 0 0.2rem rgba(214, 164, 90, 0.25) !important;
+        }
+
+        /* Card Enhancements */
+        .card {
+            transition: all 0.3s ease !important;
+        }
+
+        .card:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 15px rgba(214, 164, 90, 0.2) !important;
+        }
+
+        /* Mobile Responsiveness for Steps */
+        @media (max-width: 768px) {
+            .workshop-creation-steps .d-flex {
+                flex-direction: column !important;
+            }
+            
+            .step-line {
+                width: 2px !important;
+                height: 30px !important;
+                margin: 0.5rem 0 !important;
+                margin-left: 20px !important;
+            }
+            
+            .step-item {
+                flex-direction: row !important;
+                justify-content: flex-start !important;
+                width: 100% !important;
+            }
+            
+            .step-circle {
+                margin-right: 1rem !important;
+                margin-bottom: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -653,41 +788,446 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Progress Steps -->
+                    <div class="workshop-creation-steps mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="step-item active" data-step="1">
+                                <div class="step-circle">1</div>
+                                <div class="step-label">Basic Info</div>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step-item" data-step="2">
+                                <div class="step-circle">2</div>
+                                <div class="step-label">Schedule</div>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step-item" data-step="3">
+                                <div class="step-circle">3</div>
+                                <div class="step-label">Details</div>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step-item" data-step="4">
+                                <div class="step-circle">4</div>
+                                <div class="step-label">Resources</div>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step-item" data-step="5">
+                                <div class="step-circle">5</div>
+                                <div class="step-label">Settings</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <form id="createWorkshopForm">
-                        <div class="row g-4">
-                            <!-- Basic Information -->
-                            <div class="col-12">
-                                <h6 class="text-warning border-bottom border-warning pb-2 mb-3">
-                                    <i class="fas fa-info-circle me-2"></i>Basic Information
-                                </h6>
+                        <!-- Step 1: Basic Information -->
+                        <div class="workshop-step active" id="step1">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <h6 class="text-warning border-bottom border-warning pb-2 mb-3">
+                                        <i class="fas fa-info-circle me-2"></i>Basic Information
+                                    </h6>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="workshopTitle" class="form-label text-warning">Workshop Title *</label>
+                                    <input type="text" class="form-control bg-dark text-light border-secondary" id="workshopTitle" required>
+                                    <div class="form-text text-muted">e.g., "Coffee Brewing Masterclass"</div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="workshopCategory" class="form-label text-warning">Category *</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="workshopCategory" required>
+                                        <option value="">Select Category</option>
+                                        <option value="brewing">Coffee Brewing</option>
+                                        <option value="latte-art">Latte Art</option>
+                                        <option value="roasting">Coffee Roasting</option>
+                                        <option value="tasting">Coffee Tasting</option>
+                                        <option value="barista">Barista Skills</option>
+                                        <option value="art">Art & Creativity</option>
+                                        <option value="business">Coffee Business</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label for="workshopDescription" class="form-label text-warning">Description *</label>
+                                    <textarea class="form-control bg-dark text-light border-secondary" id="workshopDescription" rows="4" required placeholder="Provide a detailed description of what participants will learn and experience in this workshop..."></textarea>
+                                    <div class="form-text text-muted">Detailed description of what participants will learn</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="workshopObjectives" class="form-label text-warning">Learning Objectives</label>
+                                    <textarea class="form-control bg-dark text-light border-secondary" id="workshopObjectives" rows="3" placeholder="• Objective 1&#10;• Objective 2&#10;• Objective 3"></textarea>
+                                    <div class="form-text text-muted">What will participants achieve?</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="workshopPrerequisites" class="form-label text-warning">Prerequisites</label>
+                                    <textarea class="form-control bg-dark text-light border-secondary" id="workshopPrerequisites" rows="3" placeholder="List any required knowledge or experience..."></textarea>
+                                    <div class="form-text text-muted">Required knowledge or experience</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="workshopLocation" class="form-label text-warning">Location *</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="workshopLocation" required>
+                                        <option value="">Select Location</option>
+                                        <option value="main-cafe">Main Café</option>
+                                        <option value="workshop-room">Workshop Room</option>
+                                        <option value="roastery">Roastery</option>
+                                        <option value="outdoor-space">Outdoor Space</option>
+                                        <option value="online">Online/Virtual</option>
+                                        <option value="offsite">Off-site Location</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="workshopLanguage" class="form-label text-warning">Language</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="workshopLanguage">
+                                        <option value="english">English</option>
+                                        <option value="spanish">Spanish</option>
+                                        <option value="french">French</option>
+                                        <option value="bilingual">Bilingual</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
                             </div>
-                            
-                            <div class="col-md-6">
-                                <label for="workshopTitle" class="form-label text-warning">Workshop Title *</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="workshopTitle" required>
-                                <div class="form-text text-muted">e.g., "Coffee Brewing Masterclass"</div>
+                        </div>
+
+                        <!-- Step 2: Schedule & Duration -->
+                        <div class="workshop-step" id="step2">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <h6 class="text-warning border-bottom border-warning pb-2 mb-3">
+                                        <i class="fas fa-clock me-2"></i>Schedule & Duration
+                                    </h6>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="workshopDate" class="form-label text-warning">Date *</label>
+                                    <input type="date" class="form-control bg-dark text-light border-secondary" id="workshopDate" required>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="workshopStartTime" class="form-label text-warning">Start Time *</label>
+                                    <input type="time" class="form-control bg-dark text-light border-secondary" id="workshopStartTime" required>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="workshopEndTime" class="form-label text-warning">End Time *</label>
+                                    <input type="time" class="form-control bg-dark text-light border-secondary" id="workshopEndTime" required>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="workshopDuration" class="form-label text-warning">Duration (hours)</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="workshopDuration" step="0.5" min="0.5" max="8" readonly>
+                                    <div class="form-text text-muted">Calculated automatically from start/end time</div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="workshopFrequency" class="form-label text-warning">Frequency</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="workshopFrequency">
+                                        <option value="one-time">One-time Event</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="bi-weekly">Bi-weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="custom">Custom Schedule</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12" id="recurringOptions" style="display: none;">
+                                    <div class="card bg-secondary border-warning">
+                                        <div class="card-body">
+                                            <h6 class="text-warning">Recurring Workshop Settings</h6>
+                                            <div class="row g-3">
+                                                <div class="col-md-4">
+                                                    <label for="recurringEndDate" class="form-label">End Date</label>
+                                                    <input type="date" class="form-control bg-dark text-light border-secondary" id="recurringEndDate">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="maxOccurrences" class="form-label">Max Occurrences</label>
+                                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="maxOccurrences" min="1" max="52">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="skipDates" class="form-label">Skip Dates</label>
+                                                    <input type="text" class="form-control bg-dark text-light border-secondary" id="skipDates" placeholder="YYYY-MM-DD, YYYY-MM-DD">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="setupTime" class="form-label text-warning">Setup Time (minutes)</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="setupTime" min="0" max="120" value="30">
+                                    <div class="form-text text-muted">Time needed before workshop starts</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="cleanupTime" class="form-label text-warning">Cleanup Time (minutes)</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="cleanupTime" min="0" max="120" value="30">
+                                    <div class="form-text text-muted">Time needed after workshop ends</div>
+                                </div>
                             </div>
-                            
-                            <div class="col-md-6">
-                                <label for="workshopCategory" class="form-label text-warning">Category *</label>
-                                <select class="form-select bg-dark text-light border-secondary" id="workshopCategory" required>
-                                    <option value="">Select Category</option>
-                                    <option value="brewing">Coffee Brewing</option>
-                                    <option value="latte-art">Latte Art</option>
-                                    <option value="roasting">Coffee Roasting</option>
-                                    <option value="tasting">Coffee Tasting</option>
-                                    <option value="barista">Barista Skills</option>
-                                    <option value="art">Art & Creativity</option>
-                                    <option value="business">Coffee Business</option>
-                                    <option value="other">Other</option>
-                                </select>
+                        </div>
+
+                        <!-- Step 3: Capacity & Pricing -->
+                        <div class="workshop-step" id="step3">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <h6 class="text-warning border-bottom border-warning pb-2 mb-3">
+                                        <i class="fas fa-users me-2"></i>Capacity & Pricing
+                                    </h6>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="maxParticipants" class="form-label text-warning">Max Participants *</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="maxParticipants" min="1" max="50" required>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="minParticipants" class="form-label text-warning">Min Participants</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="minParticipants" min="1">
+                                    <div class="form-text text-muted">Minimum to run the workshop</div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="workshopPrice" class="form-label text-warning">Price per Person ($) *</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="workshopPrice" step="0.01" min="0" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="earlyBirdPrice" class="form-label text-warning">Early Bird Price ($)</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="earlyBirdPrice" step="0.01" min="0">
+                                    <div class="form-text text-muted">Discounted price for early registration</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="earlyBirdDeadline" class="form-label text-warning">Early Bird Deadline</label>
+                                    <input type="date" class="form-control bg-dark text-light border-secondary" id="earlyBirdDeadline">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="groupDiscount" class="form-label text-warning">Group Discount (%)</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="groupDiscount" min="0" max="50" step="5">
+                                    <div class="form-text text-muted">Discount for groups of 3 or more</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="memberDiscount" class="form-label text-warning">Member Discount (%)</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="memberDiscount" min="0" max="30" step="5">
+                                    <div class="form-text text-muted">Discount for loyalty members</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="allowWaitlist">
+                                        <label class="form-check-label text-light" for="allowWaitlist">
+                                            Allow Waitlist when Full
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <div class="col-12">
-                                <label for="workshopDescription" class="form-label text-warning">Description *</label>
-                                <textarea class="form-control bg-dark text-light border-secondary" id="workshopDescription" rows="3" required></textarea>
-                                <div class="form-text text-muted">Detailed description of what participants will learn</div>
+                        </div>
+
+                        <!-- Step 4: Instructor & Resources -->
+                        <div class="workshop-step" id="step4">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <h6 class="text-warning border-bottom border-warning pb-2 mb-3">
+                                        <i class="fas fa-chalkboard-teacher me-2"></i>Instructor & Resources
+                                    </h6>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="instructorName" class="form-label text-warning">Instructor Name *</label>
+                                    <input type="text" class="form-control bg-dark text-light border-secondary" id="instructorName" required>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="instructorEmail" class="form-label text-warning">Instructor Email</label>
+                                    <input type="email" class="form-control bg-dark text-light border-secondary" id="instructorEmail">
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label for="instructorBio" class="form-label text-warning">Instructor Bio</label>
+                                    <textarea class="form-control bg-dark text-light border-secondary" id="instructorBio" rows="3" placeholder="Brief biography and qualifications of the instructor..."></textarea>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="skillLevel" class="form-label text-warning">Skill Level Required</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="skillLevel">
+                                        <option value="beginner">Beginner</option>
+                                        <option value="intermediate">Intermediate</option>
+                                        <option value="advanced">Advanced</option>
+                                        <option value="all-levels">All Levels</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="ageRestriction" class="form-label text-warning">Age Restriction</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="ageRestriction">
+                                        <option value="none">No Restriction</option>
+                                        <option value="18+">18+ Only</option>
+                                        <option value="16+">16+ Only</option>
+                                        <option value="family">Family Friendly</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label for="materialsProvided" class="form-label text-warning">Materials Provided</label>
+                                    <textarea class="form-control bg-dark text-light border-secondary" id="materialsProvided" rows="3" placeholder="• Coffee beans and equipment&#10;• Handout materials&#10;• Take-home samples"></textarea>
+                                    <div class="form-text text-muted">List what materials/equipment will be provided</div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label for="materialsToBring" class="form-label text-warning">What Participants Should Bring</label>
+                                    <textarea class="form-control bg-dark text-light border-secondary" id="materialsToBring" rows="2" placeholder="• Notebook and pen&#10;• Comfortable clothing&#10;• Apron (optional)"></textarea>
+                                    <div class="form-text text-muted">List what participants need to bring (if anything)</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <h6 class="text-warning mt-3 mb-2">Workshop Features</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="includeRefreshments">
+                                                <label class="form-check-label text-light" for="includeRefreshments">
+                                                    Include Refreshments
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="certificateProvided">
+                                                <label class="form-check-label text-light" for="certificateProvided">
+                                                    Certificate Provided
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="takeHomeKit">
+                                                <label class="form-check-label text-light" for="takeHomeKit">
+                                                    Take-home Kit Included
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="photographyAllowed">
+                                                <label class="form-check-label text-light" for="photographyAllowed">
+                                                    Photography Allowed
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="recordingAllowed">
+                                                <label class="form-check-label text-light" for="recordingAllowed">
+                                                    Recording Allowed
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="wheelchairAccessible">
+                                                <label class="form-check-label text-light" for="wheelchairAccessible">
+                                                    Wheelchair Accessible
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+
+                        <!-- Step 5: Registration Settings -->
+                        <div class="workshop-step" id="step5">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <h6 class="text-warning border-bottom border-warning pb-2 mb-3">
+                                        <i class="fas fa-clipboard-list me-2"></i>Registration & Policies
+                                    </h6>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="registrationDeadline" class="form-label text-warning">Registration Deadline</label>
+                                    <input type="date" class="form-control bg-dark text-light border-secondary" id="registrationDeadline">
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="cancellationPolicy" class="form-label text-warning">Cancellation Policy</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="cancellationPolicy">
+                                        <option value="24h">24 hours notice</option>
+                                        <option value="48h">48 hours notice</option>
+                                        <option value="1week">1 week notice</option>
+                                        <option value="no-refund">No refunds</option>
+                                        <option value="custom">Custom policy</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="workshopStatus" class="form-label text-warning">Initial Status</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="workshopStatus">
+                                        <option value="draft">Draft</option>
+                                        <option value="published">Published</option>
+                                        <option value="full">Full</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12" id="customPolicyText" style="display: none;">
+                                    <label for="customCancellationPolicy" class="form-label text-warning">Custom Cancellation Policy</label>
+                                    <textarea class="form-control bg-dark text-light border-secondary" id="customCancellationPolicy" rows="3" placeholder="Describe your custom cancellation and refund policy..."></textarea>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="specialNotes" class="form-label text-warning">Special Notes/Requirements</label>
+                                    <textarea class="form-control bg-dark text-light border-secondary" id="specialNotes" rows="3" placeholder="Any special requirements, health considerations, or additional information participants should know..."></textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="contactPerson" class="form-label text-warning">Contact Person</label>
+                                    <input type="text" class="form-control bg-dark text-light border-secondary" id="contactPerson" placeholder="Name for workshop inquiries">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="contactPhone" class="form-label text-warning">Contact Phone</label>
+                                    <input type="tel" class="form-control bg-dark text-light border-secondary" id="contactPhone" placeholder="+1 (555) 123-4567">
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="sendConfirmationEmail" checked>
+                                        <label class="form-check-label text-light" for="sendConfirmationEmail">
+                                            Send confirmation email to participants
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="sendReminderEmail" checked>
+                                        <label class="form-check-label text-light" for="sendReminderEmail">
+                                            Send reminder email 24 hours before workshop
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-warning" id="prevStepBtn" onclick="previousStep()" style="display: none;">
+                        <i class="fas fa-arrow-left me-2"></i>Previous
+                    </button>
+                    <button type="button" class="btn btn-warning" id="nextStepBtn" onclick="nextStep()">
+                        Next<i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="saveDraftBtn" onclick="saveWorkshopDraft()" style="display: none;">
+                        <i class="fas fa-save me-2"></i>Save Draft
+                    </button>
+                    <button type="button" class="btn btn-primary" id="createBtn" onclick="createWorkshop()" style="display: none;">
+                        <i class="fas fa-plus me-2"></i>Create Workshop
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
                             
                             <!-- Schedule & Duration -->
                             <div class="col-12 mt-4">
@@ -932,6 +1472,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+
         function toggleSidebar() {
             document.getElementById('adminSidebar').classList.toggle('show');
         }
@@ -982,6 +1525,144 @@
             new bootstrap.Modal(document.getElementById('workshopModal')).show();
         }
         
+        // Step Navigation Functions
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (currentStep < totalSteps) {
+                    // Mark current step as completed
+                    document.querySelector(`[data-step="${currentStep}"]`).classList.add('completed');
+                    document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+                    
+                    // Update step lines
+                    const stepLines = document.querySelectorAll('.step-line');
+                    if (stepLines[currentStep - 1]) {
+                        stepLines[currentStep - 1].classList.add('completed');
+                    }
+                    
+                    // Hide current step
+                    document.getElementById(`step${currentStep}`).classList.remove('active');
+                    
+                    // Move to next step
+                    currentStep++;
+                    
+                    // Show next step
+                    document.getElementById(`step${currentStep}`).classList.add('active');
+                    document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+                    
+                    updateStepButtons();
+                }
+            }
+        }
+        
+        function previousStep() {
+            if (currentStep > 1) {
+                // Remove completed status from current step
+                document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+                
+                // Hide current step
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                
+                // Move to previous step
+                currentStep--;
+                
+                // Show previous step
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+                document.querySelector(`[data-step="${currentStep}"]`).classList.remove('completed');
+                
+                // Update step lines
+                const stepLines = document.querySelectorAll('.step-line');
+                if (stepLines[currentStep - 1]) {
+                    stepLines[currentStep - 1].classList.remove('completed');
+                }
+                
+                updateStepButtons();
+            }
+        }
+        
+        function updateStepButtons() {
+            const prevBtn = document.getElementById('prevStepBtn');
+            const nextBtn = document.getElementById('nextStepBtn');
+            const saveDraftBtn = document.getElementById('saveDraftBtn');
+            const createBtn = document.getElementById('createBtn');
+            
+            // Show/hide previous button
+            prevBtn.style.display = currentStep > 1 ? 'inline-block' : 'none';
+            
+            // Show/hide next button
+            nextBtn.style.display = currentStep < totalSteps ? 'inline-block' : 'none';
+            
+            // Show save draft and create buttons on last step
+            saveDraftBtn.style.display = currentStep === totalSteps ? 'inline-block' : 'none';
+            createBtn.style.display = currentStep === totalSteps ? 'inline-block' : 'none';
+        }
+        
+        function validateCurrentStep() {
+            const currentStepElement = document.getElementById(`step${currentStep}`);
+            const requiredFields = currentStepElement.querySelectorAll('[required]');
+            
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    field.focus();
+                    field.classList.add('is-invalid');
+                    
+                    // Show error message
+                    showStepError(`Please fill in all required fields in this step.`);
+                    return false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            }
+            
+            // Additional validation for specific steps
+            if (currentStep === 2) {
+                return validateScheduleStep();
+            }
+            
+            return true;
+        }
+        
+        function validateScheduleStep() {
+            const startTime = document.getElementById('workshopStartTime').value;
+            const endTime = document.getElementById('workshopEndTime').value;
+            
+            if (startTime && endTime) {
+                const start = new Date(`2000-01-01T${startTime}`);
+                const end = new Date(`2000-01-01T${endTime}`);
+                
+                if (end <= start) {
+                    showStepError('End time must be after start time.');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        function showStepError(message) {
+            // Remove existing error alerts
+            const existingAlert = document.querySelector('.step-error-alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create new error alert
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger step-error-alert mt-3';
+            alert.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${message}`;
+            
+            // Insert at the top of current step
+            const currentStepElement = document.getElementById(`step${currentStep}`);
+            currentStepElement.insertBefore(alert, currentStepElement.firstChild);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+        
         // Workshop Creation Functions
         function calculateDuration() {
             const startTime = document.getElementById('workshopStartTime').value;
@@ -999,68 +1680,264 @@
             }
         }
         
-        // Add event listeners for time calculation
+        // Add event listeners for enhanced functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Time calculation
             document.getElementById('workshopStartTime').addEventListener('change', calculateDuration);
             document.getElementById('workshopEndTime').addEventListener('change', calculateDuration);
+            
+            // Frequency change handler
+            document.getElementById('workshopFrequency').addEventListener('change', function() {
+                const recurringOptions = document.getElementById('recurringOptions');
+                if (this.value !== 'one-time') {
+                    recurringOptions.style.display = 'block';
+                } else {
+                    recurringOptions.style.display = 'none';
+                }
+            });
+            
+            // Cancellation policy change handler
+            document.getElementById('cancellationPolicy').addEventListener('change', function() {
+                const customPolicyText = document.getElementById('customPolicyText');
+                if (this.value === 'custom') {
+                    customPolicyText.style.display = 'block';
+                } else {
+                    customPolicyText.style.display = 'none';
+                }
+            });
+            
+            // Auto-set registration deadline based on workshop date
+            document.getElementById('workshopDate').addEventListener('change', function() {
+                const workshopDate = new Date(this.value);
+                const registrationDeadline = new Date(workshopDate);
+                registrationDeadline.setDate(registrationDeadline.getDate() - 3); // 3 days before
+                
+                document.getElementById('registrationDeadline').value = registrationDeadline.toISOString().split('T')[0];
+            });
+            
+            // Auto-set early bird deadline
+            document.getElementById('workshopDate').addEventListener('change', function() {
+                const workshopDate = new Date(this.value);
+                const earlyBirdDeadline = new Date(workshopDate);
+                earlyBirdDeadline.setDate(earlyBirdDeadline.getDate() - 7); // 1 week before
+                
+                document.getElementById('earlyBirdDeadline').value = earlyBirdDeadline.toISOString().split('T')[0];
+            });
+            
+            // Form validation styling
+            const form = document.getElementById('createWorkshopForm');
+            form.addEventListener('input', function(e) {
+                if (e.target.hasAttribute('required')) {
+                    if (e.target.value.trim()) {
+                        e.target.classList.remove('is-invalid');
+                        e.target.classList.add('is-valid');
+                    } else {
+                        e.target.classList.remove('is-valid');
+                    }
+                }
+            });
         });
         
         function saveWorkshopDraft() {
             const formData = collectWorkshopFormData();
             formData.status = 'draft';
             
-            // Here you would send the data to your backend
-            console.log('Saving workshop draft:', formData);
-            
-            // Show success message
-            alert('Workshop saved as draft successfully!');
-            
-            // Close modal
-            bootstrap.Modal.getInstance(document.getElementById('createWorkshopModal')).hide();
-            
-            // Reset form
-            document.getElementById('createWorkshopForm').reset();
+            // Send data to backend
+            fetch('/admin/workshops/draft', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessMessage('Workshop saved as draft successfully!');
+                    setTimeout(() => {
+                        bootstrap.Modal.getInstance(document.getElementById('createWorkshopModal')).hide();
+                        resetWorkshopForm();
+                    }, 1500);
+                } else {
+                    showErrorMessage(data.message || 'Failed to save workshop draft');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving workshop draft:', error);
+                showErrorMessage('Failed to save workshop draft');
+            });
         }
         
         function createWorkshop() {
-            const form = document.getElementById('createWorkshopForm');
-            
-            if (!form.checkValidity()) {
-                form.reportValidity();
+            if (!validateAllSteps()) {
                 return;
             }
             
             const formData = collectWorkshopFormData();
             
-            // Here you would send the data to your backend
-            console.log('Creating workshop:', formData);
+            // Send data to backend
+            fetch('/admin/workshops/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessMessage('Workshop created successfully!');
+                    setTimeout(() => {
+                        bootstrap.Modal.getInstance(document.getElementById('createWorkshopModal')).hide();
+                        resetWorkshopForm();
+                        // Refresh the page to show new workshop
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showErrorMessage(data.message || 'Failed to create workshop');
+                }
+            })
+            .catch(error => {
+                console.error('Error creating workshop:', error);
+                showErrorMessage('Failed to create workshop');
+            });
+        }
+        
+        function validateAllSteps() {
+            // Validate all required fields across all steps
+            const form = document.getElementById('createWorkshopForm');
+            const requiredFields = form.querySelectorAll('[required]');
             
-            // Show success message
-            alert('Workshop created successfully!');
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    // Find which step this field belongs to and navigate there
+                    const stepElement = field.closest('.workshop-step');
+                    if (stepElement) {
+                        const stepNumber = parseInt(stepElement.id.replace('step', ''));
+                        navigateToStep(stepNumber);
+                        field.focus();
+                        showStepError(`Please fill in all required fields.`);
+                        return false;
+                    }
+                }
+            }
             
-            // Close modal
-            bootstrap.Modal.getInstance(document.getElementById('createWorkshopModal')).hide();
+            return true;
+        }
+        
+        function navigateToStep(stepNumber) {
+            // Hide current step
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
             
+            // Show target step
+            currentStep = stepNumber;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+            
+            updateStepButtons();
+        }
+        
+        function showSuccessMessage(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px;';
+            alert.innerHTML = `<i class="fas fa-check-circle me-2"></i>${message}`;
+            
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 3000);
+        }
+        
+        function showErrorMessage(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px;';
+            alert.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${message}`;
+            
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+        
+        function resetWorkshopForm() {
             // Reset form
-            form.reset();
+            document.getElementById('createWorkshopForm').reset();
             
-            // Optionally refresh the page or update the workshop list
-            // location.reload();
+            // Reset steps
+            currentStep = 1;
+            
+            // Reset step indicators
+            document.querySelectorAll('.step-item').forEach((item, index) => {
+                item.classList.remove('active', 'completed');
+                if (index === 0) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Reset step lines
+            document.querySelectorAll('.step-line').forEach(line => {
+                line.classList.remove('completed');
+            });
+            
+            // Show first step
+            document.querySelectorAll('.workshop-step').forEach((step, index) => {
+                step.classList.remove('active');
+                if (index === 0) {
+                    step.classList.add('active');
+                }
+            });
+            
+            // Reset buttons
+            updateStepButtons();
+            
+            // Hide conditional sections
+            document.getElementById('recurringOptions').style.display = 'none';
+            document.getElementById('customPolicyText').style.display = 'none';
         }
         
         function collectWorkshopFormData() {
             return {
+                // Basic Information
                 title: document.getElementById('workshopTitle').value,
                 category: document.getElementById('workshopCategory').value,
                 description: document.getElementById('workshopDescription').value,
+                objectives: document.getElementById('workshopObjectives').value,
+                prerequisites: document.getElementById('workshopPrerequisites').value,
+                location: document.getElementById('workshopLocation').value,
+                language: document.getElementById('workshopLanguage').value,
+                
+                // Schedule & Duration
                 date: document.getElementById('workshopDate').value,
                 startTime: document.getElementById('workshopStartTime').value,
                 endTime: document.getElementById('workshopEndTime').value,
                 duration: document.getElementById('workshopDuration').value,
                 frequency: document.getElementById('workshopFrequency').value,
+                recurringEndDate: document.getElementById('recurringEndDate').value,
+                maxOccurrences: document.getElementById('maxOccurrences').value,
+                skipDates: document.getElementById('skipDates').value,
+                setupTime: document.getElementById('setupTime').value,
+                cleanupTime: document.getElementById('cleanupTime').value,
+                
+                // Capacity & Pricing
                 maxParticipants: document.getElementById('maxParticipants').value,
                 minParticipants: document.getElementById('minParticipants').value,
                 price: document.getElementById('workshopPrice').value,
+                earlyBirdPrice: document.getElementById('earlyBirdPrice').value,
+                earlyBirdDeadline: document.getElementById('earlyBirdDeadline').value,
+                groupDiscount: document.getElementById('groupDiscount').value,
+                memberDiscount: document.getElementById('memberDiscount').value,
+                allowWaitlist: document.getElementById('allowWaitlist').checked,
+                
+                // Instructor & Resources
                 instructorName: document.getElementById('instructorName').value,
                 instructorEmail: document.getElementById('instructorEmail').value,
                 instructorBio: document.getElementById('instructorBio').value,
@@ -1068,17 +1945,29 @@
                 ageRestriction: document.getElementById('ageRestriction').value,
                 materialsProvided: document.getElementById('materialsProvided').value,
                 materialsToBring: document.getElementById('materialsToBring').value,
+                
+                // Features
                 includeRefreshments: document.getElementById('includeRefreshments').checked,
                 certificateProvided: document.getElementById('certificateProvided').checked,
                 takeHomeKit: document.getElementById('takeHomeKit').checked,
                 photographyAllowed: document.getElementById('photographyAllowed').checked,
                 recordingAllowed: document.getElementById('recordingAllowed').checked,
                 wheelchairAccessible: document.getElementById('wheelchairAccessible').checked,
-                specialNotes: document.getElementById('specialNotes').value,
+                
+                // Registration & Policies
                 registrationDeadline: document.getElementById('registrationDeadline').value,
                 cancellationPolicy: document.getElementById('cancellationPolicy').value,
+                customCancellationPolicy: document.getElementById('customCancellationPolicy').value,
+                specialNotes: document.getElementById('specialNotes').value,
+                contactPerson: document.getElementById('contactPerson').value,
+                contactPhone: document.getElementById('contactPhone').value,
+                sendConfirmationEmail: document.getElementById('sendConfirmationEmail').checked,
+                sendReminderEmail: document.getElementById('sendReminderEmail').checked,
                 status: document.getElementById('workshopStatus').value,
-                createdAt: new Date().toISOString()
+                
+                // Metadata
+                createdAt: new Date().toISOString(),
+                createdBy: 'admin' // Replace with actual admin user
             };
         }
     </script>

@@ -255,6 +255,76 @@ const adminController = {
     res.redirect("/admin/workshop-requests");
   },
 
+  // Create new workshop
+  createWorkshop: async (req, res) => {
+    try {
+      const workshopData = req.body;
+      
+      // Validate required fields
+      const requiredFields = ['title', 'category', 'description', 'date', 'startTime', 'endTime', 'maxParticipants', 'price', 'instructorName'];
+      const missingFields = requiredFields.filter(field => !workshopData[field]);
+      
+      if (missingFields.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Missing required fields: ${missingFields.join(', ')}`
+        });
+      }
+      
+      // Here you would save to database
+      // const Workshop = require('../../models/Workshop');
+      // const newWorkshop = new Workshop(workshopData);
+      // await newWorkshop.save();
+      
+      console.log('Creating new workshop:', {
+        title: workshopData.title,
+        category: workshopData.category,
+        date: workshopData.date,
+        instructor: workshopData.instructorName,
+        participants: workshopData.maxParticipants,
+        price: workshopData.price
+      });
+      
+      res.json({
+        success: true,
+        message: 'Workshop created successfully',
+        workshopId: Math.floor(Math.random() * 1000) + 1 // Mock ID
+      });
+    } catch (error) {
+      console.error('Error creating workshop:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to create workshop'
+      });
+    }
+  },
+
+  // Save workshop as draft
+  saveWorkshopDraft: async (req, res) => {
+    try {
+      const workshopData = { ...req.body, status: 'draft' };
+      
+      // Here you would save to database
+      console.log('Saving workshop draft:', {
+        title: workshopData.title || 'Untitled Workshop',
+        category: workshopData.category,
+        status: 'draft'
+      });
+      
+      res.json({
+        success: true,
+        message: 'Workshop draft saved successfully',
+        draftId: Math.floor(Math.random() * 1000) + 1 // Mock ID
+      });
+    } catch (error) {
+      console.error('Error saving workshop draft:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to save workshop draft'
+      });
+    }
+  },
+
   // Update user
   updateUser: (req, res) => {
     const { id } = req.params;

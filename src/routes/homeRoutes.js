@@ -37,4 +37,7 @@ router.get('/dashboard', homeController.getUserDashboard);
 // Philosophy page
 router.get('/philosophy', homeController.getPhilosophy);
 
+// Workshop proposal submission
+router.post('/submit-workshop-proposal', homeController.submitWorkshopProposal);
+
 module.exports = router;
