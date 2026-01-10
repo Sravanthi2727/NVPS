@@ -739,12 +739,18 @@ app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
 
 app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
   try {
-    const { itemId, name, price } = req.body;
+    const { itemId, name, price, image } = req.body;
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
     
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if item already exists in wishlist
+    const existingItem = user.wishlist.find(item => item.itemId === itemId);
+    if (existingItem) {
+      return res.json({ success: false, message: 'Item already in wishlist' });
     }
 
     console.log('User before wishlist update:', {
@@ -754,7 +760,7 @@ app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
     });
 
     // Create wishlist item and add to wishlist array
-    const wishlistItem = { itemId, name, price };
+    const wishlistItem = { itemId, name, price, image };
     user.wishlist.push(wishlistItem);
     
     console.log('Wishlist item to add:', wishlistItem);
@@ -777,7 +783,7 @@ app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
   }
 });
 
-app.delete('/api/wishlist/:id', ensureAuthenticated, async (req, res) => {
+app.delete('/api/wishlist/:itemId', ensureAuthenticated, async (req, res) => {
   try {
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
@@ -786,7 +792,7 @@ app.delete('/api/wishlist/:id', ensureAuthenticated, async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    user.wishlist.pull({ _id: req.params.id });
+    user.wishlist.pull({ itemId: req.params.itemId });
     await user.save();
     res.json({ success: true, message: 'Item removed from wishlist' });
   } catch (error) {
@@ -814,6 +820,16 @@ app.post('/api/cart', ensureAuthenticated, async (req, res) => {
     
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if item already exists in cart
+    const existingItem = user.cart.find(item => item.itemId === itemId);
+    if (existingItem) {
+      // Update quantity instead of adding duplicate
+      existingItem.quantity += (quantity || 1);
+      user.markModified('cart');
+      await user.save();
+      return res.json({ success: true, message: 'Item quantity updated' });
     }
 
     console.log('User before cart update:', {
@@ -846,7 +862,7 @@ app.post('/api/cart', ensureAuthenticated, async (req, res) => {
   }
 });
 
-app.delete('/api/cart/:id', ensureAuthenticated, async (req, res) => {
+app.delete('/api/cart/:itemId', ensureAuthenticated, async (req, res) => {
   try {
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
@@ -855,7 +871,7 @@ app.delete('/api/cart/:id', ensureAuthenticated, async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    user.cart.pull({ _id: req.params.id });
+    user.cart.pull({ itemId: req.params.itemId });
     await user.save();
     res.json({ success: true, message: 'Item removed from cart' });
   } catch (error) {
@@ -994,12 +1010,18 @@ app.post('/api/wishlist/add', async (req, res) => {
       return res.status(401).json({ success: false, message: 'Please login first' });
     }
 
-    const { itemId, name, price } = req.body;
+    const { itemId, name, price, image } = req.body;
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
     
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if item already exists in wishlist
+    const existingItem = user.wishlist.find(item => item.itemId === itemId);
+    if (existingItem) {
+      return res.json({ success: false, message: 'Item already in wishlist' });
     }
 
     console.log('User before wishlist update:', {
@@ -1009,7 +1031,7 @@ app.post('/api/wishlist/add', async (req, res) => {
     });
 
     // Create wishlist item and add to wishlist array
-    const wishlistItem = { itemId, name, price };
+    const wishlistItem = { itemId, name, price, image };
     user.wishlist.push(wishlistItem);
     
     console.log('Wishlist item to add:', wishlistItem);
@@ -1046,6 +1068,38 @@ app.get('/api/wishlist/count', async (req, res) => {
   } catch (error) {
     console.error('Wishlist count error:', error);
     res.status(500).json({ count: 0 });
+  }
+});
+
+app.patch('/api/cart/:itemId', ensureAuthenticated, async (req, res) => {
+  try {
+    const { quantity } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const item = user.cart.find(item => item.itemId === req.params.itemId);
+    if (!item) {
+      return res.status(404).json({ success: false, message: 'Item not found in cart' });
+    }
+
+    if (quantity <= 0) {
+      // Remove item if quantity is 0 or less
+      user.cart.pull({ itemId: req.params.itemId });
+    } else {
+      // Update quantity
+      item.quantity = quantity;
+    }
+
+    user.markModified('cart');
+    await user.save();
+    res.json({ success: true, message: 'Cart quantity updated' });
+  } catch (error) {
+    console.error('Cart quantity update error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
