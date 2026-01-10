@@ -34,4 +34,7 @@ router.post('/submit-art-request', homeController.submitArtRequest);
 // User dashboard page
 router.get('/dashboard', homeController.getUserDashboard);
 
+// Philosophy page
+router.get('/philosophy', homeController.getPhilosophy);
+
 module.exports = router;

@@ -109,6 +109,22 @@ const homeController = {
       currentPage: '/dashboard',
       layout: false // Use standalone layout
     });
+  },
+
+  // Philosophy page
+  getPhilosophy: (req, res) => {
+    res.render('philosophy', {
+      title: 'Philosophy - The Robusta Rebellion | Rabuste Coffee',
+      description: 'Discover the philosophy behind Rabuste Coffee - our commitment to bold Robusta beans, art, and the rebellion against the ordinary.',
+      currentPage: '/philosophy',
+      keywords: 'robusta coffee philosophy, coffee rebellion, bold coffee, art and coffee, Rabuste philosophy',
+      ogTitle: 'Philosophy - The Robusta Rebellion | Rabuste Coffee',
+      ogDescription: 'Challenging the Arabica status quo. We curate strength, narrative, and the unapologetic pursuit of the bold.',
+      ogType: 'website',
+      ogUrl: 'https://rabustecoffee.com/philosophy',
+      ogImage: '/assets/coffee-bg.jpeg',
+      canonicalUrl: 'https://rabustecoffee.com/philosophy'
+    });
   }
 };
 
