@@ -93,12 +93,15 @@ passport.use(
             return done(new Error('An account with this email already exists'), null);
           }
           console.log('Creating new user from Google profile');
-          // Create new user from Google profile
+          // Create new user from Google profile with consistent field names
           user = new User({
             googleId: profile.id,
-            displayName: profile.displayName || 'User',
+            name: profile.displayName || 'User',
             email: email,
-            photo: profile.photos && profile.photos[0] ? profile.photos[0].value : ''
+            isOAuthUser: true,
+            cart: [],
+            wishlist: [],
+            registered: []
           });
           await user.save();
           console.log('New user created and saved:', user.email);
