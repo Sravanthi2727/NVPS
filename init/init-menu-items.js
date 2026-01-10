@@ -25,9 +25,8 @@ async function initMenuItems() {
     // console.log('Cleared existing menu items');
     
     let created = 0;
-    let skipped = 0;
     
-    // Insert each menu item
+    // Insert or update each menu item
     for (const itemData of menuItemsData) {
       // Check if menu item already exists
       const existingItem = await MenuItem.findOne({ 
@@ -37,8 +36,15 @@ async function initMenuItems() {
       });
       
       if (existingItem) {
-        console.log(`Skipping "${itemData.name}" - already exists`);
-        skipped++;
+        // Update existing item with correct data
+        existingItem.description = itemData.description;
+        existingItem.price = itemData.price;
+        existingItem.image = itemData.image;
+        existingItem.displayOrder = itemData.displayOrder || 0;
+        existingItem.isAvailable = true;
+        await existingItem.save();
+        console.log(`✓ Updated: "${itemData.name}" - ₹${itemData.price}`);
+        created++;
         continue;
       }
       
@@ -60,8 +66,7 @@ async function initMenuItems() {
     }
     
     console.log('\n=== Initialization Complete ===');
-    console.log(`Created: ${created} menu items`);
-    console.log(`Skipped: ${skipped} menu items (already exist)`);
+    console.log(`Created/Updated: ${created} menu items`);
     console.log(`Total: ${menuItemsData.length} menu items in JSON file`);
     
     process.exit(0);

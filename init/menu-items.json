@@ -5,7 +5,7 @@
     "price": 160,
     "category": "cold",
     "subCategory": "robusta-cold-non-milk",
-    "image": "assets/menu images/Iced latte &Iced Americano.jpeg",
+    "image": "iced-americano.jpg",
     "displayOrder": 1
   },
   {
@@ -14,7 +14,7 @@
     "price": 130,
     "category": "cold",
     "subCategory": "robusta-cold-non-milk",
-    "image": "assets/menu images/iced-espresso.jpg",
+    "image": "iced-espresso.jpg",
     "displayOrder": 2
   },
   {
@@ -23,7 +23,7 @@
     "price": 250,
     "category": "cold",
     "subCategory": "robusta-cold-non-milk",
-    "image": "assets/menu images/Cold Brew Tonic Ginger Ale Orange.webp",
+    "image": "Cold Brew Tonic Ginger Ale Orange.webp",
     "displayOrder": 3
   },
   {
@@ -32,7 +32,7 @@
     "price": 290,
     "category": "cold",
     "subCategory": "robusta-cold-non-milk",
-    "image": "assets/menu images/Iced latte &Iced Americano.jpeg",
+    "image": "cold_brew_redbull.webp",
     "displayOrder": 4
   },
   {
@@ -41,7 +41,7 @@
     "price": 270,
     "category": "cold",
     "subCategory": "robusta-cold-non-milk",
-    "image": "assets/menu images/cranberry tonic.jpg",
+    "image": "cranberry_tonic.jpg",
     "displayOrder": 5
   },
   {
@@ -50,7 +50,7 @@
     "price": 220,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "assets/menu images/Iced latte &Iced Americano.jpeg",
+    "image": "Iced_latte_&_Iced_Americano.jpeg",
     "displayOrder": 6
   },
   {
@@ -59,7 +59,7 @@
     "price": 250,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "assets/menu images/affogato cold blend.jpg",
+    "image": "affogato_cold_blend.jpg",
     "displayOrder": 7
   },
   {
@@ -68,7 +68,7 @@
     "price": 250,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "assets/menu images/cassic frappe.webp",
+    "image": "cassic_frappe.webp",
     "displayOrder": 8
   },
   {
@@ -77,7 +77,7 @@
     "price": 260,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "assets/menu images/hazelnut cold blend.jpg",
+    "image": "hazelnut_cold_blend.jpg",
     "displayOrder": 9
   },
   {
@@ -86,7 +86,7 @@
     "price": 260,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "assets/menu images/Caramel-Iced-blend.jpg",
+    "image": "Caramel-Iced-blend.jpg",
     "displayOrder": 10
   },
   {
@@ -95,7 +95,7 @@
     "price": 270,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "assets/menu images/iced-mocha-blend.jpg",
+    "image": "iced-mocha-blend.jpg",
     "displayOrder": 11
   },
   {
@@ -104,7 +104,7 @@
     "price": 270,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "assets/menu images/biscoff cold blend.jpg",
+    "image": "biscoff_cold_blend.jpg",
     "displayOrder": 12
   },
   {
@@ -113,7 +113,7 @@
     "price": 240,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "assets/menu images/Vietnamese-Iced-Coffee.webp",
+    "image": "Vietnamese-Iced-Coffee.webp",
     "displayOrder": 13
   },
   {
@@ -122,7 +122,7 @@
     "price": 250,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "assets/menu images/Cafe-suda.png",
+    "image": "Cafe-suda.png",
     "displayOrder": 14
   },
   {
@@ -131,7 +131,7 @@
     "price": 290,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "assets/menu images/robco.webp",
+    "image": "robco.webp",
     "displayOrder": 15
   },
   {
@@ -140,7 +140,7 @@
     "price": 150,
     "category": "hot",
     "subCategory": "robusta-hot-non-milk",
-    "image": "assets/menu images/hot americano.webp",
+    "image": "hot_americano.webp",
     "displayOrder": 16
   },
   {
@@ -149,7 +149,7 @@
     "price": 130,
     "category": "hot",
     "subCategory": "robusta-hot-non-milk",
-    "image": "assets/menu images/hot espresso.webp",
+    "image": "hot_espresso.webp",
     "displayOrder": 17
   },
   {
@@ -158,7 +158,7 @@
     "price": 190,
     "category": "hot",
     "subCategory": "robusta-hot-milk",
-    "image": "assets/menu images/Blend Hot latte.jpeg",
+    "image": "Blend_Hot_latte.jpeg",
     "displayOrder": 18
   },
   {
@@ -167,7 +167,7 @@
     "price": 180,
     "category": "hot",
     "subCategory": "robusta-hot-milk",
-    "image": "assets/menu images/hot flat white.webp",
+    "image": "hot_flat_white.webp",
     "displayOrder": 19
   },
   {
@@ -176,7 +176,7 @@
     "price": 180,
     "category": "hot",
     "subCategory": "robusta-hot-milk",
-    "image": "assets/menu images/cappuccino.jpg",
+    "image": "cappuccino.jpg",
     "displayOrder": 20
   },
   {
@@ -185,7 +185,7 @@
     "price": 230,
     "category": "hot",
     "subCategory": "robusta-hot-milk",
-    "image": "assets/menu images/mocha.jpg",
+    "image": "mocha.jpg",
     "displayOrder": 21
   },
   {
@@ -194,7 +194,7 @@
     "price": 150,
     "category": "cold",
     "subCategory": "blend-cold-non-milk",
-    "image": "assets/menu images/iced-americano.jpg",
+    "image": "iced-americano.jpg",
     "displayOrder": 22
   },
   {
@@ -203,7 +203,7 @@
     "price": 120,
     "category": "cold",
     "subCategory": "blend-cold-non-milk",
-    "image": "assets/menu images/iced-espresso.jpg",
+    "image": "iced-espresso.jpg",
     "displayOrder": 23
   },
   {
@@ -212,7 +212,7 @@
     "price": 230,
     "category": "cold",
     "subCategory": "blend-cold-non-milk",
-    "image": "assets/menu images/espresso.jpg",
+    "image": "Cold Brew Tonic Ginger Ale Orange.webp",
     "displayOrder": 24
   },
   {
@@ -221,7 +221,7 @@
     "price": 270,
     "category": "cold",
     "subCategory": "blend-cold-non-milk",
-    "image": "assets/menu images/Iced latte &Iced Americano.jpeg",
+    "image": "cold_brew_redbull.webp",
     "displayOrder": 25
   },
   {
@@ -230,7 +230,7 @@
     "price": 250,
     "category": "cold",
     "subCategory": "blend-cold-non-milk",
-    "image": "assets/menu images/cranberry tonic.jpg",
+    "image": "cranberry_tonic.jpg",
     "displayOrder": 26
   },
   {
@@ -239,7 +239,7 @@
     "price": 210,
     "category": "cold",
     "subCategory": "blend-cold-milk",
-    "image": "assets/menu images/latte.jpg",
+    "image": "latte.jpg",
     "displayOrder": 27
   },
   {
@@ -248,7 +248,7 @@
     "price": 240,
     "category": "cold",
     "subCategory": "blend-cold-milk",
-    "image": "assets/menu images/affogato cold blend.jpg",
+    "image": "affogato_cold_blend.jpg",
     "displayOrder": 28
   },
   {
@@ -257,7 +257,7 @@
     "price": 240,
     "category": "cold",
     "subCategory": "blend-cold-milk",
-    "image": "assets/menu images/cassic frappe.webp",
+    "image": "cassic_frappe.webp",
     "displayOrder": 29
   },
   {
@@ -266,7 +266,7 @@
     "price": 250,
     "category": "cold",
     "subCategory": "blend-cold-milk",
-    "image": "assets/menu images/hazelnut cold blend.jpg",
+    "image": "hazelnut_cold_blend.jpg",
     "displayOrder": 30
   },
   {
@@ -275,7 +275,7 @@
     "price": 250,
     "category": "cold",
     "subCategory": "blend-cold-milk",
-    "image": "assets/menu images/Caramel-Iced-blend.jpg",
+    "image": "Caramel-Iced-blend.jpg",
     "displayOrder": 31
   },
   {
@@ -284,7 +284,7 @@
     "price": 260,
     "category": "cold",
     "subCategory": "blend-cold-milk",
-    "image": "assets/menu images/iced-mocha-blend.jpg",
+    "image": "iced-mocha-blend.jpg",
     "displayOrder": 32
   },
   {
@@ -293,7 +293,7 @@
     "price": 260,
     "category": "cold",
     "subCategory": "blend-cold-milk",
-    "image": "assets/menu images/biscoff cold blend.jpg",
+    "image": "biscoff_cold_blend.jpg",
     "displayOrder": 33
   },
   {
@@ -302,7 +302,7 @@
     "price": 140,
     "category": "hot",
     "subCategory": "blend-hot-non-milk",
-    "image": "assets/menu images/hot americano.webp",
+    "image": "hot_americano.webp",
     "displayOrder": 34
   },
   {
@@ -311,7 +311,7 @@
     "price": 120,
     "category": "hot",
     "subCategory": "blend-hot-non-milk",
-    "image": "assets/menu images/hot espresso.webp",
+    "image": "hot_espresso.webp",
     "displayOrder": 35
   },
   {
@@ -320,7 +320,7 @@
     "price": 180,
     "category": "hot",
     "subCategory": "blend-hot-milk",
-    "image": "assets/menu images/Blend Hot latte.jpeg",
+    "image": "Blend_Hot_latte.jpeg",
     "displayOrder": 36
   },
   {
@@ -329,7 +329,7 @@
     "price": 170,
     "category": "hot",
     "subCategory": "blend-hot-milk",
-    "image": "assets/menu images/hot flat white.webp",
+    "image": "hot_flat_white.webp",
     "displayOrder": 37
   },
   {
@@ -338,7 +338,7 @@
     "price": 170,
     "category": "hot",
     "subCategory": "blend-hot-milk",
-    "image": "assets/menu images/cappuccino.jpg",
+    "image": "cappuccino.jpg",
     "displayOrder": 38
   },
   {
@@ -347,7 +347,7 @@
     "price": 220,
     "category": "hot",
     "subCategory": "blend-hot-milk",
-    "image": "assets/menu images/mocha.jpg",
+    "image": "mocha.jpg",
     "displayOrder": 39
   },
   {
@@ -356,7 +356,7 @@
     "price": 225,
     "category": "manual-brew",
     "subCategory": "cold-brew",
-    "image": "assets/menu images/cold brew.jpg",
+    "image": "cold brew.jpg",
     "displayOrder": 40
   },
   {
@@ -365,7 +365,7 @@
     "price": 270,
     "category": "manual-brew",
     "subCategory": "cold-brew",
-    "image": "assets/menu images/Cold Brew Tonic Ginger Ale Orange.webp",
+    "image": "Cold Brew Tonic Ginger Ale Orange.webp",
     "displayOrder": 41
   },
   {
@@ -374,7 +374,7 @@
     "price": 290,
     "category": "manual-brew",
     "subCategory": "cold-brew",
-    "image": "assets/menu images/cold brew redbull.webp",
+    "image": "cold_brew_redbull.webp",
     "displayOrder": 42
   },
   {
@@ -383,7 +383,7 @@
     "price": 220,
     "category": "manual-brew",
     "subCategory": "pour-over",
-    "image": "assets/menu images/v60 pour over.webp",
+    "image": "v60_pour_over.webp",
     "displayOrder": 43
   },
   {
@@ -392,7 +392,7 @@
     "price": 235,
     "category": "manual-brew",
     "subCategory": "pour-over",
-    "image": "assets/menu images/v60 pour over.webp",
+    "image": "v60_pour_over.webp",
     "displayOrder": 44
   },
   {
@@ -401,7 +401,7 @@
     "price": 280,
     "category": "manual-brew",
     "subCategory": "cold-brew",
-    "image": "assets/menu images/cold tea.jpg",
+    "image": "cranberry_tonic.jpg",
     "displayOrder": 45
   },
   {
@@ -410,7 +410,7 @@
     "price": 220,
     "category": "shakes-tea",
     "subCategory": "shakes",
-    "image": "assets/menu images/chocolate shake.webp",
+    "image": "chocolate_shake.webp",
     "displayOrder": 46
   },
   {
@@ -419,7 +419,7 @@
     "price": 250,
     "category": "shakes-tea",
     "subCategory": "shakes",
-    "image": "assets/menu images/biscoff shake.webp",
+    "image": "biscoff shake.webp",
     "displayOrder": 47
   },
   {
@@ -428,7 +428,7 @@
     "price": 260,
     "category": "shakes-tea",
     "subCategory": "shakes",
-    "image": "assets/menu images/nutella shake.webp",
+    "image": "nutella_shake.webp",
     "displayOrder": 48
   },
   {
@@ -437,7 +437,7 @@
     "price": 210,
     "category": "shakes-tea",
     "subCategory": "cold-tea",
-    "image": "assets/menu images/lemon ice tea.jpg",
+    "image": "lemon_ice_tea.jpg",
     "displayOrder": 49
   },
   {
@@ -446,7 +446,7 @@
     "price": 210,
     "category": "shakes-tea",
     "subCategory": "cold-tea",
-    "image": "assets/menu images/peach ice tea.webp",
+    "image": "peach_ice_tea.webp",
     "displayOrder": 50
   },
   {
@@ -455,7 +455,7 @@
     "price": 250,
     "category": "shakes-tea",
     "subCategory": "cold-tea",
-    "image": "assets/menu images/ginger fizz.webp",
+    "image": "ginger_fizz.webp",
     "displayOrder": 51
   },
   {
@@ -464,7 +464,7 @@
     "price": 250,
     "category": "shakes-tea",
     "subCategory": "cold-tea",
-    "image": "assets/menu images/classic orange mint.webp",
+    "image": "classic_orange_mint.webp",
     "displayOrder": 52
   },
   {
@@ -473,7 +473,7 @@
     "price": 150,
     "category": "food",
     "subCategory": "snacks-sides",
-    "image": "assets/menu images/frenchfries.jpeg",
+    "image": "french_fries.jpeg",
     "displayOrder": 53
   },
   {
@@ -482,7 +482,7 @@
     "price": 170,
     "category": "food",
     "subCategory": "snacks-sides",
-    "image": "assets/menu images/potato wedges.jpeg",
+    "image": "potato_wedges.jpeg",
     "displayOrder": 54
   },
   {
@@ -491,7 +491,7 @@
     "price": 190,
     "category": "food",
     "subCategory": "snacks-sides",
-    "image": "assets/menu images/veg nuggets.webp",
+    "image": "veg_nuggets.webp",
     "displayOrder": 55
   },
   {
@@ -500,7 +500,7 @@
     "price": 300,
     "category": "food",
     "subCategory": "snacks-sides",
-    "image": "assets/menu images/pizza.jpeg",
+    "image": "pizza.jpeg",
     "displayOrder": 56
   },
   {
@@ -509,7 +509,7 @@
     "price": 100,
     "category": "food",
     "subCategory": "bagels-croissants",
-    "image": "assets/menu images/plain bagel.webp",
+    "image": "plain_bagel.webp",
     "displayOrder": 57
   },
   {
@@ -518,7 +518,7 @@
     "price": 150,
     "category": "food",
     "subCategory": "bagels-croissants",
-    "image": "assets/menu images/cream cheese bagel.jpg",
+    "image": "cream_cheese_bagel.jpg",
     "displayOrder": 58
   },
   {
@@ -527,7 +527,7 @@
     "price": 200,
     "category": "food",
     "subCategory": "bagels-croissants",
-    "image": "assets/menu images/jalopino bagel.webp",
+    "image": "jalopino_bagel.webp",
     "displayOrder": 59
   },
   {
@@ -536,7 +536,7 @@
     "price": 230,
     "category": "food",
     "subCategory": "bagels-croissants",
-    "image": "assets/menu images/pesto bagel.webp",
+    "image": "pesto_bagel.webp",
     "displayOrder": 60
   },
   {
@@ -545,7 +545,7 @@
     "price": 150,
     "category": "food",
     "subCategory": "bagels-croissants",
-    "image": "assets/menu images/butter croissant.webp",
+    "image": "butter_croissant.webp",
     "displayOrder": 61
   },
   {
@@ -554,7 +554,7 @@
     "price": 200,
     "category": "food",
     "subCategory": "bagels-croissants",
-    "image": "assets/menu images/nutella croissant.webp",
+    "image": "nutella_croissant.webp",
     "displayOrder": 62
   },
   {
@@ -563,8 +563,7 @@
     "price": 240,
     "category": "food",
     "subCategory": "bagels-croissants",
-    "image": "assets/menu images/cream chese croissant.webp",
+    "image": "cream_chese_croissant.webp",
     "displayOrder": 63
   }
 ]
-

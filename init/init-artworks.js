@@ -25,9 +25,8 @@ async function initArtworks() {
     // console.log('Cleared existing artworks');
     
     let created = 0;
-    let skipped = 0;
     
-    // Insert each artwork
+    // Insert or update each artwork
     for (const artworkData of artworksData) {
       // Check if artwork already exists
       const existingArtwork = await Artwork.findOne({ 
@@ -36,8 +35,16 @@ async function initArtworks() {
       });
       
       if (existingArtwork) {
-        console.log(`Skipping "${artworkData.title}" - already exists`);
-        skipped++;
+        // Update existing artwork with correct data
+        existingArtwork.price = artworkData.price;
+        existingArtwork.image = artworkData.image;
+        existingArtwork.category = artworkData.category;
+        existingArtwork.description = artworkData.description;
+        existingArtwork.isAvailable = true;
+        existingArtwork.displayOrder = artworkData.id;
+        await existingArtwork.save();
+        console.log(`✓ Updated: "${artworkData.title}" by ${artworkData.artist}`);
+        created++;
         continue;
       }
       
@@ -59,8 +66,7 @@ async function initArtworks() {
     }
     
     console.log('\n=== Initialization Complete ===');
-    console.log(`Created: ${created} artworks`);
-    console.log(`Skipped: ${skipped} artworks (already exist)`);
+    console.log(`Created/Updated: ${created} artworks`);
     console.log(`Total: ${artworksData.length} artworks in JSON file`);
     
     process.exit(0);

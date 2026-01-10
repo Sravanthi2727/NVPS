@@ -6,10 +6,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "optimize-images": "node scripts/optimize-images.js",
-    "init-artworks": "node init-artworks.js",
-    "init-menu-items": "node init-menu-items.js",
-    "init-workshops": "node init-workshops.js",
-    "init-all": "node init-artworks.js && node init-menu-items.js && node init-workshops.js"
+    "init-artworks": "node init/init-artworks.js",
+    "init-menu-items": "node init/init-menu-items.js",
+    "init-workshops": "node init/init-workshops.js",
+    "init-all": "node init/init-artworks.js && node init/init-menu-items.js && node init/init-workshops.js"
   },
   "keywords": [],
   "author": "",
