@@ -3,6 +3,7 @@ const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const mongoose = require('mongoose');
 
 require("dotenv").config();
 const path = require('path');
@@ -12,34 +13,26 @@ const connectDB = require('./config/database');
 const User = require('./models/User');
 const MenuItem = require('./models/MenuItem');
 const Artwork = require('./models/Artwork');
-const Workshop = require('./models/Workshop');
+const WorkshopModel = require('./models/Workshop');
 
 // Connect to database
 connectDB();
 
 const app = express();
 
-// Passport serialization/deserialization
-passport.serializeUser((user, done) => {
-  console.log('Serializing user:', user.email, 'ID:', user._id || user.id);
-  done(null, user._id || user.id);
-});
+ 
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-passport.deserializeUser(async (id, done) => {
-  try {
-    console.log('Deserializing user with ID:', id);
-    const user = await User.findById(id);
-    if (user) {
-      console.log('User deserialized:', user.email);
-    } else {
-      console.log('User not found for ID:', id);
-    }
-    done(null, user);
-  } catch (error) {
-    console.error('Deserialization error:', error);
-    done(error, null);
-  }
-});
+// Database Models
+const Wishlist = require('./models/Wishlist');
+const Cart = require('./models/Cart');
+const Request = require('./models/Request');
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+ 
 
 passport.use(
   new GoogleStrategy(
@@ -153,6 +146,62 @@ app.get('/', (req, res) => {
 // Menu route - Dynamic
 app.get('/menu', async (req, res) => {
   try {
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      // Return static data if database is not connected
+      const staticMenu = {
+        cold: {
+          'robusta-cold-non-milk': [
+            {
+              name: 'Robusta Iced Americano',
+              description: 'Bold Robusta espresso with chilled water',
+              price: 160,
+              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+            },
+            {
+              name: 'Robusta Cold Brew',
+              description: '24-hour cold extracted Robusta',
+              price: 180,
+              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+            }
+          ],
+          'robusta-cold-milk': [
+            {
+              name: 'Robusta Iced Latte',
+              description: 'Smooth Robusta with cold milk',
+              price: 200,
+              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+            }
+          ]
+        },
+        hot: {
+          'robusta-hot-non-milk': [
+            {
+              name: 'Robusta Black Coffee',
+              description: 'Pure Robusta espresso',
+              price: 120,
+              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+            }
+          ]
+        }
+      };
+      
+      res.render('menu', {
+        title: 'Our Menu - Rabuste Coffee',
+        description: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
+        currentPage: '/menu',
+        keywords: 'coffee menu, robusta coffee, café menu, coffee drinks, food menu',
+        ogTitle: 'Our Menu - Rabuste Coffee',
+        ogDescription: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
+        ogType: 'website',
+        ogUrl: 'https://rabustecoffee.com/menu',
+        ogImage: '/assets/coffee-bg.jpeg',
+        canonicalUrl: 'https://rabustecoffee.com/menu',
+        menuItems: staticMenu
+      });
+      return;
+    }
+    
     const menuItems = await MenuItem.find({ isAvailable: true })
       .sort({ category: 1, subCategory: 1, displayOrder: 1 });
     
@@ -190,6 +239,48 @@ app.get('/menu', async (req, res) => {
 // Gallery route - Dynamic
 app.get('/gallery', async (req, res) => {
   try {
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      // Return static data if database is not connected
+      const staticArtworks = [
+        {
+          _id: '1',
+          title: 'Sunset Coffee',
+          artist: 'Rabuste Artist',
+          category: 'painting',
+          price: 2500,
+          image: '/assets/artwork1.jpg',
+          description: 'Beautiful sunset painting',
+          isAvailable: true
+        },
+        {
+          _id: '2', 
+          title: 'Coffee Dreams',
+          artist: 'Local Artist',
+          category: 'photography',
+          price: 1800,
+          image: '/assets/artwork2.jpg',
+          description: 'Coffee shop photography',
+          isAvailable: true
+        }
+      ];
+      
+      res.render('gallery', {
+        title: 'Art Gallery - Rabuste Coffee',
+        description: 'Discover the vibrant art collection at Rabuste Coffee, where coffee culture meets contemporary art.',
+        currentPage: '/gallery',
+        keywords: 'art gallery, coffee art, contemporary art, café art collection',
+        ogTitle: 'Art Gallery - Rabuste Coffee',
+        ogDescription: 'Discover the vibrant art collection at Rabuste Coffee, where coffee culture meets contemporary art.',
+        ogType: 'website',
+        ogUrl: 'https://rabustecoffee.com/gallery',
+        ogImage: '/assets/photowall.jpeg',
+        canonicalUrl: 'https://rabustecoffee.com/gallery',
+        artworks: staticArtworks
+      });
+      return;
+    }
+    
     const artworks = await Artwork.find({ isAvailable: true })
       .sort({ displayOrder: 1, createdAt: -1 });
     
@@ -255,13 +346,49 @@ app.get('/franchise', (req, res) => {
 
 app.get('/workshops', async (req, res) => {
   try {
-    const upcomingWorkshops = await Workshop.find({ 
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      // Return static data if database is not connected
+      const staticWorkshops = {
+        upcoming: [
+          {
+            _id: '1',
+            title: 'Coffee Brewing Basics',
+            date: '2024-02-15',
+            image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
+            description: 'Learn the fundamentals of coffee brewing',
+            type: 'upcoming'
+          }
+        ],
+        past: [
+          {
+            _id: '2',
+            title: 'Latte Art Workshop',
+            date: '2024-01-10',
+            image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
+            description: 'Master the art of latte making',
+            type: 'past'
+          }
+        ]
+      };
+      
+      res.render('workshops', {
+        title: 'Workshops - Rabuste Coffee',
+        description: 'Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.',
+        currentPage: '/workshops',
+        upcomingWorkshops: staticWorkshops.upcoming,
+        pastWorkshops: staticWorkshops.past
+      });
+      return;
+    }
+    
+    const upcomingWorkshops = await WorkshopModel.find({ 
       type: 'upcoming', 
       isActive: true,
       date: { $gte: new Date() }
     }).sort({ date: 1, displayOrder: 1 });
     
-    const pastWorkshops = await Workshop.find({ 
+    const pastWorkshops = await WorkshopModel.find({ 
       type: 'past', 
       isActive: true 
     }).sort({ date: -1, displayOrder: 1 });
@@ -436,6 +563,140 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
     currentPage: '/dashboard',
     user: req.user
   });
+});
+
+// API Routes for dynamic data
+app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
+  try {
+    const wishlist = await Wishlist.find({ userId: req.user.id }).populate('artId');
+    res.json(wishlist);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching wishlist' });
+  }
+});
+
+app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
+  try {
+    const { artId, title, artist, price, image } = req.body;
+    const wishlistItem = new Wishlist({
+      userId: req.user.id,
+      artId,
+      title,
+      artist,
+      price,
+      image
+    });
+    await wishlistItem.save();
+    res.json({ success: true, item: wishlistItem });
+  } catch (error) {
+    res.status(500).json({ error: 'Error adding to wishlist' });
+  }
+});
+
+app.delete('/api/wishlist/:id', ensureAuthenticated, async (req, res) => {
+  try {
+    await Wishlist.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Error removing from wishlist' });
+  }
+});
+
+app.get('/api/cart', ensureAuthenticated, async (req, res) => {
+  try {
+    const cart = await Cart.find({ userId: req.user.id }).populate('menuItemId');
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching cart' });
+  }
+});
+
+app.post('/api/cart', ensureAuthenticated, async (req, res) => {
+  try {
+    const { menuItemId, name, price, image, quantity } = req.body;
+    const cartItem = new Cart({
+      userId: req.user.id,
+      menuItemId,
+      name,
+      price,
+      image,
+      quantity: quantity || 1
+    });
+    await cartItem.save();
+    res.json({ success: true, item: cartItem });
+  } catch (error) {
+    res.status(500).json({ error: 'Error adding to cart' });
+  }
+});
+
+app.delete('/api/cart/:id', ensureAuthenticated, async (req, res) => {
+  try {
+    await Cart.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Error removing from cart' });
+  }
+});
+
+app.get('/api/workshops', ensureAuthenticated, async (req, res) => {
+  try {
+    const workshops = await WorkshopModel.find({ userId: req.user.id }).populate('workshopId');
+    res.json(workshops);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching workshops' });
+  }
+});
+
+app.post('/api/workshops', ensureAuthenticated, async (req, res) => {
+  try {
+    const { workshopId, workshopName, date } = req.body;
+    const registration = new WorkshopModel({
+      userId: req.user.id,
+      workshopId,
+      workshopName,
+      date,
+      status: 'registered'
+    });
+    await registration.save();
+    res.json({ success: true, item: registration });
+  } catch (error) {
+    res.status(500).json({ error: 'Error registering for workshop' });
+  }
+});
+
+app.delete('/api/workshops/:id', ensureAuthenticated, async (req, res) => {
+  try {
+    await WorkshopModel.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Error canceling workshop registration' });
+  }
+});
+
+app.get('/api/requests', ensureAuthenticated, async (req, res) => {
+  try {
+    const requests = await Request.find({ userId: req.user.id });
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching requests' });
+  }
+});
+
+app.post('/api/requests', ensureAuthenticated, async (req, res) => {
+  try {
+    const { type, title, description } = req.body;
+    const newRequest = new Request({
+      userId: req.user.id,
+      type,
+      title,
+      description,
+      status: 'pending'
+    });
+    await newRequest.save();
+    res.json({ success: true, item: newRequest });
+  } catch (error) {
+    res.status(500).json({ error: 'Error submitting request' });
+  }
 });
 
 app.get("/logout", (req, res, next) => {
