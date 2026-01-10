@@ -109,28 +109,30 @@
         }
         
         .philosophy-card {
-            background: rgba(26, 26, 26, 0.9);
-            border: 1px solid var(--gold);
+            background: #000000;
+            border: 2px solid var(--gold);
             border-radius: 15px;
             padding: 2rem;
-            margin-bottom: 2rem;
+            height: 100%;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 20px rgba(214, 164, 90, 0.3);
         }
         
         .philosophy-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(214, 164, 90, 0.2);
+            box-shadow: 0 8px 30px rgba(214, 164, 90, 0.4);
+            border-color: var(--soft-gold);
         }
         
         .philosophy-card h3 {
-            color: var(--gold);
+            color: #ffffff;
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
             margin-bottom: 1rem;
         }
         
         .philosophy-card p {
-            color: #e0e0e0;
+            color: #f5f2ee;
             line-height: 1.8;
             font-size: 1.1rem;
         }
@@ -163,21 +165,34 @@
         }
         
         .manifesto-section {
-            background: var(--gold);
-            color: #000;
+            background: #000000;
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 3rem 0;
+            box-shadow: 0 6px 30px rgba(214, 164, 90, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .manifesto-section:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(214, 164, 90, 0.4);
+            border-color: var(--soft-gold);
         }
         
         .manifesto-section h2 {
-            color: #000;
-            font-size: 3.5rem;
+            color: #ffffff;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
         }
         
         .manifesto-quote {
             font-size: 1.5rem;
             font-style: italic;
             font-weight: 600;
-            line-height: 1.6;
-            margin: 2rem 0;
+            color: #f5f2ee;
+            line-height: 1.8;
+            margin-bottom: 2rem;
         }
         
         .btn-rebellion {
