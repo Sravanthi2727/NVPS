@@ -447,6 +447,135 @@ main {
 </style>
 
 <script>
+// API functions for dynamic data
+async function fetchWishlist() {
+  try {
+    const response = await fetch('/api/wishlist');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching wishlist:', error);
+    return [];
+  }
+}
+
+async function addToWishlist(item) {
+  try {
+    const response = await fetch('/api/wishlist', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(item)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error adding to wishlist:', error);
+    return { success: false };
+  }
+}
+
+async function removeFromWishlist(id) {
+  try {
+    const response = await fetch(`/api/wishlist/${id}`, {
+      method: 'DELETE'
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error removing from wishlist:', error);
+    return { success: false };
+  }
+}
+
+async function fetchCart() {
+  try {
+    const response = await fetch('/api/cart');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+    return [];
+  }
+}
+
+async function addToCart(item) {
+  try {
+    const response = await fetch('/api/cart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(item)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+    return { success: false };
+  }
+}
+
+async function removeFromCart(id) {
+  try {
+    const response = await fetch(`/api/cart/${id}`, {
+      method: 'DELETE'
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error removing from cart:', error);
+    return { success: false };
+  }
+}
+
+async function fetchWorkshops() {
+  try {
+    const response = await fetch('/api/workshops');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching workshops:', error);
+    return [];
+  }
+}
+
+async function registerForWorkshop(workshop) {
+  try {
+    const response = await fetch('/api/workshops', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(workshop)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error registering for workshop:', error);
+    return { success: false };
+  }
+}
+
+async function fetchRequests() {
+  try {
+    const response = await fetch('/api/requests');
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching requests:', error);
+    return [];
+  }
+}
+
+async function submitRequest(request) {
+  try {
+    const response = await fetch('/api/requests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error submitting request:', error);
+    return { success: false };
+  }
+}
+
 function redirectToPage() {
   const dropdown = document.getElementById('browseDropdown');
   const selectedValue = dropdown.value;
@@ -456,12 +585,17 @@ function redirectToPage() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Load dashboard data
-  loadWishlist();
-  loadCart();
-  loadWorkshops();
-  loadRequests();
+document.addEventListener('DOMContentLoaded', async function() {
+  // Load dashboard data from API
+  const wishlist = await fetchWishlist();
+  const cart = await fetchCart();
+  const workshops = await fetchWorkshops();
+  const requests = await fetchRequests();
+
+  renderWishlist(wishlist);
+  renderCart(cart);
+  renderWorkshops(workshops);
+  renderRequests(requests);
 
   // Handle request type change
   const requestTypeSelect = document.getElementById('requestType');
@@ -483,15 +617,78 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Handle request submission
+  // Handle form submission
+  const form = document.getElementById('requestForm');
+  if (form) {
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const requestType = document.getElementById('requestType').value;
+      const title = document.getElementById('requestTitle').value;
+      const description = document.getElementById('requestDescription').value;
+      
+      if (!requestType || !title || !description) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      const request = {
+        type: requestType,
+        title: title,
+        description: description,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      };
+      
+      const result = await submitRequest(request);
+      if (result.success) {
+        alert('Request submitted successfully!');
+        form.reset();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('newRequestModal'));
+        modal.hide();
+        
+        // Refresh requests list
+        const updatedRequests = await fetchRequests();
+        renderRequests(updatedRequests);
+      } else {
+        alert('Error submitting request. Please try again.');
+      }
+    });
+  }
+
+  // Handle submit button
   const submitButton = document.getElementById('submitRequest');
   if (submitButton) {
-    submitButton.addEventListener('click', function() {
-      const form = document.getElementById('requestForm');
-      if (form && form.checkValidity()) {
-        submitRequest();
-      } else if (form) {
-        form.reportValidity();
+    submitButton.addEventListener('click', async function() {
+      const requestType = document.getElementById('requestType').value;
+      const title = document.getElementById('requestTitle').value;
+      const description = document.getElementById('requestDescription').value;
+      
+      if (!requestType || !title || !description) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      const request = {
+        type: requestType,
+        title: title,
+        description: description,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      };
+      
+      const result = await submitRequest(request);
+      if (result.success) {
+        alert('Request submitted successfully!');
+        document.getElementById('requestForm').reset();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('newRequestModal'));
+        modal.hide();
+        
+        // Refresh requests list
+        const updatedRequests = await fetchRequests();
+        renderRequests(updatedRequests);
+      } else {
+        alert('Error submitting request. Please try again.');
       }
     });
   }

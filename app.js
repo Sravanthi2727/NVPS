@@ -3,11 +3,23 @@ const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const mongoose = require('mongoose');
 
 require("dotenv").config();
 const path = require('path');
 
 const app = express();
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Database Models
+const User = require('./models/User');
+const Wishlist = require('./models/Wishlist');
+const Cart = require('./models/Cart');
+const Workshop = require('./models/Workshop');
+const Request = require('./models/Request');
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
@@ -191,6 +203,140 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
     currentPage: '/dashboard',
     user: req.user
   });
+});
+
+// API Routes for dynamic data
+app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
+  try {
+    const wishlist = await Wishlist.find({ userId: req.user.id }).populate('artId');
+    res.json(wishlist);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching wishlist' });
+  }
+});
+
+app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
+  try {
+    const { artId, title, artist, price, image } = req.body;
+    const wishlistItem = new Wishlist({
+      userId: req.user.id,
+      artId,
+      title,
+      artist,
+      price,
+      image
+    });
+    await wishlistItem.save();
+    res.json({ success: true, item: wishlistItem });
+  } catch (error) {
+    res.status(500).json({ error: 'Error adding to wishlist' });
+  }
+});
+
+app.delete('/api/wishlist/:id', ensureAuthenticated, async (req, res) => {
+  try {
+    await Wishlist.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Error removing from wishlist' });
+  }
+});
+
+app.get('/api/cart', ensureAuthenticated, async (req, res) => {
+  try {
+    const cart = await Cart.find({ userId: req.user.id }).populate('menuItemId');
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching cart' });
+  }
+});
+
+app.post('/api/cart', ensureAuthenticated, async (req, res) => {
+  try {
+    const { menuItemId, name, price, image, quantity } = req.body;
+    const cartItem = new Cart({
+      userId: req.user.id,
+      menuItemId,
+      name,
+      price,
+      image,
+      quantity: quantity || 1
+    });
+    await cartItem.save();
+    res.json({ success: true, item: cartItem });
+  } catch (error) {
+    res.status(500).json({ error: 'Error adding to cart' });
+  }
+});
+
+app.delete('/api/cart/:id', ensureAuthenticated, async (req, res) => {
+  try {
+    await Cart.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Error removing from cart' });
+  }
+});
+
+app.get('/api/workshops', ensureAuthenticated, async (req, res) => {
+  try {
+    const workshops = await Workshop.find({ userId: req.user.id }).populate('workshopId');
+    res.json(workshops);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching workshops' });
+  }
+});
+
+app.post('/api/workshops', ensureAuthenticated, async (req, res) => {
+  try {
+    const { workshopId, workshopName, date } = req.body;
+    const registration = new Workshop({
+      userId: req.user.id,
+      workshopId,
+      workshopName,
+      date,
+      status: 'registered'
+    });
+    await registration.save();
+    res.json({ success: true, item: registration });
+  } catch (error) {
+    res.status(500).json({ error: 'Error registering for workshop' });
+  }
+});
+
+app.delete('/api/workshops/:id', ensureAuthenticated, async (req, res) => {
+  try {
+    await Workshop.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Error canceling workshop registration' });
+  }
+});
+
+app.get('/api/requests', ensureAuthenticated, async (req, res) => {
+  try {
+    const requests = await Request.find({ userId: req.user.id });
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching requests' });
+  }
+});
+
+app.post('/api/requests', ensureAuthenticated, async (req, res) => {
+  try {
+    const { type, title, description } = req.body;
+    const newRequest = new Request({
+      userId: req.user.id,
+      type,
+      title,
+      description,
+      status: 'pending'
+    });
+    await newRequest.save();
+    res.json({ success: true, item: newRequest });
+  } catch (error) {
+    res.status(500).json({ error: 'Error submitting request' });
+  }
 });
 
 app.get("/logout", (req, res, next) => {
