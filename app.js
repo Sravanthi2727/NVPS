@@ -714,76 +714,153 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
   });
 });
 
+// User Dashboard route
+app.get('/user-dashboard', ensureAuthenticated, (req, res) => {
+  res.render('user-dashboard', {
+    title: 'User Dashboard - Rabuste Coffee',
+    description: 'Manage your wishlist, cart, workshop registrations, and requests at Rabuste Coffee.',
+    currentPage: '/user-dashboard',
+    user: req.user,
+    currentUser: req.user
+  });
+});
+
 // API Routes for dynamic data
 app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
   try {
-    const wishlist = await Wishlist.find({ userId: req.user.id }).populate('artId');
-    res.json(wishlist);
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    res.json(user.wishlist || []);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching wishlist' });
+    console.error('Error fetching wishlist:', error);
+    res.status(500).json([]);
   }
 });
 
 app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
   try {
-    const { artId, title, artist, price, image } = req.body;
-    const wishlistItem = new Wishlist({
-      userId: req.user.id,
-      artId,
-      title,
-      artist,
-      price,
-      image
+    const { itemId, name, price } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    console.log('User before wishlist update:', {
+      name: user.name,
+      email: user.email,
+      wishlistLength: user.wishlist.length
     });
-    await wishlistItem.save();
-    res.json({ success: true, item: wishlistItem });
+
+    // Create wishlist item and add to wishlist array
+    const wishlistItem = { itemId, name, price };
+    user.wishlist.push(wishlistItem);
+    
+    console.log('Wishlist item to add:', wishlistItem);
+    console.log('User wishlist after push:', user.wishlist);
+
+    // Mark only wishlist as modified, preserve other fields
+    user.markModified('wishlist');
+    await user.save();
+
+    console.log('User after save:', {
+      name: user.name,
+      email: user.email,
+      wishlistLength: user.wishlist.length
+    });
+
+    res.json({ success: true, message: 'Item added to wishlist' });
   } catch (error) {
-    res.status(500).json({ error: 'Error adding to wishlist' });
+    console.error('Wishlist add error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
 app.delete('/api/wishlist/:id', ensureAuthenticated, async (req, res) => {
   try {
-    await Wishlist.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
-    res.json({ success: true });
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    user.wishlist.pull({ _id: req.params.id });
+    await user.save();
+    res.json({ success: true, message: 'Item removed from wishlist' });
   } catch (error) {
-    res.status(500).json({ error: 'Error removing from wishlist' });
+    console.error('Wishlist remove error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
 app.get('/api/cart', ensureAuthenticated, async (req, res) => {
   try {
-    const cart = await Cart.find({ userId: req.user.id }).populate('menuItemId');
-    res.json(cart);
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    res.json(user.cart || []);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching cart' });
+    console.error('Error fetching cart:', error);
+    res.status(500).json([]);
   }
 });
 
 app.post('/api/cart', ensureAuthenticated, async (req, res) => {
   try {
-    const { menuItemId, name, price, image, quantity } = req.body;
-    const cartItem = new Cart({
-      userId: req.user.id,
-      menuItemId,
-      name,
-      price,
-      image,
-      quantity: quantity || 1
+    const { itemId, name, price, image, quantity } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    console.log('User before cart update:', {
+      name: user.name,
+      email: user.email,
+      cartLength: user.cart.length
     });
-    await cartItem.save();
-    res.json({ success: true, item: cartItem });
+
+    // Create cart item and add to cart array
+    const cartItem = { itemId, name, price, image, quantity: quantity || 1 };
+    user.cart.push(cartItem);
+    
+    console.log('Cart item to add:', cartItem);
+    console.log('User cart after push:', user.cart);
+
+    // Mark only cart as modified, preserve other fields
+    user.markModified('cart');
+    await user.save();
+
+    console.log('User after save:', {
+      name: user.name,
+      email: user.email,
+      cartLength: user.cart.length
+    });
+
+    res.json({ success: true, message: 'Item added to cart' });
   } catch (error) {
-    res.status(500).json({ error: 'Error adding to cart' });
+    console.error('Cart add error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
 app.delete('/api/cart/:id', ensureAuthenticated, async (req, res) => {
   try {
-    await Cart.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
-    res.json({ success: true });
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    user.cart.pull({ _id: req.params.id });
+    await user.save();
+    res.json({ success: true, message: 'Item removed from cart' });
   } catch (error) {
-    res.status(500).json({ error: 'Error removing from cart' });
+    console.error('Cart remove error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
