@@ -31,12 +31,28 @@
         <li class="nav-item">
           <a class="nav-link" href="/about">About Us</a>
         </li>
-        <% if (typeof user !== 'undefined' && user) { %>
-          <li class="nav-item">
-            <a class="nav-link" href="/dashboard">Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/logout">Logout</a>
+        <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user me-1"></i><%= currentUser.name %>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/profile">
+                <i class="fas fa-user me-2"></i>My Profile
+              </a></li>
+              <li><a class="dropdown-item" href="/profile#cart">
+                <i class="fas fa-shopping-cart me-2"></i>Cart 
+                <span class="badge bg-primary ms-1 cart-count">0</span>
+              </a></li>
+              <li><a class="dropdown-item" href="/profile#wishlist">
+                <i class="fas fa-heart me-2"></i>Wishlist
+                <span class="badge bg-warning text-dark ms-1 wishlist-count">0</span>
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/logout">
+                <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+              </a></li>
+            </ul>
           </li>
         <% } else { %>
           <li class="nav-item">

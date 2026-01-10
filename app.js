@@ -62,7 +62,12 @@ passport.use(
         // Wait for database connection
         if (mongoose.connection.readyState !== 1) {
           console.log('Database not connected, waiting...');
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+
+        // Check again after waiting
+        if (mongoose.connection.readyState !== 1) {
+          return done(new Error('Database not connected'), null);
         }
 
         console.log('Google OAuth profile received:', {
@@ -678,6 +683,178 @@ app.post('/api/requests', ensureAuthenticated, async (req, res) => {
     res.json({ success: true, item: newRequest });
   } catch (error) {
     res.status(500).json({ error: 'Error submitting request' });
+  }
+});
+
+// Cart API routes
+app.post('/api/cart/add', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const { itemId, name, price, image, quantity = 1 } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    console.log('User before cart update:', {
+      name: user.name,
+      email: user.email,
+      cartLength: user.cart.length
+    });
+
+    // Create cart item and add to cart array
+    const cartItem = { itemId, name, price, image, quantity };
+    user.cart.push(cartItem);
+    
+    console.log('Cart item to add:', cartItem);
+    console.log('User cart after push:', user.cart);
+
+    // Mark only cart as modified, preserve other fields
+    user.markModified('cart');
+    await user.save();
+
+    console.log('User after save:', {
+      name: user.name,
+      email: user.email,
+      cartLength: user.cart.length
+    });
+
+    res.json({ success: true, message: 'Item added to cart' });
+  } catch (error) {
+    console.error('Cart add error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.get('/api/cart/count', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.json({ count: 0 });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    const count = user ? user.cart.length : 0;
+    
+    res.json({ count });
+  } catch (error) {
+    console.error('Cart count error:', error);
+    res.status(500).json({ count: 0 });
+  }
+});
+
+// Wishlist API routes
+app.post('/api/wishlist/add', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const { itemId, name, price } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    console.log('User before wishlist update:', {
+      name: user.name,
+      email: user.email,
+      wishlistLength: user.wishlist.length
+    });
+
+    // Create wishlist item and add to wishlist array
+    const wishlistItem = { itemId, name, price };
+    user.wishlist.push(wishlistItem);
+    
+    console.log('Wishlist item to add:', wishlistItem);
+    console.log('User wishlist after push:', user.wishlist);
+
+    // Mark only wishlist as modified, preserve other fields
+    user.markModified('wishlist');
+    await user.save();
+
+    console.log('User after save:', {
+      name: user.name,
+      email: user.email,
+      wishlistLength: user.wishlist.length
+    });
+
+    res.json({ success: true, message: 'Item added to wishlist' });
+  } catch (error) {
+    console.error('Wishlist add error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.get('/api/wishlist/count', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.json({ count: 0 });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    const count = user ? user.wishlist.length : 0;
+    
+    res.json({ count });
+  } catch (error) {
+    console.error('Wishlist count error:', error);
+    res.status(500).json({ count: 0 });
+  }
+});
+
+app.delete('/api/cart/remove/:itemId', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Remove item from cart
+    user.cart.pull({ _id: req.params.itemId });
+    await user.save();
+
+    res.json({ success: true, message: 'Item removed from cart' });
+  } catch (error) {
+    console.error('Cart remove error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.delete('/api/wishlist/remove/:itemId', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Remove item from wishlist
+    user.wishlist.pull({ _id: req.params.itemId });
+    await user.save();
+
+    res.json({ success: true, message: 'Item removed from wishlist' });
+  } catch (error) {
+    console.error('Wishlist remove error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 

@@ -1,5 +1,48 @@
 const mongoose = require('mongoose');
 
+const cartItemSchema = new mongoose.Schema({
+  itemId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  image: String,
+  quantity: {
+    type: Number,
+    default: 1
+  },
+  addedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const wishlistItemSchema = new mongoose.Schema({
+  itemId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  addedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 const userSchema = new mongoose.Schema({
   googleId: {
     type: String,
@@ -21,14 +64,8 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  cart: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'MenuItem'
-  }],
-  wishlist: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'MenuItem'
-  }],
+  cart: [cartItemSchema],
+  wishlist: [wishlistItemSchema],
   registered: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Workshop'
