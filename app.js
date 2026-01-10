@@ -369,6 +369,49 @@ app.get('/gallery', async (req, res) => {
   }
 });
 
+// API route for individual artwork details
+app.get('/api/artwork/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('Looking for artwork with ID:', id);
+    
+    let artwork;
+    
+    // Try to find by ObjectId first
+    try {
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        artwork = await Artwork.findById(id);
+        console.log('Tried ObjectId lookup, found:', !!artwork);
+      }
+    } catch (error) {
+      console.log('ObjectId lookup failed:', error.message);
+    }
+    
+    // If not found, try to find by displayOrder (for numeric IDs)
+    if (!artwork && !isNaN(parseInt(id))) {
+      artwork = await Artwork.findOne({ displayOrder: parseInt(id) });
+      console.log('Tried displayOrder lookup, found:', !!artwork);
+    }
+    
+    // If still not found, try to find by title as fallback
+    if (!artwork) {
+      artwork = await Artwork.findOne({ title: { $regex: id, $options: 'i' } });
+      console.log('Tried title lookup, found:', !!artwork);
+    }
+    
+    if (!artwork) {
+      console.log('Artwork not found for ID:', id);
+      return res.status(404).json({ error: 'Artwork not found' });
+    }
+    
+    console.log('Found artwork:', artwork.title, 'ID:', artwork._id);
+    res.json(artwork);
+  } catch (error) {
+    console.error('Error fetching artwork details:', error);
+    res.status(500).json({ error: 'Error fetching artwork details' });
+  }
+});
+
 // About Us route
 app.get("/about", (req, res) => {
   res.render("about", {

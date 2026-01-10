@@ -40,8 +40,14 @@ async function initArtworks() {
         existingArtwork.image = artworkData.image;
         existingArtwork.category = artworkData.category;
         existingArtwork.description = artworkData.description;
+        existingArtwork.year = artworkData.year;
+        existingArtwork.medium = artworkData.medium;
+        existingArtwork.dimensions = artworkData.dimensions;
+        existingArtwork.availability = artworkData.availability;
+        existingArtwork.shipping = artworkData.shipping;
+        existingArtwork.editionInfo = artworkData.editionInfo;
         existingArtwork.isAvailable = true;
-        existingArtwork.displayOrder = artworkData.id;
+        existingArtwork.displayOrder = artworkData.id || existingArtwork.displayOrder;
         await existingArtwork.save();
         console.log(`✓ Updated: "${artworkData.title}" by ${artworkData.artist}`);
         created++;
@@ -56,8 +62,14 @@ async function initArtworks() {
         image: artworkData.image,
         category: artworkData.category,
         description: artworkData.description,
+        year: artworkData.year,
+        medium: artworkData.medium,
+        dimensions: artworkData.dimensions,
+        availability: artworkData.availability,
+        shipping: artworkData.shipping,
+        editionInfo: artworkData.editionInfo,
         isAvailable: true,
-        displayOrder: artworkData.id
+        displayOrder: artworkData.id || 0
       });
       
       await artwork.save();

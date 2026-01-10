@@ -42,6 +42,7 @@ async function initMenuItems() {
         existingItem.image = itemData.image;
         existingItem.displayOrder = itemData.displayOrder || 0;
         existingItem.isAvailable = true;
+        existingItem.reviews = itemData.reviews || [];
         await existingItem.save();
         console.log(`✓ Updated: "${itemData.name}" - ₹${itemData.price}`);
         created++;
@@ -57,7 +58,8 @@ async function initMenuItems() {
         subCategory: itemData.subCategory,
         image: itemData.image,
         isAvailable: true,
-        displayOrder: itemData.displayOrder || 0
+        displayOrder: itemData.displayOrder || 0,
+        reviews: itemData.reviews || []
       });
       
       await menuItem.save();

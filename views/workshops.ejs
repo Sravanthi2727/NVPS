@@ -20,11 +20,82 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/workshops.css">
+  <link rel="stylesheet" href="/css/gallery.css">
   
   <style>
     /* Workshops page specific styles */
     body {
       padding-top: 76px; /* Account for fixed navbar */
+    }
+    
+    /* Workshop Hero Animations */
+    .hero {
+        position: relative;
+        padding: 6rem 0;
+    }
+
+    .hero-content {
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .hero-logo {
+        animation: fadeInDown 1s ease-out 0.3s both;
+    }
+
+    .hero-title {
+        animation: slideInLeft 1s ease-out 0.6s both;
+        background: linear-gradient(45deg, var(--gold), var(--gold-soft));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero-subtitle {
+        animation: slideInRight 1s ease-out 0.9s both;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
     }
   </style>
 </head>
@@ -36,9 +107,12 @@
 
 <!-- HERO -->
 <section class="hero" id="hero">
-  <h1 class="hero-title">Workshops At Rabuste</h1>
-  <p class="hero-subtitle">Where Creativity Meets Caffeine</p>
-  <div class="particles"></div>
+    <div class="hero-content">
+        <img src="/assets/logo-icon.png" alt="Rabuste Coffee Logo" class="hero-logo" style="display:block; margin:0 auto 20px auto; width:120px;">
+        <h1 class="hero-title">Workshops At Rabuste</h1>
+        <p class="hero-subtitle">Where Creativity Meets Caffeine</p>
+    </div>
+    <div class="particles"></div>
 </section>
 
 <!-- INTRO CARD -->
