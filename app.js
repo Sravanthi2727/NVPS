@@ -826,6 +826,35 @@ app.get('/api/cart', ensureAuthenticated, async (req, res) => {
   }
 });
 
+// User: Get user's orders
+app.get('/api/user/orders', async (req, res) => {
+  try {
+    console.log('=== USER ORDERS API CALLED ===');
+    console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
+    console.log('User object:', req.user);
+    
+    // For debugging, let's get all orders first
+    const allOrders = await Order.find().sort({ createdAt: -1 });
+    console.log('Total orders in database:', allOrders.length);
+    
+    if (req.isAuthenticated && req.isAuthenticated()) {
+      const userId = req.user._id || req.user.id;
+      console.log('Fetching orders for authenticated user:', userId);
+      
+      const userOrders = await Order.find({ userId: userId }).sort({ createdAt: -1 });
+      console.log(`Found ${userOrders.length} orders for user ${userId}`);
+      
+      res.json(userOrders);
+    } else {
+      console.log('User not authenticated, returning all orders for debugging');
+      res.json(allOrders);
+    }
+  } catch (error) {
+    console.error('Error fetching user orders:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch orders', error: error.message });
+  }
+});
+
 app.post('/api/cart', ensureAuthenticated, async (req, res) => {
   try {
     const { itemId, name, price, image, quantity } = req.body;
@@ -1176,8 +1205,12 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
       status: 'pending'
     });
 
+    console.log('Creating order for user:', user._id, 'with', user.cart.length, 'items');
+
     // Save order
     await newOrder.save();
+
+    console.log('Order saved successfully:', newOrder._id);
 
     // Clear user's cart
     user.cart = [];
@@ -1202,6 +1235,58 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
     console.error('Checkout error:', error);
     res.status(500).json({ success: false, message: 'Failed to place order. Please try again.' });
   }
+});
+
+// Simple test route
+app.get('/test-route', (req, res) => {
+  res.json({ message: 'Test route working!' });
+});
+
+// Debug: Get current user info (temporary for testing)
+app.get('/api/debug/user', ensureAuthenticated, async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    console.log('Current user:', user ? { id: user._id, name: user.name, email: user.email } : 'Not found');
+    res.json({ 
+      user: user ? {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        cartLength: user.cart ? user.cart.length : 0
+      } : null
+    });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Debug: Get all orders (temporary for testing)
+app.get('/api/debug/orders', async (req, res) => {
+  try {
+    const allOrders = await Order.find().populate('userId', 'name email');
+    console.log('All orders in database:', allOrders.length);
+    res.json({ 
+      total: allOrders.length, 
+      orders: allOrders.map(o => ({
+        id: o._id,
+        userId: o.userId,
+        customerName: o.customerName,
+        status: o.status,
+        total: o.totalAmount,
+        date: o.orderDate
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching all orders:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Test endpoint to check if routes are working
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working!', timestamp: new Date() });
 });
 
 // Admin: Get all orders

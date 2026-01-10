@@ -276,6 +276,11 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="#orders" data-bs-toggle="pill">
+              <i class="bi bi-receipt"></i> My Orders
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="#workshops" data-bs-toggle="pill">
               <i class="bi bi-brush"></i> Workshops
             </a>
@@ -305,6 +310,45 @@
           <h3 style="color: #d6a45a; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px rgba(214, 164, 90, 0.2);">My Cart</h3>
           <div class="row" id="cartItems">
             <!-- Cart items will be dynamically loaded here -->
+          </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div class="tab-pane fade" id="orders">
+          <h3 style="color: #d6a45a; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px rgba(214, 164, 90, 0.2);">My Orders</h3>
+          
+          <!-- Orders Filter -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <select class="form-select" id="orderStatusFilter" style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
+                <option value="">All Orders</option>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <select class="form-select" id="orderTypeFilter" style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
+                <option value="">All Types</option>
+                <option value="menu">Menu Orders</option>
+                <option value="art">Art Orders</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Orders List -->
+          <div id="ordersList">
+            <!-- Orders will be dynamically loaded here -->
+          </div>
+          
+          <!-- Empty State -->
+          <div id="emptyOrdersState" class="text-center py-5" style="display: none;">
+            <i class="bi bi-receipt" style="font-size: 4rem; color: #666;"></i>
+            <h4 style="color: #666; margin-top: 1rem;">No Orders Yet</h4>
+            <p style="color: #999;">Your order history will appear here once you make your first purchase.</p>
+            <a href="/menu" class="btn" style="background-color: #d6a45a; border: none; color: #000; margin-top: 1rem;">
+              <i class="bi bi-cup-hot me-2"></i>Browse Menu
+            </a>
           </div>
         </div>
 
@@ -394,6 +438,22 @@ async function fetchCart() {
     return await response.json();
   } catch (error) {
     console.error('Error fetching cart:', error);
+    return [];
+  }
+}
+
+async function fetchOrders() {
+  try {
+    console.log('Fetching user orders...');
+    const response = await fetch('/api/user/orders');
+    if (!response.ok) {
+      throw new Error('Failed to fetch orders');
+    }
+    const orders = await response.json();
+    console.log('Fetched orders:', orders);
+    return orders;
+  } catch (error) {
+    console.error('Error fetching orders:', error);
     return [];
   }
 }
@@ -512,6 +572,95 @@ function renderCart(items) {
       </div>
     </div>
   `;
+}
+
+function renderOrders(orders) {
+  console.log('renderOrders called with:', orders);
+  const container = document.getElementById('ordersList');
+  const emptyState = document.getElementById('emptyOrdersState');
+  
+  if (!container) {
+    console.error('ordersList container not found!');
+    return;
+  }
+  
+  if (!emptyState) {
+    console.error('emptyOrdersState container not found!');
+    return;
+  }
+  
+  if (orders.length === 0) {
+    console.log('No orders found, showing empty state');
+    container.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  console.log('Rendering', orders.length, 'orders');
+  container.style.display = 'block';
+  emptyState.style.display = 'none';
+
+  container.innerHTML = orders.map(order => {
+    const statusColor = order.status === 'completed' ? 'success' : 
+                       order.status === 'pending' ? 'warning' : 
+                       order.status === 'cancelled' ? 'danger' : 'secondary';
+    
+    const orderDate = new Date(order.orderDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    return `
+      <div class="card mb-3" style="background-color: #1a1a1a; border: 1px solid #333;">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #2a2a2a; border-bottom: 1px solid #333;">
+          <div>
+            <h6 class="mb-0" style="color: #d6a45a;">Order #${order._id.slice(-6).toUpperCase()}</h6>
+            <small style="color: #ccc;">${orderDate}</small>
+          </div>
+          <span class="badge bg-${statusColor}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+        </div>
+        <div class="card-body" style="color: #f5f2ee;">
+          <div class="row">
+            <div class="col-md-8">
+              <h6 style="color: #d6a45a; margin-bottom: 10px;">Items Ordered:</h6>
+              <div class="row">
+                ${order.items.map(item => `
+                  <div class="col-md-6 mb-2">
+                    <div class="d-flex align-items-center">
+                      ${item.image ? `<img src="${item.image}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="${item.name}" onerror="this.src='/assets/placeholder.jpg'">` : `<div class="bg-secondary rounded me-2" style="width: 40px; height: 40px;"></div>`}
+                      <div>
+                        <small class="fw-bold">${item.name}</small><br>
+                        <small style="color: #ccc;">Qty: ${item.quantity} × ₹${item.price}</small>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            <div class="col-md-4 text-end">
+              <h5 style="color: #d6a45a;">Total: ₹${order.totalAmount.toFixed(2)}</h5>
+              ${order.status === 'pending' ? `
+                <small style="color: #f39c12;">
+                  <i class="bi bi-clock"></i> Order is being prepared
+                </small>
+              ` : order.status === 'completed' ? `
+                <small style="color: #28a745;">
+                  <i class="bi bi-check-circle"></i> Order completed
+                </small>
+              ` : order.status === 'cancelled' ? `
+                <small style="color: #dc3545;">
+                  <i class="bi bi-x-circle"></i> Order cancelled
+                </small>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 function renderWorkshops(registrations) {
@@ -686,17 +835,66 @@ async function updateQuantity(itemId, change) {
   }
 }
 
+// Filter orders function
+function filterOrders() {
+  const statusFilter = document.getElementById('orderStatusFilter').value;
+  const typeFilter = document.getElementById('orderTypeFilter').value;
+  
+  let filteredOrders = window.allOrders || [];
+  
+  // Filter by status
+  if (statusFilter) {
+    filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
+  }
+  
+  // Filter by type (for future art orders)
+  if (typeFilter === 'menu') {
+    // Currently all orders are menu orders, but this is ready for art orders
+    filteredOrders = filteredOrders.filter(order => order.type !== 'art');
+  } else if (typeFilter === 'art') {
+    filteredOrders = filteredOrders.filter(order => order.type === 'art');
+  }
+  
+  renderOrders(filteredOrders);
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
   // Load dashboard data from API
+  console.log('Loading dashboard data...');
   const wishlist = await fetchWishlist();
   const cart = await fetchCart();
+  const orders = await fetchOrders();
   const workshops = await fetchWorkshops();
   const requests = await fetchRequests();
 
+  console.log('Dashboard data loaded:', {
+    wishlist: wishlist.length,
+    cart: cart.length, 
+    orders: orders.length,
+    workshops: workshops.length,
+    requests: requests.length
+  });
+
   renderWishlist(wishlist);
   renderCart(cart);
+  renderOrders(orders);
   renderWorkshops(workshops);
   renderRequests(requests);
+
+  // Store orders globally for filtering
+  window.allOrders = orders;
+
+  // Add event listeners for order filters
+  const statusFilter = document.getElementById('orderStatusFilter');
+  const typeFilter = document.getElementById('orderTypeFilter');
+  
+  if (statusFilter) {
+    statusFilter.addEventListener('change', filterOrders);
+  }
+  
+  if (typeFilter) {
+    typeFilter.addEventListener('change', filterOrders);
+  }
 
   // Handle request type change
   const requestTypeSelect = document.getElementById('requestType');
@@ -821,6 +1019,157 @@ async function submitRequest(request) {
     console.error('Error submitting request:', error);
     return { success: false };
   }
+}
+
+// Checkout functionality
+async function proceedToCheckout() {
+  try {
+    // Check if cart is empty
+    const cart = await fetchCart();
+    if (!cart || cart.length === 0) {
+      alert('Your cart is empty. Please add items before checkout.');
+      return;
+    }
+    
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const originalText = checkoutBtn.innerHTML;
+    
+    // Show loading state
+    checkoutBtn.disabled = true;
+    checkoutBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+    
+    const response = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      // Show success message
+      showCheckoutSuccess(result.orderId, result.totalAmount);
+      
+      // Refresh cart display
+      const updatedCart = await fetchCart();
+      renderCart(updatedCart);
+      
+      // Refresh orders display
+      const updatedOrders = await fetchOrders();
+      renderOrders(updatedOrders);
+      window.allOrders = updatedOrders;
+      
+    } else {
+      throw new Error(result.message || 'Checkout failed');
+    }
+    
+  } catch (error) {
+    console.error('Checkout error:', error);
+    
+    let errorMessage = 'Failed to place order. Please try again.';
+    if (error.message.includes('Please login')) {
+      errorMessage = 'Please login to place an order.';
+    } else if (error.message.includes('Cart is empty')) {
+      errorMessage = 'Your cart is empty. Please add items before checkout.';
+    }
+    
+    alert(errorMessage);
+  } finally {
+    // Reset button
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn) {
+      checkoutBtn.disabled = false;
+      checkoutBtn.innerHTML = 'Proceed to Checkout';
+    }
+  }
+}
+
+function showCheckoutSuccess(orderId, totalAmount) {
+  // Create success modal
+  const successModal = document.createElement('div');
+  successModal.className = 'modal fade';
+  successModal.id = 'checkoutSuccessModal';
+  successModal.innerHTML = `
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background-color: #1a1a1a; border: 1px solid #d6a45a;">
+        <div class="modal-header" style="border-bottom: 1px solid #d6a45a;">
+          <h5 class="modal-title" style="color: #d6a45a;">
+            <i class="bi bi-check-circle-fill me-2"></i>Order Placed Successfully!
+          </h5>
+        </div>
+        <div class="modal-body text-center" style="color: #f5f2ee;">
+          <div class="mb-3">
+            <i class="bi bi-check-circle" style="font-size: 3rem; color: #28a745;"></i>
+          </div>
+          <h4 style="color: #d6a45a;">Thank You!</h4>
+          <p>Your order has been placed successfully and is now being processed.</p>
+          <div class="alert alert-success" style="background-color: rgba(40, 167, 69, 0.1); border: 1px solid #28a745; color: #28a745;">
+            <strong>Order ID:</strong> #${orderId.toString().slice(-6).toUpperCase()}<br>
+            <strong>Total Amount:</strong> ₹${totalAmount.toFixed(2)}
+          </div>
+          <p class="small">You can track your order status in the "My Orders" section. Your order will be prepared shortly!</p>
+        </div>
+        <div class="modal-footer" style="border-top: 1px solid #d6a45a;">
+          <button type="button" class="btn" style="background-color: #d6a45a; border: none; color: #000;" data-bs-dismiss="modal">Continue Shopping</button>
+          <a href="/menu" class="btn btn-outline-light">Browse Menu</a>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(successModal);
+  
+  // Show modal
+  const modal = new bootstrap.Modal(successModal);
+  modal.show();
+  
+  // Remove modal from DOM when hidden
+  successModal.addEventListener('hidden.bs.modal', function() {
+    document.body.removeChild(successModal);
+  });
+  
+  // Also show a toast notification
+  showToast('Order placed successfully!', 'success');
+}
+
+// Toast notification system
+function showToast(message, type = 'info') {
+  // Create toast container if it doesn't exist
+  let toastContainer = document.getElementById('toastContainer');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'toastContainer';
+    toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+    toastContainer.style.zIndex = '9999';
+    document.body.appendChild(toastContainer);
+  }
+  
+  // Create toast
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.setAttribute('role', 'alert');
+  toast.innerHTML = `
+    <div class="toast-header" style="background-color: #1a1a1a; border-bottom: 1px solid #d6a45a;">
+      <i class="bi bi-${type === 'success' ? 'check-circle-fill text-success' : 'info-circle-fill text-info'} me-2"></i>
+      <strong class="me-auto" style="color: #d6a45a;">Notification</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" style="filter: invert(1);"></button>
+    </div>
+    <div class="toast-body" style="background-color: #1a1a1a; color: #f5f2ee;">
+      ${message}
+    </div>
+  `;
+  
+  toastContainer.appendChild(toast);
+  
+  // Show toast
+  const bsToast = new bootstrap.Toast(toast, { delay: 4000 });
+  bsToast.show();
+  
+  // Remove toast from DOM after it's hidden
+  toast.addEventListener('hidden.bs.toast', function() {
+    toastContainer.removeChild(toast);
+  });
 }
 </script>
 
