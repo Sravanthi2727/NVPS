@@ -718,7 +718,7 @@ function renderCart(items) {
           <div class="card-body">
             <div class="row align-items-center">
               <div class="col-md-2">
-                <img src="${item.image}" class="img-fluid rounded" alt="${item.name}">
+                <img src="${item.image || '/assets/menu_images/default-item.jpg'}" class="img-fluid rounded" alt="${item.name}" onerror="this.src='/assets/logo-icon.png'">
               </div>
               <div class="col-md-4">
                 <h5>${item.name}</h5>
@@ -755,7 +755,7 @@ function renderCart(items) {
               <h4 style="color: #d6a45a; font-weight: bold;">Total: ${total.toFixed(2)}</h4>
             </div>
             <div class="col-md-4 text-end">
-              <button class="btn" style="background-color: #d6a45a; border: none; color: #000;">Proceed to Checkout</button>
+              <button class="btn" id="checkoutBtn" style="background-color: #d6a45a; border: none; color: #000;" onclick="proceedToCheckout()">Proceed to Checkout</button>
             </div>
           </div>
         </div>
@@ -918,6 +918,174 @@ function submitRequest() {
   
   // Reload requests
   loadRequests();
+}
+
+// Checkout functionality
+async function proceedToCheckout() {
+  try {
+    // Check if cart is empty
+    const cart = await fetchCart();
+    if (!cart || cart.length === 0) {
+      alert('Your cart is empty. Please add items before checkout.');
+      return;
+    }
+    
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const originalText = checkoutBtn.innerHTML;
+    
+    // Show loading state
+    checkoutBtn.disabled = true;
+    checkoutBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+    
+    const response = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      // Show success message
+      showCheckoutSuccess(result.orderId, result.totalAmount);
+      
+      // Refresh cart display
+      const updatedCart = await fetchCart();
+      renderCart(updatedCart);
+      
+      // Update cart count in navbar if it exists
+      updateCartCount();
+      
+    } else {
+      throw new Error(result.message || 'Checkout failed');
+    }
+    
+  } catch (error) {
+    console.error('Checkout error:', error);
+    
+    let errorMessage = 'Failed to place order. Please try again.';
+    if (error.message.includes('Please login')) {
+      errorMessage = 'Please login to place an order.';
+    } else if (error.message.includes('Cart is empty')) {
+      errorMessage = 'Your cart is empty. Please add items before checkout.';
+    }
+    
+    alert(errorMessage);
+    
+    // Reset button
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn) {
+      checkoutBtn.disabled = false;
+      checkoutBtn.innerHTML = 'Proceed to Checkout';
+    }
+  }
+}
+
+// Update cart count in navbar
+async function updateCartCount() {
+  try {
+    const response = await fetch('/api/cart/count');
+    const data = await response.json();
+    const cartCount = document.querySelector('.cart-count');
+    if (cartCount) {
+      cartCount.textContent = data.count || '0';
+    }
+  } catch (error) {
+    console.error('Error updating cart count:', error);
+  }
+}
+
+function showCheckoutSuccess(orderId, totalAmount) {
+  // Create success modal
+  const successModal = document.createElement('div');
+  successModal.className = 'modal fade';
+  successModal.id = 'checkoutSuccessModal';
+  successModal.innerHTML = `
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background-color: #1a1a1a; border: 1px solid #d6a45a;">
+        <div class="modal-header" style="border-bottom: 1px solid #d6a45a;">
+          <h5 class="modal-title" style="color: #d6a45a;">
+            <i class="bi bi-check-circle-fill me-2"></i>Order Placed Successfully!
+          </h5>
+        </div>
+        <div class="modal-body text-center" style="color: #f5f2ee;">
+          <div class="mb-3">
+            <i class="bi bi-check-circle" style="font-size: 3rem; color: #28a745;"></i>
+          </div>
+          <h4 style="color: #d6a45a;">Thank You!</h4>
+          <p>Your order has been placed successfully and is now being processed.</p>
+          <div class="alert alert-success" style="background-color: rgba(40, 167, 69, 0.1); border: 1px solid #28a745; color: #28a745;">
+            <strong>Order ID:</strong> #${orderId.toString().slice(-6).toUpperCase()}<br>
+            <strong>Total Amount:</strong> $${totalAmount.toFixed(2)}
+          </div>
+          <p class="small">You can track your order status in the admin panel. Your order will be prepared shortly!</p>
+        </div>
+        <div class="modal-footer" style="border-top: 1px solid #d6a45a;">
+          <button type="button" class="btn" style="background-color: #d6a45a; border: none; color: #000;" data-bs-dismiss="modal">Continue Shopping</button>
+          <a href="/menu" class="btn btn-outline-light">Browse Menu</a>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(successModal);
+  
+  // Show modal
+  const modal = new bootstrap.Modal(successModal);
+  modal.show();
+  
+  // Remove modal from DOM when hidden
+  successModal.addEventListener('hidden.bs.modal', function() {
+    document.body.removeChild(successModal);
+  });
+  
+  // Also show a toast notification
+  showToast('Order placed successfully!', 'success');
+}
+
+// Toast notification system
+function showToast(message, type = 'info') {
+  // Create toast container if it doesn't exist
+  let toastContainer = document.getElementById('toastContainer');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'toastContainer';
+    toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+    toastContainer.style.zIndex = '9999';
+    document.body.appendChild(toastContainer);
+  }
+  
+  // Create toast
+  const toastId = 'toast-' + Date.now();
+  const toast = document.createElement('div');
+  toast.id = toastId;
+  toast.className = 'toast';
+  toast.setAttribute('role', 'alert');
+  
+  const bgColor = type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#d6a45a';
+  
+  toast.innerHTML = `
+    <div class="toast-header" style="background-color: ${bgColor}; color: white;">
+      <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+      <strong class="me-auto">Rabuste Coffee</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+    </div>
+    <div class="toast-body" style="background-color: #1a1a1a; color: #f5f2ee;">
+      ${message}
+    </div>
+  `;
+  
+  toastContainer.appendChild(toast);
+  
+  // Show toast
+  const bsToast = new bootstrap.Toast(toast, { delay: 4000 });
+  bsToast.show();
+  
+  // Remove toast from DOM after it's hidden
+  toast.addEventListener('hidden.bs.toast', function() {
+    toastContainer.removeChild(toast);
+  });
 }
 </script>
 

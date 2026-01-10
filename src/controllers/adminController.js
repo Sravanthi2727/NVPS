@@ -5,48 +5,110 @@
 
 const adminController = {
   // Admin Dashboard
-  getDashboard: (req, res) => {
-    res.render("admin/dashboard", {
-      title: 'Admin Dashboard - Rabuste Coffee',
-      description: 'Admin dashboard for managing cart requests, workshop requests, and user accounts.',
-      currentPage: '/admin',
-      layout: false // Disable layout system completely
-    });
+  getDashboard: async (req, res) => {
+    try {
+      const Order = require('../../models/Order');
+      
+      // Get recent orders for dashboard
+      const recentOrders = await Order.find()
+        .populate('userId', 'name email')
+        .sort({ createdAt: -1 })
+        .limit(5);
+
+      // Transform orders for dashboard display
+      const recentActivity = recentOrders.map(order => ({
+        type: 'Cart',
+        customer: order.customerName,
+        email: order.customerEmail,
+        details: order.items.length > 1 
+          ? `${order.items[0].name} +${order.items.length - 1} more`
+          : order.items[0]?.name || 'Order',
+        date: order.orderDate.toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric', 
+          year: 'numeric' 
+        }),
+        status: order.status
+      }));
+
+      res.render("admin/dashboard", {
+        title: 'Admin Dashboard - Rabuste Coffee',
+        description: 'Admin dashboard for managing orders, workshop requests, and user accounts.',
+        currentPage: '/admin',
+        recentActivity,
+        layout: false
+      });
+    } catch (error) {
+      console.error('Error loading dashboard:', error);
+      
+      // Fallback to static data
+      res.render("admin/dashboard", {
+        title: 'Admin Dashboard - Rabuste Coffee',
+        description: 'Admin dashboard for managing orders, workshop requests, and user accounts.',
+        currentPage: '/admin',
+        layout: false
+      });
+    }
   },
 
-  // Cart Requests Management
-  getCartRequests: (req, res) => {
-    // Mock data - replace with actual database queries
-    const cartRequests = [
-      {
-        id: 1,
-        customerName: 'John Doe',
-        email: 'john@example.com',
-        items: ['Robusta Blend', 'Espresso Shot'],
-        total: 25.50,
-        status: 'pending',
-        date: '2024-01-08'
-      },
-      {
-        id: 2,
-        customerName: 'Jane Smith',
-        email: 'jane@example.com',
-        items: ['Cold Brew', 'Pastry'],
-        total: 18.75,
-        status: 'completed',
-        date: '2024-01-07'
-      }
-    ];
-    
-    res.render("admin/cart-requests", {
-      title: 'Cart Requests - Admin Dashboard',
-      description: 'Manage customer cart requests and orders.',
-      currentPage: '/admin/cart-requests',
-      cartRequests,
-      layout: false,
-      additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-      additionalJS: '<script src="/js/admin.js"></script>'
-    });
+  // Cart Requests Management (now Orders Management)
+  getCartRequests: async (req, res) => {
+    try {
+      const Order = require('../../models/Order');
+      
+      // Fetch orders from database
+      const orders = await Order.find()
+        .populate('userId', 'name email')
+        .sort({ createdAt: -1 });
+
+      // Transform orders to match the expected format
+      const cartRequests = orders.map(order => ({
+        id: order._id,
+        customerName: order.customerName,
+        email: order.customerEmail,
+        items: order.items.map(item => `${item.name} (x${item.quantity})`),
+        itemsDetailed: order.items,
+        total: order.totalAmount,
+        status: order.status,
+        date: order.orderDate.toISOString().split('T')[0],
+        createdAt: order.createdAt
+      }));
+
+      res.render("admin/cart-requests", {
+        title: 'Orders Management - Admin Dashboard',
+        description: 'Manage customer orders and their status.',
+        currentPage: '/admin/cart-requests',
+        cartRequests,
+        layout: false,
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>'
+      });
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      
+      // Fallback to mock data if database fails
+      const cartRequests = [
+        {
+          id: 1,
+          customerName: 'John Doe',
+          email: 'john@example.com',
+          items: ['Robusta Blend', 'Espresso Shot'],
+          total: 25.50,
+          status: 'pending',
+          date: '2024-01-08'
+        }
+      ];
+      
+      res.render("admin/cart-requests", {
+        title: 'Orders Management - Admin Dashboard',
+        description: 'Manage customer orders and their status.',
+        currentPage: '/admin/cart-requests',
+        cartRequests,
+        layout: false,
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>'
+      });
+    }
   },
 
   // Workshop Requests Management
@@ -149,13 +211,43 @@ const adminController = {
     }
   },
 
-  // Update cart request status
-  updateCartRequest: (req, res) => {
-    const { id } = req.params;
-    const { status } = req.body;
-    // Update cart request status in database
-    console.log(`Updating cart request ${id} to status: ${status}`);
-    res.redirect("/admin/cart-requests");
+  // Update cart request status (now order status)
+  updateCartRequest: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      
+      const Order = require('../../models/Order');
+      
+      // Validate status
+      if (!['pending', 'completed', 'cancelled'].includes(status)) {
+        console.error('Invalid status:', status);
+        return res.redirect("/admin/cart-requests?error=invalid_status");
+      }
+
+      // Update order status in database
+      const updatedOrder = await Order.findByIdAndUpdate(
+        id,
+        { status: status },
+        { new: true }
+      );
+
+      if (!updatedOrder) {
+        console.error('Order not found:', id);
+        return res.redirect("/admin/cart-requests?error=order_not_found");
+      }
+
+      console.log(`Order status updated successfully:`, {
+        orderId: id,
+        newStatus: status,
+        customer: updatedOrder.customerName
+      });
+
+      res.redirect("/admin/cart-requests?success=status_updated");
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      res.redirect("/admin/cart-requests?error=update_failed");
+    }
   },
 
   // Update art request status
