@@ -1,569 +1,170 @@
 [
   {
     "name": "Robusta Iced Americano",
-    "description": "Bold Robusta espresso with chilled water",
+    "description": "Bold Robusta espresso with chilled water. Perfect kick with notes of dark chocolate and caramel.",
     "price": 160,
     "category": "cold",
     "subCategory": "robusta-cold-non-milk",
     "image": "iced-americano.jpg",
-    "displayOrder": 1
-  },
-  {
-    "name": "Robusta Iced Espresso",
-    "description": "Pure Robusta espresso shot over ice",
-    "price": 130,
-    "category": "cold",
-    "subCategory": "robusta-cold-non-milk",
-    "image": "iced-espresso.jpg",
-    "displayOrder": 2
-  },
-  {
-    "name": "Robusta Espresso Tonic/Ginger Ale/Orange",
-    "description": "Robusta espresso with tonic, ginger ale, or orange",
-    "price": 250,
-    "category": "cold",
-    "subCategory": "robusta-cold-non-milk",
-    "image": "Cold Brew Tonic Ginger Ale Orange.webp",
-    "displayOrder": 3
-  },
-  {
-    "name": "Robusta Espresso Red Bull",
-    "description": "Energy boost with Robusta espresso and Red Bull",
-    "price": 290,
-    "category": "cold",
-    "subCategory": "robusta-cold-non-milk",
-    "image": "cold_brew_redbull.webp",
-    "displayOrder": 4
-  },
-  {
-    "name": "Cranberry Tonic",
-    "description": "Refreshing cranberry and tonic combination",
-    "price": 270,
-    "category": "cold",
-    "subCategory": "robusta-cold-non-milk",
-    "image": "cranberry_tonic.jpg",
-    "displayOrder": 5
+    "displayOrder": 1,
+    "reviews": [
+      {
+        "customer": "Rahul Sharma",
+        "rating": 5,
+        "comment": "Perfect kick to start my day! Strong and refreshing."
+      },
+      {
+        "customer": "Priya Patel",
+        "rating": 4,
+        "comment": "Great Robusta flavor, exactly what I needed."
+      }
+    ]
   },
   {
     "name": "Robusta Iced Latte",
-    "description": "Smooth Robusta espresso with cold milk",
+    "description": "Smooth Robusta espresso with cold milk. Perfect balance of bold intensity and creamy texture.",
     "price": 220,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
     "image": "Iced_latte_&_Iced_Americano.jpeg",
-    "displayOrder": 6
-  },
-  {
-    "name": "Robusta Affogato",
-    "description": "Vanilla ice cream drowned in hot Robusta espresso",
-    "price": 250,
-    "category": "cold",
-    "subCategory": "robusta-cold-milk",
-    "image": "affogato_cold_blend.jpg",
-    "displayOrder": 7
-  },
-  {
-    "name": "Robusta Classic Frappe",
-    "description": "Blended iced Robusta coffee with milk",
-    "price": 250,
-    "category": "cold",
-    "subCategory": "robusta-cold-milk",
-    "image": "cassic_frappe.webp",
-    "displayOrder": 8
-  },
-  {
-    "name": "Robusta Hazelnut",
-    "description": "Robusta coffee with rich hazelnut flavor",
-    "price": 260,
-    "category": "cold",
-    "subCategory": "robusta-cold-milk",
-    "image": "hazelnut_cold_blend.jpg",
-    "displayOrder": 9
-  },
-  {
-    "name": "Robusta Caramel",
-    "description": "Sweet caramel meets bold Robusta",
-    "price": 260,
-    "category": "cold",
-    "subCategory": "robusta-cold-milk",
-    "image": "Caramel-Iced-blend.jpg",
-    "displayOrder": 10
-  },
-  {
-    "name": "Robusta Mocha",
-    "description": "Perfect blend of Robusta and chocolate",
-    "price": 270,
-    "category": "cold",
-    "subCategory": "robusta-cold-milk",
-    "image": "iced-mocha-blend.jpg",
-    "displayOrder": 11
-  },
-  {
-    "name": "Robusta Biscoff",
-    "description": "Robusta with creamy Biscoff cookie flavor",
-    "price": 270,
-    "category": "cold",
-    "subCategory": "robusta-cold-milk",
-    "image": "biscoff_cold_blend.jpg",
-    "displayOrder": 12
-  },
-  {
-    "name": "Robusta Vietnamese",
-    "description": "Traditional Vietnamese style with condensed milk",
-    "price": 240,
-    "category": "cold",
-    "subCategory": "robusta-cold-milk",
-    "image": "Vietnamese-Iced-Coffee.webp",
-    "displayOrder": 13
-  },
-  {
-    "name": "Robusta Café Suda",
-    "description": "Signature Robusta blend with special preparation",
-    "price": 250,
-    "category": "cold",
-    "subCategory": "robusta-cold-milk",
-    "image": "Cafe-suda.png",
-    "displayOrder": 14
-  },
-  {
-    "name": "Robusta Robco",
-    "description": "Premium Robusta specialty creation",
-    "price": 290,
-    "category": "cold",
-    "subCategory": "robusta-cold-milk",
-    "image": "robco.webp",
-    "displayOrder": 15
-  },
-  {
-    "name": "Robusta Hot Americano",
-    "description": "Classic hot Robusta with hot water",
-    "price": 150,
-    "category": "hot",
-    "subCategory": "robusta-hot-non-milk",
-    "image": "hot_americano.webp",
-    "displayOrder": 16
-  },
-  {
-    "name": "Robusta Hot Espresso",
-    "description": "Pure, intense Robusta espresso shot",
-    "price": 130,
-    "category": "hot",
-    "subCategory": "robusta-hot-non-milk",
-    "image": "hot_espresso.webp",
-    "displayOrder": 17
+    "displayOrder": 6,
+    "reviews": [
+      {
+        "customer": "Anjali Kumar",
+        "rating": 5,
+        "comment": "Best iced latte in town! Perfect balance of coffee and milk."
+      },
+      {
+        "customer": "Vikram Singh",
+        "rating": 5,
+        "comment": "Smooth, creamy, and strong - exactly how I like it!"
+      }
+    ]
   },
   {
     "name": "Robusta Hot Latte",
-    "description": "Smooth Robusta with steamed milk",
+    "description": "Rich Robusta espresso with velvety steamed milk. Beautiful crema layer with earthy, bold flavor.",
     "price": 190,
     "category": "hot",
     "subCategory": "robusta-hot-milk",
     "image": "Blend_Hot_latte.jpeg",
-    "displayOrder": 18
+    "displayOrder": 18,
+    "reviews": [
+      {
+        "customer": "Sneha Reddy",
+        "rating": 5,
+        "comment": "The foam is perfect! Rich and aromatic every time."
+      },
+      {
+        "customer": "Amit Mehta",
+        "rating": 4,
+        "comment": "Strong coffee flavor, just the way I prefer my latte."
+      }
+    ]
   },
   {
-    "name": "Robusta Hot Flat White",
-    "description": "Strong Robusta with microfoam milk",
-    "price": 180,
-    "category": "hot",
-    "subCategory": "robusta-hot-milk",
-    "image": "hot_flat_white.webp",
-    "displayOrder": 19
-  },
-  {
-    "name": "Robusta Hot Cappuccino",
-    "description": "Traditional cappuccino with Robusta espresso",
-    "price": 180,
-    "category": "hot",
-    "subCategory": "robusta-hot-milk",
-    "image": "cappuccino.jpg",
-    "displayOrder": 20
-  },
-  {
-    "name": "Robusta Hot Mocha",
-    "description": "Rich chocolate and Robusta combination",
-    "price": 230,
-    "category": "hot",
-    "subCategory": "robusta-hot-milk",
-    "image": "mocha.jpg",
-    "displayOrder": 21
-  },
-  {
-    "name": "Iced Americano",
-    "description": "Classic blend espresso with chilled water",
-    "price": 150,
-    "category": "cold",
-    "subCategory": "blend-cold-non-milk",
-    "image": "iced-americano.jpg",
-    "displayOrder": 22
-  },
-  {
-    "name": "Iced Espresso",
-    "description": "Pure blend espresso shot over ice",
-    "price": 120,
-    "category": "cold",
-    "subCategory": "blend-cold-non-milk",
-    "image": "iced-espresso.jpg",
-    "displayOrder": 23
-  },
-  {
-    "name": "Iced Espresso Tonic/Ginger Ale/Orange",
-    "description": "Blend espresso with tonic, ginger ale, or orange",
-    "price": 230,
-    "category": "cold",
-    "subCategory": "blend-cold-non-milk",
-    "image": "Cold Brew Tonic Ginger Ale Orange.webp",
-    "displayOrder": 24
-  },
-  {
-    "name": "Iced Espresso Red Bull",
-    "description": "Energy boost with blend espresso and Red Bull",
+    "name": "Robusta Mocha",
+    "description": "Bold Robusta espresso with premium chocolate. Rich, velvety, and intensely satisfying.",
     "price": 270,
     "category": "cold",
-    "subCategory": "blend-cold-non-milk",
-    "image": "cold_brew_redbull.webp",
-    "displayOrder": 25
-  },
-  {
-    "name": "Cranberry Tonic (Blend)",
-    "description": "Refreshing cranberry and tonic combination",
-    "price": 250,
-    "category": "cold",
-    "subCategory": "blend-cold-non-milk",
-    "image": "cranberry_tonic.jpg",
-    "displayOrder": 26
-  },
-  {
-    "name": "Iced Latte",
-    "description": "Smooth blend espresso with cold milk",
-    "price": 210,
-    "category": "cold",
-    "subCategory": "blend-cold-milk",
-    "image": "latte.jpg",
-    "displayOrder": 27
-  },
-  {
-    "name": "Affogato",
-    "description": "Vanilla ice cream drowned in hot blend espresso",
-    "price": 240,
-    "category": "cold",
-    "subCategory": "blend-cold-milk",
-    "image": "affogato_cold_blend.jpg",
-    "displayOrder": 28
-  },
-  {
-    "name": "Classic Frappe",
-    "description": "Blended iced blend coffee with milk",
-    "price": 240,
-    "category": "cold",
-    "subCategory": "blend-cold-milk",
-    "image": "cassic_frappe.webp",
-    "displayOrder": 29
-  },
-  {
-    "name": "Hazelnut",
-    "description": "Blend coffee with rich hazelnut flavor",
-    "price": 250,
-    "category": "cold",
-    "subCategory": "blend-cold-milk",
-    "image": "hazelnut_cold_blend.jpg",
-    "displayOrder": 30
-  },
-  {
-    "name": "Caramel",
-    "description": "Sweet caramel meets smooth blend",
-    "price": 250,
-    "category": "cold",
-    "subCategory": "blend-cold-milk",
-    "image": "Caramel-Iced-blend.jpg",
-    "displayOrder": 31
-  },
-  {
-    "name": "Mocha",
-    "description": "Perfect blend of coffee and chocolate",
-    "price": 260,
-    "category": "cold",
-    "subCategory": "blend-cold-milk",
+    "subCategory": "robusta-cold-milk",
     "image": "iced-mocha-blend.jpg",
-    "displayOrder": 32
-  },
-  {
-    "name": "Biscoff",
-    "description": "Blend coffee with creamy Biscoff cookie flavor",
-    "price": 260,
-    "category": "cold",
-    "subCategory": "blend-cold-milk",
-    "image": "biscoff_cold_blend.jpg",
-    "displayOrder": 33
-  },
-  {
-    "name": "Hot Americano",
-    "description": "Classic hot blend with hot water",
-    "price": 140,
-    "category": "hot",
-    "subCategory": "blend-hot-non-milk",
-    "image": "hot_americano.webp",
-    "displayOrder": 34
-  },
-  {
-    "name": "Hot Espresso",
-    "description": "Pure blend espresso shot",
-    "price": 120,
-    "category": "hot",
-    "subCategory": "blend-hot-non-milk",
-    "image": "hot_espresso.webp",
-    "displayOrder": 35
-  },
-  {
-    "name": "Hot Latte",
-    "description": "Smooth blend with steamed milk",
-    "price": 180,
-    "category": "hot",
-    "subCategory": "blend-hot-milk",
-    "image": "Blend_Hot_latte.jpeg",
-    "displayOrder": 36
-  },
-  {
-    "name": "Hot Flat White",
-    "description": "Strong blend with microfoam milk",
-    "price": 170,
-    "category": "hot",
-    "subCategory": "blend-hot-milk",
-    "image": "hot_flat_white.webp",
-    "displayOrder": 37
-  },
-  {
-    "name": "Hot Cappuccino",
-    "description": "Traditional cappuccino with blend espresso",
-    "price": 170,
-    "category": "hot",
-    "subCategory": "blend-hot-milk",
-    "image": "cappuccino.jpg",
-    "displayOrder": 38
-  },
-  {
-    "name": "Hot Mocha",
-    "description": "Rich chocolate and blend combination",
-    "price": 220,
-    "category": "hot",
-    "subCategory": "blend-hot-milk",
-    "image": "mocha.jpg",
-    "displayOrder": 39
+    "displayOrder": 11,
+    "reviews": [
+      {
+        "customer": "Kavya Nair",
+        "rating": 5,
+        "comment": "Chocolate heaven with real coffee kick! Absolutely addictive."
+      },
+      {
+        "customer": "Rohan Joshi",
+        "rating": 5,
+        "comment": "Perfect blend of chocolate and coffee. My daily treat!"
+      }
+    ]
   },
   {
     "name": "Classic Cold Brew",
-    "description": "Slow-brewed Robusta peaberry for 12+ hours",
+    "description": "12+ hour slow-brewed Robusta peaberry. Low acidity with hints of caramel and dark chocolate.",
     "price": 225,
     "category": "manual-brew",
     "subCategory": "cold-brew",
     "image": "cold brew.jpg",
-    "displayOrder": 40
-  },
-  {
-    "name": "Cold Brew Tonic/Ginger Ale/Orange",
-    "description": "Cold brew with refreshing mixers",
-    "price": 270,
-    "category": "manual-brew",
-    "subCategory": "cold-brew",
-    "image": "Cold Brew Tonic Ginger Ale Orange.webp",
-    "displayOrder": 41
-  },
-  {
-    "name": "Cold Brew Red Bull",
-    "description": "Ultimate energy combination",
-    "price": 290,
-    "category": "manual-brew",
-    "subCategory": "cold-brew",
-    "image": "cold_brew_redbull.webp",
-    "displayOrder": 42
-  },
-  {
-    "name": "V60 Pour Over (Hot)",
-    "description": "Precision brewing method for pure flavor",
-    "price": 220,
-    "category": "manual-brew",
-    "subCategory": "pour-over",
-    "image": "v60_pour_over.webp",
-    "displayOrder": 43
-  },
-  {
-    "name": "V60 Pour Over (Cold)",
-    "description": "Chilled precision brewing",
-    "price": 235,
-    "category": "manual-brew",
-    "subCategory": "pour-over",
-    "image": "v60_pour_over.webp",
-    "displayOrder": 44
-  },
-  {
-    "name": "Cranberry Cold Brew Tonic",
-    "description": "Signature cold brew with cranberry tonic",
-    "price": 280,
-    "category": "manual-brew",
-    "subCategory": "cold-brew",
-    "image": "cranberry_tonic.jpg",
-    "displayOrder": 45
+    "displayOrder": 40,
+    "reviews": [
+      {
+        "customer": "Divya Krishnan",
+        "rating": 5,
+        "comment": "Smoothest cold brew I've ever had. No bitterness at all!"
+      },
+      {
+        "customer": "Arjun Pillai",
+        "rating": 5,
+        "comment": "Worth the wait! Complex flavors and so refreshing."
+      }
+    ]
   },
   {
     "name": "Chocolate Shake",
-    "description": "Rich chocolate milkshake",
+    "description": "Rich chocolate milkshake with premium cocoa. Thick, creamy, and perfectly balanced.",
     "price": 220,
     "category": "shakes-tea",
     "subCategory": "shakes",
     "image": "chocolate_shake.webp",
-    "displayOrder": 46
-  },
-  {
-    "name": "Biscoff Shake",
-    "description": "Creamy Biscoff cookie milkshake",
-    "price": 250,
-    "category": "shakes-tea",
-    "subCategory": "shakes",
-    "image": "biscoff shake.webp",
-    "displayOrder": 47
-  },
-  {
-    "name": "Nutella Shake",
-    "description": "Indulgent Nutella milkshake",
-    "price": 260,
-    "category": "shakes-tea",
-    "subCategory": "shakes",
-    "image": "nutella_shake.webp",
-    "displayOrder": 48
-  },
-  {
-    "name": "Lemon Ice Tea",
-    "description": "Refreshing lemon-infused iced tea",
-    "price": 210,
-    "category": "shakes-tea",
-    "subCategory": "cold-tea",
-    "image": "lemon_ice_tea.jpg",
-    "displayOrder": 49
-  },
-  {
-    "name": "Peach Ice Tea",
-    "description": "Sweet peach-flavored iced tea",
-    "price": 210,
-    "category": "shakes-tea",
-    "subCategory": "cold-tea",
-    "image": "peach_ice_tea.webp",
-    "displayOrder": 50
-  },
-  {
-    "name": "Ginger Fizz",
-    "description": "Spicy ginger with fizzy water",
-    "price": 250,
-    "category": "shakes-tea",
-    "subCategory": "cold-tea",
-    "image": "ginger_fizz.webp",
-    "displayOrder": 51
-  },
-  {
-    "name": "Classic Orange Mint",
-    "description": "Fresh orange with mint leaves",
-    "price": 250,
-    "category": "shakes-tea",
-    "subCategory": "cold-tea",
-    "image": "classic_orange_mint.webp",
-    "displayOrder": 52
+    "displayOrder": 46,
+    "reviews": [
+      {
+        "customer": "Pooja Desai",
+        "rating": 5,
+        "comment": "Pure chocolate indulgence! So thick and creamy."
+      },
+      {
+        "customer": "Karan Malhotra",
+        "rating": 4,
+        "comment": "Great chocolate flavor, not too sweet. Perfect!"
+      }
+    ]
   },
   {
     "name": "Fries",
-    "description": "Crispy golden french fries",
+    "description": "Crispy golden french fries. Double-fried for extra crunch with perfect seasoning.",
     "price": 150,
     "category": "food",
     "subCategory": "snacks-sides",
     "image": "french_fries.jpeg",
-    "displayOrder": 53
-  },
-  {
-    "name": "Potato Wedges",
-    "description": "Seasoned potato wedges",
-    "price": 170,
-    "category": "food",
-    "subCategory": "snacks-sides",
-    "image": "potato_wedges.jpeg",
-    "displayOrder": 54
-  },
-  {
-    "name": "Veg Nuggets",
-    "description": "Crispy vegetarian nuggets",
-    "price": 190,
-    "category": "food",
-    "subCategory": "snacks-sides",
-    "image": "veg_nuggets.webp",
-    "displayOrder": 55
-  },
-  {
-    "name": "Pizza",
-    "description": "Personal size pizza",
-    "price": 300,
-    "category": "food",
-    "subCategory": "snacks-sides",
-    "image": "pizza.jpeg",
-    "displayOrder": 56
-  },
-  {
-    "name": "Plain Bagel",
-    "description": "Fresh baked bagel",
-    "price": 100,
-    "category": "food",
-    "subCategory": "bagels-croissants",
-    "image": "plain_bagel.webp",
-    "displayOrder": 57
-  },
-  {
-    "name": "Cream Cheese Bagel",
-    "description": "Bagel with cream cheese spread",
-    "price": 150,
-    "category": "food",
-    "subCategory": "bagels-croissants",
-    "image": "cream_cheese_bagel.jpg",
-    "displayOrder": 58
-  },
-  {
-    "name": "Jalapeño Cheese Bagel",
-    "description": "Spicy jalapeño with cheese",
-    "price": 200,
-    "category": "food",
-    "subCategory": "bagels-croissants",
-    "image": "jalopino_bagel.webp",
-    "displayOrder": 59
-  },
-  {
-    "name": "Pesto Bagel",
-    "description": "Bagel with fresh pesto spread",
-    "price": 230,
-    "category": "food",
-    "subCategory": "bagels-croissants",
-    "image": "pesto_bagel.webp",
-    "displayOrder": 60
-  },
-  {
-    "name": "Butter Croissant",
-    "description": "Flaky buttery croissant",
-    "price": 150,
-    "category": "food",
-    "subCategory": "bagels-croissants",
-    "image": "butter_croissant.webp",
-    "displayOrder": 61
+    "displayOrder": 53,
+    "reviews": [
+      {
+        "customer": "Neha Gupta",
+        "rating": 5,
+        "comment": "Crispiest fries ever! Perfect with my iced coffee."
+      },
+      {
+        "customer": "Suresh Kumar",
+        "rating": 4,
+        "comment": "Hot and crispy, just the right amount of salt."
+      }
+    ]
   },
   {
     "name": "Nutella Croissant",
-    "description": "Croissant filled with Nutella",
+    "description": "Flaky buttery croissant with generous Nutella. Warm, gooey center in every bite.",
     "price": 200,
     "category": "food",
     "subCategory": "bagels-croissants",
     "image": "nutella_croissant.webp",
-    "displayOrder": 62
-  },
-  {
-    "name": "Cream Cheese Croissant",
-    "description": "Croissant with cream cheese filling",
-    "price": 240,
-    "category": "food",
-    "subCategory": "bagels-croissants",
-    "image": "cream_chese_croissant.webp",
-    "displayOrder": 63
+    "displayOrder": 58,
+    "reviews": [
+      {
+        "customer": "Meera Shah",
+        "rating": 5,
+        "comment": "Heaven in every bite! Warm, flaky, and chocolatey."
+      },
+      {
+        "customer": "Rajat Verma",
+        "rating": 5,
+        "comment": "Best croissant I've had! Nutella filling is perfect."
+      }
+    ]
   }
 ]

@@ -250,6 +250,153 @@
             border-top: 1px solid rgba(214, 164, 90, 0.1);
         }
 
+        /* Modal Styles */
+        .artwork-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .artwork-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            border: 1px solid var(--gold);
+            border-radius: 15px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-header {
+            background: rgba(214, 164, 90, 0.1);
+            border-bottom: 1px solid var(--gold);
+            padding: 1.5rem;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--gold);
+            color: #000;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--gold-soft);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .artwork-detail-img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .artwork-detail-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .artwork-detail-artist {
+            color: var(--muted);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .artwork-detail-price {
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .artwork-detail-description {
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .artwork-detail-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-item {
+            background: rgba(214, 164, 90, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(214, 164, 90, 0.2);
+        }
+
+        .meta-label {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .meta-value {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .gallery-section {
@@ -262,6 +409,19 @@
             
             .category-filter {
                 flex-wrap: wrap;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .artwork-detail-title {
+                font-size: 1.5rem;
+            }
+
+            .modal-body {
+                padding: 1rem;
             }
         }
     </style>
@@ -352,7 +512,7 @@
                                     <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(1, 'Golden Horizon', 'Sarah Johnson', 450, 'assets/gallery/art1.jpg')">
                                         <i class="fas fa-heart"></i> Wishlist
                                     </button>
-                                    <button class="btn btn-gold">View Details</button>
+                                    <button class="btn btn-gold" onclick="showArtworkDetails(1)">View Details</button>
                                 </div>
                             </div>
                         </div>
@@ -372,7 +532,7 @@
                                     <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(2, 'City Lights', 'Michael Chen', 320, 'assets/photowall.jpeg')">
                                         <i class="fas fa-heart"></i> Wishlist
                                     </button>
-                                    <button class="btn btn-gold">View Details</button>
+                                    <button class="btn btn-gold" onclick="showArtworkDetails(2)">View Details</button>
                                 </div>
                             </div>
                         </div>
@@ -392,7 +552,7 @@
                                     <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(3, 'Eternal Flow', 'Elena Rodriguez', 780, 'assets/gallery/art3.jpg')">
                                         <i class="fas fa-heart"></i> Wishlist
                                     </button>
-                                    <button class="btn btn-gold">View Details</button>
+                                    <button class="btn btn-gold" onclick="showArtworkDetails(3)">View Details</button>
                                 </div>
                             </div>
                         </div>
@@ -413,7 +573,7 @@
                                     <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(4, 'Digital Dreams', 'Alex Turner', 290, 'assets/gallery/art4.jpg')">
                                         <i class="fas fa-heart"></i> Wishlist
                                     </button>
-                                    <button class="btn btn-gold">View Details</button>
+                                    <button class="btn btn-gold" onclick="showArtworkDetails(4)">View Details</button>
                                 </div>
                             </div>
                         </div>
@@ -433,7 +593,7 @@
                                     <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(5, 'Mountain Serenity', 'James Wilson', 520, 'assets/gallery/art5.jpg')">
                                         <i class="fas fa-heart"></i> Wishlist
                                     </button>
-                                    <button class="btn btn-gold">View Details</button>
+                                    <button class="btn btn-gold" onclick="showArtworkDetails(5)">View Details</button>
                                 </div>
                             </div>
                         </div>
@@ -453,7 +613,7 @@
                                     <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(6, 'Wilderness', 'Olivia Parker', 380, 'assets/gallery/art6.jpg')">
                                         <i class="fas fa-heart"></i> Wishlist
                                     </button>
-                                    <button class="btn btn-gold">View Details</button>
+                                    <button class="btn btn-gold" onclick="showArtworkDetails(6)">View Details</button>
                                 </div>
                             </div>
                         </div>
@@ -503,6 +663,19 @@
             </div>
         </div>
     </footer>
+
+    <!-- Artwork Details Modal -->
+    <div id="artworkModal" class="artwork-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
      <!-- Back to Top Button -->
     <button id="back-to-top" class="position-fixed bottom-0 end-0 m-4 btn btn-coffee rounded-circle p-3 shadow-lg" style="opacity: 0; visibility: hidden; transition: all 0.3s ease;color:white; background-color:var(--gold) ;">
         <i class="fas fa-arrow-up"></i>
@@ -589,7 +762,185 @@
             });
         });
 
-         // Only scroll if needed
+        // Artwork details data
+        const artworkDetails = {
+            1: {
+                title: "Golden Horizon",
+                artist: "Sarah Johnson",
+                price: "$450",
+                image: "assets/golden origin.webp",
+                category: "Painting",
+                year: "2024",
+                medium: "Oil on Canvas",
+                dimensions: "36 x 48 inches",
+                description: "'Golden Horizon' is a breathtaking abstract painting that captures the essence of a sunset over vast landscapes. Sarah Johnson masterfully blends warm golds and deep oranges to create a sense of tranquility and wonder. The piece invites viewers to lose themselves in its flowing forms and radiant colors, evoking feelings of hope and new beginnings.",
+                availability: "In Stock",
+                shipping: "Free shipping within India"
+            },
+            2: {
+                title: "City Lights",
+                artist: "Michael Chen",
+                price: "$320",
+                image: "assets/city lights.jpg",
+                category: "Photography",
+                year: "2023",
+                medium: "Digital Photography",
+                dimensions: "24 x 36 inches",
+                description: "Michael Chen's 'City Lights' is a stunning urban photography piece that captures the vibrant energy of metropolitan nightlife. The photograph showcases a bustling cityscape illuminated by countless lights, creating a mesmerizing tapestry of colors and reflections. This piece perfectly encapsulates the modern urban experience.",
+                availability: "Limited Edition (1/25)",
+                shipping: "Complimentary framing included"
+            },
+            3: {
+                title: "Eternal Flow",
+                artist: "Elena Rodriguez",
+                price: "$780",
+                image: "assets/eternal flow.jpg",
+                category: "Sculpture",
+                year: "2024",
+                medium: "Bronze and Clay",
+                dimensions: "18 x 12 x 8 inches",
+                description: "'Eternal Flow' is a captivating sculpture that explores themes of continuity and movement. Elena Rodriguez combines traditional clay techniques with contemporary bronze casting to create a piece that seems to defy gravity. The flowing forms suggest both water and wind, representing the eternal cycles of nature.",
+                availability: "One of a kind",
+                shipping: "White-glove delivery service"
+            },
+            4: {
+                title: "Digital Dreams",
+                artist: "Alex Turner",
+                price: "$290",
+                image: "assets/Digital dreams.webp",
+                category: "Digital Art",
+                year: "2024",
+                medium: "Digital Illustration",
+                dimensions: "30 x 40 inches (print)",
+                description: "Alex Turner's 'Digital Dreams' is a mesmerizing digital artwork that blurs the line between reality and imagination. Using cutting-edge digital techniques, Turner creates a surreal landscape where organic and geometric elements coexist in perfect harmony. The piece challenges our perception of the digital age.",
+                availability: "Open Edition",
+                shipping: "Printed on archival quality paper"
+            },
+            5: {
+                title: "Mountain Serenity",
+                artist: "James Wilson",
+                price: "$520",
+                image: "assets/mountain serinity.jpg",
+                category: "Painting",
+                year: "2023",
+                medium: "Oil on Canvas",
+                dimensions: "40 x 30 inches",
+                description: "'Mountain Serenity' captures the majestic beauty of untouched mountain landscapes. James Wilson's masterful use of light and shadow creates a sense of depth and atmosphere that transports viewers to peaceful mountain peaks. The painting serves as a meditation on nature's grandeur and our place within it.",
+                availability: "In Stock",
+                shipping: "Stretcher frame included"
+            },
+            6: {
+                title: "Wilderness",
+                artist: "Olivia Parker",
+                price: "$380",
+                image: "assets/wilderness.webp",
+                category: "Photography",
+                year: "2024",
+                medium: "Nature Photography",
+                dimensions: "20 x 30 inches",
+                description: "Olivia Parker's 'Wilderness' is a powerful nature photograph that captures the raw beauty of untamed landscapes. Taken in the early morning light, the image reveals the intricate details of forest life and the delicate balance of ecosystems. This piece reminds us of the importance of preserving our natural heritage.",
+                availability: "Limited Edition (1/50)",
+                shipping: "Museum-quality archival print"
+            }
+        };
+
+        // Show artwork details modal
+        function showArtworkDetails(artworkId) {
+            const artwork = artworkDetails[artworkId];
+            if (!artwork) return;
+
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="${artwork.image}" alt="${artwork.title}" class="artwork-detail-img">
+                    </div>
+                    <div class="col-md-6">
+                        <h2 class="artwork-detail-title">${artwork.title}</h2>
+                        <p class="artwork-detail-artist">By ${artwork.artist}</p>
+                        <p class="artwork-detail-price">${artwork.price}</p>
+                        <p class="artwork-detail-description">${artwork.description}</p>
+                        
+                        <div class="artwork-detail-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Category</div>
+                                <div class="meta-value">${artwork.category}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Year</div>
+                                <div class="meta-value">${artwork.year}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Medium</div>
+                                <div class="meta-value">${artwork.medium}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Dimensions</div>
+                                <div class="meta-value">${artwork.dimensions}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Availability</div>
+                                <div class="meta-value">${artwork.availability}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Shipping</div>
+                                <div class="meta-value">${artwork.shipping}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button class="btn btn-gold" onclick="addToWishlist(${artworkId}, '${artwork.title}', '${artwork.artist}', '${artwork.price}', '${artwork.image}')">
+                                <i class="fas fa-heart me-2"></i>Add to Wishlist
+                            </button>
+                            <button class="btn btn-outline-light" onclick="purchaseArtwork(${artworkId})">
+                                <i class="fas fa-shopping-cart me-2"></i>Purchase
+                            </button>
+                            <button class="btn btn-outline-light" onclick="inquireArtwork(${artworkId})">
+                                <i class="fas fa-envelope me-2"></i>Inquire
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('artworkModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('artworkModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Purchase artwork
+        function purchaseArtwork(artworkId) {
+            const artwork = artworkDetails[artworkId];
+            alert(`Purchase functionality for "${artwork.title}" would be implemented here. This would connect to your payment processing system.`);
+        }
+
+        // Inquire about artwork
+        function inquireArtwork(artworkId) {
+            const artwork = artworkDetails[artworkId];
+            alert(`Inquiry form for "${artwork.title}" would be implemented here. This would allow customers to ask questions or request additional information.`);
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('artworkModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Only scroll if needed
         const scrollPosition = window.scrollY || document.documentElement.scrollTop;
         if (scrollPosition > 300) {
             const headerOffset = 100;

@@ -29,6 +29,30 @@ const artworkSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  year: {
+    type: Number
+  },
+  medium: {
+    type: String,
+    trim: true
+  },
+  dimensions: {
+    type: String,
+    trim: true
+  },
+  availability: {
+    type: String,
+    enum: ['In Stock', 'Limited Edition', 'One of a kind', 'Open Edition', 'Sold Out'],
+    default: 'In Stock'
+  },
+  shipping: {
+    type: String,
+    trim: true
+  },
+  editionInfo: {
+    type: String,
+    trim: true
+  },
   isAvailable: {
     type: Boolean,
     default: true
