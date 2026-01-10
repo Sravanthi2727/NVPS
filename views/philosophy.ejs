@@ -1,0 +1,198 @@
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#d46211",
+                "espresso": "#1a1412",
+                "espresso-dark": "#0d0a09",
+                "background-dark": "#181411",
+                "accent-gold": "#b9a89d",
+                "rich-gold": "#c5a059",
+              },
+              fontFamily: {
+                "display": ["Space Grotesk", "sans-serif"],
+                "serif": ["Cormorant Garamond", "serif"]
+              },
+              borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+            },
+          },
+        }
+</script>
+<style type="text/tailwindcss">
+        @layer base {
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                @apply bg-espresso-dark text-white font-display overflow-x-hidden;
+            }
+        }
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .group:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        .text-shadow-gold {
+            text-shadow: 0 0 20px rgba(197, 160, 89, 0.3);
+        }
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .gradient-overlay {
+            background: linear-gradient(to bottom, rgba(13, 10, 9, 0.8), rgba(13, 10, 9, 0.4), rgba(13, 10, 9, 0.8));
+        }
+</style>
+
+<body class="bg-espresso-dark">
+<main>
+<section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 bg-cover bg-center grayscale brightness-[0.4]" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAtgd7bUt9ChHhhE4rqovWRjEsfaiQK3hP7mNgu99VvduMchanKg9csmH0PjnJ9q2ch8tPN5GJCq4mzj8FGUXH9a6cwp9UmN7kEmMN8j4Z3B7l2Gp5AGtw9gTi4fXvNGmcNNb_2W_Kpa-l1ouVVPuum-5etxq8pIfn4LvRtEi6Uv-TE5OQd21t6BFEMBtF-vxGxLAkLRqb_9D-5ANdJgOWcA53dV2fU6kQrHrJAqWSD2_Ufo_wG2zh58Tnp8miKpLIeQQaQIFr19_g");'></div>
+<div class="absolute inset-0 bg-black/60"></div>
+<div class="absolute inset-0 gradient-overlay"></div>
+</div>
+<div class="relative z-10 text-center px-4 max-w-5xl">
+<span class="inline-block text-rich-gold font-bold tracking-[0.3em] uppercase text-xs mb-6 opacity-0 animate-[fadeIn_1s_ease-out_forwards]">A New Order of Specialty Coffee</span>
+<h1 class="text-white text-7xl md:text-9xl font-black leading-tight tracking-tighter font-display mb-8 drop-shadow-2xl">
+                THE ROBUSTA <br/> <span class="text-rich-gold italic font-serif font-light">REBELLION</span>
+</h1>
+<p class="text-accent-gold text-lg md:text-2xl font-light max-w-3xl mx-auto leading-relaxed mb-12">
+                Challenging the Arabica hegemony with the untamed complexity and velvet strength of the world's most resilient bean.
+            </p>
+<div class="flex justify-center">
+<div class="animate-bounce">
+<span class="material-symbols-outlined text-rich-gold text-5xl font-extralight" href="#arrowup"><i class="fa-solid fa-arrow-up"></i></span>
+</div>
+</div>
+</div>
+</section>
+<section class="relative min-h-screen flex flex-col md:flex-row border-t border-white/5">
+<div class="w-full md:w-1/2 h-[50vh] md:h-screen bg-cover bg-center sticky top-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBUryqMvHwHB8ERlfE83Jg1HKUYkaXNkFsqsdaIXvDeQTov4O2KnA1ZeTEyF1771YgSSwD5loZpAKPXVso90tObQ1havoCf1p9i1_T4Frf9mUyQRosSoe4Sf-FbAIRyvQnBaXfBL0Rc-xBF8kaCn4GpUc85b0fvELdkif1iKWS8pUvDJWqcjo_TA43OuaH2H-bn0eZihSIYkLZxECeybvhs36DZ0gUKd-ORIPrJ4kRhvbcUb6LiWrWQ1usKE8Vk8s34PN3eA40sxIE");'>
+<div class="absolute inset-0 bg-espresso/30 backdrop-grayscale-[0.5]"></div>
+</div>
+<div class="w-full md:w-1/2 min-h-screen flex flex-col justify-center px-8 md:px-24 py-24 bg-espresso">
+<div class="max-w-md" id="arrowup">
+<span class="text-rich-gold text-sm font-bold tracking-widest uppercase mb-4 block">01 / MANTRA</span>
+<h2 class="text-5xl md:text-7xl font-display font-bold text-white mb-8">BOLD</h2>
+<p class="text-accent-gold text-xl font-light leading-relaxed mb-10">
+                    We don't hide the intensity. We curate it. Our specialty Robusta brings a depth of dark chocolate and toasted spice that lingers long after the first sip. It is unapologetic, structured, and fierce.
+                </p>
+<div class="h-1 w-24 bg-rich-gold"></div>
+</div>
+</div>
+</section>
+<section class="relative min-h-screen flex flex-col md:flex-row-reverse border-t border-white/5">
+<div class="w-full md:w-1/2 h-[50vh] md:h-screen bg-cover bg-center sticky top-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCjhBrCi5htstErMto713fc1SOz5GciFLHcAAWDstS_tsdbS0R37E7r1hqZeToYDTukejhYiSBcDUpy64CBvjBBPLz5bsmdiJs-Hulnmz-OS5HkexKYbd_IGgwKZHLY5OUsQRGlZTEC8RsNj3wCpBM3sDztebmZCsrKFiGWbjiNCqyx-SvLhEl6pXhhTGnJmw91eUnqrZcmJAtJL1jyeDwS0qMCGzzeWAXzLtcxp5-pcys3GZ57TPT_7_J4lAepUGrVKfMWrOTvnRo");'>
+<div class="absolute inset-0 bg-espresso/30 backdrop-sepia-[0.3]"></div>
+</div>
+<div class="w-full md:w-1/2 min-h-screen flex flex-col justify-center px-8 md:px-24 py-24 bg-espresso-dark">
+<div class="max-w-md ml-auto text-right">
+<span class="text-rich-gold text-sm font-bold tracking-widest uppercase mb-4 block">02 / ATMOSPHERE</span>
+<h2 class="text-5xl md:text-7xl font-display font-bold text-white mb-8">COZY</h2>
+<p class="text-accent-gold text-xl font-light leading-relaxed mb-10">
+                    Contrast is the soul of Rabuste. Our gallery spaces are designed as brutalist sanctuaries—softened by the scent of roasted beans and the warm glow of gold accents. A place to think, or to simply be.
+                </p>
+<div class="h-1 w-24 bg-rich-gold ml-auto"></div>
+</div>
+</div>
+</section>
+<section class="relative min-h-screen flex flex-col md:flex-row border-t border-white/5">
+<div class="w-full md:w-1/2 h-[50vh] md:h-screen bg-cover bg-center sticky top-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBSdSUhZNKmTyZAueoDpZ1VOJssf1SU7Ls9nNA6QMt8H9AKzqnhuW5JPIafHSsa245uceRirhoKBxzKvfC37Rj1d924DQr3B6Ww3A5VUT2Qv_m1HbzL0m1oeghGKq-fnY4cLDA8AmMpDp2zsaNbOX8LYhbUlVt4cqqOdoc5PT9RXhzLVmlE6pTx_kTivHxWgCecydoBd837z7YqByjhoyFfCqyswO9D7HeXG7zRToXzyMB20t0oFwSg7J-njuwbKwwO8gTkAQNaK4Y");'>
+<div class="absolute inset-0 bg-espresso/30"></div>
+</div>
+<div class="w-full md:w-1/2 min-h-screen flex flex-col justify-center px-8 md:px-24 py-24 bg-espresso">
+<div class="max-w-md">
+<span class="text-rich-gold text-sm font-bold tracking-widest uppercase mb-4 block">03 / RHYTHM</span>
+<h2 class="text-5xl md:text-7xl font-display font-bold text-white mb-8 uppercase tracking-tighter">Grab-and-go</h2>
+<p class="text-accent-gold text-xl font-light leading-relaxed mb-10">
+                    Art shouldn't be static, and neither should your fuel. We've mastered the precision of the quick pour without sacrificing the craft. High-end energy for the high-speed creator.
+                </p>
+<div class="h-1 w-24 bg-rich-gold"></div>
+</div>
+</div>
+</section>
+<section class="py-32 px-6 md:px-20 bg-espresso-dark border-y border-white/5">
+<div class="max-w-6xl mx-auto">
+<div class="text-center mb-20">
+<h2 class="text-4xl md:text-6xl font-display font-bold text-white mb-6">Truths about Robusta</h2>
+<p class="text-rich-gold text-lg tracking-wide uppercase font-medium">Hover to unmask the myths</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<div class="group h-[400px] perspective-1000 cursor-pointer">
+<div class="relative w-full h-full flip-card-inner">
+<div class="absolute inset-0 flip-card-front flex flex-col items-center justify-center p-10 border border-white/10 bg-espresso rounded-2xl">
+<span class="material-symbols-outlined text-rich-gold text-6xl mb-6">science</span>
+<h3 class="text-2xl font-display font-bold text-white text-center">Caffeine Composition</h3>
+<p class="text-white/40 mt-4 text-sm uppercase tracking-widest">Tap to reveal</p>
+</div>
+<div class="absolute inset-0 flip-card-back flex flex-col items-center justify-center p-10 bg-rich-gold rounded-2xl text-espresso-dark text-center">
+<h3 class="text-2xl font-display font-bold mb-4">The Pure Edge</h3>
+<p class="text-lg font-medium leading-relaxed">
+                                Robusta contains nearly double the caffeine of Arabica, acting as a natural pest repellent for the plant and a potent, sustained focus-booster for the drinker.
+                            </p>
+</div>
+</div>
+</div>
+<div class="group h-[400px] perspective-1000 cursor-pointer">
+<div class="relative w-full h-full flip-card-inner">
+<div class="absolute inset-0 flip-card-front flex flex-col items-center justify-center p-10 border border-white/10 bg-espresso rounded-2xl">
+<span class="material-symbols-outlined text-rich-gold text-6xl mb-6">waves</span>
+<h3 class="text-2xl font-display font-bold text-white text-center">The Velvet Crema</h3>
+<p class="text-white/40 mt-4 text-sm uppercase tracking-widest">Tap to reveal</p>
+</div>
+<div class="absolute inset-0 flip-card-back flex flex-col items-center justify-center p-10 bg-rich-gold rounded-2xl text-espresso-dark text-center">
+<h3 class="text-2xl font-display font-bold mb-4">Structural Beauty</h3>
+<p class="text-lg font-medium leading-relaxed">
+                                Due to higher lipid and sugar density, specialty Robusta produces a thicker, more resilient crema, perfect for intricate latte art and a luxurious mouthfeel.
+                            </p>
+</div>
+</div>
+</div>
+<div class="group h-[400px] perspective-1000 cursor-pointer">
+<div class="relative w-full h-full flip-card-inner">
+<div class="absolute inset-0 flip-card-front flex flex-col items-center justify-center p-10 border border-white/10 bg-espresso rounded-2xl">
+<span class="material-symbols-outlined text-rich-gold text-6xl mb-6">eco</span>
+<h3 class="text-2xl font-display font-bold text-white text-center">Ecological Strength</h3>
+<p class="text-white/40 mt-4 text-sm uppercase tracking-widest">Tap to reveal</p>
+</div>
+<div class="absolute inset-0 flip-card-back flex flex-col items-center justify-center p-10 bg-rich-gold rounded-2xl text-espresso-dark text-center">
+<h3 class="text-2xl font-display font-bold mb-4">Sustainable Future</h3>
+<p class="text-lg font-medium leading-relaxed">
+                                Robusta is hardy, growing at lower altitudes and resisting climate fluctuations. It's the future-proof bean for a warming world, ensuring coffee for generations.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="relative h-[60vh] flex items-center justify-center overflow-hidden parallax-bg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAkO5WwE3pV90hTGnnwHDuAbqRpZIkdM_-pkwTzb_nAbR_jsoD25dAXwr08mwIxvntqaVbWcaROWZxLJDPDlTYx_pFYQiKrUq7WEkI81Y4m6JqyATZSWWP0wa9lE2nwKSuQ7lUPPgJVm9k6ThzrWmtOruPhKROFDiYWZ_tAYxQjGIBzu090unH7k0qmueHAUsBYF_YeS3LanOQ3ihiXavQd9uWmz71i-usiU7loEdDZk6TC3ACWd3j6DcYFmDTkHwRG_RWCtpSctDE");'>
+<div class="absolute inset-0 bg-espresso-dark/80 backdrop-blur-[2px]"></div>
+<div class="relative z-10 text-center px-4">
+<h2 class="text-4xl md:text-6xl font-display font-bold text-white mb-8">Ready to taste the rebellion?</h2>
+<div class="flex flex-col md:flex-row gap-6 justify-center">
+<button class="bg-primary text-white px-12 py-5 text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl shadow-primary/20">
+                    Visit the Gallery
+                </button>
+<button class="border border-white/20 text-white px-12 py-5 text-lg font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
+                    Shop The Roast
+                </button>
+</div>
+</body>

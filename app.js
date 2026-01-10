@@ -4,9 +4,11 @@ const session = require("express-session");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const mongoose = require('mongoose');
+const compression = require('compression');
+const helmet = require('helmet');
 
 require("dotenv").config();
-const path = require('path');
+const path = require("path");
 
 // Database connection
 const connectDB = require('./config/database');
@@ -19,6 +21,20 @@ const WorkshopModel = require('./models/Workshop');
 connectDB();
 
 const app = express();
+
+// Performance middleware
+app.use(compression()); // Compress all responses
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP for development
+  crossOriginEmbedderPolicy: false
+}));
+
+// Set caching headers for static assets
+app.use(express.static("public", {
+  maxAge: '1d', // Cache static files for 1 day
+  etag: true,
+  lastModified: true
+}));
 
  
 // Middleware
@@ -39,10 +55,16 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        // Wait for database connection
+        if (mongoose.connection.readyState !== 1) {
+          console.log('Database not connected, waiting...');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
         console.log('Google OAuth profile received:', {
           id: profile.id,
           displayName: profile.displayName,
@@ -57,28 +79,26 @@ passport.use(
         const email = profile.emails[0].value.toLowerCase();
         console.log('Looking for user with email:', email);
         
-        let user = await User.findOne({ email: email });
+        let user = await User.findOne({ googleId: profile.id });
         
         if (user) {
           console.log('Existing user found:', user.email);
-          // Update user if they're logging in via OAuth
-          if (!user.isOAuthUser) {
-            user.isOAuthUser = true;
-            await user.save();
-            console.log('Updated user to OAuth user');
-          }
           console.log('Returning user to passport:', user.email);
           return done(null, user);
         } else {
+          // Check if user exists with same email but different googleId
+          const existingEmailUser = await User.findOne({ email: email });
+          if (existingEmailUser) {
+            console.log('User with same email exists but different googleId');
+            return done(new Error('An account with this email already exists'), null);
+          }
           console.log('Creating new user from Google profile');
           // Create new user from Google profile
           user = new User({
-            name: profile.displayName || 'User',
+            googleId: profile.id,
+            displayName: profile.displayName || 'User',
             email: email,
-            isOAuthUser: true,
-            cart: [],
-            wishlist: [],
-            registered: []
+            photo: profile.photos && profile.photos[0] ? profile.photos[0].value : ''
           });
           await user.save();
           console.log('New user created and saved:', user.email);
@@ -112,34 +132,40 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static("public"));
 app.use(expressLayouts);
 
 app.set("layout", "layouts/boilerplate");
 
-// Serve static files from public directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Import auth middleware
+const { getUserData } = require('./middleware/auth');
+const { viewCacheMiddleware, cacheMiddleware } = require('./middleware/cache');
 
 // Middleware to make variables available to all views
 app.use((req, res, next) => {
   res.locals.currentPage = req.path;
-  res.locals.siteUrl = 'https://rabustecoffee.com';
+  res.locals.siteUrl = "https://rabustecoffee.com";
   next();
 });
 
-// Home route
-app.get('/', (req, res) => {
-  res.render('home', { 
-    title: 'Rabuste Coffee - Premium Robusta Coffee & Art',
-    description: 'Experience the bold taste of premium Robusta coffee in our art-filled café. Join us for workshops, exhibitions, and the best coffee in town.',
-    currentPage: '/',
-    keywords: 'premium robusta coffee, art café, coffee shop, coffee and art, Rabuste Coffee',
-    ogTitle: 'Rabuste Coffee - Premium Robusta Coffee & Art',
-    ogDescription: 'Experience the bold taste of premium Robusta coffee in our art-filled café. Join us for workshops, exhibitions, and the best coffee in town.',
-    ogType: 'website',
-    ogUrl: 'https://rabustecoffee.com',
-    ogImage: '/assets/coffee-bg.jpeg',
-    canonicalUrl: 'https://rabustecoffee.com'
+// Add user data middleware after passport setup
+app.use(getUserData);
+
+// Home route - Cache for 10 minutes
+app.get("/", viewCacheMiddleware(600), (req, res) => {
+  res.render("home", {
+    title: "Rabuste Coffee - Premium Robusta Coffee & Art",
+    description:
+      "Experience the bold taste of premium Robusta coffee in our art-filled café. Join us for workshops, exhibitions, and the best coffee in town.",
+    currentPage: "/",
+    keywords:
+      "premium robusta coffee, art café, coffee shop, coffee and art, Rabuste Coffee",
+    ogTitle: "Rabuste Coffee - Premium Robusta Coffee & Art",
+    ogDescription:
+      "Experience the bold taste of premium Robusta coffee in our art-filled café. Join us for workshops, exhibitions, and the best coffee in town.",
+    ogType: "website",
+    ogUrl: "https://rabustecoffee.com",
+    ogImage: "/assets/coffee-bg.jpeg",
+    canonicalUrl: "https://rabustecoffee.com",
   });
 });
 
@@ -304,106 +330,61 @@ app.get('/gallery', async (req, res) => {
 });
 
 // About Us route
-app.get('/about', (req, res) => {
-  res.render('about', {
-    title: 'About Us - Rabuste Coffee',
-    description: 'Learn about Rabuste Coffee - our story, leadership team, and our passion for Robusta coffee and art.',
-    currentPage: '/about',
-    keywords: 'about Rabuste Coffee, our story, coffee passion, Robusta coffee, café team',
-    ogTitle: 'About Us - Rabuste Coffee',
-    ogDescription: 'Learn about Rabuste Coffee - our story, leadership team, and our passion for Robusta coffee and art.',
-    ogType: 'website',
-    ogUrl: 'https://rabustecoffee.com/about',
-    ogImage: '/assets/coffee-bg.jpeg',
-    canonicalUrl: 'https://rabustecoffee.com/about',
+app.get("/about", (req, res) => {
+  res.render("about", {
+    title: "About Us - Rabuste Coffee",
+    description:
+      "Learn about Rabuste Coffee - our story, leadership team, and our passion for Robusta coffee and art.",
+    currentPage: "/about",
+    keywords:
+      "about Rabuste Coffee, our story, coffee passion, Robusta coffee, café team",
+    ogTitle: "About Us - Rabuste Coffee",
+    ogDescription:
+      "Learn about Rabuste Coffee - our story, leadership team, and our passion for Robusta coffee and art.",
+    ogType: "website",
+    ogUrl: "https://rabustecoffee.com/about",
+    ogImage: "/assets/coffee-bg.jpeg",
+    canonicalUrl: "https://rabustecoffee.com/about",
     additionalCSS: '<link rel="stylesheet" href="/css/about.css">',
-    additionalJS: '<script src="/js/about-animations.js"></script>'
+    additionalJS: '<script src="/js/about-animations.js"></script>',
   });
 });
 
 // Franchise route
-app.get('/franchise', (req, res) => {
-  res.render('franchise', {
-    title: 'Franchise Opportunities - Partner with Rabuste Coffee',
-    description: 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support and proven business model. Investment range $75K-$150K.',
-    currentPage: '/franchise',
-    keywords: 'coffee franchise, robusta coffee franchise, café franchise opportunities, premium coffee business, franchise investment, coffee shop franchise',
-    ogTitle: 'Franchise Opportunities - Partner with Rabuste Coffee',
-    ogDescription: 'Join the bold coffee revolution. Premium Robusta-only franchise with proven business model, comprehensive support, and strong ROI potential.',
-    ogType: 'website',
-    ogUrl: 'https://rabustecoffee.com/franchise',
-    ogImage: '/assets/coffee-bg.jpeg',
-    canonicalUrl: 'https://rabustecoffee.com/franchise',
+app.get("/franchise", (req, res) => {
+  res.render("franchise", {
+    title: "Franchise Opportunities - Partner with Rabuste Coffee",
+    description:
+      "Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support and proven business model. Investment range $75K-$150K.",
+    currentPage: "/franchise",
+    keywords:
+      "coffee franchise, robusta coffee franchise, café franchise opportunities, premium coffee business, franchise investment, coffee shop franchise",
+    ogTitle: "Franchise Opportunities - Partner with Rabuste Coffee",
+    ogDescription:
+      "Join the bold coffee revolution. Premium Robusta-only franchise with proven business model, comprehensive support, and strong ROI potential.",
+    ogType: "website",
+    ogUrl: "https://rabustecoffee.com/franchise",
+    ogImage: "/assets/coffee-bg.jpeg",
+    canonicalUrl: "https://rabustecoffee.com/franchise",
     investmentRanges: [
-      '$50K - $75K',
-      '$75K - $100K',
-      '$100K - $150K',
-      '$150K - $200K',
-      '$200K+'
-    ]
+      "$50K - $75K",
+      "$75K - $100K",
+      "$100K - $150K",
+      "$150K - $200K",
+      "$200K+",
+    ],
   });
 });
 
-app.get('/workshops', async (req, res) => {
-  try {
-    // Check if database is connected
-    if (mongoose.connection.readyState !== 1) {
-      // Return static data if database is not connected
-      const staticWorkshops = {
-        upcoming: [
-          {
-            _id: '1',
-            title: 'Coffee Brewing Basics',
-            date: '2024-02-15',
-            image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
-            description: 'Learn the fundamentals of coffee brewing',
-            type: 'upcoming'
-          }
-        ],
-        past: [
-          {
-            _id: '2',
-            title: 'Latte Art Workshop',
-            date: '2024-01-10',
-            image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
-            description: 'Master the art of latte making',
-            type: 'past'
-          }
-        ]
-      };
-      
-      res.render('workshops', {
-        title: 'Workshops - Rabuste Coffee',
-        description: 'Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.',
-        currentPage: '/workshops',
-        upcomingWorkshops: staticWorkshops.upcoming,
-        pastWorkshops: staticWorkshops.past
-      });
-      return;
-    }
-    
-    const upcomingWorkshops = await WorkshopModel.find({ 
-      type: 'upcoming', 
-      isActive: true,
-      date: { $gte: new Date() }
-    }).sort({ date: 1, displayOrder: 1 });
-    
-    const pastWorkshops = await WorkshopModel.find({ 
-      type: 'past', 
-      isActive: true 
-    }).sort({ date: -1, displayOrder: 1 });
+app.get("/workshops", (req, res) => {
+  res.render("workshops");
+});
 
-    res.render('workshops', {
-      title: 'Workshops - Rabuste Coffee',
-      description: 'Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.',
-      currentPage: '/workshops',
-      upcomingWorkshops: upcomingWorkshops,
-      pastWorkshops: pastWorkshops
-    });
-  } catch (error) {
-    console.error('Workshops route error:', error);
-    res.status(500).send('Error loading workshops');
-  }
+app.get("/philosophy", (req, res) => {
+  res.render("philosophy", {
+    title: "The Robusta Philosophy Experience | Rabuste",
+    currentPage: "/philosophy",
+  });
 });
 
 app.get("/signin", (req, res) => {
@@ -416,14 +397,13 @@ app.get("/signin", (req, res) => {
   
   res.render("signin", {
     additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`,
-    error: error
   });
 });
 
 app.get(
   "/auth/google",
   passport.authenticate("google", {
-    scope: ["profile", "email"]
+    scope: ["profile", "email"],
   })
 );
 
@@ -484,7 +464,6 @@ app.get("/signup", (req, res) => {
   // console.log("at signup");
   res.render("signup", {
     additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`,
-    // layout : false,
   });
 });
 
@@ -696,6 +675,29 @@ app.post('/api/requests', ensureAuthenticated, async (req, res) => {
     res.json({ success: true, item: newRequest });
   } catch (error) {
     res.status(500).json({ error: 'Error submitting request' });
+  }
+});
+
+// Example route to show user data
+app.get("/profile", (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/signin");
+  }
+  
+  res.render("profile", {
+    title: "My Profile - Rabuste Coffee",
+    user: res.locals.currentUser
+  });
+});
+
+// API route to get all users (for admin purposes)
+app.get("/api/users", async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const users = await User.find({}).select('googleId displayName email createdAt').sort({ createdAt: -1 });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch users' });
   }
 });
 
