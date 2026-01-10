@@ -59,6 +59,12 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        // Wait for database connection
+        if (mongoose.connection.readyState !== 1) {
+          console.log('Database not connected, waiting...');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
         console.log('Google OAuth profile received:', {
           id: profile.id,
           displayName: profile.displayName,
