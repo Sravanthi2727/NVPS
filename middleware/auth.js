@@ -4,12 +4,27 @@ const User = require('../models/User');
 const getUserData = async (req, res, next) => {
   if (req.isAuthenticated() && req.user) {
     try {
-      // Get full user data from database
-      const user = await User.findOne({ googleId: req.user.googleId });
+      console.log('Getting user data for:', req.user.email || req.user.googleId);
+      
+      // Get full user data from database - handle both Google OAuth and registered users
+      let user;
+      if (req.user.googleId) {
+        // Google OAuth user
+        user = await User.findOne({ googleId: req.user.googleId });
+      } else if (req.user.email) {
+        // Registered user or fallback
+        user = await User.findOne({ email: req.user.email });
+      } else {
+        // Fallback to _id if available
+        user = await User.findById(req.user._id || req.user.id);
+      }
+      
       if (user) {
+        console.log('User found:', user.email);
         res.locals.currentUser = user;
         res.locals.isLoggedIn = true;
       } else {
+        console.log('User not found in database');
         res.locals.isLoggedIn = false;
       }
     } catch (error) {
@@ -17,6 +32,7 @@ const getUserData = async (req, res, next) => {
       res.locals.isLoggedIn = false;
     }
   } else {
+    console.log('User not authenticated');
     res.locals.isLoggedIn = false;
   }
   next();

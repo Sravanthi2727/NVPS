@@ -65,8 +65,15 @@ function ensureAdmin(req, res, next) {
   res.status(401).json({ success: false, message: 'Admin access required' });
 }
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+passport.serializeUser((user, done) => {
+  console.log('Serializing user:', user.email || user.googleId);
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  console.log('Deserializing user:', user.email || user.googleId);
+  done(null, user);
+});
  
 
 passport.use(
@@ -155,6 +162,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: "lax"
     }
   })
@@ -1124,14 +1134,22 @@ app.patch('/api/cart/:itemId', ensureAuthenticated, async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const item = user.cart.find(item => item.itemId === req.params.itemId);
+    // Handle both string and ObjectId itemId
+    const paramItemId = req.params.itemId;
+    const item = user.cart.find(item => 
+      item.itemId.toString() === paramItemId || 
+      item.itemId === paramItemId
+    );
+    
     if (!item) {
+      console.log('Item not found in cart. Looking for:', paramItemId);
+      console.log('Available items:', user.cart.map(i => ({ itemId: i.itemId, itemIdStr: i.itemId.toString() })));
       return res.status(404).json({ success: false, message: 'Item not found in cart' });
     }
 
     if (quantity <= 0) {
       // Remove item if quantity is 0 or less
-      user.cart.pull({ itemId: req.params.itemId });
+      user.cart.pull({ itemId: item.itemId });
     } else {
       // Update quantity
       item.quantity = quantity;
