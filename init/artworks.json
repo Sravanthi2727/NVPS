@@ -1,0 +1,64 @@
+[
+  {
+    "title": "Golden Horizon",
+    "artist": "Sarah Johnson",
+    "price": 450,
+    "image": "/assets/golden_origin.webp",
+    "category": "painting",
+    "description": "Abstract Painting",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "title": "City Lights",
+    "artist": "Michael Chen",
+    "price": 320,
+    "image": "/assets/city_lights.jpg",
+    "category": "photography",
+    "description": "Urban Photography",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "title": "Eternal Flow",
+    "artist": "Elena Rodriguez",
+    "price": 780,
+    "image": "/assets/eternal_flow.jpg",
+    "category": "sculpture",
+    "description": "Clay Sculpture",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "title": "Digital Dreams",
+    "artist": "Alex Turner",
+    "price": 290,
+    "image": "/assets/Digital_dreams.webp",
+    "category": "digital",
+    "description": "Digital Art",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+
+    "title": "Mountain Serenity",
+    "artist": "James Wilson",
+    "price": 520,
+    "image": "/assets/mountain_serinity.jpg",
+    "category": "painting",
+    "description": "Oil Painting",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "title": "Wilderness",
+    "artist": "Olivia Parker",
+    "price": 380,
+    "image": "/assets/wilderness.webp",
+    "category": "photography",
+    "description": "Nature Photography",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  }
+]
+

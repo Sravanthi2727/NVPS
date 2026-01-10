@@ -165,7 +165,7 @@
             position: relative;
             padding: 8rem 0 4rem;
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), 
-                        url('assets/menu images/grounded powder.jpeg') center/cover;
+                        url('assets/menu_images/grounded powder.jpeg') center/cover;
         }
         .hero-section h1 {
             font-family: 'Playfair Display', serif;
@@ -339,9 +339,14 @@
                                     <p class="text-muted mb-2 small">Bold Robusta espresso with chilled water</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
                             </div>
-                                <span class="price-tag ms-3">₹160</span>
+                                <div class="d-flex flex-column align-items-end">
+                                    <span class="price-tag">₹160</span>
+                                    <button class="btn btn-sm btn-outline-light mt-2" onclick="addToCart(1, 'Robusta Iced Americano', 160, 'assets/menu_images/Iced latte &Iced Americano.jpeg')">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -354,7 +359,7 @@
                                     <p class="text-muted mb-2 small">Pure Robusta espresso shot over ice</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/iced-espresso.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/iced-espresso.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹130</span>
                             </div>
@@ -372,7 +377,7 @@
                                     <p class="text-muted mb-2 small">Robusta espresso with tonic, ginger ale, or orange</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/Cold Brew Tonic Ginger Ale Orange.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Cold Brew Tonic Ginger Ale Orange.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
@@ -388,7 +393,7 @@
                                     <p class="text-muted mb-2 small">Energy boost with Robusta espresso and Red Bull</p>
                                 </div>
                                  <div>
-                                    <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
+                                    <img src="assets/menu_images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹290</span>
                             </div>
@@ -404,7 +409,7 @@
                                     <p class="text-muted mb-2 small">Refreshing cranberry and tonic combination</p>
                                 </div>
                                  <div>
-                                <img src="assets/menu images/cranberry tonic.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/cranberry tonic.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹270</span>
                             </div>
@@ -424,7 +429,7 @@
                                     <p class="text-muted mb-2 small">Smooth Robusta espresso with cold milk</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹220</span>
                             </div>
@@ -440,7 +445,7 @@
                                     <p class="text-muted mb-2 small">Vanilla ice cream drowned in hot Robusta espresso</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/affogato cold blend.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/affogato cold blend.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
@@ -456,7 +461,7 @@
                                     <p class="text-muted mb-2 small">Blended iced Robusta coffee with milk</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/cassic frappe.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/cassic frappe.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
@@ -472,7 +477,7 @@
                                     <p class="text-muted mb-2 small">Robusta coffee with rich hazelnut flavor</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/hazelnut cold blend.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/hazelnut cold blend.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹260</span>
                             </div>
@@ -488,7 +493,7 @@
                                     <p class="text-muted mb-2 small">Sweet caramel meets bold Robusta</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/Caramel-Iced-blend.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Caramel-Iced-blend.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹260</span>
                             </div>
@@ -504,7 +509,7 @@
                                     <p class="text-muted mb-2 small">Perfect blend of Robusta and chocolate</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/iced-mocha-blend.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/iced-mocha-blend.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹270</span>
                             </div>
@@ -520,7 +525,7 @@
                                     <p class="text-muted mb-2 small">Robusta with creamy Biscoff cookie flavor</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/biscoff cold blend.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/biscoff cold blend.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹270</span>
                             </div>
@@ -536,7 +541,7 @@
                                     <p class="text-muted mb-2 small">Traditional Vietnamese style with condensed milk</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/Vietnamese-Iced-Coffee.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Vietnamese-Iced-Coffee.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹240</span>
                             </div>
@@ -552,7 +557,7 @@
                                     <p class="text-muted mb-2 small">Signature Robusta blend with special preparation</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/Cafe-suda.png" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Cafe-suda.png" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
@@ -568,7 +573,7 @@
                                     <p class="text-muted mb-2 small">Premium Robusta specialty creation</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/robco.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/robco.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹290</span>
                             </div>
@@ -595,7 +600,7 @@
                                     <p class="text-muted mb-2 small">Classic hot Robusta with hot water</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/hot americano.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/hot americano.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹150</span>
                             </div>
@@ -611,7 +616,7 @@
                                     <p class="text-muted mb-2 small">Pure, intense Robusta espresso shot</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/hot espresso.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/hot espresso.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹130</span>
                             </div>
@@ -631,7 +636,7 @@
                                     <p class="text-muted mb-2 small">Smooth Robusta with steamed milk</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/Blend Hot latte.jpeg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Blend Hot latte.jpeg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹190</span>
                             </div>
@@ -647,7 +652,7 @@
                                     <p class="text-muted mb-2 small">Strong Robusta with microfoam milk</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/hot flat white.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/hot flat white.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹180</span>
                             </div>
@@ -663,7 +668,7 @@
                                     <p class="text-muted mb-2 small">Traditional cappuccino with Robusta espresso</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/cappuccino.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/cappuccino.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹180</span>
                             </div>
@@ -679,7 +684,7 @@
                                     <p class="text-muted mb-2 small">Rich chocolate and Robusta combination</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/mocha.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/mocha.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹230</span>
                             </div>
@@ -710,7 +715,7 @@
                                     <p class="text-muted mb-2 small">Classic blend espresso with chilled water</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/iced-americano.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/iced-americano.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹150</span>
                             </div>
@@ -726,7 +731,7 @@
                                     <p class="text-muted mb-2 small">Pure blend espresso shot over ice</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/iced-espresso.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/iced-espresso.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹120</span>
                             </div>
@@ -742,7 +747,7 @@
                                     <p class="text-muted mb-2 small">Blend espresso with tonic, ginger ale, or orange</p>
                                 </div>
                                  <div>
-                                <img src="assets/menu images/espresso.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/espresso.jpg" class="menu-hover-img"> 
                             </div>
                                     <span class="price-tag ms-3">₹230</span>
                             </div>
@@ -758,7 +763,7 @@
                                     <p class="text-muted mb-2 small">Energy boost with blend espresso and Red Bull</p>
                                 </div>
                                  <div>
-                                <img src="assets/menu images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Iced latte &Iced Americano.jpeg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹270</span>
                             </div>
@@ -774,7 +779,7 @@
                                     <p class="text-muted mb-2 small">Refreshing cranberry and tonic combination</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/cranberry tonic.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/cranberry tonic.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
@@ -794,7 +799,7 @@
                                     <p class="text-muted mb-2 small">Smooth blend espresso with cold milk</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/latte.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/latte.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹210</span>
                             </div>
@@ -810,7 +815,7 @@
                                     <p class="text-muted mb-2 small">Vanilla ice cream drowned in hot blend espresso</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/affogato cold blend.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/affogato cold blend.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹240</span>
                             </div>
@@ -826,7 +831,7 @@
                                     <p class="text-muted mb-2 small">Blended iced blend coffee with milk</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/cassic frappe.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/cassic frappe.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹240</span>
                             </div>
@@ -842,7 +847,7 @@
                                     <p class="text-muted mb-2 small">Blend coffee with rich hazelnut flavor</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/hazelnut cold blend.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/hazelnut cold blend.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
@@ -858,7 +863,7 @@
                                     <p class="text-muted mb-2 small">Sweet caramel meets smooth blend</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/Caramel-Iced-blend.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Caramel-Iced-blend.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹250</span>
                             </div>
@@ -874,7 +879,7 @@
                                     <p class="text-muted mb-2 small">Perfect blend of coffee and chocolate</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/iced-mocha-blend.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/iced-mocha-blend.jpg" class="menu-hover-img"> 
                             </div>
                                     <span class="price-tag ms-3">₹260</span>
                             </div>
@@ -890,7 +895,7 @@
                                     <p class="text-muted mb-2 small">Blend coffee with creamy Biscoff cookie flavor</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/biscoff cold blend.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/biscoff cold blend.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹260</span>
                             </div>
@@ -921,7 +926,7 @@
                                     <p class="text-muted mb-2 small">Classic hot blend with hot water</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/hot americano.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/hot americano.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹140</span>
                             </div>
@@ -937,7 +942,7 @@
                                     <p class="text-muted mb-2 small">Pure blend espresso shot</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/hot espresso.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/hot espresso.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹120</span>
                             </div>
@@ -957,7 +962,7 @@
                                     <p class="text-muted mb-2 small">Smooth blend with steamed milk</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/Blend Hot latte.jpeg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Blend Hot latte.jpeg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹180</span>
                             </div>
@@ -973,7 +978,7 @@
                                     <p class="text-muted mb-2 small">Strong blend with microfoam milk</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/hot flat white.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/hot flat white.webp" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹170</span>
                             </div>
@@ -989,7 +994,7 @@
                                     <p class="text-muted mb-2 small">Traditional cappuccino with blend espresso</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/cappuccino.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/cappuccino.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹170</span>
                             </div>
@@ -1005,7 +1010,7 @@
                                     <p class="text-muted mb-2 small">Rich chocolate and blend combination</p>
                                 </div>
                                 <div>
-                                <img src="assets/menu images/mocha.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/mocha.jpg" class="menu-hover-img"> 
                             </div>
                                 <span class="price-tag ms-3">₹220</span>
                             </div>
@@ -1032,7 +1037,7 @@
                                 <p class="text-muted mb-2 small">Slow-brewed Robusta peaberry for 12+ hours</p>
                             </div>
                             <div>
-                                <img src="assets/menu images/cold brew.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/cold brew.jpg" class="menu-hover-img"> 
                             </div>
                             <span class="price-tag ms-3">₹220-230</span>
                         </div>
@@ -1048,7 +1053,7 @@
                                 <p class="text-muted mb-2 small">Cold brew with refreshing mixers</p>
                             </div>
                             <div>
-                                <img src="assets/menu images/Cold Brew Tonic Ginger Ale Orange.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/Cold Brew Tonic Ginger Ale Orange.webp" class="menu-hover-img"> 
                             </div>
                             <span class="price-tag ms-3">₹270</span>
                         </div>
@@ -1064,7 +1069,7 @@
                                 <p class="text-muted mb-2 small">Ultimate energy combination</p>
                             </div>
                             <div>
-                                <img src="assets/menu images/cold brew redbull.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/cold brew redbull.webp" class="menu-hover-img"> 
                             </div>
                             <span class="price-tag ms-3">₹290</span>
                         </div>
@@ -1080,7 +1085,7 @@
                                 <p class="text-muted mb-2 small">Precision brewing method for pure flavor</p>
                             </div>
                             <div>
-                                <img src="assets/menu images/v60 pour over.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/v60 pour over.webp" class="menu-hover-img"> 
                             </div>
                             <span class="price-tag ms-3">₹220</span>
                         </div>
@@ -1096,7 +1101,7 @@
                                 <p class="text-muted mb-2 small">Chilled precision brewing</p>
                             </div>
                             <div>
-                                <img src="assets/menu images/v60 pour over.webp" class="menu-hover-img"> 
+                                <img src="assets/menu_images/v60 pour over.webp" class="menu-hover-img"> 
                             </div>
                             <span class="price-tag ms-3">₹230-240</span>
                         </div>
@@ -1112,7 +1117,7 @@
                                 <p class="text-muted mb-2 small">Signature cold brew with cranberry tonic</p>
                             </div>
                             <div>
-                                <img src="assets/menu images/cold tea.jpg" class="menu-hover-img"> 
+                                <img src="assets/menu_images/cold tea.jpg" class="menu-hover-img"> 
                             </div>
                             <span class="price-tag ms-3">₹280</span>
                         </div>
@@ -1140,7 +1145,7 @@
                                         <p class="text-muted mb-2 small">Rich chocolate milkshake</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/chocolate shake.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/chocolate shake.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹220</span>
                                 </div>
@@ -1156,7 +1161,7 @@
                                         <p class="text-muted mb-2 small">Creamy Biscoff cookie milkshake</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/biscoff shake.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/biscoff shake.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹250</span>
                                 </div>
@@ -1172,7 +1177,7 @@
                                         <p class="text-muted mb-2 small">Indulgent Nutella milkshake</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/nutella shake.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/nutella shake.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹260</span>
                                 </div>
@@ -1195,7 +1200,7 @@
                                         <p class="text-muted mb-2 small">Refreshing lemon-infused iced tea</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/lemon ice tea.jpg" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/lemon ice tea.jpg" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹210</span>
                                 </div>
@@ -1211,7 +1216,7 @@
                                         <p class="text-muted mb-2 small">Sweet peach-flavored iced tea</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/peach ice tea.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/peach ice tea.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹210</span>
                                 </div>
@@ -1227,7 +1232,7 @@
                                         <p class="text-muted mb-2 small">Spicy ginger with fizzy water</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/ginger fizz.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/ginger fizz.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹250</span>
                                 </div>
@@ -1243,7 +1248,7 @@
                                         <p class="text-muted mb-2 small">Fresh orange with mint leaves</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/classic orange mint.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/classic orange mint.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹250</span>
                                 </div>
@@ -1275,7 +1280,7 @@
                                         <p class="text-muted mb-2 small">Crispy golden french fries</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/frenchfries.jpeg" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/frenchfries.jpeg" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹150</span>
                                 </div>
@@ -1291,7 +1296,7 @@
                                         <p class="text-muted mb-2 small">Seasoned potato wedges</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/potato wedges.jpeg" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/potato wedges.jpeg" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹170</span>
                                 </div>
@@ -1307,7 +1312,7 @@
                                         <p class="text-muted mb-2 small">Crispy vegetarian nuggets</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/veg nuggets.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/veg nuggets.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹190</span>
                                 </div>
@@ -1323,7 +1328,7 @@
                                         <p class="text-muted mb-2 small">Personal size pizza</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/pizza.jpeg" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/pizza.jpeg" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹300</span>
                                 </div>
@@ -1344,7 +1349,7 @@
                                         <p class="text-muted mb-2 small">Fresh baked bagel</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/plain bagel.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/plain bagel.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹100</span>
                                 </div>
@@ -1360,7 +1365,7 @@
                                         <p class="text-muted mb-2 small">Bagel with cream cheese spread</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/cream cheese bagel.jpg" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/cream cheese bagel.jpg" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹150</span>
                                 </div>
@@ -1376,7 +1381,7 @@
                                         <p class="text-muted mb-2 small">Spicy jalapeño with cheese</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/jalopino bagel.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/jalopino bagel.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹200</span>
                                 </div>
@@ -1392,7 +1397,7 @@
                                         <p class="text-muted mb-2 small">Bagel with fresh pesto spread</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/pesto bagel.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/pesto bagel.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹230</span>
                                 </div>
@@ -1408,7 +1413,7 @@
                                         <p class="text-muted mb-2 small">Flaky buttery croissant</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/butter croissant.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/butter croissant.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹150</span>
                                 </div>
@@ -1424,7 +1429,7 @@
                                         <p class="text-muted mb-2 small">Croissant filled with Nutella</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/nutella croissant.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/nutella croissant.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹200</span>
                                 </div>
@@ -1440,7 +1445,7 @@
                                         <p class="text-muted mb-2 small">Croissant with cream cheese filling</p>
                                     </div>
                                     <div>
-                                        <img src="assets/menu images/cream chese croissant.webp" class="menu-hover-img"> 
+                                        <img src="assets/menu_images/cream chese croissant.webp" class="menu-hover-img"> 
                                     </div>
                                     <span class="price-tag ms-3">₹240</span>
                                 </div>
@@ -1530,8 +1535,37 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Cart functionality
+        function addToCart(id, name, price, image) {
+            // Get current cart from localStorage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Check if item already exists
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: id,
+                    name: name,
+                    price: price,
+                    quantity: 1,
+                    image: image
+                });
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Show success message
+            alert('Added to cart successfully!');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add any existing menu functionality here
+        });
+    </script>
     
     <!-- Custom Scripts -->
     <script src="js/theme.js"></script>

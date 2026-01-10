@@ -45,8 +45,41 @@ function closeRegister() {
 
 document.getElementById('registerForm').addEventListener('submit', e => {
   e.preventDefault();
-  alert('Registration successful!');
+  
+  // Get form data
+  const workshopName = document.getElementById('workshopName').value;
+  const workshopDate = document.getElementById('workshopDate').value;
+  const formData = new FormData(e.target);
+  const userName = formData.get('name') || e.target.elements[2].value;
+  const userEmail = formData.get('email') || e.target.elements[3].value;
+  const userPhone = formData.get('phone') || e.target.elements[4].value;
+  
+  // Create workshop registration object
+  const registration = {
+    id: Date.now(),
+    workshopName: workshopName,
+    workshopDate: workshopDate,
+    userName: userName,
+    userEmail: userEmail,
+    userPhone: userPhone,
+    registrationDate: new Date().toISOString().split('T')[0],
+    status: 'registered'
+  };
+  
+  // Get current registrations from localStorage
+  let registrations = JSON.parse(localStorage.getItem('workshopRegistrations')) || [];
+  
+  // Add new registration
+  registrations.push(registration);
+  
+  // Save to localStorage
+  localStorage.setItem('workshopRegistrations', JSON.stringify(registrations));
+  
+  alert('Registration successful! You can view your registered workshops in your dashboard.');
   closeRegister();
+  
+  // Reset form
+  e.target.reset();
 });
 
 // GALLERY

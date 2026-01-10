@@ -1,0 +1,110 @@
+<!-- Admin Dashboard -->
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <p class="text-muted">Manage your Rabuste Coffee operations</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Cart Requests Card -->
+    <div class="col-md-6 col-lg-3">
+      <div class="admin-card">
+        <div class="admin-card-icon cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+        </div>
+        <div class="admin-card-content">
+          <h3>Cart Requests</h3>
+          <p class="admin-card-number">12</p>
+          <p class="admin-card-subtitle">Pending orders</p>
+          <a href="/admin/cart-requests" class="btn btn-primary btn-sm">Manage</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workshop Requests Card -->
+    <div class="col-md-6 col-lg-3">
+      <div class="admin-card">
+        <div class="admin-card-icon workshop-icon">
+          <i class="fas fa-calendar-alt"></i>
+        </div>
+        <div class="admin-card-content">
+          <h3>Workshop Requests</h3>
+          <p class="admin-card-number">8</p>
+          <p class="admin-card-subtitle">Pending bookings</p>
+          <a href="/admin/workshop-requests" class="btn btn-primary btn-sm">Manage</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Management Card -->
+    <div class="col-md-6 col-lg-3">
+      <div class="admin-card">
+        <div class="admin-card-icon users-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="admin-card-content">
+          <h3>User Management</h3>
+          <p class="admin-card-number">156</p>
+          <p class="admin-card-subtitle">Total users</p>
+          <a href="/admin/users" class="btn btn-primary btn-sm">Manage</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Card -->
+    <div class="col-md-6 col-lg-3">
+      <div class="admin-card">
+        <div class="admin-card-icon analytics-icon">
+          <i class="fas fa-chart-bar"></i>
+        </div>
+        <div class="admin-card-content">
+          <h3>Analytics</h3>
+          <p class="admin-card-number">$2,450</p>
+          <p class="admin-card-subtitle">This month</p>
+          <a href="#" class="btn btn-primary btn-sm">View</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="admin-section">
+    <h2>Recent Activity</h2>
+    <div class="admin-table-container">
+      <table class="table admin-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Customer</th>
+            <th>Details</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge bg-info">Cart</span></td>
+            <td>John Doe</td>
+            <td>Robusta Blend, Espresso Shot</td>
+            <td>Jan 8, 2024</td>
+            <td><span class="badge bg-warning">Pending</span></td>
+          </tr>
+          <tr>
+            <td><span class="badge bg-success">Workshop</span></td>
+            <td>Alice Johnson</td>
+            <td>Coffee Brewing Basics</td>
+            <td>Jan 8, 2024</td>
+            <td><span class="badge bg-warning">Pending</span></td>
+          </tr>
+          <tr>
+            <td><span class="badge bg-info">Cart</span></td>
+            <td>Jane Smith</td>
+            <td>Cold Brew, Pastry</td>
+            <td>Jan 7, 2024</td>
+            <td><span class="badge bg-success">Completed</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

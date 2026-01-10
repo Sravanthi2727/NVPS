@@ -403,10 +403,15 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       phone: {
         required: true,
-        pattern: /^[\+]?[1-9][\d]{0,15}$/,
+        // No pattern validation - we use custom validate function that handles formatting
+        validate: function(value) {
+          // Strip formatting characters for validation
+          const cleaned = value.replace(/\D/g, '');
+          return cleaned.length >= 10 && cleaned.length <= 15;
+        },
         errorMessages: {
           required: 'Phone number is required',
-          pattern: 'Please enter a valid phone number'
+          pattern: 'Please enter a valid phone number (at least 10 digits)'
         }
       },
       cityState: {
@@ -458,9 +463,9 @@ document.addEventListener('DOMContentLoaded', function() {
         messageCounter.textContent = `${currentLength} / ${maxLength} characters`;
         
         if (currentLength > maxLength * 0.9) {
-          messageCounter.style.color = '#dc3545';
+          messageCounter.style.color = '#ff6b6b';
         } else {
-          messageCounter.style.color = 'rgba(44, 24, 16, 0.6)';
+          messageCounter.style.color = 'rgba(245, 241, 235, 0.6)';
         }
       });
     }
@@ -570,10 +575,20 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
       }
 
-      // Pattern validation
-      if (config.pattern && !config.pattern.test(value)) {
-        showFieldError(fieldName, field, errorElement, config.errorMessages.pattern);
-        return false;
+      // Custom validation function (runs before pattern for fields like phone that need formatting handling)
+      if (config.validate && typeof config.validate === 'function') {
+        if (!config.validate(value)) {
+          showFieldError(fieldName, field, errorElement, config.errorMessages.pattern || config.errorMessages.required);
+          return false;
+        }
+        // If custom validation passes, skip pattern validation (for phone numbers with formatting)
+        // This prevents pattern validation from failing on formatted numbers
+      } else {
+        // Pattern validation (only if no custom validate function exists)
+        if (config.pattern && !config.pattern.test(value)) {
+          showFieldError(fieldName, field, errorElement, config.errorMessages.pattern);
+          return false;
+        }
       }
 
       // Field is valid
@@ -854,7 +869,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (formElements.message) {
         const messageCounter = document.getElementById('message-counter');
         messageCounter.textContent = '0 / 500 characters';
-        messageCounter.style.color = 'rgba(44, 24, 16, 0.6)';
+        messageCounter.style.color = 'rgba(245, 241, 235, 0.6)';
       }
       
       resetButtonState();
