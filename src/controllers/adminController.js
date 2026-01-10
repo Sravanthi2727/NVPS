@@ -88,10 +88,6 @@ const adminController = {
 
   // Art Requests Management
   getArtRequests: (req, res) => {
-    console.log('=== ART REQUESTS ROUTE HIT ===');
-    console.log('Request path:', req.path);
-    console.log('Request method:', req.method);
-    
     // Mock data - replace with actual database queries
     const artRequests = [
       {
@@ -129,24 +125,15 @@ const adminController = {
       }
     ];
     
-    console.log('Art requests data:', artRequests.length, 'items');
-    
-    try {
-      console.log('Attempting to render art-requests view...');
-      res.render("admin/art-requests", {
-        title: 'Art Requests - Admin Dashboard',
-        description: 'Manage artwork submissions and gallery requests.',
-        currentPage: '/admin/art-requests',
-        artRequests,
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>'
-      });
-      console.log('Art requests view rendered successfully');
-    } catch (error) {
-      console.error('Error rendering art requests view:', error);
-      res.status(500).send('Error rendering art requests page: ' + error.message);
-    }
+    res.render("admin/art-requests", {
+      title: 'Art Requests - Admin Dashboard',
+      description: 'Manage artwork submissions and gallery requests.',
+      currentPage: '/admin/art-requests',
+      artRequests,
+      layout: false,
+      additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+      additionalJS: '<script src="/js/admin.js"></script>'
+    });
   },
 
   // Update cart request status
