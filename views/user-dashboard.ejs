@@ -488,22 +488,22 @@ function renderWishlist(items) {
         <a href="/menu" class="btn" style="background-color: #d6a45a; border: none; color: #000;">Browse Menu</a>
       </div>
     `;
-    return;
-  }
-
-  container.innerHTML = items.map(item => `
-    <div class="col-md-4 mb-4">
-      <div class="card">
-        ${item.image ? `<img src="${item.image}" class="card-img-top" alt="${item.name}">` : `<div class="bg-secondary rounded-top" style="height: 200px; display: flex; align-items: center; justify-content: center;"><i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i></div>`}
-        <div class="card-body">
-          <h5 class="card-title">${item.name}</h5>
-          <p class="card-text">Price: $${item.price}</p>
-          <button class="btn btn-sm" style="background-color: #d6a45a; border: none; color: #000;" onclick="moveToCart('${item.itemId}', '${item.name}', ${item.price})">Move to Cart</button>
-          <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeFromWishlist('${item.itemId}')">Remove</button>
+  } else {
+    container.innerHTML = items.map(item => `
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">${item.name}</h5>
+            <p class="card-text">Price: $${item.price}</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm" style="background-color: #d6a45a; border: none; color: #000;" onclick="moveToCart('${item.itemId}', '${item.name}', ${item.price})">Move to Cart</button>
+              <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeFromWishlist('${item.itemId}')">Remove</button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    `).join('');
+  }
 }
 
 function renderCart(items) {
@@ -910,6 +910,16 @@ document.addEventListener('DOMContentLoaded', async function() {
   renderOrders(orders);
   renderWorkshops(workshops);
   renderRequests(requests);
+
+  // Auto-refresh wishlist every 5 seconds
+  setInterval(async () => {
+    try {
+      const currentWishlist = await fetchWishlist();
+      renderWishlist(currentWishlist);
+    } catch (error) {
+      console.error('Error refreshing wishlist:', error);
+    }
+  }, 5000);
 
   // Store orders globally for filtering
   window.allOrders = orders;

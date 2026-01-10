@@ -595,6 +595,8 @@
 
     // Add art to wishlist (backend integration)
     async function addArtToWishlist(artworkId, title, artist, price, image) {
+        console.log('Adding to wishlist:', { artworkId, title, artist, price, image });
+        
         try {
             const response = await fetch('/api/wishlist', {
                 method: 'POST',
@@ -611,6 +613,7 @@
             });
 
             const result = await response.json();
+            console.log('Wishlist response:', result);
             
             if (result.success) {
                 alert('Added to wishlist successfully!');
@@ -625,6 +628,8 @@
 
     // Add art to cart (backend integration)
     async function addArtToCart(artworkId, title, artist, price, image) {
+        console.log('Adding to cart:', { artworkId, title, artist, price, image });
+        
         try {
             const response = await fetch('/api/cart', {
                 method: 'POST',
@@ -642,6 +647,7 @@
             });
 
             const result = await response.json();
+            console.log('Cart response:', result);
             
             if (result.success) {
                 alert('Added to cart successfully!');
