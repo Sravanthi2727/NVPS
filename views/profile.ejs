@@ -1,0 +1,41 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>My Profile</h3>
+        </div>
+        <div class="card-body">
+          <% if (user) { %>
+            <div class="row">
+              <div class="col-md-4 text-center">
+                <% if (user.photo) { %>
+                  <img src="<%= user.photo %>" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+                <% } else { %>
+                  <div class="bg-secondary rounded-circle d-inline-block" style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-user fa-3x text-white"></i>
+                  </div>
+                <% } %>
+              </div>
+              <div class="col-md-8">
+                <h4><%= user.displayName %></h4>
+                <p><strong>Email:</strong> <%= user.email %></p>
+                <p><strong>Google ID:</strong> <%= user.googleId %></p>
+                <p><strong>Member Since:</strong> <%= user.createdAt.toLocaleDateString() %></p>
+                
+                <div class="mt-3">
+                  <a href="/" class="btn btn-primary">Back to Home</a>
+                  <a href="/logout" class="btn btn-secondary">Logout</a>
+                </div>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="alert alert-warning">
+              User data not found. Please <a href="/signin">sign in</a> again.
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

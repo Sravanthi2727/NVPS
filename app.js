@@ -4,6 +4,8 @@ const session = require("express-session");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const mongoose = require('mongoose');
+const compression = require('compression');
+const helmet = require('helmet');
 
 require("dotenv").config();
 const path = require("path");
@@ -19,6 +21,20 @@ const WorkshopModel = require('./models/Workshop');
 connectDB();
 
 const app = express();
+
+// Performance middleware
+app.use(compression()); // Compress all responses
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP for development
+  crossOriginEmbedderPolicy: false
+}));
+
+// Set caching headers for static assets
+app.use(express.static("public", {
+  maxAge: '1d', // Cache static files for 1 day
+  etag: true,
+  lastModified: true
+}));
 
  
 // Middleware
@@ -57,28 +73,26 @@ passport.use(
         const email = profile.emails[0].value.toLowerCase();
         console.log('Looking for user with email:', email);
         
-        let user = await User.findOne({ email: email });
+        let user = await User.findOne({ googleId: profile.id });
         
         if (user) {
           console.log('Existing user found:', user.email);
-          // Update user if they're logging in via OAuth
-          if (!user.isOAuthUser) {
-            user.isOAuthUser = true;
-            await user.save();
-            console.log('Updated user to OAuth user');
-          }
           console.log('Returning user to passport:', user.email);
           return done(null, user);
         } else {
+          // Check if user exists with same email but different googleId
+          const existingEmailUser = await User.findOne({ email: email });
+          if (existingEmailUser) {
+            console.log('User with same email exists but different googleId');
+            return done(new Error('An account with this email already exists'), null);
+          }
           console.log('Creating new user from Google profile');
           // Create new user from Google profile
           user = new User({
-            name: profile.displayName || 'User',
+            googleId: profile.id,
+            displayName: profile.displayName || 'User',
             email: email,
-            isOAuthUser: true,
-            cart: [],
-            wishlist: [],
-            registered: []
+            photo: profile.photos && profile.photos[0] ? profile.photos[0].value : ''
           });
           await user.save();
           console.log('New user created and saved:', user.email);
@@ -104,24 +118,21 @@ app.use(
     secret: process.env.SESSION_SECRET || "change_me",
     resave: false,
     saveUninitialized: false,
-<<<<<<< HEAD
-=======
     cookie: {
       sameSite: "lax"   // THIS FIXES GOOGLE OAUTH
     }
->>>>>>> 519b0bd544a6d0acb50aa9a22ab91c9cebe4c82f
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static("public"));
 app.use(expressLayouts);
 
 app.set("layout", "layouts/boilerplate");
 
-// Serve static files from public directory
-app.use(express.static(path.join(__dirname, "public")));
+// Import auth middleware
+const { getUserData } = require('./middleware/auth');
+const { viewCacheMiddleware, cacheMiddleware } = require('./middleware/cache');
 
 // Middleware to make variables available to all views
 app.use((req, res, next) => {
@@ -130,8 +141,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Home route
-app.get("/", (req, res) => {
+// Add user data middleware after passport setup
+app.use(getUserData);
+
+// Home route - Cache for 10 minutes
+app.get("/", viewCacheMiddleware(600), (req, res) => {
   res.render("home", {
     title: "Rabuste Coffee - Premium Robusta Coffee & Art",
     description:
@@ -149,28 +163,6 @@ app.get("/", (req, res) => {
   });
 });
 
-<<<<<<< HEAD
-// Menu route - Serve static HTML for now, can be converted to EJS later
-app.get("/menu", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/menu.html"), {
-    title: "Our Menu - Rabuste Coffee",
-    description:
-      "Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.",
-    currentPage: "/menu",
-    layout: false,
-  });
-});
-
-// Gallery route - Serve static HTML for now, can be converted to EJS later
-app.get("/gallery", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/gallery.html"), {
-    title: "Art Gallery - Rabuste Coffee",
-    description:
-      "Discover the vibrant art collection at Rabuste Coffee, where coffee culture meets contemporary art.",
-    currentPage: "/gallery",
-    layout: false,
-  });
-=======
 // Menu route - Dynamic
 app.get('/menu', async (req, res) => {
   try {
@@ -329,7 +321,6 @@ app.get('/gallery', async (req, res) => {
     console.error('Gallery route error:', error);
     res.status(500).send('Error loading gallery');
   }
->>>>>>> 519b0bd544a6d0acb50aa9a22ab91c9cebe4c82f
 });
 
 // About Us route
@@ -379,7 +370,6 @@ app.get("/franchise", (req, res) => {
   });
 });
 
-<<<<<<< HEAD
 app.get("/workshops", (req, res) => {
   res.render("workshops");
 });
@@ -389,68 +379,6 @@ app.get("/philosophy", (req, res) => {
     title: "The Robusta Philosophy Experience | Rabuste",
     currentPage: "/philosophy",
   });
-=======
-app.get('/workshops', async (req, res) => {
-  try {
-    // Check if database is connected
-    if (mongoose.connection.readyState !== 1) {
-      // Return static data if database is not connected
-      const staticWorkshops = {
-        upcoming: [
-          {
-            _id: '1',
-            title: 'Coffee Brewing Basics',
-            date: '2024-02-15',
-            image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
-            description: 'Learn the fundamentals of coffee brewing',
-            type: 'upcoming'
-          }
-        ],
-        past: [
-          {
-            _id: '2',
-            title: 'Latte Art Workshop',
-            date: '2024-01-10',
-            image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
-            description: 'Master the art of latte making',
-            type: 'past'
-          }
-        ]
-      };
-      
-      res.render('workshops', {
-        title: 'Workshops - Rabuste Coffee',
-        description: 'Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.',
-        currentPage: '/workshops',
-        upcomingWorkshops: staticWorkshops.upcoming,
-        pastWorkshops: staticWorkshops.past
-      });
-      return;
-    }
-    
-    const upcomingWorkshops = await WorkshopModel.find({ 
-      type: 'upcoming', 
-      isActive: true,
-      date: { $gte: new Date() }
-    }).sort({ date: 1, displayOrder: 1 });
-    
-    const pastWorkshops = await WorkshopModel.find({ 
-      type: 'past', 
-      isActive: true 
-    }).sort({ date: -1, displayOrder: 1 });
-
-    res.render('workshops', {
-      title: 'Workshops - Rabuste Coffee',
-      description: 'Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.',
-      currentPage: '/workshops',
-      upcomingWorkshops: upcomingWorkshops,
-      pastWorkshops: pastWorkshops
-    });
-  } catch (error) {
-    console.error('Workshops route error:', error);
-    res.status(500).send('Error loading workshops');
-  }
->>>>>>> 519b0bd544a6d0acb50aa9a22ab91c9cebe4c82f
 });
 
 app.get("/signin", (req, res) => {
@@ -463,10 +391,6 @@ app.get("/signin", (req, res) => {
   
   res.render("signin", {
     additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`,
-<<<<<<< HEAD
-=======
-    error: error
->>>>>>> 519b0bd544a6d0acb50aa9a22ab91c9cebe4c82f
   });
 });
 
@@ -534,10 +458,6 @@ app.get("/signup", (req, res) => {
   // console.log("at signup");
   res.render("signup", {
     additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`,
-<<<<<<< HEAD
-=======
-    // layout : false,
->>>>>>> 519b0bd544a6d0acb50aa9a22ab91c9cebe4c82f
   });
 });
 
@@ -594,12 +514,8 @@ app.post("/signup", async (req, res, next) => {
     // Explicitly passing a string here fixes the "next is not a function" crash
     return res.status(500).render("signup", {
       additionalCSS: `<link rel="stylesheet" href="/css/auth.css">`,
-<<<<<<< HEAD
-      error: "Passwords do not match.",
-=======
       error: "An unexpected error occurred. Please try again.",
       layout: false
->>>>>>> 519b0bd544a6d0acb50aa9a22ab91c9cebe4c82f
     });
   }
 });
@@ -756,6 +672,29 @@ app.post('/api/requests', ensureAuthenticated, async (req, res) => {
   }
 });
 
+// Example route to show user data
+app.get("/profile", (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/signin");
+  }
+  
+  res.render("profile", {
+    title: "My Profile - Rabuste Coffee",
+    user: res.locals.currentUser
+  });
+});
+
+// API route to get all users (for admin purposes)
+app.get("/api/users", async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const users = await User.find({}).select('googleId displayName email createdAt').sort({ createdAt: -1 });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
 app.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
@@ -763,11 +702,6 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-<<<<<<< HEAD
-// 404 Handler - Must be after all other routes
-app.use((req, res) => {
-  res.status(404).send("Page Not Found");
-=======
 // Admin routes
 app.get("/admin", (req, res) => {
   res.render("admin/dashboard", {
@@ -777,7 +711,6 @@ app.get("/admin", (req, res) => {
     additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
     additionalJS: '<script src="/js/admin.js"></script>'
   });
->>>>>>> 519b0bd544a6d0acb50aa9a22ab91c9cebe4c82f
 });
 
 app.get("/admin/cart-requests", (req, res) => {
@@ -923,11 +856,6 @@ app.use((req, res) => {
 
 
 // Error handling middleware
-<<<<<<< HEAD
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something went wrong");
-=======
 app.use(function(err, req, res, next) {
   console.error('Error stack:', err.stack);
   console.error('Error details:', {
@@ -942,7 +870,6 @@ app.use(function(err, req, res, next) {
   }
   
   res.status(500).send('Something went wrong');
->>>>>>> 519b0bd544a6d0acb50aa9a22ab91c9cebe4c82f
 });
 
 const port = process.env.PORT || 3001;

@@ -1,0 +1,85 @@
+/* Lazy Loading Styles */
+img[data-src] {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+img.loaded {
+  opacity: 1;
+}
+
+img.loading {
+  opacity: 0.5;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+img.error {
+  opacity: 0.3;
+  background-color: #f8f9fa;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Component Loading Styles */
+[data-lazy-component] {
+  min-height: 100px;
+  position: relative;
+}
+
+.component-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.component-loading::after {
+  content: 'Loading...';
+  color: #666;
+  font-size: 14px;
+}
+
+.component-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}
+
+/* Performance optimizations */
+img {
+  content-visibility: auto;
+  contain-intrinsic-size: 400px 300px;
+}
+
+/* Critical image loading */
+.critical-image {
+  content-visibility: visible;
+  contain-intrinsic-size: auto;
+}
+
+/* Responsive image optimizations */
+@media (max-width: 768px) {
+  img {
+    contain-intrinsic-size: 300px 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  img {
+    contain-intrinsic-size: 200px 150px;
+  }
+}
