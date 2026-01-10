@@ -37,6 +37,7 @@ const wishlistItemSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  image: String,
   addedAt: {
     type: Date,
     default: Date.now
