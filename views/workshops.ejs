@@ -5,21 +5,34 @@
   <title>Workshops At Rabuste</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/workshops.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/workshops.css">
+  
+  <style>
+    /* Workshops page specific styles */
+    body {
+      padding-top: 76px; /* Account for fixed navbar */
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<nav>
-  <a href="#hero">Home</a>
-  <a href="#upcoming">Upcoming</a>
-  <a href="#past">Past</a>
-  <a href="#register">Register</a>
-</nav>
+<!-- Include Navbar -->
+<%- include('partials/navbar') %>
 
 <!-- HERO -->
 <section class="hero" id="hero">
@@ -271,6 +284,14 @@
   </div>
 </div>
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Navbar JS -->
+<script src="/js/navbar.js"></script>
+
+<!-- Workshops JS -->
 <script src="/js/workshops.js"></script>
+
 </body>
 </html>
