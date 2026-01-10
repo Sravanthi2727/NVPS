@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Rabuste Coffee</title>
+    <title><%= typeof title !== 'undefined' ? title : 'Admin Dashboard - Rabuste Coffee' %></title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,6 +22,7 @@
             box-sizing: border-box !important;
         }
         
+        /* Override any existing styles */
         html, body {
             margin: 0 !important;
             padding: 0 !important;
@@ -32,11 +33,22 @@
             height: 100% !important;
         }
         
+        /* Hide any main site elements that might be inherited */
+        .navbar:not(.admin-navbar), 
+        .nav:not(.admin-nav), 
+        .header:not(.admin-header), 
+        .footer,
+        nav:not(.admin-sidebar) {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        
         /* Admin Layout */
         .admin-wrapper {
             display: flex !important;
             min-height: 100vh !important;
             background: #000 !important;
+            position: relative !important;
         }
         
         /* Sidebar */
@@ -48,6 +60,8 @@
             height: 100vh !important;
             overflow-y: auto !important;
             z-index: 9999 !important;
+            top: 0 !important;
+            left: 0 !important;
         }
         
         .admin-logo {
@@ -60,6 +74,7 @@
             color: #d6a45a !important;
             margin: 0 !important;
             font-weight: 700 !important;
+            font-size: 1.5rem !important;
         }
         
         .admin-nav {
@@ -72,6 +87,7 @@
             color: #fff !important;
             text-decoration: none !important;
             transition: all 0.3s ease !important;
+            margin: 0 !important;
         }
         
         .admin-nav a:hover {
@@ -94,6 +110,7 @@
             flex: 1 !important;
             margin-left: 250px !important;
             background: #000 !important;
+            min-height: 100vh !important;
         }
         
         .admin-header {
@@ -108,10 +125,12 @@
         .admin-header h2 {
             color: #d6a45a !important;
             margin: 0 !important;
+            font-size: 1.75rem !important;
         }
         
         .admin-content {
             padding: 2rem !important;
+            background: #000 !important;
         }
         
         /* Cards */
@@ -132,6 +151,7 @@
         .admin-card h3 {
             color: #d6a45a !important;
             margin-bottom: 1rem !important;
+            font-size: 1.25rem !important;
         }
         
         .admin-card-number {
@@ -157,6 +177,7 @@
         .admin-table table {
             width: 100% !important;
             margin: 0 !important;
+            background: transparent !important;
         }
         
         .admin-table th {
@@ -170,6 +191,7 @@
             padding: 1rem !important;
             border-bottom: 1px solid #333 !important;
             color: #fff !important;
+            background: transparent !important;
         }
         
         .admin-table tr:hover {
@@ -192,11 +214,30 @@
         .btn-outline-primary {
             color: #d6a45a !important;
             border-color: #d6a45a !important;
+            background: transparent !important;
         }
         
         .btn-outline-primary:hover {
             background: #d6a45a !important;
             color: #000 !important;
+        }
+        
+        /* Form Controls */
+        .form-control, .form-select {
+            background: #333 !important;
+            border: 1px solid #555 !important;
+            color: #fff !important;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: #333 !important;
+            border-color: #d6a45a !important;
+            color: #fff !important;
+            box-shadow: 0 0 0 0.2rem rgba(214, 164, 90, 0.25) !important;
+        }
+        
+        .form-label {
+            color: #d6a45a !important;
         }
         
         /* Badges */
@@ -211,6 +252,7 @@
         
         .badge.bg-success {
             background: #27ae60 !important;
+            color: #fff !important;
         }
         
         .badge.bg-info {
@@ -221,6 +263,11 @@
         .badge.bg-primary {
             background: #d6a45a !important;
             color: #000 !important;
+        }
+        
+        .badge.bg-danger {
+            background: #e74c3c !important;
+            color: #fff !important;
         }
         
         /* Mobile */
@@ -253,6 +300,20 @@
                 display: inline-block !important;
             }
         }
+        
+        /* Override Bootstrap and any other conflicting styles */
+        .container, .container-fluid {
+            max-width: none !important;
+            padding: 0 !important;
+        }
+        
+        .row {
+            margin: 0 !important;
+        }
+        
+        .col, .col-md-6, .col-lg-4 {
+            padding: 0.75rem !important;
+        }
     </style>
 </head>
 <body>
@@ -264,16 +325,16 @@
             </div>
             
             <div class="admin-nav">
-                <a href="/admin" class="active">
+                <a href="/admin" class="<%= typeof currentPage !== 'undefined' && currentPage === '/admin' ? 'active' : '' %>">
                     <i class="fas fa-tachometer-alt"></i>Dashboard
                 </a>
-                <a href="/admin/cart-requests">
+                <a href="/admin/cart-requests" class="<%= typeof currentPage !== 'undefined' && currentPage === '/admin/cart-requests' ? 'active' : '' %>">
                     <i class="fas fa-shopping-cart"></i>Cart Requests
                 </a>
-                <a href="/admin/art-requests">
+                <a href="/admin/art-requests" class="<%= typeof currentPage !== 'undefined' && currentPage === '/admin/art-requests' ? 'active' : '' %>">
                     <i class="fas fa-palette"></i>Art Requests
                 </a>
-                <a href="/admin/workshop-requests">
+                <a href="/admin/workshop-requests" class="<%= typeof currentPage !== 'undefined' && currentPage === '/admin/workshop-requests' ? 'active' : '' %>">
                     <i class="fas fa-calendar-alt"></i>Workshop Requests
                 </a>
                 
@@ -295,7 +356,7 @@
                     <button class="mobile-toggle me-3" onclick="toggleSidebar()">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h2>Admin Dashboard</h2>
+                    <h2><%= typeof title !== 'undefined' ? title.replace(' - Rabuste Coffee', '').replace('Admin Dashboard', 'Dashboard') : 'Dashboard' %></h2>
                 </div>
                 <div>
                     <span style="color: #ccc;">Welcome, Admin</span>
@@ -303,90 +364,7 @@
             </div>
             
             <div class="admin-content">
-                <!-- Dashboard Content -->
-                <div class="row g-4 mb-4">
-                    <!-- Cart Requests Card -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="admin-card">
-                            <h3><i class="fas fa-shopping-cart me-2"></i>Cart Requests</h3>
-                            <div class="admin-card-number">12</div>
-                            <div class="admin-card-subtitle">Pending orders</div>
-                            <a href="/admin/cart-requests" class="btn btn-primary">Manage Orders</a>
-                        </div>
-                    </div>
-
-                    <!-- Art Requests Card -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="admin-card">
-                            <h3><i class="fas fa-palette me-2"></i>Art Requests</h3>
-                            <div class="admin-card-number">5</div>
-                            <div class="admin-card-subtitle">Pending submissions</div>
-                            <a href="/admin/art-requests" class="btn btn-primary">Review Art</a>
-                        </div>
-                    </div>
-
-                    <!-- Workshop Requests Card -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="admin-card">
-                            <h3><i class="fas fa-calendar-alt me-2"></i>Workshop Requests</h3>
-                            <div class="admin-card-number">8</div>
-                            <div class="admin-card-subtitle">Pending bookings</div>
-                            <a href="/admin/workshop-requests" class="btn btn-primary">Manage Workshops</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="admin-card">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3>Recent Activity</h3>
-                        
-                    </div>
-                    
-                    <div class="admin-table">
-                        <table class="table table-dark">
-                            <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Customer</th>
-                                    <th>Details</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (typeof recentActivity !== 'undefined' && recentActivity.length > 0) { %>
-                                    <% recentActivity.forEach(activity => { %>
-                                        <tr>
-                                            <td><span class="badge bg-info"><%= activity.type %></span></td>
-                                            <td>
-                                                <strong><%= activity.customer %></strong><br>
-                                                <small style="color: #ccc;"><%= activity.email %></small>
-                                            </td>
-                                            <td><%= activity.details %></td>
-                                            <td><%= activity.date %></td>
-                                            <td>
-                                                <span class="badge <%= activity.status === 'pending' ? 'bg-warning' : activity.status === 'completed' ? 'bg-success' : 'bg-danger' %>">
-                                                    <%= activity.status.charAt(0).toUpperCase() + activity.status.slice(1) %>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-outline-primary btn-sm">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    <% }); %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="6" class="text-center" style="color: #ccc;">No recent activity</td>
-                                    </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <%- body %>
             </div>
         </main>
     </div>
@@ -410,6 +388,16 @@
                 sidebar.classList.contains('show')) {
                 sidebar.classList.remove('show');
             }
+        });
+        
+        // Prevent any main site scripts from interfering
+        document.addEventListener('DOMContentLoaded', function() {
+            // Remove any main site elements that might have been loaded
+            const mainNavbars = document.querySelectorAll('.navbar:not(.admin-navbar)');
+            mainNavbars.forEach(nav => nav.remove());
+            
+            const mainHeaders = document.querySelectorAll('.header:not(.admin-header)');
+            mainHeaders.forEach(header => header.remove());
         });
     </script>
 </body>

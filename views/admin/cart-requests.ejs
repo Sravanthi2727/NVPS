@@ -1,177 +1,431 @@
-<!-- Cart Requests Management -->
-<div class="admin-container">
-  <div class="admin-header">
-    <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <h1>Cart Requests</h1>
-        <p class="text-muted">Manage customer orders and cart requests</p>
-      </div>
-      <a href="/admin" class="btn btn-outline-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Dashboard
-      </a>
-    </div>
-  </div>
-
-  <!-- Filter and Search -->
-  <div class="admin-filters">
-    <div class="row g-3">
-      <div class="col-md-4">
-        <select class="form-select" id="statusFilter">
-          <option value="">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="processing">Processing</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <input type="date" class="form-control" id="dateFilter" placeholder="Filter by date">
-      </div>
-      <div class="col-md-4">
-        <input type="text" class="form-control" id="searchFilter" placeholder="Search by customer name or email">
-      </div>
-    </div>
-  </div>
-
-  <!-- Cart Requests Table -->
-  <div class="admin-section">
-    <div class="admin-table-container">
-      <table class="table admin-table">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Customer</th>
-            <th>Items</th>
-            <th>Total</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% cartRequests.forEach(request => { %>
-          <tr>
-            <td>#<%= request.id.toString().padStart(4, '0') %></td>
-            <td>
-              <div class="customer-info">
-                <strong><%= request.customerName %></strong>
-                <br>
-                <small class="text-muted"><%= request.email %></small>
-              </div>
-            </td>
-            <td>
-              <div class="items-list">
-                <% request.items.forEach(item => { %>
-                  <span class="badge bg-light text-dark me-1"><%= item %></span>
-                <% }); %>
-              </div>
-            </td>
-            <td class="fw-bold">$<%= request.total.toFixed(2) %></td>
-            <td><%= new Date(request.date).toLocaleDateString() %></td>
-            <td>
-              <span class="badge bg-<%= request.status === 'completed' ? 'success' : request.status === 'pending' ? 'warning' : 'secondary' %>">
-                <%= request.status.charAt(0).toUpperCase() + request.status.slice(1) %>
-              </span>
-            </td>
-            <td>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewOrder(<%= request.id %>)">
-                  <i class="fas fa-eye"></i>
-                </button>
-                <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-sm btn-outline-success dropdown-toggle" data-bs-toggle="dropdown">
-                    Update
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <form method="POST" action="/admin/cart-requests/<%= request.id %>/update" class="d-inline">
-                        <input type="hidden" name="status" value="processing">
-                        <button type="submit" class="dropdown-item">Mark as Processing</button>
-                      </form>
-                    </li>
-                    <li>
-                      <form method="POST" action="/admin/cart-requests/<%= request.id %>/update" class="d-inline">
-                        <input type="hidden" name="status" value="completed">
-                        <button type="submit" class="dropdown-item">Mark as Completed</button>
-                      </form>
-                    </li>
-                    <li>
-                      <form method="POST" action="/admin/cart-requests/<%= request.id %>/update" class="d-inline">
-                        <input type="hidden" name="status" value="cancelled">
-                        <button type="submit" class="dropdown-item text-danger">Cancel Order</button>
-                      </form>
-                    </li>
-                  </ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Requests - Admin Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Complete CSS Reset for Admin */
+        * {
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+        }
+        
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+            background: #000 !important;
+            color: #fff !important;
+            overflow-x: hidden !important;
+            height: 100% !important;
+        }
+        
+        /* Admin Layout */
+        .admin-wrapper {
+            display: flex !important;
+            min-height: 100vh !important;
+            background: #000 !important;
+        }
+        
+        /* Sidebar */
+        .admin-sidebar {
+            width: 250px !important;
+            background: #111 !important;
+            border-right: 2px solid #d6a45a !important;
+            position: fixed !important;
+            height: 100vh !important;
+            overflow-y: auto !important;
+            z-index: 9999 !important;
+        }
+        
+        .admin-logo {
+            padding: 2rem 1.5rem !important;
+            text-align: center !important;
+            border-bottom: 1px solid #333 !important;
+        }
+        
+        .admin-logo h4 {
+            color: #d6a45a !important;
+            margin: 0 !important;
+            font-weight: 700 !important;
+        }
+        
+        .admin-nav {
+            padding: 1rem 0 !important;
+        }
+        
+        .admin-nav a {
+            display: block !important;
+            padding: 1rem 1.5rem !important;
+            color: #fff !important;
+            text-decoration: none !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .admin-nav a:hover {
+            background: rgba(214, 164, 90, 0.1) !important;
+            color: #d6a45a !important;
+        }
+        
+        .admin-nav a.active {
+            background: #d6a45a !important;
+            color: #000 !important;
+        }
+        
+        .admin-nav i {
+            width: 20px !important;
+            margin-right: 10px !important;
+        }
+        
+        /* Main Content */
+        .admin-main {
+            flex: 1 !important;
+            margin-left: 250px !important;
+            background: #000 !important;
+        }
+        
+        .admin-header {
+            background: #1a1a1a !important;
+            padding: 1rem 2rem !important;
+            border-bottom: 1px solid #333 !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 100 !important;
+        }
+        
+        .admin-header h2 {
+            color: #d6a45a !important;
+            margin: 0 !important;
+        }
+        
+        .admin-content {
+            padding: 2rem !important;
+        }
+        
+        /* Cards */
+        .admin-card {
+            background: #1a1a1a !important;
+            border: 1px solid #333 !important;
+            border-radius: 8px !important;
+            padding: 1.5rem !important;
+            margin-bottom: 1rem !important;
+            transition: transform 0.3s ease !important;
+        }
+        
+        .admin-card:hover {
+            transform: translateY(-2px) !important;
+            border-color: #d6a45a !important;
+        }
+        
+        .admin-card h3 {
+            color: #d6a45a !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        /* Tables */
+        .admin-table {
+            background: #1a1a1a !important;
+            border: 1px solid #333 !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+        }
+        
+        .admin-table table {
+            width: 100% !important;
+            margin: 0 !important;
+        }
+        
+        .admin-table th {
+            background: #333 !important;
+            color: #d6a45a !important;
+            padding: 1rem !important;
+            border: none !important;
+        }
+        
+        .admin-table td {
+            padding: 1rem !important;
+            border-bottom: 1px solid #333 !important;
+            color: #fff !important;
+        }
+        
+        .admin-table tr:hover {
+            background: rgba(214, 164, 90, 0.1) !important;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: #d6a45a !important;
+            border-color: #d6a45a !important;
+            color: #000 !important;
+        }
+        
+        .btn-primary:hover {
+            background: #e3b873 !important;
+            border-color: #e3b873 !important;
+            color: #000 !important;
+        }
+        
+        .btn-outline-primary {
+            color: #d6a45a !important;
+            border-color: #d6a45a !important;
+        }
+        
+        .btn-outline-primary:hover {
+            background: #d6a45a !important;
+            color: #000 !important;
+        }
+        
+        /* Form Controls */
+        .form-control, .form-select {
+            background: #333 !important;
+            border: 1px solid #555 !important;
+            color: #fff !important;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: #333 !important;
+            border-color: #d6a45a !important;
+            color: #fff !important;
+            box-shadow: 0 0 0 0.2rem rgba(214, 164, 90, 0.25) !important;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 0.5rem 0.75rem !important;
+        }
+        
+        .badge.bg-warning {
+            background: #f39c12 !important;
+            color: #000 !important;
+        }
+        
+        .badge.bg-success {
+            background: #27ae60 !important;
+        }
+        
+        .badge.bg-info {
+            background: #d6a45a !important;
+            color: #000 !important;
+        }
+        
+        .badge.bg-primary {
+            background: #d6a45a !important;
+            color: #000 !important;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%) !important;
+                z-index: 10000 !important;
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0) !important;
+            }
+            
+            .admin-main {
+                margin-left: 0 !important;
+            }
+        }
+        
+        .mobile-toggle {
+            display: none !important;
+            background: #d6a45a !important;
+            border: none !important;
+            color: #000 !important;
+            padding: 0.5rem !important;
+            border-radius: 4px !important;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: inline-block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <nav class="admin-sidebar" id="adminSidebar">
+            <div class="admin-logo">
+                <h4><i class="fas fa-coffee me-2"></i>Rabuste Admin</h4>
+            </div>
+            
+            <div class="admin-nav">
+                <a href="/admin">
+                    <i class="fas fa-tachometer-alt"></i>Dashboard
+                </a>
+                <a href="/admin/cart-requests" class="active">
+                    <i class="fas fa-shopping-cart"></i>Cart Requests
+                </a>
+                <a href="/admin/art-requests">
+                    <i class="fas fa-palette"></i>Art Requests
+                </a>
+                <a href="/admin/workshop-requests">
+                    <i class="fas fa-calendar-alt"></i>Workshop Requests
+                </a>
+                
+                <hr style="border-color: #333; margin: 1rem 1.5rem;">
+                
+                <a href="/" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>View Website
+                </a>
+                <a href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <button class="mobile-toggle me-3" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2>Cart Requests</h2>
                 </div>
-              </div>
-            </td>
-          </tr>
-          <% }); %>
-        </tbody>
-      </table>
-    </div>
-  </div>
+                <div>
+                    <span style="color: #ccc;">Welcome, Admin</span>
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <!-- Cart Requests Content -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <p style="color: #ccc;">Manage customer orders and cart requests</p>
+                    </div>
+                </div>
 
-  <!-- Pagination -->
-  <nav aria-label="Cart requests pagination">
-    <ul class="pagination justify-content-center">
-      <li class="page-item disabled">
-        <a class="page-link" href="#" tabindex="-1">Previous</a>
-      </li>
-      <li class="page-item active"><a class="page-link" href="#">1</a></li>
-      <li class="page-item"><a class="page-link" href="#">2</a></li>
-      <li class="page-item"><a class="page-link" href="#">3</a></li>
-      <li class="page-item">
-        <a class="page-link" href="#">Next</a>
-      </li>
-    </ul>
-  </nav>
-</div>
+                <!-- Filter and Search -->
+                <div class="admin-card mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <select class="form-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="processing">Processing</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="date" class="form-control" id="dateFilter" placeholder="Filter by date">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="searchFilter" placeholder="Search by customer name or email">
+                        </div>
+                    </div>
+                </div>
 
-<!-- Order Details Modal -->
-<div class="modal fade" id="orderModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Order Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body" id="orderModalBody">
-        <!-- Order details will be loaded here -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
+                <!-- Cart Requests Table -->
+                <div class="admin-card">
+                    <h3 class="mb-3">Customer Orders</h3>
+                    <div class="admin-table">
+                        <table class="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cartRequests.forEach(request => { %>
+                                <tr>
+                                    <td>#<%= request.id.toString().padStart(4, '0') %></td>
+                                    <td>
+                                        <strong><%= request.customerName %></strong><br>
+                                        <small style="color: #ccc;"><%= request.email %></small>
+                                    </td>
+                                    <td>
+                                        <% request.items.forEach(item => { %>
+                                            <span class="badge bg-info me-1"><%= item %></span>
+                                        <% }); %>
+                                    </td>
+                                    <td class="fw-bold">$<%= request.total.toFixed(2) %></td>
+                                    <td><%= new Date(request.date).toLocaleDateString() %></td>
+                                    <td>
+                                        <span class="badge bg-<%= request.status === 'completed' ? 'success' : request.status === 'pending' ? 'warning' : request.status === 'cancelled' ? 'danger' : 'secondary' %>">
+                                            <%= request.status.charAt(0).toUpperCase() + request.status.slice(1) %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewOrder('<%= request.id %>')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <% if (request.status === 'pending') { %>
+                                                <form method="POST" action="/admin/cart-requests/<%= request.id %>/update" class="d-inline">
+                                                    <input type="hidden" name="status" value="completed">
+                                                    <button type="submit" class="btn btn-sm btn-success" title="Mark as Completed">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="POST" action="/admin/cart-requests/<%= request.id %>/update" class="d-inline">
+                                                    <input type="hidden" name="status" value="cancelled">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Cancel Order" onclick="return confirm('Are you sure you want to cancel this order?')">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </form>
+                                            <% } else { %>
+                                                <span class="text-muted small">No actions available</span>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-  </div>
-</div>
-
-<script>
-function viewOrder(orderId) {
-  // Mock order details - replace with actual API call
-  const orderDetails = `
-    <div class="order-details">
-      <h6>Order #${orderId.toString().padStart(4, '0')}</h6>
-      <div class="row">
-        <div class="col-md-6">
-          <strong>Customer Information:</strong>
-          <p>John Doe<br>john@example.com<br>+1 (555) 123-4567</p>
-        </div>
-        <div class="col-md-6">
-          <strong>Order Information:</strong>
-          <p>Date: January 8, 2024<br>Status: Pending<br>Total: $25.50</p>
-        </div>
-      </div>
-      <strong>Items:</strong>
-      <ul>
-        <li>Robusta Blend - $15.00</li>
-        <li>Espresso Shot - $8.50</li>
-        <li>Tax - $2.00</li>
-      </ul>
-    </div>
-  `;
-  
-  document.getElementById('orderModalBody').innerHTML = orderDetails;
-  new bootstrap.Modal(document.getElementById('orderModal')).show();
-}
-</script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function toggleSidebar() {
+            document.getElementById('adminSidebar').classList.toggle('show');
+        }
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('adminSidebar');
+            const toggle = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) && 
+                sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+            }
+        });
+        
+        function viewOrder(orderId) {
+            alert('View order details for Order #' + orderId);
+        }
+    </script>
+</body>
+</html>

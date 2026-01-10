@@ -591,34 +591,66 @@ section {
 .footer-section {
   padding: 60px 0 40px;
   background: rgba(0, 0, 0, 0.85);
+  text-align: center;
+  width: 100%;
 }
 
 .footer-brand {
   letter-spacing: 3px;
   margin-bottom: 10px;
+  text-align: center;
+  color: var(--gold);
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 .footer-text {
   font-size: 0.9rem;
   color: var(--muted);
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .footer-links {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 24px;
   margin: 20px 0;
+  flex-wrap: wrap;
 }
 
 .footer-links a {
   color: var(--gold);
   text-decoration: none;
   font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: var(--cream);
 }
 
 .footer-copy {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.footer-legal {
+  text-align: center;
+}
+
+.footer-legal a {
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: color 0.3s ease;
+}
+
+.footer-legal a:hover {
+  color: var(--cream);
 }
 
 /* ================= WORKSHOPS ================= */

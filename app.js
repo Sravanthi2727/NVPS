@@ -1,3 +1,8 @@
+/**
+ * Rabuste Coffee Application - MVC Structure
+ * Main application file with proper MVC organization
+ */
+
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
@@ -45,6 +50,20 @@ app.use(express.urlencoded({ extended: true }));
 const Wishlist = require('./models/Wishlist');
 const Cart = require('./models/Cart');
 const Request = require('./models/Request');
+const Order = require('./models/Order');
+
+// Controllers
+const adminController = require('./src/controllers/adminController');
+
+// Admin middleware
+function ensureAdmin(req, res, next) {
+  // Simple admin check - in production, implement proper admin authentication
+  // For now, just check if user is authenticated
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ success: false, message: 'Admin access required' });
+}
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
@@ -62,7 +81,12 @@ passport.use(
         // Wait for database connection
         if (mongoose.connection.readyState !== 1) {
           console.log('Database not connected, waiting...');
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+
+        // Check again after waiting
+        if (mongoose.connection.readyState !== 1) {
+          return done(new Error('Database not connected'), null);
         }
 
         console.log('Google OAuth profile received:', {
@@ -93,12 +117,15 @@ passport.use(
             return done(new Error('An account with this email already exists'), null);
           }
           console.log('Creating new user from Google profile');
-          // Create new user from Google profile
+          // Create new user from Google profile with consistent field names
           user = new User({
             googleId: profile.id,
-            displayName: profile.displayName || 'User',
+            name: profile.displayName || 'User',
             email: email,
-            photo: profile.photos && profile.photos[0] ? profile.photos[0].value : ''
+            isOAuthUser: true,
+            cart: [],
+            wishlist: [],
+            registered: []
           });
           await user.save();
           console.log('New user created and saved:', user.email);
@@ -117,15 +144,18 @@ passport.use(
   )
 );
 
+// Express configuration
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "change_me",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      sameSite: "lax"   // THIS FIXES GOOGLE OAUTH
+      sameSite: "lax"
     }
   })
 );
@@ -182,13 +212,13 @@ app.get('/menu', async (req, res) => {
               name: 'Robusta Iced Americano',
               description: 'Bold Robusta espresso with chilled water',
               price: 160,
-              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
             },
             {
               name: 'Robusta Cold Brew',
               description: '24-hour cold extracted Robusta',
               price: 180,
-              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
             }
           ],
           'robusta-cold-milk': [
@@ -196,7 +226,7 @@ app.get('/menu', async (req, res) => {
               name: 'Robusta Iced Latte',
               description: 'Smooth Robusta with cold milk',
               price: 200,
-              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
             }
           ]
         },
@@ -206,7 +236,7 @@ app.get('/menu', async (req, res) => {
               name: 'Robusta Black Coffee',
               description: 'Pure Robusta espresso',
               price: 120,
-              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
             }
           ]
         }
@@ -419,8 +449,162 @@ app.get("/franchise", (req, res) => {
   });
 });
 
-app.get("/workshops", (req, res) => {
-  res.render("workshops");
+app.get("/workshops", async (req, res) => {
+  console.log("Workshops route accessed");
+  try {
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      console.log("Database not connected, using static data");
+      // Return static data if database is not connected
+      const staticWorkshops = {
+        upcoming: [
+          {
+            title: "Advanced Coffee Brewing",
+            description: "Master the art of precision brewing with advanced techniques. Learn pour-over methods, temperature control, and extraction principles.",
+            date: "2026-02-18T10:00:00.000Z",
+            type: "upcoming",
+            category: "Coffee",
+            image: "/assets/workshops/coffee-brewing.jpeg",
+            meta: {
+              duration: "3 hours",
+              level: "Intermediate",
+              tags: ["coffee", "brewing", "technique"]
+            }
+          },
+          {
+            title: "Modern Calligraphy",
+            description: "Create beautiful latte art designs. From basic hearts to advanced rosettas and tulips. Perfect for baristas and coffee enthusiasts.",
+            date: "2026-03-15T14:00:00.000Z",
+            type: "upcoming",
+            category: "Coffee Art",
+            image: "/assets/workshops/modern-calligraphy.jpg",
+            meta: {
+              duration: "2.5 hours",
+              level: "Beginner",
+              tags: ["Modern Calligraphy", "barista", "design"]
+            }
+          },
+          {
+            title: "Watercolor Painting Workshop",
+            description: "Explore the fluid beauty of watercolor painting. Learn techniques, color mixing, and create your own masterpiece in a relaxed café setting.",
+            date: "2026-04-10T11:00:00.000Z",
+            type: "upcoming",
+            category: "Art",
+            image: "/assets/workshops/watercolor.jpeg",
+            meta: {
+              duration: "3 hours",
+              level: "All Levels",
+              tags: ["watercolor", "painting", "art"]
+            }
+          },
+          {
+            title: "Beginner Pottery",
+            description: "Explore the fluid beauty of pottery. Learn techniques, clay handling, and create your own masterpiece in a relaxed café setting.",
+            date: "2026-04-10T11:00:00.000Z",
+            type: "upcoming",
+            category: "Art",
+            image: "/assets/workshops/pottery.jpg",
+            meta: {
+              duration: "3 hours",
+              level: "All Levels",
+              tags: ["Beginner Pottery", "clay", "art"]
+            }
+          }
+        ],
+        past: [
+          {
+            title: "Coffee Art Workshop",
+            date: "2025-11-20T10:00:00.000Z",
+            type: "past",
+            category: "Coffee Education",
+            description: "Learn about the unique characteristics of Robusta coffee, its flavor profile, and why it's special. Tasting session included.",
+            image: "/assets/workshops/coffee_art.jpg",
+            meta: {
+              duration: "2 hours",
+              level: "Beginner",
+              tags: ["robusta", "coffee", "tasting"]
+            },
+            galleryImages: [
+              "/assets/workshops/coffee_art-1.jpg",
+              "/assets/workshops/coffee_art-2.jpg",
+              "/assets/workshops/coffee_art-3.jpg"
+            ]
+          },
+          {
+            title: "Lino Cut Art Workshop",
+            date: "2025-10-15T14:00:00.000Z",
+            type: "past",
+            category: "Art",
+            description: "Hands-on printmaking workshop where participants created their own prints using simple techniques. Great for beginners!",
+            image: "/assets/workshops/printmaking.jpg",
+            meta: {
+              duration: "3 hours",
+              level: "Beginner",
+              tags: ["printmaking", "art", "craft"]
+            },
+            galleryImages: [
+              "/assets/workshops/printmaking-1.jpg",
+              "/assets/workshops/printmaking-2.jpg",
+              "/assets/workshops/printmaking-3.jpg"
+            ]
+          },
+          {
+            title: "Ganesha Making Workshop",
+            date: "2025-09-25T16:00:00.000Z",
+            type: "past",
+            category: "Clay Modelling",
+            description: "A mindful sculpting experience rooted in tradition",
+            image: "/assets/workshops/ganesha-making.jpg",
+            meta: {
+              duration: "2 hours",
+              level: "Intermediate",
+              tags: ["Guided Session", "tradition", "Clay Modelling"]
+            },
+            galleryImages: [
+              "/assets/workshops/cupping-1.jpg"
+            ]
+          }
+        ]
+      };
+      
+      console.log("Rendering with static data - upcoming:", staticWorkshops.upcoming.length, "past:", staticWorkshops.past.length);
+      
+      res.render("workshops", {
+        title: "Workshops - Rabuste Coffee",
+        description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
+        currentPage: "/workshops",
+        upcomingWorkshops: staticWorkshops.upcoming,
+        pastWorkshops: staticWorkshops.past,
+        layout: false // Disable layout for this route
+      });
+      return;
+    }
+    
+    console.log("Database connected, fetching from database");
+    const upcomingWorkshops = await WorkshopModel.find({ 
+      type: 'upcoming', 
+      isActive: true,
+    }).sort({ date: 1, displayOrder: 1 });
+    
+    const pastWorkshops = await WorkshopModel.find({ 
+      type: 'past', 
+      isActive: true 
+    }).sort({ date: -1, displayOrder: 1 });
+
+    console.log("Database results - upcoming:", upcomingWorkshops.length, "past:", pastWorkshops.length);
+
+    res.render("workshops", {
+      title: "Workshops - Rabuste Coffee",
+      description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
+      currentPage: "/workshops",
+      upcomingWorkshops: upcomingWorkshops,
+      pastWorkshops: pastWorkshops,
+      layout: false // Disable layout for this route
+    });
+  } catch (error) {
+    console.error('Workshops route error:', error);
+    res.status(500).send('Error loading workshops');
+  }
 });
 
 app.get("/philosophy", (req, res) => {
@@ -587,76 +771,169 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
   });
 });
 
+// User Dashboard route
+app.get('/user-dashboard', ensureAuthenticated, (req, res) => {
+  res.render('user-dashboard', {
+    title: 'User Dashboard - Rabuste Coffee',
+    description: 'Manage your wishlist, cart, workshop registrations, and requests at Rabuste Coffee.',
+    currentPage: '/user-dashboard',
+    user: req.user,
+    currentUser: req.user
+  });
+});
+
 // API Routes for dynamic data
 app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
   try {
-    const wishlist = await Wishlist.find({ userId: req.user.id }).populate('artId');
-    res.json(wishlist);
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    res.json(user.wishlist || []);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching wishlist' });
+    console.error('Error fetching wishlist:', error);
+    res.status(500).json([]);
   }
 });
 
 app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
   try {
-    const { artId, title, artist, price, image } = req.body;
-    const wishlistItem = new Wishlist({
-      userId: req.user.id,
-      artId,
-      title,
-      artist,
-      price,
-      image
+    const { itemId, name, price, image } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if item already exists in wishlist
+    const existingItem = user.wishlist.find(item => item.itemId === itemId);
+    if (existingItem) {
+      return res.json({ success: false, message: 'Item already in wishlist' });
+    }
+
+    console.log('User before wishlist update:', {
+      name: user.name,
+      email: user.email,
+      wishlistLength: user.wishlist.length
     });
-    await wishlistItem.save();
-    res.json({ success: true, item: wishlistItem });
+
+    // Create wishlist item and add to wishlist array
+    const wishlistItem = { itemId, name, price, image };
+    user.wishlist.push(wishlistItem);
+    
+    console.log('Wishlist item to add:', wishlistItem);
+    console.log('User wishlist after push:', user.wishlist);
+
+    // Mark only wishlist as modified, preserve other fields
+    user.markModified('wishlist');
+    await user.save();
+
+    console.log('User after save:', {
+      name: user.name,
+      email: user.email,
+      wishlistLength: user.wishlist.length
+    });
+
+    res.json({ success: true, message: 'Item added to wishlist' });
   } catch (error) {
-    res.status(500).json({ error: 'Error adding to wishlist' });
+    console.error('Wishlist add error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
-app.delete('/api/wishlist/:id', ensureAuthenticated, async (req, res) => {
+app.delete('/api/wishlist/:itemId', ensureAuthenticated, async (req, res) => {
   try {
-    await Wishlist.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
-    res.json({ success: true });
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    user.wishlist.pull({ itemId: req.params.itemId });
+    await user.save();
+    res.json({ success: true, message: 'Item removed from wishlist' });
   } catch (error) {
-    res.status(500).json({ error: 'Error removing from wishlist' });
+    console.error('Wishlist remove error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
 app.get('/api/cart', ensureAuthenticated, async (req, res) => {
   try {
-    const cart = await Cart.find({ userId: req.user.id }).populate('menuItemId');
-    res.json(cart);
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    res.json(user.cart || []);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching cart' });
+    console.error('Error fetching cart:', error);
+    res.status(500).json([]);
   }
 });
 
 app.post('/api/cart', ensureAuthenticated, async (req, res) => {
   try {
-    const { menuItemId, name, price, image, quantity } = req.body;
-    const cartItem = new Cart({
-      userId: req.user.id,
-      menuItemId,
-      name,
-      price,
-      image,
-      quantity: quantity || 1
+    const { itemId, name, price, image, quantity } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if item already exists in cart
+    const existingItem = user.cart.find(item => item.itemId === itemId);
+    if (existingItem) {
+      // Update quantity instead of adding duplicate
+      existingItem.quantity += (quantity || 1);
+      user.markModified('cart');
+      await user.save();
+      return res.json({ success: true, message: 'Item quantity updated' });
+    }
+
+    console.log('User before cart update:', {
+      name: user.name,
+      email: user.email,
+      cartLength: user.cart.length
     });
-    await cartItem.save();
-    res.json({ success: true, item: cartItem });
+
+    // Create cart item and add to cart array
+    const cartItem = { itemId, name, price, image, quantity: quantity || 1 };
+    user.cart.push(cartItem);
+    
+    console.log('Cart item to add:', cartItem);
+    console.log('User cart after push:', user.cart);
+
+    // Mark only cart as modified, preserve other fields
+    user.markModified('cart');
+    await user.save();
+
+    console.log('User after save:', {
+      name: user.name,
+      email: user.email,
+      cartLength: user.cart.length
+    });
+
+    res.json({ success: true, message: 'Item added to cart' });
   } catch (error) {
-    res.status(500).json({ error: 'Error adding to cart' });
+    console.error('Cart add error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
-app.delete('/api/cart/:id', ensureAuthenticated, async (req, res) => {
+app.delete('/api/cart/:itemId', ensureAuthenticated, async (req, res) => {
   try {
-    await Cart.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
-    res.json({ success: true });
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    user.cart.pull({ itemId: req.params.itemId });
+    await user.save();
+    res.json({ success: true, message: 'Item removed from cart' });
   } catch (error) {
-    res.status(500).json({ error: 'Error removing from cart' });
+    console.error('Cart remove error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
@@ -721,6 +998,326 @@ app.post('/api/requests', ensureAuthenticated, async (req, res) => {
   }
 });
 
+// Cart API routes
+app.post('/api/cart/add', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const { itemId, name, price, image, quantity = 1 } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    console.log('User before cart update:', {
+      name: user.name,
+      email: user.email,
+      cartLength: user.cart.length
+    });
+
+    // Create cart item and add to cart array
+    const cartItem = { itemId, name, price, image, quantity };
+    user.cart.push(cartItem);
+    
+    console.log('Cart item to add:', cartItem);
+    console.log('User cart after push:', user.cart);
+
+    // Mark only cart as modified, preserve other fields
+    user.markModified('cart');
+    await user.save();
+
+    console.log('User after save:', {
+      name: user.name,
+      email: user.email,
+      cartLength: user.cart.length
+    });
+
+    res.json({ success: true, message: 'Item added to cart' });
+  } catch (error) {
+    console.error('Cart add error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.get('/api/cart/count', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.json({ count: 0 });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    const count = user ? user.cart.length : 0;
+    
+    res.json({ count });
+  } catch (error) {
+    console.error('Cart count error:', error);
+    res.status(500).json({ count: 0 });
+  }
+});
+
+// Wishlist API routes
+app.post('/api/wishlist/add', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const { itemId, name, price, image } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if item already exists in wishlist
+    const existingItem = user.wishlist.find(item => item.itemId === itemId);
+    if (existingItem) {
+      return res.json({ success: false, message: 'Item already in wishlist' });
+    }
+
+    console.log('User before wishlist update:', {
+      name: user.name,
+      email: user.email,
+      wishlistLength: user.wishlist.length
+    });
+
+    // Create wishlist item and add to wishlist array
+    const wishlistItem = { itemId, name, price, image };
+    user.wishlist.push(wishlistItem);
+    
+    console.log('Wishlist item to add:', wishlistItem);
+    console.log('User wishlist after push:', user.wishlist);
+
+    // Mark only wishlist as modified, preserve other fields
+    user.markModified('wishlist');
+    await user.save();
+
+    console.log('User after save:', {
+      name: user.name,
+      email: user.email,
+      wishlistLength: user.wishlist.length
+    });
+
+    res.json({ success: true, message: 'Item added to wishlist' });
+  } catch (error) {
+    console.error('Wishlist add error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.get('/api/wishlist/count', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.json({ count: 0 });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    const count = user ? user.wishlist.length : 0;
+    
+    res.json({ count });
+  } catch (error) {
+    console.error('Wishlist count error:', error);
+    res.status(500).json({ count: 0 });
+  }
+});
+
+app.patch('/api/cart/:itemId', ensureAuthenticated, async (req, res) => {
+  try {
+    const { quantity } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const item = user.cart.find(item => item.itemId === req.params.itemId);
+    if (!item) {
+      return res.status(404).json({ success: false, message: 'Item not found in cart' });
+    }
+
+    if (quantity <= 0) {
+      // Remove item if quantity is 0 or less
+      user.cart.pull({ itemId: req.params.itemId });
+    } else {
+      // Update quantity
+      item.quantity = quantity;
+    }
+
+    user.markModified('cart');
+    await user.save();
+    res.json({ success: true, message: 'Cart quantity updated' });
+  } catch (error) {
+    console.error('Cart quantity update error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.delete('/api/cart/remove/:itemId', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Remove item from cart
+    user.cart.pull({ _id: req.params.itemId });
+    await user.save();
+
+    res.json({ success: true, message: 'Item removed from cart' });
+  } catch (error) {
+    console.error('Cart remove error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// Checkout API - Convert cart to order
+app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (!user.cart || user.cart.length === 0) {
+      return res.status(400).json({ success: false, message: 'Cart is empty' });
+    }
+
+    // Calculate total amount
+    const totalAmount = user.cart.reduce((total, item) => {
+      return total + (item.price * item.quantity);
+    }, 0);
+
+    // Create new order
+    const newOrder = new Order({
+      userId: user._id,
+      customerName: user.name || user.displayName,
+      customerEmail: user.email,
+      items: user.cart.map(item => ({
+        itemId: item.itemId,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        quantity: item.quantity
+      })),
+      totalAmount: totalAmount,
+      status: 'pending'
+    });
+
+    // Save order
+    await newOrder.save();
+
+    // Clear user's cart
+    user.cart = [];
+    await user.save();
+
+    console.log('Order created:', {
+      orderId: newOrder._id,
+      customer: user.name || user.displayName,
+      email: user.email,
+      totalAmount: totalAmount,
+      itemCount: newOrder.items.length
+    });
+
+    res.json({ 
+      success: true, 
+      message: 'Order placed successfully!',
+      orderId: newOrder._id,
+      totalAmount: totalAmount
+    });
+
+  } catch (error) {
+    console.error('Checkout error:', error);
+    res.status(500).json({ success: false, message: 'Failed to place order. Please try again.' });
+  }
+});
+
+// Admin: Get all orders
+app.get('/api/admin/orders', ensureAdmin, async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate('userId', 'name email')
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, orders });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch orders' });
+  }
+});
+
+// Admin: Update order status
+app.post('/api/admin/orders/:id/status', ensureAdmin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const orderId = req.params.id;
+
+    if (!['pending', 'completed', 'cancelled'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status' });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      { status: status },
+      { new: true }
+    ).populate('userId', 'name email');
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    console.log('Order status updated:', {
+      orderId: order._id,
+      newStatus: status,
+      customer: order.customerName
+    });
+
+    res.json({ success: true, order });
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    res.status(500).json({ success: false, message: 'Failed to update order status' });
+  }
+});
+
+app.delete('/api/wishlist/remove/:itemId', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Remove item from wishlist
+    user.wishlist.pull({ _id: req.params.itemId });
+    await user.save();
+
+    res.json({ success: true, message: 'Item removed from wishlist' });
+  } catch (error) {
+    console.error('Wishlist remove error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 // Example route to show user data
 app.get("/profile", (req, res) => {
   if (!req.isAuthenticated()) {
@@ -751,84 +1348,15 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-// Admin routes
-app.get("/admin", (req, res) => {
-  res.render("admin/dashboard", {
-    title: 'Admin Dashboard - Rabuste Coffee',
-    description: 'Admin dashboard for managing cart requests, workshop requests, and user accounts.',
-    currentPage: '/admin',
-    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-    additionalJS: '<script src="/js/admin.js"></script>'
-  });
-});
+// Import admin routes
+const adminRoutes = require('./src/routes/adminRoutes');
 
-app.get("/admin/cart-requests", (req, res) => {
-  // Mock data - replace with actual database queries
-  const cartRequests = [
-    {
-      id: 1,
-      customerName: 'John Doe',
-      email: 'john@example.com',
-      items: ['Robusta Blend', 'Espresso Shot'],
-      total: 25.50,
-      status: 'pending',
-      date: '2024-01-08'
-    },
-    {
-      id: 2,
-      customerName: 'Jane Smith',
-      email: 'jane@example.com',
-      items: ['Cold Brew', 'Pastry'],
-      total: 18.75,
-      status: 'completed',
-      date: '2024-01-07'
-    }
-  ];
-  
-  res.render("admin/cart-requests", {
-    title: 'Cart Requests - Admin Dashboard',
-    description: 'Manage customer cart requests and orders.',
-    currentPage: '/admin/cart-requests',
-    cartRequests,
-    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-    additionalJS: '<script src="/js/admin.js"></script>'
-  });
-});
+// Use admin routes
+app.use('/admin', adminRoutes);
 
-app.get("/admin/workshop-requests", (req, res) => {
-  // Mock data - replace with actual database queries
-  const workshopRequests = [
-    {
-      id: 1,
-      customerName: 'Alice Johnson',
-      email: 'alice@example.com',
-      workshop: 'Coffee Brewing Basics',
-      date: '2024-01-15',
-      participants: 2,
-      status: 'pending',
-      requestDate: '2024-01-08'
-    },
-    {
-      id: 2,
-      customerName: 'Bob Wilson',
-      email: 'bob@example.com',
-      workshop: 'Latte Art Masterclass',
-      date: '2024-01-20',
-      participants: 1,
-      status: 'approved',
-      requestDate: '2024-01-07'
-    }
-  ];
-  
-  res.render("admin/workshop-requests", {
-    title: 'Workshop Requests - Admin Dashboard',
-    description: 'Manage workshop booking requests and schedules.',
-    currentPage: '/admin/workshop-requests',
-    workshopRequests,
-    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-    additionalJS: '<script src="/js/admin.js"></script>'
-  });
-});
+
+
+
 
 app.get("/admin/users", (req, res) => {
   // Mock data - replace with actual database queries
@@ -870,13 +1398,7 @@ app.get("/admin/users", (req, res) => {
 });
 
 // Admin API routes for handling requests
-app.post("/admin/cart-requests/:id/update", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  // Update cart request status in database
-  console.log(`Updating cart request ${id} to status: ${status}`);
-  res.redirect("/admin/cart-requests");
-});
+app.post("/admin/cart-requests/:id/update", adminController.updateCartRequest);
 
 app.post("/admin/workshop-requests/:id/update", (req, res) => {
   const { id } = req.params;
@@ -903,7 +1425,6 @@ app.use((req, res) => {
   res.status(404).send("404: " + req.originalUrl);
 });
 
-
 // Error handling middleware
 app.use(function(err, req, res, next) {
   console.error('Error stack:', err.stack);
@@ -923,3 +1444,5 @@ app.use(function(err, req, res, next) {
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => console.log(`Server running on port ${port}`));
+
+module.exports = app;

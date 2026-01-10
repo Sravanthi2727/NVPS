@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Rabuste Coffee</title>
+    <title>Art Requests - Admin Dashboard</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -134,18 +134,6 @@
             margin-bottom: 1rem !important;
         }
         
-        .admin-card-number {
-            font-size: 2rem !important;
-            font-weight: bold !important;
-            color: #fff !important;
-            margin-bottom: 0.5rem !important;
-        }
-        
-        .admin-card-subtitle {
-            color: #ccc !important;
-            margin-bottom: 1rem !important;
-        }
-        
         /* Tables */
         .admin-table {
             background: #1a1a1a !important;
@@ -199,6 +187,24 @@
             color: #000 !important;
         }
         
+        /* Form Controls */
+        .form-control, .form-select {
+            background: #333 !important;
+            border: 1px solid #555 !important;
+            color: #fff !important;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: #333 !important;
+            border-color: #d6a45a !important;
+            color: #fff !important;
+            box-shadow: 0 0 0 0.2rem rgba(214, 164, 90, 0.25) !important;
+        }
+        
+        .form-label {
+            color: #d6a45a !important;
+        }
+        
         /* Badges */
         .badge {
             padding: 0.5rem 0.75rem !important;
@@ -221,6 +227,11 @@
         .badge.bg-primary {
             background: #d6a45a !important;
             color: #000 !important;
+        }
+        
+        .badge.bg-danger {
+            background: #e74c3c !important;
+            color: #fff !important;
         }
         
         /* Mobile */
@@ -264,13 +275,13 @@
             </div>
             
             <div class="admin-nav">
-                <a href="/admin" class="active">
+                <a href="/admin">
                     <i class="fas fa-tachometer-alt"></i>Dashboard
                 </a>
                 <a href="/admin/cart-requests">
                     <i class="fas fa-shopping-cart"></i>Cart Requests
                 </a>
-                <a href="/admin/art-requests">
+                <a href="/admin/art-requests" class="active">
                     <i class="fas fa-palette"></i>Art Requests
                 </a>
                 <a href="/admin/workshop-requests">
@@ -295,7 +306,7 @@
                     <button class="mobile-toggle me-3" onclick="toggleSidebar()">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h2>Admin Dashboard</h2>
+                    <h2>Art Requests</h2>
                 </div>
                 <div>
                     <span style="color: #ccc;">Welcome, Admin</span>
@@ -303,86 +314,130 @@
             </div>
             
             <div class="admin-content">
-                <!-- Dashboard Content -->
-                <div class="row g-4 mb-4">
-                    <!-- Cart Requests Card -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="admin-card">
-                            <h3><i class="fas fa-shopping-cart me-2"></i>Cart Requests</h3>
-                            <div class="admin-card-number">12</div>
-                            <div class="admin-card-subtitle">Pending orders</div>
-                            <a href="/admin/cart-requests" class="btn btn-primary">Manage Orders</a>
-                        </div>
+                <!-- Art Requests Content -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <p style="color: #ccc;">Manage artwork submissions and gallery requests</p>
                     </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addArtModal">
+                        <i class="fas fa-plus me-2"></i>Add Art Request
+                    </button>
+                </div>
 
-                    <!-- Art Requests Card -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="admin-card">
-                            <h3><i class="fas fa-palette me-2"></i>Art Requests</h3>
-                            <div class="admin-card-number">5</div>
-                            <div class="admin-card-subtitle">Pending submissions</div>
-                            <a href="/admin/art-requests" class="btn btn-primary">Review Art</a>
+                <!-- Filters -->
+                <div class="admin-card mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label" style="color: #d6a45a;">Status</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="displayed">Displayed</option>
+                            </select>
                         </div>
-                    </div>
-
-                    <!-- Workshop Requests Card -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="admin-card">
-                            <h3><i class="fas fa-calendar-alt me-2"></i>Workshop Requests</h3>
-                            <div class="admin-card-number">8</div>
-                            <div class="admin-card-subtitle">Pending bookings</div>
-                            <a href="/admin/workshop-requests" class="btn btn-primary">Manage Workshops</a>
+                        <div class="col-md-3">
+                            <label class="form-label" style="color: #d6a45a;">Art Type</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="typeFilter">
+                                <option value="">All Types</option>
+                                <option value="painting">Painting</option>
+                                <option value="photography">Photography</option>
+                                <option value="digital">Digital Art</option>
+                                <option value="sculpture">Sculpture</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" style="color: #d6a45a;">Search</label>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" placeholder="Search by artist name or title..." id="searchInput">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-outline-primary w-100" onclick="clearFilters()">
+                                <i class="fas fa-times me-2"></i>Clear
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Activity -->
+                <!-- Art Requests Table -->
                 <div class="admin-card">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3>Recent Activity</h3>
-                        
-                    </div>
-                    
+                    <h3 class="mb-3">Art Submissions</h3>
                     <div class="admin-table">
                         <table class="table table-dark">
                             <thead>
                                 <tr>
+                                    <th>Artist</th>
+                                    <th>Artwork</th>
                                     <th>Type</th>
-                                    <th>Customer</th>
-                                    <th>Details</th>
-                                    <th>Date</th>
+                                    <th>Submission Date</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% if (typeof recentActivity !== 'undefined' && recentActivity.length > 0) { %>
-                                    <% recentActivity.forEach(activity => { %>
-                                        <tr>
-                                            <td><span class="badge bg-info"><%= activity.type %></span></td>
-                                            <td>
-                                                <strong><%= activity.customer %></strong><br>
-                                                <small style="color: #ccc;"><%= activity.email %></small>
-                                            </td>
-                                            <td><%= activity.details %></td>
-                                            <td><%= activity.date %></td>
-                                            <td>
-                                                <span class="badge <%= activity.status === 'pending' ? 'bg-warning' : activity.status === 'completed' ? 'bg-success' : 'bg-danger' %>">
-                                                    <%= activity.status.charAt(0).toUpperCase() + activity.status.slice(1) %>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-outline-primary btn-sm">
-                                                    <i class="fas fa-eye"></i>
+                                <% artRequests.forEach(request => { %>
+                                <tr>
+                                    <td>
+                                        <strong><%= request.artistName %></strong><br>
+                                        <small style="color: #ccc;"><%= request.email %></small>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="<%= request.thumbnail %>" alt="<%= request.title %>" 
+                                                 class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                            <div>
+                                                <strong><%= request.title %></strong><br>
+                                                <small style="color: #ccc;"><%= request.description %></small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info"><%= request.type %></span>
+                                    </td>
+                                    <td><%= request.submissionDate %></td>
+                                    <td>
+                                        <% if (request.status === 'pending') { %>
+                                            <span class="badge bg-warning">Pending</span>
+                                        <% } else if (request.status === 'approved') { %>
+                                            <span class="badge bg-success">Approved</span>
+                                        <% } else if (request.status === 'rejected') { %>
+                                            <span class="badge bg-danger">Rejected</span>
+                                        <% } else if (request.status === 'displayed') { %>
+                                            <span class="badge bg-primary">Displayed</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="viewArt('<%= request.id %>')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <% if (request.status === 'pending') { %>
+                                            <form method="POST" action="/admin/art-requests/<%= request.id %>/update" class="d-inline">
+                                                <input type="hidden" name="status" value="approved">
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-check"></i>
                                                 </button>
-                                            </td>
-                                        </tr>
-                                    <% }); %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="6" class="text-center" style="color: #ccc;">No recent activity</td>
-                                    </tr>
-                                <% } %>
+                                            </form>
+                                            <form method="POST" action="/admin/art-requests/<%= request.id %>/update" class="d-inline">
+                                                <input type="hidden" name="status" value="rejected">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                            <% } %>
+                                            <% if (request.status === 'approved') { %>
+                                            <form method="POST" action="/admin/art-requests/<%= request.id %>/update" class="d-inline">
+                                                <input type="hidden" name="status" value="displayed">
+                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-image"></i>
+                                                </button>
+                                            </form>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% }); %>
                             </tbody>
                         </table>
                     </div>
@@ -411,6 +466,16 @@
                 sidebar.classList.remove('show');
             }
         });
+        
+        function viewArt(id) {
+            alert('View art details for ID: ' + id);
+        }
+
+        function clearFilters() {
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('searchInput').value = '';
+        }
     </script>
 </body>
 </html>
