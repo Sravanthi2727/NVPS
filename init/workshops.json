@@ -1,0 +1,108 @@
+[
+  {
+    "title": "Advanced Coffee Brewing",
+    "description": "Master the art of precision brewing with advanced techniques. Learn pour-over methods, temperature control, and extraction principles.",
+    "date": "2026-02-18T10:00:00.000Z",
+    "type": "upcoming",
+    "category": "Coffee",
+    "image": "/assets/workshops/coffee-brewing.jpg",
+    "meta": {
+      "duration": "3 hours",
+      "level": "Intermediate",
+      "tags": ["coffee", "brewing", "technique"]
+    },
+    "galleryImages": [],
+    "isActive": true,
+    "displayOrder": 1
+  },
+  {
+    "title": "Latte Art Masterclass",
+    "description": "Create beautiful latte art designs. From basic hearts to advanced rosettas and tulips. Perfect for baristas and coffee enthusiasts.",
+    "date": "2026-03-15T14:00:00.000Z",
+    "type": "upcoming",
+    "category": "Coffee Art",
+    "image": "/assets/workshops/latte-art.jpg",
+    "meta": {
+      "duration": "2.5 hours",
+      "level": "Beginner",
+      "tags": ["latte art", "barista", "design"]
+    },
+    "galleryImages": [],
+    "isActive": true,
+    "displayOrder": 2
+  },
+  {
+    "title": "Watercolor Painting Workshop",
+    "description": "Explore the fluid beauty of watercolor painting. Learn techniques, color mixing, and create your own masterpiece in a relaxed café setting.",
+    "date": "2026-04-10T11:00:00.000Z",
+    "type": "upcoming",
+    "category": "Art",
+    "image": "/assets/workshops/watercolor.jpg",
+    "meta": {
+      "duration": "3 hours",
+      "level": "All Levels",
+      "tags": ["watercolor", "painting", "art"]
+    },
+    "galleryImages": [],
+    "isActive": true,
+    "displayOrder": 3
+  },
+  {
+    "title": "Introduction to Robusta Coffee",
+    "date": "2025-11-20T10:00:00.000Z",
+    "type": "past",
+    "category": "Coffee Education",
+    "description": "Learn about the unique characteristics of Robusta coffee, its flavor profile, and why it's special. Tasting session included.",
+    "image": "/assets/workshops/robusta-intro.jpg",
+    "meta": {
+      "duration": "2 hours",
+      "level": "Beginner",
+      "tags": ["robusta", "coffee", "tasting"]
+    },
+    "galleryImages": [
+      "/assets/workshops/robusta-intro-1.jpg",
+      "/assets/workshops/robusta-intro-2.jpg"
+    ],
+    "isActive": true,
+    "displayOrder": 1
+  },
+  {
+    "title": "Printmaking Basics",
+    "date": "2025-10-15T14:00:00.000Z",
+    "type": "past",
+    "category": "Art",
+    "description": "Hands-on printmaking workshop where participants created their own prints using simple techniques. Great for beginners!",
+    "image": "/assets/workshops/printmaking.jpg",
+    "meta": {
+      "duration": "3 hours",
+      "level": "Beginner",
+      "tags": ["printmaking", "art", "craft"]
+    },
+    "galleryImages": [
+      "/assets/workshops/printmaking-1.jpg",
+      "/assets/workshops/printmaking-2.jpg",
+      "/assets/workshops/printmaking-3.jpg"
+    ],
+    "isActive": true,
+    "displayOrder": 2
+  },
+  {
+    "title": "Coffee Cupping Session",
+    "date": "2025-09-25T16:00:00.000Z",
+    "type": "past",
+    "category": "Coffee",
+    "description": "Professional coffee cupping session to develop your palate and learn to identify different flavor notes in coffee.",
+    "image": "/assets/workshops/cupping.jpg",
+    "meta": {
+      "duration": "2 hours",
+      "level": "Intermediate",
+      "tags": ["cupping", "tasting", "coffee"]
+    },
+    "galleryImages": [
+      "/assets/workshops/cupping-1.jpg"
+    ],
+    "isActive": true,
+    "displayOrder": 3
+  }
+]
+
