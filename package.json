@@ -5,7 +5,11 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "optimize-images": "node scripts/optimize-images.js"
+    "optimize-images": "node scripts/optimize-images.js",
+    "init-artworks": "node init/init-artworks.js",
+    "init-menu-items": "node init/init-menu-items.js",
+    "init-workshops": "node init/init-workshops.js",
+    "init-all": "node init/init-artworks.js && node init/init-menu-items.js && node init/init-workshops.js"
   },
   "keywords": [],
   "author": "",
@@ -13,12 +17,15 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "compression": "^1.8.1",
     "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
     "express": "^5.2.1",
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.18.2",
+    "helmet": "^8.1.0",
     "mongoose": "^9.0.2",
+    "node-cache": "^5.1.2",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0"
   },

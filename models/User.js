@@ -1,114 +1,51 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
+  googleId: {
+    type: String,
+    index: true // Add index for faster lookups
+  },
   name: {
     type: String,
     required: true,
-    trim: true
+    index: true // Add index for name lookups
   },
-  email: {
-    type: String,
+  email: { 
+    type: String, 
     required: true,
     unique: true,
-    lowercase: true,
-    trim: true
+    index: true // Add index for email lookups
   },
-  password: {
-    type: String,
-    required: false,
-    default: null
-  },
+  password: String,
   isOAuthUser: {
     type: Boolean,
     default: false
   },
   cart: [{
-    itemId: String,
-    itemName: String,
-    quantity: Number,
-    price: Number,
-    addedAt: {
-      type: Date,
-      default: Date.now
-    }
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'MenuItem'
   }],
   wishlist: [{
-    itemId: String,
-    itemName: String,
-    addedAt: {
-      type: Date,
-      default: Date.now
-    }
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'MenuItem'
   }],
   registered: [{
-    eventId: String,
-    eventName: String,
-    registeredAt: {
-      type: Date,
-      default: Date.now
-    }
-  }]
-}, {
-  timestamps: true
-});
-
-// // Hash password before saving
-// userSchema.pre('save', async function(next) {
-//   // Skip password hashing if password is empty (OAuth users)
-//   if (!this.password || !this.isModified('password')) return next();
-  
-//   try {
-//     const salt = await bcrypt.genSalt(10);
-//     this.password = await bcrypt.hash(this.password, salt);
-//     next();
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// // Method to compare password
-// userSchema.methods.comparePassword = async function(candidatePassword) {
-//   if (!this.password) {
-//     return false;
-//   }
-//   return await bcrypt.compare(candidatePassword, this.password);
-// };
-
-// // Custom validation for password (only required for non-OAuth users)
-// userSchema.pre('validate', function(next) {
-//   if (!this.isOAuthUser && !this.password) {
-//     this.invalidate('password', 'Password is required for email/password signup');
-//   }
-//   next();
-// });
-
-// 1. Hash password before saving (Modern Async Style)
-userSchema.pre('save', async function() {
-  // If no password (OAuth) or not changed, just exit
-  if (!this.password || !this.isModified('password')) return;
-  
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    // No next() needed here because of 'async'
-  } catch (error) {
-    throw error; 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Workshop'
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    index: true // Add index for sorting by creation date
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
   }
 });
 
-// 2. Custom validation (Synchronous Style)
-userSchema.pre('validate', function() {
-  if (!this.isOAuthUser && !this.password) {
-    this.invalidate('password', 'Password is required for email/password signup');
-  }
-  // No next() needed here
-});
+// Compound index for common queries
+userSchema.index({ email: 1, googleId: 1 });
 
-// 3. Keep your comparePassword method as is
-userSchema.methods.comparePassword = async function(candidatePassword) {
-  if (!this.password) return false;
-  return await bcrypt.compare(candidatePassword, this.password);
-};
 module.exports = mongoose.model('User', userSchema);
 

@@ -1,0 +1,38 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>My Profile</h3>
+        </div>
+        <div class="card-body">
+          <% if (user) { %>
+            <div class="row">
+              <div class="col-md-8">
+                <h4><%= user.name %></h4>
+                <p><strong>Email:</strong> <%= user.email %></p>
+                <% if (user.googleId) { %>
+                  <p><strong>Google ID:</strong> <%= user.googleId %></p>
+                <% } %>
+                <p><strong>Account Type:</strong> <%= user.isOAuthUser ? 'Google OAuth' : 'Email' %></p>
+                <p><strong>Member Since:</strong> <%= user.createdAt.toLocaleDateString() %></p>
+                <p><strong>Cart Items:</strong> <%= user.cart ? user.cart.length : 0 %></p>
+                <p><strong>Wishlist Items:</strong> <%= user.wishlist ? user.wishlist.length : 0 %></p>
+                <p><strong>Registered Workshops:</strong> <%= user.registered ? user.registered.length : 0 %></p>
+                
+                <div class="mt-3">
+                  <a href="/" class="btn btn-primary">Back to Home</a>
+                  <a href="/logout" class="btn btn-secondary">Logout</a>
+                </div>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="alert alert-warning">
+              User data not found. Please <a href="/signin">sign in</a> again.
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
