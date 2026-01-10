@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart Requests - Admin Dashboard</title>
+    <title>Art Requests - Admin Dashboard</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -201,6 +201,10 @@
             box-shadow: 0 0 0 0.2rem rgba(214, 164, 90, 0.25) !important;
         }
         
+        .form-label {
+            color: #d6a45a !important;
+        }
+        
         /* Badges */
         .badge {
             padding: 0.5rem 0.75rem !important;
@@ -223,6 +227,11 @@
         .badge.bg-primary {
             background: #d6a45a !important;
             color: #000 !important;
+        }
+        
+        .badge.bg-danger {
+            background: #e74c3c !important;
+            color: #fff !important;
         }
         
         /* Mobile */
@@ -269,10 +278,10 @@
                 <a href="/admin">
                     <i class="fas fa-tachometer-alt"></i>Dashboard
                 </a>
-                <a href="/admin/cart-requests" class="active">
+                <a href="/admin/cart-requests">
                     <i class="fas fa-shopping-cart"></i>Cart Requests
                 </a>
-                <a href="/admin/art-requests">
+                <a href="/admin/art-requests" class="active">
                     <i class="fas fa-palette"></i>Art Requests
                 </a>
                 <a href="/admin/workshop-requests">
@@ -297,7 +306,7 @@
                     <button class="mobile-toggle me-3" onclick="toggleSidebar()">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h2>Cart Requests</h2>
+                    <h2>Art Requests</h2>
                 </div>
                 <div>
                     <span style="color: #ccc;">Welcome, Admin</span>
@@ -305,81 +314,126 @@
             </div>
             
             <div class="admin-content">
-                <!-- Cart Requests Content -->
+                <!-- Art Requests Content -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <p style="color: #ccc;">Manage customer orders and cart requests</p>
+                        <p style="color: #ccc;">Manage artwork submissions and gallery requests</p>
                     </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addArtModal">
+                        <i class="fas fa-plus me-2"></i>Add Art Request
+                    </button>
                 </div>
 
-                <!-- Filter and Search -->
+                <!-- Filters -->
                 <div class="admin-card mb-4">
                     <div class="row g-3">
-                        <div class="col-md-4">
-                            <select class="form-select" id="statusFilter">
+                        <div class="col-md-3">
+                            <label class="form-label" style="color: #d6a45a;">Status</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="statusFilter">
                                 <option value="">All Status</option>
                                 <option value="pending">Pending</option>
-                                <option value="processing">Processing</option>
-                                <option value="completed">Completed</option>
-                                <option value="cancelled">Cancelled</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="displayed">Displayed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" style="color: #d6a45a;">Art Type</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="typeFilter">
+                                <option value="">All Types</option>
+                                <option value="painting">Painting</option>
+                                <option value="photography">Photography</option>
+                                <option value="digital">Digital Art</option>
+                                <option value="sculpture">Sculpture</option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <input type="date" class="form-control" id="dateFilter" placeholder="Filter by date">
+                            <label class="form-label" style="color: #d6a45a;">Search</label>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" placeholder="Search by artist name or title..." id="searchInput">
                         </div>
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" id="searchFilter" placeholder="Search by customer name or email">
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-outline-primary w-100" onclick="clearFilters()">
+                                <i class="fas fa-times me-2"></i>Clear
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Cart Requests Table -->
+                <!-- Art Requests Table -->
                 <div class="admin-card">
-                    <h3 class="mb-3">Customer Orders</h3>
+                    <h3 class="mb-3">Art Submissions</h3>
                     <div class="admin-table">
                         <table class="table table-dark">
                             <thead>
                                 <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Items</th>
-                                    <th>Total</th>
-                                    <th>Date</th>
+                                    <th>Artist</th>
+                                    <th>Artwork</th>
+                                    <th>Type</th>
+                                    <th>Submission Date</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% cartRequests.forEach(request => { %>
+                                <% artRequests.forEach(request => { %>
                                 <tr>
-                                    <td>#<%= request.id.toString().padStart(4, '0') %></td>
                                     <td>
-                                        <strong><%= request.customerName %></strong><br>
+                                        <strong><%= request.artistName %></strong><br>
                                         <small style="color: #ccc;"><%= request.email %></small>
                                     </td>
                                     <td>
-                                        <% request.items.forEach(item => { %>
-                                            <span class="badge bg-info me-1"><%= item %></span>
-                                        <% }); %>
+                                        <div class="d-flex align-items-center">
+                                            <img src="<%= request.thumbnail %>" alt="<%= request.title %>" 
+                                                 class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                            <div>
+                                                <strong><%= request.title %></strong><br>
+                                                <small style="color: #ccc;"><%= request.description %></small>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td class="fw-bold">$<%= request.total.toFixed(2) %></td>
-                                    <td><%= new Date(request.date).toLocaleDateString() %></td>
                                     <td>
-                                        <span class="badge bg-<%= request.status === 'completed' ? 'success' : request.status === 'pending' ? 'warning' : 'secondary' %>">
-                                            <%= request.status.charAt(0).toUpperCase() + request.status.slice(1) %>
-                                        </span>
+                                        <span class="badge bg-info"><%= request.type %></span>
+                                    </td>
+                                    <td><%= request.submissionDate %></td>
+                                    <td>
+                                        <% if (request.status === 'pending') { %>
+                                            <span class="badge bg-warning">Pending</span>
+                                        <% } else if (request.status === 'approved') { %>
+                                            <span class="badge bg-success">Approved</span>
+                                        <% } else if (request.status === 'rejected') { %>
+                                            <span class="badge bg-danger">Rejected</span>
+                                        <% } else if (request.status === 'displayed') { %>
+                                            <span class="badge bg-primary">Displayed</span>
+                                        <% } %>
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewOrder(<%= request.id %>)">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="viewArt('<%= request.id %>')">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <form method="POST" action="/admin/cart-requests/<%= request.id %>/update" class="d-inline">
-                                                <input type="hidden" name="status" value="completed">
+                                            <% if (request.status === 'pending') { %>
+                                            <form method="POST" action="/admin/art-requests/<%= request.id %>/update" class="d-inline">
+                                                <input type="hidden" name="status" value="approved">
                                                 <button type="submit" class="btn btn-sm btn-success">
                                                     <i class="fas fa-check"></i>
                                                 </button>
                                             </form>
+                                            <form method="POST" action="/admin/art-requests/<%= request.id %>/update" class="d-inline">
+                                                <input type="hidden" name="status" value="rejected">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                            <% } %>
+                                            <% if (request.status === 'approved') { %>
+                                            <form method="POST" action="/admin/art-requests/<%= request.id %>/update" class="d-inline">
+                                                <input type="hidden" name="status" value="displayed">
+                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-image"></i>
+                                                </button>
+                                            </form>
+                                            <% } %>
                                         </div>
                                     </td>
                                 </tr>
@@ -413,8 +467,14 @@
             }
         });
         
-        function viewOrder(orderId) {
-            alert('View order details for Order #' + orderId);
+        function viewArt(id) {
+            alert('View art details for ID: ' + id);
+        }
+
+        function clearFilters() {
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('searchInput').value = '';
         }
     </script>
 </body>

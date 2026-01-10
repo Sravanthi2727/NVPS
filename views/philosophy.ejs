@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Rabuste Narrative | Bold, Cozy, Grab-and-Go</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f4c025",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#1a0f0a", // Deep Espresso Brown
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .glass-effect {
+            background: rgba(26, 15, 10, 0.8);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white">
+<!-- Progress Bar -->
+<div class="fixed top-0 left-0 w-full z-50">
+<div class="h-1 bg-primary" style="width: 35%;"></div>
+</div>
+<!-- Navigation -->
+<header class="fixed top-0 w-full z-40 px-6 py-4 glass-effect border-b border-white/10">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="size-8 text-primary">
+<svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold tracking-tight uppercase">Rabuste</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8 text-sm font-medium tracking-widest uppercase text-white/70">
+<a class="hover:text-primary transition-colors" href="#origin">Origin</a>
+<a class="hover:text-primary transition-colors" href="#bold">Bold</a>
+<a class="hover:text-primary transition-colors" href="#cozy">Cozy</a>
+<a class="hover:text-primary transition-colors" href="#grab-go">Efficiency</a>
+<a class="hover:text-primary transition-colors" href="#manifesto">Manifesto</a>
+</nav>
+<button class="bg-primary text-background-dark px-6 py-2 rounded-lg font-bold text-sm tracking-tight hover:brightness-110 transition-all">
+                Find a Sanctuary
+            </button>
+</div>
+</header>
+<main>
+<!-- Section 1: The Origin Story (Hero) -->
+<section class="relative h-screen flex items-center justify-center overflow-hidden" id="origin">
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent via-background-dark/40 to-background-dark z-10"></div>
+<div class="w-full h-full bg-cover bg-center" data-alt="Atmospheric dark coffee shop interior with moody lighting" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAFHW2yzm-B9O6dvzUmqcUhAAMv3GEAV-O91XXziXZOt5lA-xxTPqpBI7YntZA2o4_n5Ow28tqAdIaPIHJG0IjUgkB24QlZipECPXIjrQzMu0geZmWOcHlKMTfIks0pBy5hYtgWP8W6y3OEClGW9f45YpUgMA1ciVoswtNAy4boMuektUuvZXLzgfVyatWdFgF5ozk2fZJhfNPJhznQ7sMQEf6cyRL_lPE6UqAY0klCJ8YAGiZ0TlB9h1xHcvNodT-mm_DlLbQYC2U");'></div>
+</div>
+<div class="relative z-20 text-center max-w-4xl px-6">
+<p class="text-primary font-bold tracking-[0.3em] uppercase mb-4 text-sm">A Coffee Revolution</p>
+<h1 class="font-serif text-6xl md:text-8xl font-black mb-8 leading-none">The Robusta Rebellion</h1>
+<p class="text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-light leading-relaxed italic">
+                    Challenging the Arabica status quo. We don't just brew coffee; we curate strength, narrative, and the unapologetic pursuit of the bold.
+                </p>
+<div class="mt-12">
+<span class="material-symbols-outlined text-4xl text-primary animate-bounce">expand_more</span>
+</div>
+</div>
+</section>
+<!-- Narrative Journey Indicator -->
+<div class="max-w-[960px] mx-auto py-8">
+<div class="flex flex-col gap-3 px-4">
+<div class="flex gap-6 justify-between">
+<p class="text-white text-base font-medium">Narrative Journey</p>
+<p class="text-white text-sm font-normal">Step 1 of 5</p>
+</div>
+<div class="rounded bg-white/10"><div class="h-2 rounded bg-primary" style="width: 20%;"></div></div>
+<p class="text-white/60 text-sm font-normal">Phase: The Foundation</p>
+</div>
+</div>
+<!-- Section 2: Bold - The Coffee -->
+<section class="py-24 px-6" id="bold">
+<div class="max-w-7xl mx-auto">
+<div class="grid md:grid-cols-2 gap-16 items-center">
+<div class="order-2 md:order-1">
+<h2 class="font-serif text-5xl font-bold mb-6 italic text-primary">Bold - The Coffee</h2>
+<p class="text-white/80 text-lg leading-relaxed mb-8">
+                            Robusta is power redefined. With twice the caffeine of standard beans and a crema density that defies physics, our roast is engineered for the thinkers and the doers who require more than just a beverage.
+                        </p>
+<div class="grid grid-cols-1 gap-4 mb-10">
+<div class="flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
+<span class="material-symbols-outlined text-3xl text-primary">bolt</span>
+<div>
+<h4 class="font-bold">2x Caffeine Payload</h4>
+<p class="text-sm text-white/60">Twice the intensity of premium Arabica.</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
+<span class="material-symbols-outlined text-3xl text-primary">texture</span>
+<div>
+<h4 class="font-bold">Crema Density</h4>
+<p class="text-sm text-white/60">Extra thick velvet layer for a richer mouthfeel.</p>
+</div>
+</div>
+</div>
+<!-- Stats Component -->
+<div class="flex flex-wrap gap-4">
+<div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-6 border border-primary/30 bg-primary/5">
+<p class="text-white/70 text-sm font-medium">Caffeine Boost</p>
+<p class="text-white tracking-light text-3xl font-bold">2x</p>
+<p class="text-[#0bda1d] text-sm font-medium">+100%</p>
+</div>
+<div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-6 border border-white/10">
+<p class="text-white/70 text-sm font-medium">Strength Rating</p>
+<p class="text-white tracking-light text-3xl font-bold">9.5/10</p>
+<p class="text-primary text-sm font-medium">Elite</p>
+</div>
+</div>
+</div>
+<div class="order-1 md:order-2">
+<div class="aspect-square rounded-2xl overflow-hidden border-8 border-white/5 shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Macro photography of dark oily coffee beans" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5E_ZwfykZcxxUlViVJKxHIwXzuRrwDNV0rK0ns-5yZwdKhLYrLX82wmdHer5uDL4GnWGf64L3fsKQba6Tai6IjBG1I-_oYamsMTsc_xO7EFJGQNU1L6tMnHQzA33wfDC6SfrRdegNQuAdUW1AnHY5oyM7xJrlIhDoIQO223EM1oCp4rJVf5bZlNIb_BcrtYrug5fxyExZnL5XP-MHGOmwz-LaRE8taFeQzaTId5kqBFHBWhEHVa1K2h-_Z8AfDXKmRwpPKVZGbZU"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Cozy - The Micro Gallery -->
+<section class="py-24 bg-white/5" id="cozy">
+<div class="max-w-7xl mx-auto px-6">
+<div class="text-center mb-16">
+<h2 class="font-serif text-5xl font-bold mb-4">Cozy - The Micro Gallery</h2>
+<p class="text-white/60 max-w-2xl mx-auto">A compact sanctuary for art lovers. We blend the intensity of our roast with the softness of local expression.</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="space-y-4">
+<img class="rounded-lg object-cover w-full h-64 grayscale hover:grayscale-0 transition-all duration-500 border border-primary/20" data-alt="Artistic cafe interior with warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9cqmVtBwMk5zMoT0Mp4NBTJcOAS_cIqRnPWlIZoUBW12k_tgnXkQwBHgPIi7E6NMRmoHiqMn8fLkroLL0UpCKcYQexozA7zzcgzwy6ZSSIILN-t2hkU22jjA8Apaw5eEPg58bnO8ViNM-VADtLwkx89dswwmijiu0u6BwOwQDmbjtdaGceXMcajvgWhePPNRb4Zz5MUiudEgGK_VS1JXUw3stARuro2Kj_P2--lQw5cqHW1FxxBiUxuH-U9e3GgVXxx_JQG8A_XE"/>
+<img class="rounded-lg object-cover w-full h-48 grayscale hover:grayscale-0 transition-all duration-500 border border-primary/20" data-alt="Ceramic coffee cup on art table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAP165RyJU6ZCYGCS5JrsewGFmFcvFu9SFRkd-mxRP8kl9z0HJeM_I-O35P5-xJw76CxMpstfhd5AoMybXLUZGgfQRI-SWLbqNzPSDCLpzYlOQoLZA6cwe4XS6jNg2wxp5LVFzB727hwFe343pURT8GmJaPbbBKHH3SzfBGclvmjrJ7djWtaQgLbLkSx59pupN-ruRb51K1T6AcicMJkhhlucuTrqJvlZ-W8kKnjSGXo9B5B8U2aLhqvcENsk3GGHTUvukiqJbOQxs"/>
+</div>
+<div class="space-y-4 pt-8">
+<img class="rounded-lg object-cover w-full h-48 grayscale hover:grayscale-0 transition-all duration-500 border border-primary/20" data-alt="Woman reading in a cozy corner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo0TIN4coqdeJMree_Mrx7onn39Vh-BIIIun7PZhSLitrXRm1yWDrN5zd2ANNQCpzudKXSyY_IL3V_8RkH-e02oRzKAm4KWVw_FBHuTpf_ygH1pKpWrJ-4PeugahRamB7Thq5TU1xCyobgyIhydb6hLY52Q_dQwqYrpx7Dz0LF4eDsXVyICvbJjD3L6O0Q5uTmIoSws07viIB19KaEXgC7uU_Ndns7HAuQWdEDdR04sy7l1BXMaAnexRMnscubQm2ZOl6o0C_faPg"/>
+<img class="rounded-lg object-cover w-full h-80 grayscale hover:grayscale-0 transition-all duration-500 border border-primary/20" data-alt="Minimalist art gallery wall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBz2P_H0o0DTftT-dDeCX3MiY2ucHvEGL7ICZH1GjnxvJSQqho7w4aF5aV-c65E6u5AMVAmDI8kvrhor3P-wa9HSBc6E1UfdLB5i2CqAkEnHV7OdRs9LPiRhmjXckMjMDoxjidGiVWXtjQVDxEYrRpZVayEhnGtL2DmDC1RjqZ8TLxhIqOfSMhrc2Lm7G58oOa0BesLlBio_zxI4hJ-7uv8XuYK_qIsMP9O0X1KP1cd1Tv7OppwOXH8fsWBrUf6zuGNXpAmepwfP-Y"/>
+</div>
+<div class="space-y-4">
+<img class="rounded-lg object-cover w-full h-80 grayscale hover:grayscale-0 transition-all duration-500 border border-primary/20" data-alt="Barista at work in warm light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmXzNM74-28OlRkbMu702PIYO5itVY9RBLleCDJpVAFJ01M5UERS02FZ14kXp6etN-bx7Wy6XKeBurTPOLsF_RuiD59tXFSpRUTNhVZ4GQqE5r1hWVszv3h1V9-V_fYhbFLEg3mVMg-dvJE175dRin3zEJb1Qny3YRIvfz1NfFcGHauCToZcZYI9By836NCGPGN2elxFEg4ZbI_KHszjaAX1QwR0AEq9xGfeEbBYflGXWX-vSRGBwwxmkrzOKvNBcbesDUnxnZvAk"/>
+<img class="rounded-lg object-cover w-full h-48 grayscale hover:grayscale-0 transition-all duration-500 border border-primary/20" data-alt="Espresso machine detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhXZdL263Y9C2hswJqW1yLDHBnJVns4PGs1BcRcqP1x1jV8_GYSn6mVoVm0NUTzRDFKpkOt4tJFx4g7qmiO-qNW_qg1-dJNaL4SssmhU81ptthL5WJdX0P5kXU3z_F3U0voWUqM-eSRnn0_0HYdE-yy6nXHRTr3zOlztDD1FNErZYgdojV8lRPpzaCjd7D7Zzida8xIKyYd3eq0cYKy8d0lWkbxIcrEDprkpquYK57yXTXvQUhtxFtje8hNum0Y0VYJtq0oPEWhyQ"/>
+</div>
+<div class="space-y-4 pt-12">
+<img class="rounded-lg object-cover w-full h-56 grayscale hover:grayscale-0 transition-all duration-500 border border-primary/20" data-alt="Coffee shop seating area" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtvM0E2TaLmbBE7vz-i2XqALsQNsMRqySYKoxCQeIMsN9OWYicVJHCuPE4oEY8Cnp9Bq1Nc8qN6mQQAfzt7niCckEpXfLCu29l_sjC0vv60zZvOV66qMhpg-u13y2-G6AlB6zfw0EUzHrWqCmzyYw6OBdNkjoB9FeWEID1EmlhDXZ688tdofcwt7d3JTpY16kWN6rTEL2-NgqbvizRQ4U1zchi5XBHt-j-iqfCLo-MD9_U1gx7yhY5pxsURxwzeVdTBLqq8wiVU1U"/>
+<img class="rounded-lg object-cover w-full h-64 grayscale hover:grayscale-0 transition-all duration-500 border border-primary/20" data-alt="Coffee beans in a ceramic bowl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvZy0gqdT6wS_BCvk6tE6x94JMG-ilnuPfnDSfrkPco7Mlyx28hNwXCsgBVkH5MJxMmoM5Z3LMa3lo0oB6ai3sKkiIx4UKTg8FZdp0btIvIWYJtOqreiBUqFt8hHRO-ZbphJfVvz2qw8r8caMLn_exMrZjiajRIgy8EoRO7y5PnWd0RkV6r7q8LdvSna4lq_CfRrZt-yuuTbZHNH0CkAakGnrKmW2wMoHyhlNhDcVbic-PAJ5kvYZ5SSHhqKqS5cD0XBPREKdcek4"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Grab-and-Go - Efficiency -->
+<section class="py-24 px-6 overflow-hidden" id="grab-go">
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col lg:flex-row items-center gap-16">
+<div class="lg:w-1/2">
+<div class="inline-flex items-center gap-2 text-primary font-bold tracking-widest text-xs uppercase mb-4">
+<span class="material-symbols-outlined text-sm">speed</span> Ultra-Minimalist Service
+                        </div>
+<h2 class="text-5xl font-bold mb-8 font-serif italic">Tap. Grab. Go.</h2>
+<p class="text-white/70 text-lg leading-relaxed mb-10">
+                            Our seamless digital workflow ensures you spend less time waiting and more time being bold. From pre-ordering via our app to the high-quality biodegradable takeaway cups, every touchpoint is optimized for efficiency without compromising on the craft.
+                        </p>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="bg-primary/20 text-primary p-3 rounded-lg h-fit">
+<span class="material-symbols-outlined">smartphone</span>
+</div>
+<div>
+<h4 class="font-bold text-lg">Digital First</h4>
+<p class="text-white/60">Order through the Rabuste App and arrive just as your crema is perfect.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="bg-primary/20 text-primary p-3 rounded-lg h-fit">
+<span class="material-symbols-outlined">coffee_maker</span>
+</div>
+<div>
+<h4 class="font-bold text-lg">Express Craft</h4>
+<p class="text-white/60">Automated precision meets artisan beans for 45-second prep times.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:w-1/2 relative">
+<div class="absolute -top-12 -right-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="relative rounded-2xl border border-white/10 overflow-hidden bg-white/5 p-8 flex justify-center">
+<img class="rounded-xl shadow-2xl h-[500px] w-full object-cover" data-alt="Minimalist branded coffee takeaway cup" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdoLX6DW2zSlQtkrMFa6iJUY0KGF5pMArUy__J0DkIictzMI7hJA68GsbZl8ZZJuqya5RIHPbpwBfzbmOpp7kdzO93GVwMobbca8FJT_NP7Sjfl73sOV--n1DExpA-1ZwsB1-jHkfpW9DA-LbqDVb336_augKi4S0BReqrBW4WLYSywiQhU9AShknHXg3aTobfmpB4R0sUSzrUHA2edezwuNu4TzGjtsjBoX_UNekEehVd6eXAjbNDTp-fWU2gEkTuW-a-JC3dz0s"/>
+<!-- Tech Overlay -->
+<div class="absolute bottom-16 right-16 bg-background-dark/90 p-4 border border-primary/30 rounded-xl backdrop-blur-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">qr_code_2</span>
+</div>
+<div>
+<p class="text-[10px] uppercase tracking-widest text-white/50">Service Protocol</p>
+<p class="font-bold text-sm">Verified Efficiency</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: The Community Manifesto -->
+<section class="py-32 px-6 bg-primary text-background-dark relative" id="manifesto">
+<div class="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+<h2 class="text-[200px] font-black uppercase leading-none whitespace-nowrap absolute top-1/2 -translate-y-1/2 left-0 font-serif">RABUSTE MANIFESTO</h2>
+</div>
+<div class="max-w-3xl mx-auto text-center relative z-10">
+<span class="material-symbols-outlined text-6xl mb-6">format_quote</span>
+<h2 class="text-4xl md:text-6xl font-serif font-black mb-8 leading-tight italic">
+                    "We believe the intersection of art, technology, and caffeine is where the future is brewed."
+                </h2>
+<p class="text-xl font-medium mb-12 opacity-80">
+                    Rabuste is not just coffee. It is a commitment to the bold. A sanctuary for the creative mind. A high-efficiency fuel for the rebellion. Join the narrative.
+                </p>
+<button class="bg-background-dark text-white px-12 py-5 rounded-full font-black text-xl hover:scale-105 transition-transform uppercase tracking-tighter">
+                    Join the Rebellion
+                </button>
+</div>
+</section>
+<!-- Footer -->
+<footer class="py-12 border-t border-white/10 px-6">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="size-6 text-primary">
+<svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold uppercase">Rabuste</h2>
+</div>
+<div class="flex gap-12 text-sm text-white/50 font-medium">
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms</a>
+<a class="hover:text-primary transition-colors" href="#">Instagram</a>
+<a class="hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+<p class="text-xs text-white/30">© 2024 Rabuste Coffee Narrative. Built for the Bold.</p>
+</div>
+</footer>
+</main>
+</body></html>
