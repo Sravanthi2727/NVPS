@@ -1,4 +1,4 @@
-<!-- Franchise Page Template - Simplified Dark Theme -->
+<!-- Enhanced Franchise Page - Clean & Modern -->
 
 <!-- Structured Data (JSON-LD) -->
 <script type="application/ld+json">
@@ -11,61 +11,12 @@
   "description": "Premium Robusta-only coffee franchise offering artisanal coffee experiences, community workshops, and cultural programming.",
   "address": {
     "@type": "PostalAddress",
-    "addressCountry": "US"
+    "addressCountry": "IN"
   },
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "franchise development",
     "url": "https://rabustecoffee.com/franchise"
-  },
-  "sameAs": [
-    "https://facebook.com/rabustecoffee",
-    "https://instagram.com/rabustecoffee",
-    "https://twitter.com/rabustecoffee"
-  ]
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Franchise Opportunities - Partner with Rabuste Coffee",
-  "description": "Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and $75K-$150K investment range.",
-  "url": "https://rabustecoffee.com/franchise",
-  "mainEntity": {
-    "@type": "BusinessOpportunity",
-    "name": "Rabuste Coffee Franchise",
-    "description": "Premium Robusta-only coffee franchise opportunity with comprehensive brand support and proven business model.",
-    "category": "Food & Beverage Franchise",
-    "investmentRequired": {
-      "@type": "MonetaryAmount",
-      "currency": "USD",
-      "minValue": 75000,
-      "maxValue": 150000
-    },
-    "areaServed": "United States",
-    "provider": {
-      "@type": "Organization",
-      "name": "Rabuste Coffee"
-    }
-  },
-  "breadcrumb": {
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://rabustecoffee.com"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Franchise Opportunities",
-        "item": "https://rabustecoffee.com/franchise"
-      }
-    ]
   }
 }
 </script>
@@ -79,163 +30,328 @@
   .franchise-page { background: #000 !important; min-height: 100vh; color: #F5F1EB; }
 </style>
 
-<div class="franchise-page" itemscope itemtype="https://schema.org/WebPage" style="background: #000 !important; min-height: 100vh; color: #F5F1EB;">
-  <!-- Skip Links for Accessibility -->
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  <a href="#franchise-form" class="skip-link">Skip to franchise form</a>
+<div class="franchise-page" style="background: #000 !important; min-height: 100vh; color: #F5F1EB;">
 
-  <!-- Hero Section -->
-  <header class="franchise-hero-dark" role="banner" aria-labelledby="hero-title" itemscope itemtype="https://schema.org/WPHeader">
+  <!-- Hero Section with Video Background -->
+  <header class="franchise-hero" role="banner">
+    <div class="hero-background">
+      <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1920&h=1080&fit=crop&crop=center" alt="Coffee Shop Interior" class="hero-bg-image">
+      <div class="hero-overlay"></div>
+    </div>
+    
     <div class="container">
-      <div class="franchise-hero-content-dark text-center">
-        <h1 id="hero-title" class="franchise-hero-title-dark" itemprop="headline">Franchise with Rabuste</h1>
-        <p class="franchise-hero-subtitle-dark" itemprop="description">A scalable grab-and-go café model built around bold Robusta coffee, culture, and technology.</p>
-        <p class="franchise-hero-subtitle-dark" itemprop="description">Designed for compact spaces and high repeat value.</p>
-        <nav class="franchise-hero-cta-dark" role="navigation" aria-label="Primary actions">
-          <a href="#franchise-form" class="btn btn-franchise-primary-dark" aria-describedby="apply-description">Apply for Franchise</a>
-          <span id="apply-description" class="sr-only">Navigate to the franchise application form</span>
-          <a href="/about" class="btn btn-franchise-primary-dark" style="background: rgba(212, 175, 55, 0.2); border: 1px solid #D4AF37; color: #D4AF37; margin-left: 12px;">Learn More About Us</a>
-        </nav>
+      <div class="hero-content text-center">
+        <h1 class="hero-title">Partner with Rabuste Coffee</h1>
+        <p class="hero-subtitle">Join India's first Robusta-only café franchise</p>
+        <p class="hero-description">A proven business model combining premium coffee, art culture, and community engagement</p>
+        
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number" data-count="50">50+</span>
+            <span class="stat-label">Locations</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" data-count="75">₹75L-₹1.5Cr</span>
+            <span class="stat-label">Investment Range</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" data-count="18">12-18</span>
+            <span class="stat-label">Months ROI</span>
+          </div>
+        </div>
+        
+        <div class="hero-cta">
+          <a href="#franchise-form" class="btn btn-primary">Start Your Journey</a>
+          <a href="#business-model" class="btn btn-outline">Learn More</a>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main id="main-content" role="main" itemprop="mainContentOfPage">
-
-  <!-- Enquiry Form Section -->
-  <section class="franchise-form-section-dark" id="franchise-form" aria-labelledby="form-title" itemscope itemtype="https://schema.org/ContactPage">
+  <!-- Business Opportunity Section -->
+  <section class="opportunity-section" id="business-model">
     <div class="container">
-      <header class="franchise-form-header-dark">
-        <h2 id="form-title" class="franchise-form-title-dark" itemprop="name">Start Your Franchise Journey</h2>
-        <p class="franchise-form-subtitle-dark" itemprop="description">Ready to bring Rabuste Coffee to your community? Tell us about your vision and we'll guide you through the next steps.</p>
-      </header>
-      
-      <div class="franchise-form-container-dark">
-        <form class="franchise-form-dark" id="franchiseEnquiryForm" novalidate itemscope itemtype="https://schema.org/ContactForm">
-          <!-- Full Name Field -->
-          <div class="franchise-form-group-dark">
-            <label for="fullName" class="franchise-form-label-dark">Full Name *</label>
-            <input 
-              type="text" 
-              id="fullName" 
-              name="fullName" 
-              class="franchise-form-input-dark" 
-              placeholder="Enter your full name"
-              required
-              aria-describedby="fullName-error"
-              itemprop="name"
-            >
-            <div class="franchise-form-error-dark" id="fullName-error" role="alert"></div>
-          </div>
-
-          <!-- Email Field -->
-          <div class="franchise-form-group-dark">
-            <label for="email" class="franchise-form-label-dark">Email Address *</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              class="franchise-form-input-dark" 
-              placeholder="your.email@example.com"
-              required
-              aria-describedby="email-error"
-              itemprop="email"
-            >
-            <div class="franchise-form-error-dark" id="email-error" role="alert"></div>
-          </div>
-
-          <!-- Phone Field -->
-          <div class="franchise-form-group-dark">
-            <label for="phone" class="franchise-form-label-dark">Phone Number *</label>
-            <input 
-              type="tel" 
-              id="phone" 
-              name="phone" 
-              class="franchise-form-input-dark" 
-              placeholder="(555) 123-4567"
-              required
-              aria-describedby="phone-error"
-              itemprop="telephone"
-            >
-            <div class="franchise-form-error-dark" id="phone-error" role="alert"></div>
-          </div>
-
-          <!-- City & State Field -->
-          <div class="franchise-form-group-dark">
-            <label for="cityState" class="franchise-form-label-dark">City & State *</label>
-            <input 
-              type="text" 
-              id="cityState" 
-              name="cityState" 
-              class="franchise-form-input-dark" 
-              placeholder="e.g., Austin, TX"
-              required
-              aria-describedby="cityState-error"
-              itemprop="addressLocality"
-            >
-            <div class="franchise-form-error-dark" id="cityState-error" role="alert"></div>
-          </div>
-
-          <!-- Investment Range Field -->
-          <div class="franchise-form-group-dark">
-            <label for="investmentRange" class="franchise-form-label-dark">Investment Range *</label>
-            <select 
-              id="investmentRange" 
-              name="investmentRange" 
-              class="franchise-form-select-dark" 
-              required
-              aria-describedby="investmentRange-error"
-            >
-              <option value="">Select your investment range</option>
-              <% investmentRanges.forEach(range => { %>
-                <option value="<%= range %>"><%= range %></option>
-              <% }); %>
-            </select>
-            <div class="franchise-form-error-dark" id="investmentRange-error" role="alert"></div>
-          </div>
-
-          <!-- Message Field -->
-          <div class="franchise-form-group-dark">
-            <label for="message" class="franchise-form-label-dark">Tell Us About Your Vision</label>
-            <textarea 
-              id="message" 
-              name="message" 
-              class="franchise-form-textarea-dark" 
-              placeholder="Share your experience, goals, and what excites you about bringing Rabuste Coffee to your community..."
-              rows="4"
-              maxlength="500"
-              aria-describedby="message-counter"
-              itemprop="message"
-            ></textarea>
-            <div class="franchise-form-counter-dark" id="message-counter">0 / 500 characters</div>
-          </div>
-
-          <!-- Acknowledgment Checkbox -->
-          <div class="franchise-form-group-dark franchise-form-checkbox-group-dark">
-            <div class="franchise-form-checkbox-wrapper-dark">
-              <input 
-                type="checkbox" 
-                id="acknowledgment" 
-                name="acknowledgment" 
-                class="franchise-form-checkbox-dark" 
-                required
-                aria-describedby="acknowledgment-error"
-              >
-              <label for="acknowledgment" class="franchise-form-checkbox-label-dark">
-                I understand this is a premium Robusta-only concept and I'm interested in learning more about the unique positioning and requirements.
-              </label>
+      <div class="opportunity-grid">
+        <div class="opportunity-content">
+          <h2 class="section-title">A Unique Business Opportunity</h2>
+          <p class="section-subtitle">India's first Robusta-only café franchise with a proven track record</p>
+          
+          <div class="opportunity-features">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="#D4AF37" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>Unique Market Position</h3>
+                <p>First-mover advantage in the Robusta-only café segment with strong brand differentiation</p>
+              </div>
             </div>
-            <div class="franchise-form-error-dark" id="acknowledgment-error" role="alert"></div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 3H21V21H3V3Z" stroke="#D4AF37" stroke-width="2"/>
+                  <path d="M9 9H15V15H9V9Z" stroke="#D4AF37" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>Compact Footprint</h3>
+                <p>Efficient 500-1200 sq ft model designed for high-traffic urban locations</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 21V19C16 16.7909 14.2091 15 12 15H5C2.79086 15 1 16.7909 1 19V21" stroke="#D4AF37" stroke-width="2"/>
+                  <circle cx="8.5" cy="7" r="4" stroke="#D4AF37" stroke-width="2"/>
+                  <path d="M20 8V14M23 11H17" stroke="#D4AF37" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="feature-content">
+                <h3>Community Focus</h3>
+                <p>Art workshops and cultural events create loyal customer base and recurring revenue</p>
+              </div>
+            </div>
           </div>
+        </div>
+        
+        <div class="opportunity-visual">
+          <div class="visual-grid">
+            <div class="visual-item main">
+              <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&h=400&fit=crop&crop=center" alt="Modern Coffee Shop">
+              <div class="visual-overlay">
+                <h4>Modern Design</h4>
+                <p>Contemporary aesthetics that attract urban customers</p>
+              </div>
+            </div>
+            
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-          <!-- Submit Button -->
-          <div class="franchise-form-submit-dark">
-            <button type="submit" class="btn-franchise-submit-dark" id="submitButton">
-              <span class="btn-text">Start My Franchise Journey</span>
+  <!-- Investment & Returns Section -->
+  <section class="investment-section">
+    <div class="container">
+      <h2 class="section-title text-center">Investment & Returns</h2>
+      <p class="section-subtitle text-center">Transparent financials with strong ROI potential</p>
+      
+      <div class="investment-grid">
+        <div class="investment-card">
+          <div class="card-header">
+            <h3>Initial Investment</h3>
+            <div class="investment-amount">₹75L - ₹1.5Cr</div>
+          </div>
+          <div class="card-content">
+            <ul class="investment-breakdown">
+              <li>Franchise Fee: ₹15-25L</li>
+              <li>Setup & Equipment: ₹40-80L</li>
+              <li>Interior & Branding: ₹15-30L</li>
+              <li>Working Capital: ₹5-15L</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="investment-card featured">
+          <div class="card-header">
+            <h3>Projected Returns</h3>
+            <div class="investment-amount">25-35% ROI</div>
+          </div>
+          <div class="card-content">
+            <ul class="investment-breakdown">
+              <li>Break-even: 12-18 months</li>
+              <li>Monthly Revenue: ₹8-15L</li>
+              <li>Net Profit Margin: 15-25%</li>
+              <li>Payback Period: 3-4 years</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="investment-card">
+          <div class="card-header">
+            <h3>Ongoing Fees</h3>
+            <div class="investment-amount">8% Total</div>
+          </div>
+          <div class="card-content">
+            <ul class="investment-breakdown">
+              <li>Royalty Fee: 5%</li>
+              <li>Marketing Fee: 2%</li>
+              <li>Technology Fee: 1%</li>
+              <li>No Hidden Charges</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Support & Training Section -->
+  <section class="support-section">
+    <div class="container">
+      <h2 class="section-title text-center">Complete Support System</h2>
+      <p class="section-subtitle text-center">We're with you every step of the way</p>
+      
+      <div class="support-timeline">
+        <div class="timeline-item">
+          <div class="timeline-icon">
+            <span class="step-number">1</span>
+          </div>
+          <div class="timeline-content">
+            <h3>Site Selection & Setup</h3>
+            <p>Location analysis, lease negotiation, design, and construction management</p>
+            
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="timeline-icon">
+            <span class="step-number">2</span>
+          </div>
+          <div class="timeline-content">
+            <h3>Training & Certification</h3>
+            <p>Comprehensive 3-week training program covering operations, coffee craft, and management</p>
+            
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="timeline-icon">
+            <span class="step-number">3</span>
+          </div>
+          <div class="timeline-content">
+            <h3>Grand Opening & Beyond</h3>
+            <p>Marketing launch, ongoing support, and continuous business development</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+        
+       
+        
+      
+
+  <!-- Qualification Section -->
+  <section class="qualification-section">
+    <div class="container">
+      <h2 class="section-title text-center">Are You Ready to Partner with Us?</h2>
+      <p class="section-subtitle text-center">We're looking for passionate entrepreneurs who share our vision</p>
+      
+      <div class="qualification-grid">
+        <div class="qualification-item">
+          <div class="qualification-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="#D4AF37" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>Financial Capability</h3>
+          <p>Liquid capital of ₹50-75L and total investment capacity of ₹75L-₹1.5Cr</p>
+        </div>
+        
+        <div class="qualification-item">
+          <div class="qualification-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 21V19C16 16.7909 14.2091 15 12 15H5C2.79086 15 1 16.7909 1 19V21" stroke="#D4AF37" stroke-width="2"/>
+              <circle cx="8.5" cy="7" r="4" stroke="#D4AF37" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>Business Mindset</h3>
+          <p>Entrepreneurial spirit with commitment to hands-on involvement and community building</p>
+        </div>
+        
+        <div class="qualification-item">
+          <div class="qualification-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="#D4AF37" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>Prime Location</h3>
+          <p>Access to high-traffic urban locations with strong coffee culture and target demographics</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Application Form Section -->
+  <section class="form-section" id="franchise-form">
+    <div class="container">
+      <div class="form-header text-center">
+        <h2 class="section-title">Start Your Franchise Journey</h2>
+        <p class="section-subtitle">Ready to bring Rabuste Coffee to your community? Let's discuss your vision.</p>
+      </div>
+      
+      <div class="form-container">
+        <form class="franchise-form" id="franchiseForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fullName">Full Name *</label>
+              <input type="text" id="fullName" name="fullName" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Phone Number *</label>
+              <input type="tel" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+              <label for="city">City *</label>
+              <input type="text" id="city" name="city" required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="investment">Investment Range *</label>
+              <select id="investment" name="investment" required>
+                <option value="">Select investment range</option>
+                <option value="75L-1Cr">₹75L - ₹1Cr</option>
+                <option value="1Cr-1.5Cr">₹1Cr - ₹1.5Cr</option>
+                <option value="1.5Cr+">₹1.5Cr+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="timeline">Expected Timeline *</label>
+              <select id="timeline" name="timeline" required>
+                <option value="">Select timeline</option>
+                <option value="3-6months">3-6 months</option>
+                <option value="6-12months">6-12 months</option>
+                <option value="12months+">12+ months</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="experience">Business Experience</label>
+            <textarea id="experience" name="experience" rows="3" placeholder="Tell us about your business background and what excites you about the Rabuste Coffee opportunity..."></textarea>
+          </div>
+          
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="agreement" name="agreement" required>
+              <span class="checkmark"></span>
+              I understand this is a premium Robusta-only concept and I'm committed to maintaining brand standards and community focus.
+            </label>
+          </div>
+          
+          <div class="form-submit">
+            <button type="submit" class="btn btn-primary btn-large">
+              <span class="btn-text">Submit Application</span>
               <span class="btn-loading" style="display: none;">
-                <svg class="btn-spinner" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+                <svg class="spinner" width="20" height="20" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="31.416" stroke-dashoffset="31.416">
                     <animate attributeName="stroke-dasharray" dur="2s" values="0 31.416;15.708 15.708;0 31.416" repeatCount="indefinite"/>
                     <animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416" repeatCount="indefinite"/>
                   </circle>
@@ -244,142 +360,132 @@
               </span>
             </button>
           </div>
-
-          <!-- Success Message -->
-          <div class="franchise-form-success-dark" id="successMessage" style="display: none;" role="alert" aria-live="polite">
-            <div class="franchise-form-success-icon-dark" aria-hidden="true">
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="20" fill="#228B22"/>
-                <path d="M16 24L21 29L32 18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <h3 class="franchise-form-success-title-dark">Thank You for Your Interest!</h3>
-            <p class="franchise-form-success-message-dark">
-              We've received your franchise enquiry and are excited about the possibility of partnering with you. 
-              Our franchise development team will review your information and contact you within 2 business days to discuss the next steps.
-            </p>
-            <p class="franchise-form-success-next-dark">
-              In the meantime, feel free to <a href="/about" class="franchise-form-success-link-dark">learn more about us</a> 
-              to discover the Rabuste Coffee opportunity.
-            </p>
-          </div>
         </form>
+        
+        <!-- Success Message -->
+        <div class="form-success" id="formSuccess" style="display: none;">
+          <div class="success-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" fill="#228B22"/>
+              <path d="M9 12L11 14L15 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Application Submitted Successfully!</h3>
+          <p>Thank you for your interest in partnering with Rabuste Coffee. Our franchise development team will review your application and contact you within 2 business days.</p>
+          <p>In the meantime, feel free to <a href="/about">learn more about our story</a> and what makes Rabuste Coffee special.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  </main>
+</div>
 
-  <!-- AI Assistant Feature -->
-  <div class="ai-assistant" id="aiAssistant" aria-label="Franchise qualification assistant">
-    <!-- Chat Bubble -->
-    <button class="ai-chat-bubble" id="aiChatBubble" aria-label="Open franchise qualification helper" aria-expanded="false">
-      <svg class="ai-bubble-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M8 9H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M8 13H14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="ai-bubble-text">Need help?</span>
-    </button>
+<!-- AI Assistant Feature -->
+<div class="ai-assistant" id="aiAssistant" aria-label="Franchise qualification assistant">
+  <!-- Chat Bubble -->
+  <button class="ai-chat-bubble" id="aiChatBubble" aria-label="Open franchise qualification helper" aria-expanded="false">
+    <svg class="ai-bubble-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 9H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 13H14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="ai-bubble-text">Need help?</span>
+  </button>
 
-    <!-- Chat Modal -->
-    <div class="ai-chat-modal" id="aiChatModal" role="dialog" aria-labelledby="ai-modal-title" aria-hidden="true">
-      <div class="ai-modal-content">
-        <header class="ai-modal-header">
-          <h3 id="ai-modal-title" class="ai-modal-title">Franchise Qualification Helper</h3>
-          <button class="ai-modal-close" id="aiModalClose" aria-label="Close qualification helper">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </header>
+  <!-- Chat Modal -->
+  <div class="ai-chat-modal" id="aiChatModal" role="dialog" aria-labelledby="ai-modal-title" aria-hidden="true">
+    <div class="ai-modal-content">
+      <header class="ai-modal-header">
+        <h3 id="ai-modal-title" class="ai-modal-title">Franchise Qualification Helper</h3>
+        <button class="ai-modal-close" id="aiModalClose" aria-label="Close qualification helper">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </header>
 
-        <div class="ai-modal-body">
-          <!-- Welcome Screen -->
-          <div class="ai-screen ai-welcome-screen" id="aiWelcomeScreen">
-            <div class="ai-message ai-assistant-message">
-              <div class="ai-message-content">
-                <p>Hi! I'm here to help you determine if the Rabuste Coffee franchise is a great fit for you.</p>
-                <p>I'll ask you three quick questions to provide personalized guidance. Ready to get started?</p>
-              </div>
-            </div>
-            <div class="ai-actions">
-              <button class="ai-btn ai-btn-primary" id="aiStartQuestions">Let's Begin</button>
-              <button class="ai-btn ai-btn-secondary" id="aiSkipToForm">Skip to Application</button>
+      <div class="ai-modal-body">
+        <!-- Welcome Screen -->
+        <div class="ai-screen ai-welcome-screen" id="aiWelcomeScreen">
+          <div class="ai-message ai-assistant-message">
+            <div class="ai-message-content">
+              <p>Hi! I'm here to help you determine if the Rabuste Coffee franchise is a great fit for you.</p>
+              <p>I'll ask you three quick questions to provide personalized guidance. Ready to get started?</p>
             </div>
           </div>
+          <div class="ai-actions">
+            <button class="ai-btn ai-btn-primary" id="aiStartQuestions">Let's Begin</button>
+            <button class="ai-btn ai-btn-secondary" id="aiSkipToForm">Skip to Application</button>
+          </div>
+        </div>
 
-          <!-- Question 1 Screen -->
-          <div class="ai-screen ai-question-screen" id="aiQuestion1Screen" style="display: none;">
-            <div class="ai-message ai-assistant-message">
-              <div class="ai-message-content">
-                <p><strong>Question 1 of 3:</strong></p>
-                <p>What's your experience with food or beverage businesses?</p>
-              </div>
-            </div>
-            <div class="ai-actions">
-              <button class="ai-btn ai-btn-option" data-answer="extensive">Extensive - I've owned/managed F&B businesses</button>
-              <button class="ai-btn ai-btn-option" data-answer="some">Some - I've worked in the industry</button>
-              <button class="ai-btn ai-btn-option" data-answer="none">None - This would be my first venture</button>
+        <!-- Question 1 Screen -->
+        <div class="ai-screen ai-question-screen" id="aiQuestion1Screen" style="display: none;">
+          <div class="ai-message ai-assistant-message">
+            <div class="ai-message-content">
+              <p><strong>Question 1 of 3:</strong></p>
+              <p>What's your experience with food or beverage businesses?</p>
             </div>
           </div>
+          <div class="ai-actions">
+            <button class="ai-btn ai-btn-option" data-answer="extensive">Extensive - I've owned/managed F&B businesses</button>
+            <button class="ai-btn ai-btn-option" data-answer="some">Some - I've worked in the industry</button>
+            <button class="ai-btn ai-btn-option" data-answer="none">None - This would be my first venture</button>
+          </div>
+        </div>
 
-          <!-- Question 2 Screen -->
-          <div class="ai-screen ai-question-screen" id="aiQuestion2Screen" style="display: none;">
-            <div class="ai-message ai-assistant-message">
-              <div class="ai-message-content">
-                <p><strong>Question 2 of 3:</strong></p>
-                <p>What's your target investment range for this opportunity?</p>
-              </div>
-            </div>
-            <div class="ai-actions">
-              <button class="ai-btn ai-btn-option" data-answer="75-100k">$75K - $100K</button>
-              <button class="ai-btn ai-btn-option" data-answer="100-150k">$100K - $150K</button>
-              <button class="ai-btn ai-btn-option" data-answer="150k+">$150K+</button>
-              <button class="ai-btn ai-btn-option" data-answer="flexible">I'm flexible based on the opportunity</button>
+        <!-- Question 2 Screen -->
+        <div class="ai-screen ai-question-screen" id="aiQuestion2Screen" style="display: none;">
+          <div class="ai-message ai-assistant-message">
+            <div class="ai-message-content">
+              <p><strong>Question 2 of 3:</strong></p>
+              <p>What's your target investment range for this opportunity?</p>
             </div>
           </div>
+          <div class="ai-actions">
+            <button class="ai-btn ai-btn-option" data-answer="75L-1Cr">₹75L - ₹1Cr</button>
+            <button class="ai-btn ai-btn-option" data-answer="1Cr-1.5Cr">₹1Cr - ₹1.5Cr</button>
+            <button class="ai-btn ai-btn-option" data-answer="1.5Cr+">₹1.5Cr+</button>
+            <button class="ai-btn ai-btn-option" data-answer="flexible">I'm flexible based on the opportunity</button>
+          </div>
+        </div>
 
-          <!-- Question 3 Screen -->
-          <div class="ai-screen ai-question-screen" id="aiQuestion3Screen" style="display: none;">
-            <div class="ai-message ai-assistant-message">
-              <div class="ai-message-content">
-                <p><strong>Question 3 of 3:</strong></p>
-                <p>Are you interested in hands-on or passive ownership?</p>
-              </div>
-            </div>
-            <div class="ai-actions">
-              <button class="ai-btn ai-btn-option" data-answer="hands-on">Hands-on - I want to be actively involved</button>
-              <button class="ai-btn ai-btn-option" data-answer="semi-passive">Semi-passive - Some involvement with management</button>
-              <button class="ai-btn ai-btn-option" data-answer="passive">Passive - Investment with minimal day-to-day involvement</button>
+        <!-- Question 3 Screen -->
+        <div class="ai-screen ai-question-screen" id="aiQuestion3Screen" style="display: none;">
+          <div class="ai-message ai-assistant-message">
+            <div class="ai-message-content">
+              <p><strong>Question 3 of 3:</strong></p>
+              <p>Are you interested in hands-on or passive ownership?</p>
             </div>
           </div>
+          <div class="ai-actions">
+            <button class="ai-btn ai-btn-option" data-answer="hands-on">Hands-on - I want to be actively involved</button>
+            <button class="ai-btn ai-btn-option" data-answer="semi-passive">Semi-passive - Some involvement with management</button>
+            <button class="ai-btn ai-btn-option" data-answer="passive">Passive - Investment with minimal day-to-day involvement</button>
+          </div>
+        </div>
 
-          <!-- Results Screen -->
-          <div class="ai-screen ai-results-screen" id="aiResultsScreen" style="display: none;">
-            <div class="ai-message ai-assistant-message">
-              <div class="ai-message-content" id="aiResultsContent">
-                <!-- Dynamic content will be inserted here -->
-              </div>
+        <!-- Results Screen -->
+        <div class="ai-screen ai-results-screen" id="aiResultsScreen" style="display: none;">
+          <div class="ai-message ai-assistant-message">
+            <div class="ai-message-content" id="aiResultsContent">
+              <!-- Dynamic content will be inserted here -->
             </div>
-            <div class="ai-actions">
-              <button class="ai-btn ai-btn-primary" id="aiGoToForm">Apply Now</button>
-              <button class="ai-btn ai-btn-secondary" id="aiStartOver">Start Over</button>
-            </div>
+          </div>
+          <div class="ai-actions">
+            <button class="ai-btn ai-btn-primary" id="aiGoToForm">Apply Now</button>
+            <button class="ai-btn ai-btn-secondary" id="aiStartOver">Start Over</button>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Modal Backdrop -->
-    <div class="ai-modal-backdrop" id="aiModalBackdrop" style="display: none;"></div>
   </div>
+
+  <!-- Modal Backdrop -->
+  <div class="ai-modal-backdrop" id="aiModalBackdrop" style="display: none;"></div>
 </div>
 
 <!-- Include franchise-specific JS -->
-<script src="/js/background-optimizer.js"></script>
-<script src="/js/image-optimization.js"></script>
+<script src="/js/franchise-enhanced.js"></script>
 <script src="/js/ai.js"></script>
-<script src="/js/franchise.js"></script>
-<script src="/js/franchise-diagnostic.js"></script>
