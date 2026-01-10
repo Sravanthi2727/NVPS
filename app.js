@@ -67,7 +67,12 @@ passport.use(
         // Wait for database connection
         if (mongoose.connection.readyState !== 1) {
           console.log('Database not connected, waiting...');
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+
+        // Check again after waiting
+        if (mongoose.connection.readyState !== 1) {
+          return done(new Error('Database not connected'), null);
         }
 
         console.log('Google OAuth profile received:', {
@@ -193,13 +198,13 @@ app.get('/menu', async (req, res) => {
               name: 'Robusta Iced Americano',
               description: 'Bold Robusta espresso with chilled water',
               price: 160,
-              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
             },
             {
               name: 'Robusta Cold Brew',
               description: '24-hour cold extracted Robusta',
               price: 180,
-              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
             }
           ],
           'robusta-cold-milk': [
@@ -207,7 +212,7 @@ app.get('/menu', async (req, res) => {
               name: 'Robusta Iced Latte',
               description: 'Smooth Robusta with cold milk',
               price: 200,
-              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
             }
           ]
         },
@@ -217,7 +222,7 @@ app.get('/menu', async (req, res) => {
               name: 'Robusta Black Coffee',
               description: 'Pure Robusta espresso',
               price: 120,
-              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
             }
           ]
         }
@@ -387,8 +392,162 @@ app.get("/franchise", (req, res) => {
   });
 });
 
-app.get("/workshops", (req, res) => {
-  res.render("workshops");
+app.get("/workshops", async (req, res) => {
+  console.log("Workshops route accessed");
+  try {
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      console.log("Database not connected, using static data");
+      // Return static data if database is not connected
+      const staticWorkshops = {
+        upcoming: [
+          {
+            title: "Advanced Coffee Brewing",
+            description: "Master the art of precision brewing with advanced techniques. Learn pour-over methods, temperature control, and extraction principles.",
+            date: "2026-02-18T10:00:00.000Z",
+            type: "upcoming",
+            category: "Coffee",
+            image: "/assets/workshops/coffee-brewing.jpeg",
+            meta: {
+              duration: "3 hours",
+              level: "Intermediate",
+              tags: ["coffee", "brewing", "technique"]
+            }
+          },
+          {
+            title: "Modern Calligraphy",
+            description: "Create beautiful latte art designs. From basic hearts to advanced rosettas and tulips. Perfect for baristas and coffee enthusiasts.",
+            date: "2026-03-15T14:00:00.000Z",
+            type: "upcoming",
+            category: "Coffee Art",
+            image: "/assets/workshops/modern-calligraphy.jpg",
+            meta: {
+              duration: "2.5 hours",
+              level: "Beginner",
+              tags: ["Modern Calligraphy", "barista", "design"]
+            }
+          },
+          {
+            title: "Watercolor Painting Workshop",
+            description: "Explore the fluid beauty of watercolor painting. Learn techniques, color mixing, and create your own masterpiece in a relaxed café setting.",
+            date: "2026-04-10T11:00:00.000Z",
+            type: "upcoming",
+            category: "Art",
+            image: "/assets/workshops/watercolor.jpeg",
+            meta: {
+              duration: "3 hours",
+              level: "All Levels",
+              tags: ["watercolor", "painting", "art"]
+            }
+          },
+          {
+            title: "Beginner Pottery",
+            description: "Explore the fluid beauty of pottery. Learn techniques, clay handling, and create your own masterpiece in a relaxed café setting.",
+            date: "2026-04-10T11:00:00.000Z",
+            type: "upcoming",
+            category: "Art",
+            image: "/assets/workshops/pottery.jpg",
+            meta: {
+              duration: "3 hours",
+              level: "All Levels",
+              tags: ["Beginner Pottery", "clay", "art"]
+            }
+          }
+        ],
+        past: [
+          {
+            title: "Coffee Art Workshop",
+            date: "2025-11-20T10:00:00.000Z",
+            type: "past",
+            category: "Coffee Education",
+            description: "Learn about the unique characteristics of Robusta coffee, its flavor profile, and why it's special. Tasting session included.",
+            image: "/assets/workshops/coffee_art.jpg",
+            meta: {
+              duration: "2 hours",
+              level: "Beginner",
+              tags: ["robusta", "coffee", "tasting"]
+            },
+            galleryImages: [
+              "/assets/workshops/coffee_art-1.jpg",
+              "/assets/workshops/coffee_art-2.jpg",
+              "/assets/workshops/coffee_art-3.jpg"
+            ]
+          },
+          {
+            title: "Lino Cut Art Workshop",
+            date: "2025-10-15T14:00:00.000Z",
+            type: "past",
+            category: "Art",
+            description: "Hands-on printmaking workshop where participants created their own prints using simple techniques. Great for beginners!",
+            image: "/assets/workshops/printmaking.jpg",
+            meta: {
+              duration: "3 hours",
+              level: "Beginner",
+              tags: ["printmaking", "art", "craft"]
+            },
+            galleryImages: [
+              "/assets/workshops/printmaking-1.jpg",
+              "/assets/workshops/printmaking-2.jpg",
+              "/assets/workshops/printmaking-3.jpg"
+            ]
+          },
+          {
+            title: "Ganesha Making Workshop",
+            date: "2025-09-25T16:00:00.000Z",
+            type: "past",
+            category: "Clay Modelling",
+            description: "A mindful sculpting experience rooted in tradition",
+            image: "/assets/workshops/ganesha-making.jpg",
+            meta: {
+              duration: "2 hours",
+              level: "Intermediate",
+              tags: ["Guided Session", "tradition", "Clay Modelling"]
+            },
+            galleryImages: [
+              "/assets/workshops/cupping-1.jpg"
+            ]
+          }
+        ]
+      };
+      
+      console.log("Rendering with static data - upcoming:", staticWorkshops.upcoming.length, "past:", staticWorkshops.past.length);
+      
+      res.render("workshops", {
+        title: "Workshops - Rabuste Coffee",
+        description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
+        currentPage: "/workshops",
+        upcomingWorkshops: staticWorkshops.upcoming,
+        pastWorkshops: staticWorkshops.past,
+        layout: false // Disable layout for this route
+      });
+      return;
+    }
+    
+    console.log("Database connected, fetching from database");
+    const upcomingWorkshops = await WorkshopModel.find({ 
+      type: 'upcoming', 
+      isActive: true,
+    }).sort({ date: 1, displayOrder: 1 });
+    
+    const pastWorkshops = await WorkshopModel.find({ 
+      type: 'past', 
+      isActive: true 
+    }).sort({ date: -1, displayOrder: 1 });
+
+    console.log("Database results - upcoming:", upcomingWorkshops.length, "past:", pastWorkshops.length);
+
+    res.render("workshops", {
+      title: "Workshops - Rabuste Coffee",
+      description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
+      currentPage: "/workshops",
+      upcomingWorkshops: upcomingWorkshops,
+      pastWorkshops: pastWorkshops,
+      layout: false // Disable layout for this route
+    });
+  } catch (error) {
+    console.error('Workshops route error:', error);
+    res.status(500).send('Error loading workshops');
+  }
 });
 
 app.get("/philosophy", (req, res) => {
@@ -686,6 +845,178 @@ app.post('/api/requests', ensureAuthenticated, async (req, res) => {
     res.json({ success: true, item: newRequest });
   } catch (error) {
     res.status(500).json({ error: 'Error submitting request' });
+  }
+});
+
+// Cart API routes
+app.post('/api/cart/add', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const { itemId, name, price, image, quantity = 1 } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    console.log('User before cart update:', {
+      name: user.name,
+      email: user.email,
+      cartLength: user.cart.length
+    });
+
+    // Create cart item and add to cart array
+    const cartItem = { itemId, name, price, image, quantity };
+    user.cart.push(cartItem);
+    
+    console.log('Cart item to add:', cartItem);
+    console.log('User cart after push:', user.cart);
+
+    // Mark only cart as modified, preserve other fields
+    user.markModified('cart');
+    await user.save();
+
+    console.log('User after save:', {
+      name: user.name,
+      email: user.email,
+      cartLength: user.cart.length
+    });
+
+    res.json({ success: true, message: 'Item added to cart' });
+  } catch (error) {
+    console.error('Cart add error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.get('/api/cart/count', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.json({ count: 0 });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    const count = user ? user.cart.length : 0;
+    
+    res.json({ count });
+  } catch (error) {
+    console.error('Cart count error:', error);
+    res.status(500).json({ count: 0 });
+  }
+});
+
+// Wishlist API routes
+app.post('/api/wishlist/add', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const { itemId, name, price } = req.body;
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    console.log('User before wishlist update:', {
+      name: user.name,
+      email: user.email,
+      wishlistLength: user.wishlist.length
+    });
+
+    // Create wishlist item and add to wishlist array
+    const wishlistItem = { itemId, name, price };
+    user.wishlist.push(wishlistItem);
+    
+    console.log('Wishlist item to add:', wishlistItem);
+    console.log('User wishlist after push:', user.wishlist);
+
+    // Mark only wishlist as modified, preserve other fields
+    user.markModified('wishlist');
+    await user.save();
+
+    console.log('User after save:', {
+      name: user.name,
+      email: user.email,
+      wishlistLength: user.wishlist.length
+    });
+
+    res.json({ success: true, message: 'Item added to wishlist' });
+  } catch (error) {
+    console.error('Wishlist add error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.get('/api/wishlist/count', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.json({ count: 0 });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    const count = user ? user.wishlist.length : 0;
+    
+    res.json({ count });
+  } catch (error) {
+    console.error('Wishlist count error:', error);
+    res.status(500).json({ count: 0 });
+  }
+});
+
+app.delete('/api/cart/remove/:itemId', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Remove item from cart
+    user.cart.pull({ _id: req.params.itemId });
+    await user.save();
+
+    res.json({ success: true, message: 'Item removed from cart' });
+  } catch (error) {
+    console.error('Cart remove error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.delete('/api/wishlist/remove/:itemId', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ success: false, message: 'Please login first' });
+    }
+
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Remove item from wishlist
+    user.wishlist.pull({ _id: req.params.itemId });
+    await user.save();
+
+    res.json({ success: true, message: 'Item removed from wishlist' });
+  } catch (error) {
+    console.error('Wishlist remove error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
