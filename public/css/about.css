@@ -1,9 +1,9 @@
 /**
- * About Us Page Styles
- * Rabuste Coffee - About page specific styling
+ * About Us Page Styles - Clean & Aesthetic
+ * Rabuste Coffee - Enhanced with real images and smooth animations
  */
 
-/* CSS Variables for About Page - Matching Main Website */
+/* CSS Variables */
 :root {
   --about-bg: #000;
   --about-text: #f5f2ee;
@@ -22,21 +22,22 @@
   min-height: 100vh;
   color: var(--about-text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
 }
 
-/* Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* Hero Section */
+/* Hero Section with Floating Elements */
 .about-hero-section {
   padding: 120px 0 80px;
   text-align: center;
   background: var(--about-bg);
   position: relative;
+  overflow: hidden;
 }
 
 .about-hero-title {
@@ -47,6 +48,9 @@
   margin-bottom: 1rem;
   line-height: 1.2;
   text-shadow: 0 10px 40px rgba(0, 0, 0, 0.75);
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 1s ease 0.2s forwards;
 }
 
 .about-hero-subtitle {
@@ -54,7 +58,9 @@
   font-weight: 500;
   color: var(--about-text);
   margin-bottom: 1.5rem;
-  opacity: 0.9;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 1s ease 0.4s forwards;
 }
 
 .about-hero-description {
@@ -63,22 +69,32 @@
   max-width: 800px;
   margin: 0 auto;
   line-height: 1.6;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 1s ease 0.6s forwards;
 }
 
-/* Story Section */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Story Section with Real Images */
 .about-story-section {
   padding: 80px 0;
   background: var(--about-bg);
 }
 
-.about-story-content {
+.story-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   align-items: center;
 }
 
-.about-section-title {
+.section-title {
   font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
   font-weight: 700;
@@ -87,51 +103,205 @@
   line-height: 1.3;
 }
 
-.about-story-paragraph {
+.story-text {
   font-size: 1.1rem;
   line-height: 1.7;
   color: var(--about-muted);
   margin-bottom: 1.5rem;
 }
 
-.about-story-visual {
+.story-stats {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  gap: 30px;
+  margin-top: 30px;
 }
 
-.about-story-card {
-  background: var(--about-card-bg);
-  backdrop-filter: blur(16px);
-  padding: 30px;
-  border-radius: 12px;
+.stat-item {
   text-align: center;
-  border: 1px solid var(--about-border);
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px var(--about-shadow);
 }
 
-.about-story-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px var(--about-shadow);
-  border-color: var(--about-gold);
-}
-
-.about-story-icon {
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-
-.about-story-card h3 {
-  font-size: 2rem;
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
   font-weight: 700;
-  color: var(--about-text);
+  color: var(--about-gold);
   margin-bottom: 5px;
 }
 
-.about-story-card p {
+.stat-label {
+  font-size: 0.9rem;
   color: var(--about-muted);
-  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Story Images */
+.story-images {
+  position: relative;
+}
+
+.image-container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px var(--about-shadow);
+  transition: transform 0.4s ease;
+  margin-bottom: 20px;
+}
+
+.image-container:hover {
+  transform: translateY(-10px);
+}
+
+.main-image {
+  margin-bottom: 20px;
+}
+
+.secondary-image {
+  width: 70%;
+  margin-left: auto;
+}
+
+.story-img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  display: block;
+}
+
+.image-container:hover .story-img {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  padding: 20px;
+  transform: translateY(100%);
+  transition: transform 0.4s ease;
+}
+
+.image-container:hover .image-overlay {
+  transform: translateY(0);
+}
+
+/* Experience Section */
+.experience-section {
+  padding: 80px 0;
+  background: var(--about-bg);
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: var(--about-muted);
+  margin-bottom: 50px;
+}
+
+.experience-slider {
+  position: relative;
+  height: 500px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.slide.active {
+  opacity: 1;
+}
+
+.slide-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.slide-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+  color: white;
+  padding: 40px;
+  text-align: center;
+}
+
+.slide-overlay h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.slide-overlay p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* Slider Controls */
+.slider-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.slider-btn {
+  background: var(--about-card-bg);
+  border: 1px solid var(--about-border);
+  color: var(--about-text);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slider-btn:hover {
+  background: var(--about-gold);
+  color: #111;
+  border-color: var(--about-gold);
+}
+
+.slider-dots {
+  display: flex;
+  gap: 10px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--about-border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot.active,
+.dot:hover {
+  background: var(--about-gold);
 }
 
 /* Team Section */
@@ -145,10 +315,17 @@
   margin-bottom: 60px;
 }
 
+.about-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--about-text);
+  margin-bottom: 1rem;
+}
+
 .about-section-subtitle {
   font-size: 1.2rem;
   color: var(--about-muted);
-  margin-top: 1rem;
 }
 
 .about-team-grid {
@@ -164,7 +341,7 @@
   border-radius: 16px;
   text-align: center;
   border: 1px solid var(--about-border);
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   box-shadow: 0 4px 12px var(--about-shadow);
 }
 
@@ -232,36 +409,116 @@
   border-color: var(--about-gold);
 }
 
-/* Development Team Section */
-.about-dev-section {
+/* Coffee Process Section */
+.coffee-process-section {
   padding: 80px 0;
   background: var(--about-bg);
 }
 
-.about-dev-grid {
+.process-timeline {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+  margin-top: 50px;
 }
 
-.about-dev-card {
-  background: var(--about-card-bg);
-  backdrop-filter: blur(16px);
-  padding: 30px;
-  border-radius: 12px;
+.process-step {
   text-align: center;
-  border: 1px solid var(--about-border);
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px var(--about-shadow);
+  position: relative;
 }
 
-.about-dev-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px var(--about-shadow);
-  border-color: var(--about-gold);
+.step-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 20px;
+  border: 4px solid var(--about-gold);
+  transition: transform 0.4s ease;
 }
 
-.about-dev-avatar {
+.step-image:hover {
+  transform: scale(1.05);
+}
+
+.step-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.step-number {
+  position: absolute;
+  top: -10px;
+  right: 50px;
+  width: 40px;
+  height: 40px;
+  background: var(--about-gold);
+  color: #111;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.step-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--about-text);
+  margin-bottom: 10px;
+}
+
+.step-content p {
+  color: var(--about-muted);
+  line-height: 1.6;
+}
+
+/* Testimonials Section */
+.testimonials-section {
+  padding: 80px 0;
+  background: var(--about-bg);
+}
+
+.testimonial-slider {
+  max-width: 800px;
+  margin: 50px auto 30px;
+  position: relative;
+  height: 200px;
+}
+
+.testimonial {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  text-align: center;
+}
+
+.testimonial.active {
+  opacity: 1;
+}
+
+.testimonial-content p {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: var(--about-text);
+  font-style: italic;
+  margin-bottom: 30px;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.author-avatar {
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -272,428 +529,159 @@
   justify-content: center;
   font-size: 1.2rem;
   font-weight: 700;
-  margin: 0 auto 15px;
-  box-shadow: 0 4px 12px rgba(214, 164, 90, 0.3);
 }
 
-.about-dev-name {
-  font-size: 1.3rem;
-  font-weight: 700;
+.author-info h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
   color: var(--about-text);
   margin-bottom: 5px;
 }
 
-.about-dev-role {
+.author-info span {
   font-size: 0.9rem;
-  color: var(--about-gold);
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.about-dev-bio {
-  font-size: 0.9rem;
-  line-height: 1.5;
   color: var(--about-muted);
-  margin-bottom: 15px;
 }
 
-.about-dev-skills {
+.testimonial-controls {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 20px;
 }
 
-.about-skill-tag {
+.test-btn {
+  background: var(--about-card-bg);
+  border: 1px solid var(--about-border);
+  color: var(--about-text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.test-btn:hover {
   background: var(--about-gold);
   color: #111;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
+  border-color: var(--about-gold);
 }
 
-/* Franchise Sections - Card-based Design */
-.franchise-benefits,
-.franchise-business-model,
-.franchise-support,
-.franchise-qualification {
-  background: var(--about-bg);
+.test-dots {
+  display: flex;
+  gap: 10px;
+}
+
+.test-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--about-border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.test-dot.active,
+.test-dot:hover {
+  background: var(--about-gold);
+}
+
+/* Franchise CTA Section */
+.franchise-cta-section {
   padding: 80px 0;
-}
-
-.franchise-benefits {
   background: var(--about-bg);
 }
 
-.franchise-business-model {
-  background: var(--about-bg);
+.cta-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  background: var(--about-card-bg);
+  padding: 60px;
+  border-radius: 20px;
+  border: 1px solid var(--about-border);
 }
 
-.franchise-support {
-  background: var(--about-bg);
-}
-
-.franchise-qualification {
-  background: var(--about-bg);
-}
-
-/* Section Headers */
-.franchise-benefits-header,
-.franchise-business-model-header,
-.franchise-support-header,
-.franchise-qualification-header {
-  text-align: center;
-  margin-bottom: 60px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.franchise-benefits-title,
-.franchise-business-model-title,
-.franchise-support-title,
-.franchise-qualification-title {
+.cta-text h2 {
   font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
   font-weight: 700;
   color: var(--about-text);
-  margin-bottom: 1rem;
-  line-height: 1.2;
+  margin-bottom: 20px;
 }
 
-.franchise-benefits-subtitle,
-.franchise-business-model-subtitle,
-.franchise-support-subtitle,
-.franchise-qualification-subtitle {
-  font-size: 1.125rem;
+.cta-text p {
+  font-size: 1.2rem;
   color: var(--about-muted);
+  margin-bottom: 30px;
   line-height: 1.6;
 }
 
-/* Card-based Design for Benefits */
-.franchise-benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.franchise-benefit-card {
-  background: var(--about-card-bg);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--about-border);
-  border-radius: 16px;
-  padding: 32px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px var(--about-shadow);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.franchise-benefit-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--about-shadow);
-  border-color: var(--about-gold);
-}
-
-.franchise-benefit-icon {
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 8px;
-}
-
-.franchise-benefit-icon svg {
-  width: 48px;
-  height: 48px;
-}
-
-.franchise-benefit-icon svg path,
-.franchise-benefit-icon svg circle,
-.franchise-benefit-icon svg rect {
-  fill: var(--about-gold);
-}
-
-.franchise-benefit-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.375rem;
+.cta-button {
+  display: inline-block;
+  background: var(--about-gold);
+  color: #111;
+  padding: 15px 30px;
+  border-radius: 30px;
+  text-decoration: none;
   font-weight: 600;
-  color: var(--about-text);
-  margin: 0;
-  line-height: 1.3;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
 }
 
-.franchise-benefit-description {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--about-muted);
-  margin: 0;
+.cta-button:hover {
+  background: var(--about-gold-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(214, 164, 90, 0.3);
 }
 
-/* Card-based Design for Business Model */
-.franchise-business-model-content {
-  max-width: 1200px;
-  margin: 0 auto;
+.cta-image {
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.franchise-business-model-visual {
-  display: none; /* Hide visual illustration for card-based design */
-}
-
-.franchise-business-model-info {
+.cta-image img {
   width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
 }
 
-.franchise-business-model-header {
-  text-align: center;
-  margin-bottom: 60px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.franchise-business-model-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-  margin-top: 40px;
-}
-
-.franchise-business-model-item {
-  background: var(--about-card-bg);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--about-border);
-  border-radius: 16px;
-  padding: 32px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px var(--about-shadow);
-}
-
-.franchise-business-model-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--about-shadow);
-  border-color: var(--about-gold);
-}
-
-.franchise-business-model-item-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.375rem;
-  font-weight: 600;
-  color: var(--about-gold);
-  margin-bottom: 12px;
-  line-height: 1.3;
-}
-
-.franchise-business-model-item-description {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--about-muted);
-  margin: 0;
-}
-
-.franchise-business-model-cta {
-  text-align: center;
-  margin-top: 40px;
-}
-
-/* Card-based Design for Support */
-.franchise-support-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.franchise-support-card {
-  background: var(--about-card-bg);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--about-border);
-  border-radius: 16px;
-  padding: 32px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px var(--about-shadow);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.franchise-support-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--about-shadow);
-  border-color: var(--about-gold);
-}
-
-.franchise-support-icon {
-  width: 56px;
-  height: 56px;
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background: var(--about-gold);
+  color: #111;
+  border: none;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
-}
-
-.franchise-support-icon svg {
-  width: 48px;
-  height: 48px;
-}
-
-.franchise-support-icon svg path,
-.franchise-support-icon svg circle,
-.franchise-support-icon svg rect {
-  fill: var(--about-gold);
-}
-
-.franchise-support-title-card {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.375rem;
-  font-weight: 600;
-  color: var(--about-text);
-  margin: 0;
-  line-height: 1.3;
-}
-
-.franchise-support-description {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--about-muted);
-  margin: 0;
-}
-
-/* Card-based Design for Qualification */
-.franchise-qualification-checklist {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-  max-width: 1200px;
-  margin: 0 auto 40px;
-}
-
-.franchise-qualification-item {
-  background: var(--about-card-bg);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--about-border);
-  border-radius: 16px;
-  padding: 32px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px var(--about-shadow);
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-.franchise-qualification-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--about-shadow);
-  border-color: var(--about-gold);
-}
-
-.franchise-qualification-check {
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.franchise-qualification-content {
-  flex: 1;
-}
-
-.franchise-qualification-item-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--about-text);
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-
-.franchise-qualification-item-description {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--about-muted);
-  margin: 0;
-}
-
-.franchise-qualification-cta {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.franchise-qualification-encouragement {
-  font-size: 1.125rem;
-  color: var(--about-muted);
-  margin-bottom: 24px;
-}
-
-/* Scroll Animations for Cards */
-.franchise-benefit-card,
-.franchise-support-card,
-.franchise-business-model-item,
-.franchise-qualification-item {
+  cursor: pointer;
   opacity: 0;
+  visibility: hidden;
   transform: translateY(20px);
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(214, 164, 90, 0.3);
 }
 
-.franchise-benefit-card.revealed,
-.franchise-support-card.revealed,
-.franchise-business-model-item.revealed,
-.franchise-qualification-item.revealed {
+.back-to-top.visible {
   opacity: 1;
+  visibility: visible;
   transform: translateY(0);
 }
 
-/* Smooth transitions */
-.franchise-benefit-card,
-.franchise-support-card,
-.franchise-business-model-item,
-.franchise-qualification-item {
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-}
-
-/* Disable animations for reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .franchise-benefit-card,
-  .franchise-support-card,
-  .franchise-business-model-item,
-  .franchise-qualification-item {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-  }
-}
-
-/* Button Styles */
-.btn {
-  display: inline-block;
-  padding: 12px 30px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-franchise-primary {
-  background: linear-gradient(135deg, var(--about-gold-soft), var(--about-gold));
-  color: #111;
-  font-weight: 600;
-  box-shadow: 0 12px 30px rgba(214, 164, 90, 0.35);
-}
-
-.btn-franchise-primary:hover {
+.back-to-top:hover {
+  background: var(--about-gold-soft);
   transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(214, 164, 90, 0.45);
+  box-shadow: 0 8px 20px rgba(214, 164, 90, 0.4);
 }
 
 /* Responsive Design */
@@ -702,90 +690,97 @@
     font-size: 2.5rem;
   }
   
-  .about-hero-subtitle {
-    font-size: 1.2rem;
-  }
-  
-  .about-story-content {
+  .story-grid,
+  .cta-content {
     grid-template-columns: 1fr;
     gap: 40px;
+  }
+  
+  .story-stats {
+    justify-content: center;
+  }
+  
+  .process-timeline {
+    grid-template-columns: 1fr;
   }
   
   .about-team-grid {
     grid-template-columns: 1fr;
   }
   
-  .about-dev-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  .testimonial-author {
+    flex-direction: column;
+    gap: 15px;
   }
   
-  .container {
-    padding: 0 15px;
-  }
-  
-  .about-section-title {
-    font-size: 2rem;
-  }
-
-  /* Franchise sections responsive */
-  .franchise-benefits-title,
-  .franchise-business-model-title,
-  .franchise-support-title,
-  .franchise-qualification-title {
-    font-size: 2rem;
-  }
-
-  .franchise-benefits-grid,
-  .franchise-support-grid,
-  .franchise-business-model-details,
-  .franchise-qualification-checklist {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .franchise-benefit-card,
-  .franchise-support-card,
-  .franchise-business-model-item,
-  .franchise-qualification-item {
-    padding: 24px;
+  .back-to-top {
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
   }
 }
 
-@media (max-width: 480px) {
-  .about-hero-title {
-    font-size: 2rem;
-  }
-  
-  .about-hero-subtitle {
-    font-size: 1.1rem;
-  }
-  
-  .about-team-card,
-  .about-dev-card {
-    padding: 25px;
-  }
-  
-  .about-story-card {
-    padding: 20px;
-  }
+/* Smooth Animations */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease;
+}
 
-  .franchise-benefits-title,
-  .franchise-business-model-title,
-  .franchise-support-title,
-  .franchise-qualification-title {
-    font-size: 1.75rem;
-  }
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-  .franchise-benefit-card,
-  .franchise-support-card,
-  .franchise-business-model-item,
-  .franchise-qualification-item {
-    padding: 20px;
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
+}
+/* Image Loading and Error States */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
 
-  .franchise-benefit-title,
-  .franchise-support-title-card,
-  .franchise-business-model-item-title {
-    font-size: 1.25rem;
-  }
+img[src=""], img:not([src]) {
+  opacity: 0.3;
+  background: var(--about-card-bg);
+  border: 1px solid var(--about-border);
+}
+
+/* Ensure images are visible */
+.story-img, 
+.slide-image img, 
+.step-image img, 
+.cta-image img {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Loading placeholder */
+.image-loading {
+  background: linear-gradient(90deg, var(--about-card-bg) 25%, rgba(255,255,255,0.1) 50%, var(--about-card-bg) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Force image display */
+.story-images img,
+.experience-slider img,
+.process-timeline img,
+.cta-image img {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }

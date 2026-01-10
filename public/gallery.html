@@ -348,7 +348,12 @@
                             <span class="art-artist">By Sarah Johnson</span>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="art-price">$450</span>
-                                <button class="btn btn-gold">View Details</button>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(1, 'Golden Horizon', 'Sarah Johnson', 450, 'assets/gallery/art1.jpg')">
+                                        <i class="fas fa-heart"></i> Wishlist
+                                    </button>
+                                    <button class="btn btn-gold">View Details</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -363,7 +368,12 @@
                             <span class="art-artist">By Michael Chen</span>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="art-price">$320</span>
-                                <button class="btn btn-gold">View Details</button>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(2, 'City Lights', 'Michael Chen', 320, 'assets/photowall.jpeg')">
+                                        <i class="fas fa-heart"></i> Wishlist
+                                    </button>
+                                    <button class="btn btn-gold">View Details</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -378,7 +388,12 @@
                             <span class="art-artist">By Elena Rodriguez</span>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="art-price">$780</span>
-                                <button class="btn btn-gold">View Details</button>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(3, 'Eternal Flow', 'Elena Rodriguez', 780, 'assets/gallery/art3.jpg')">
+                                        <i class="fas fa-heart"></i> Wishlist
+                                    </button>
+                                    <button class="btn btn-gold">View Details</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -394,7 +409,12 @@
                             <span class="art-artist">By Alex Turner</span>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="art-price">$290</span>
-                                <button class="btn btn-gold">View Details</button>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(4, 'Digital Dreams', 'Alex Turner', 290, 'assets/gallery/art4.jpg')">
+                                        <i class="fas fa-heart"></i> Wishlist
+                                    </button>
+                                    <button class="btn btn-gold">View Details</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -409,7 +429,12 @@
                             <span class="art-artist">By James Wilson</span>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="art-price">$520</span>
-                                <button class="btn btn-gold">View Details</button>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(5, 'Mountain Serenity', 'James Wilson', 520, 'assets/gallery/art5.jpg')">
+                                        <i class="fas fa-heart"></i> Wishlist
+                                    </button>
+                                    <button class="btn btn-gold">View Details</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -424,7 +449,12 @@
                             <span class="art-artist">By Olivia Parker</span>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="art-price">$380</span>
-                                <button class="btn btn-gold">View Details</button>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-light me-2" onclick="addToWishlist(6, 'Wilderness', 'Olivia Parker', 380, 'assets/gallery/art6.jpg')">
+                                        <i class="fas fa-heart"></i> Wishlist
+                                    </button>
+                                    <button class="btn btn-gold">View Details</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -500,6 +530,34 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Wishlist functionality
+        function addToWishlist(id, title, artist, price, image) {
+            // Get current wishlist from localStorage
+            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            
+            // Check if item already exists
+            const existingItem = wishlist.find(item => item.id === id);
+            if (existingItem) {
+                alert('This item is already in your wishlist!');
+                return;
+            }
+            
+            // Add new item to wishlist
+            wishlist.push({
+                id: id,
+                title: title,
+                artist: artist,
+                price: price,
+                image: image
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            
+            // Show success message
+            alert('Added to wishlist successfully!');
+        }
+
         // Simple filter functionality
         document.addEventListener('DOMContentLoaded', function() {
             const filterButtons = document.querySelectorAll('.category-btn');

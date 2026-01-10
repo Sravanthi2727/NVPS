@@ -1,0 +1,126 @@
+[
+  {
+    "title": "Advanced Coffee Brewing",
+    "description": "Master the art of precision brewing with advanced techniques. Learn pour-over methods, temperature control, and extraction principles.",
+    "date": "2026-02-18T10:00:00.000Z",
+    "type": "upcoming",
+    "category": "Coffee",
+    "image": "/assets/workshops/coffee-brewing.jpeg",
+    "meta": {
+      "duration": "3 hours",
+      "level": "Intermediate",
+      "tags": ["coffee", "brewing", "technique"]
+    },
+    "galleryImages": [],
+    "isActive": true,
+    "displayOrder": 1
+  },
+  {
+    "title": "Morden Calligraphy",
+    "description": "Create beautiful latte art designs. From basic hearts to advanced rosettas and tulips. Perfect for baristas and coffee enthusiasts.",
+    "date": "2026-03-15T14:00:00.000Z",
+    "type": "upcoming",
+    "category": "Coffee Art",
+    "image": "/assets/workshops/modern-calligraphy.jpg",
+    "meta": {
+      "duration": "2.5 hours",
+      "level": "Beginner",
+      "tags": ["Morden Calligraphy", "barista", "design"]
+    },
+    "galleryImages": [],
+    "isActive": true,
+    "displayOrder": 2
+  },
+  {
+    "title": "Watercolor Painting Workshop",
+    "description": "Explore the fluid beauty of watercolor painting. Learn techniques, color mixing, and create your own masterpiece in a relaxed café setting.",
+    "date": "2026-04-10T11:00:00.000Z",
+    "type": "upcoming",
+    "category": "Art",
+    "image": "/assets/workshops/watercolor.jpeg",
+    "meta": {
+      "duration": "3 hours",
+      "level": "All Levels",
+      "tags": ["watercolor", "painting", "art"]
+    },
+    "galleryImages": [],
+    "isActive": true,
+    "displayOrder": 3
+  },{
+    "title": "Beginner Pottery",
+    "description": "Explore the fluid beauty of watercolor painting. Learn techniques, color mixing, and create your own masterpiece in a relaxed café setting.",
+    "date": "2026-04-10T11:00:00.000Z",
+    "type": "upcoming",
+    "category": "Art",
+    "image": "/assets/workshops/pottery.jpg",
+    "meta": {
+      "duration": "3 hours",
+      "level": "All Levels",
+      "tags": ["Beginner Pottery", "painting", "art"]
+    },
+    "galleryImages": [],
+    "isActive": true,
+    "displayOrder": 3
+  },
+
+  {
+
+    "title": "Coffee Art Workshop",
+    "date": "2025-11-20T10:00:00.000Z",
+    "type": "past",
+    "category": "Coffee Education",
+    "description": "Learn about the unique characteristics of Robusta coffee, its flavor profile, and why it's special. Tasting session included.",
+    "image": "/assets/workshops/coffee_art.jpg",
+    "meta": {
+      "duration": "2 hours",
+      "level": "Beginner",
+      "tags": ["robusta", "coffee", "tasting"]
+    },
+    "galleryImages": [
+      "/assets/workshops/coffee_art-1.jpg",
+      "/assets/workshops/coffee_art-2.jpg",
+      "/assets/workshops/coffee_art-3.jpg"
+    ],
+    "isActive": true,
+    "displayOrder": 1
+  },
+  {
+    "title": "Lino Cut Art Workshop",
+    "date": "2025-10-15T14:00:00.000Z",
+    "type": "past",
+    "category": "Art",
+    "description": "Hands-on printmaking workshop where participants created their own prints using simple techniques. Great for beginners!",
+    "image": "/assets/workshops/printmaking.jpg",
+    "meta": {
+      "duration": "3 hours",
+      "level": "Beginner",
+      "tags": ["printmaking", "art", "craft"]
+    },
+    "galleryImages": [
+      "/assets/workshops/printmaking-1.jpg",
+      "/assets/workshops/printmaking-2.jpg",
+      "/assets/workshops/printmaking-3.jpg"
+    ],
+    "isActive": true,
+    "displayOrder": 2
+  },
+  {
+    "title": "Ganesha Making Workshop",
+    "date": "2025-09-25T16:00:00.000Z",
+    "type": "past",
+    "category": " Clay Modelling",
+    "description": " A mindful sculpting experience rooted in tradition",
+    "image": "/assets/workshops/ganesha-making.jpg",
+    "meta": {
+      "duration": "2 hours",
+      "level": "Intermediate",
+      "tags": ["Guided Session", "tradition", " Clay Modelling"]
+    },
+    "galleryImages": [
+      "/assets/workshops/cupping-1.jpg"
+    ],
+    "isActive": true,
+    "displayOrder": 3
+  }
+]
+

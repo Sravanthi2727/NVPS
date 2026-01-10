@@ -9,10 +9,19 @@
       rel="stylesheet"
     />
     <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/lazy-load.css" />
     <% if (typeof additionalCSS !== 'undefined' && additionalCSS) { %>
       <%- additionalCSS %>
     <% } %>
@@ -31,12 +40,12 @@
     <%- include("../partials/footer") %>
 
     <!-- GSAP -->
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" onerror="console.warn('GSAP failed to load'); window.gsap = null;"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" onerror="console.warn('ScrollTrigger failed to load');"></script>
     <script src="/js/animations.js"></script>
 
     <!-- THREE.JS (MUST COME BEFORE three-bg.js) -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js" onerror="console.warn('Three.js failed to load'); window.THREE = null;"></script>
 
     <!-- THREE BACKGROUND -->
     <script src="/js/three-bg.js"></script>
@@ -44,6 +53,7 @@
     <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/navbar.js"></script>
+    <script src="/js/lazy-load.js"></script>
     <% if (typeof additionalJS !== 'undefined' && additionalJS) { %>
       <%- additionalJS %>
     <% } %>

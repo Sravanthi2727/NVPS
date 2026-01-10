@@ -1,0 +1,177 @@
+<style>
+    :root {
+        --gold: #d6a45a;
+        --gold-soft: #e3b873;
+        --text: #f5f2ee;
+        --muted: rgba(245, 242, 238, 0.7);
+        --dark: #0a0a0a;
+        --darker: #000;
+    }
+    .gallery-item {
+        position: relative;
+        margin-bottom: 30px;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: all 0.4s ease;
+        background: rgba(20, 20, 20, 0.8);
+        border: 1px solid rgba(214, 164, 90, 0.2);
+    }
+    .gallery-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(214, 164, 90, 0.2);
+        border-color: var(--gold);
+    }
+    .gallery-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: all 0.5s ease;
+    }
+    .gallery-item:hover .gallery-img {
+        transform: scale(1.05);
+    }
+    .gallery-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        padding: 2rem 1.5rem 1.5rem;
+        color: white;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+    .gallery-item:hover .gallery-overlay {
+        transform: translateY(0);
+    }
+    .art-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--gold);
+        margin-bottom: 0.5rem;
+        font-size: 1.25rem;
+    }
+    .art-artist {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    .art-price {
+        font-weight: 600;
+        color: var(--gold);
+        font-size: 1.1rem;
+    }
+    .btn-gold {
+        background-color: var(--gold);
+        color: #000;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 30px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    .btn-gold:hover {
+        background-color: var(--gold-soft);
+        color: #000;
+        transform: translateY(-2px);
+    }
+    .category-btn {
+        background: transparent;
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        padding: 0.5rem 1.5rem;
+        margin: 0.25rem;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    .category-btn:hover, .category-btn.active {
+        background: var(--gold);
+        color: #000;
+        border-color: var(--gold);
+    }
+    .hero-section {
+        position: relative;
+        padding: 6rem 0;
+    }
+</style>
+
+<section class="hero-section position-relative overflow-hidden">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(rgba(139, 69, 19, 0.7), rgba(139, 69, 19, 0.5)), url('/assets/photowall.jpeg') center/cover; z-index: -1;"></div>
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-12 text-center">
+                <img src="/assets/logo-icon.png" alt="Rabuste Coffee Logo" style="display:block; margin:0 auto 20px auto; width:95px;">
+                <h1 class="font-playfair display-1 fw-bold mb-4 text-white">Our Gallery</h1>
+                <p class="lead mb-5 fs-4 text-white">Discover the warm, aesthetic beauty of our brown-themed café through these moments</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="gallery-section py-5" style="padding: 6rem 0;">
+    <div class="container">
+        <div class="d-flex flex-wrap category-filter justify-content-center mb-4">
+            <button class="category-btn active" data-filter="all">All Artworks</button>
+            <button class="category-btn" data-filter="painting">Paintings</button>
+            <button class="category-btn" data-filter="photography">Photography</button>
+            <button class="category-btn" data-filter="sculpture">Sculptures</button>
+            <button class="category-btn" data-filter="digital">Digital Art</button>
+        </div>
+
+        <div class="row">
+            <% if (typeof artworks !== 'undefined' && artworks.length > 0) { %>
+                <% artworks.forEach(artwork => { %>
+                    <div class="col-lg-4 col-md-6 mb-4" data-category="<%= artwork.category %>">
+                        <div class="gallery-item">
+                            <img src="<%= artwork.image.startsWith('/') ? artwork.image : '/assets/gallery/' + artwork.image %>" 
+                                 alt="<%= artwork.title %>" 
+                                 class="gallery-img"
+                                 onerror="this.src='/assets/photowall.jpeg'">
+                            <div class="gallery-overlay">
+                                <h3 class="art-title"><%= artwork.title %></h3>
+                                <span class="art-artist">By <%= artwork.artist %></span>
+                                <% if (artwork.description) { %>
+                                    <p class="text-white small mb-2"><%= artwork.description %></p>
+                                <% } %>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="art-price">₹<%= artwork.price %></span>
+                                    <button class="btn btn-gold">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">No artworks available at the moment.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.category-btn');
+        const galleryItems = document.querySelectorAll('[data-category]');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
