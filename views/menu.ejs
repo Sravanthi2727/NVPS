@@ -187,7 +187,7 @@
                                         <% 
 const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image) : '';
 const addToCartData = JSON.stringify([item._id, item.name, item.price, itemImage]);
-const addToWishlistData = JSON.stringify([item._id, item.name, item.price]);
+const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemImage]);
 %>
                                         <div class="mt-3 d-flex gap-2">
                                             <% if (isLoggedIn && currentUser) { %>
@@ -278,13 +278,13 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price]);
         });
     }
 
-    function addToWishlist(itemId, itemName, price) {
+    function addToWishlist(itemId, itemName, price, image) {
         if (!<%= typeof isLoggedIn !== 'undefined' ? isLoggedIn : false %>) {
             window.location.href = '/signin';
             return;
         }
         
-        fetch('/api/wishlist/add', {
+        fetch('/api/wishlist', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -292,7 +292,8 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price]);
             body: JSON.stringify({
                 itemId: itemId,
                 name: itemName,
-                price: price
+                price: price,
+                image: image
             })
         })
         .then(response => response.json())
