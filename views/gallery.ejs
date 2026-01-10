@@ -559,11 +559,11 @@
                         </div>
                         
                         <div class="modal-actions">
-                            <button class="btn btn-gold" onclick="addToWishlist('${artwork._id}', '${artwork.title}', '${artwork.artist}', ${artwork.price}, '${artwork.image}')">
+                            <button class="btn btn-gold" onclick="addArtToWishlist('${artwork._id}', '${artwork.title}', '${artwork.artist}', ${artwork.price}, '${artwork.image}')">
                                 <i class="fas fa-heart me-2"></i>Add to Wishlist
                             </button>
-                            <button class="btn btn-outline-light" onclick="purchaseArtwork('${artwork._id}')">
-                                <i class="fas fa-shopping-cart me-2"></i>Purchase
+                            <button class="btn btn-outline-light" onclick="addArtToCart('${artwork._id}', '${artwork.title}', '${artwork.artist}', ${artwork.price}, '${artwork.image}')">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                             </button>
                             <button class="btn btn-outline-light" onclick="inquireArtwork('${artwork._id}')">
                                 <i class="fas fa-envelope me-2"></i>Inquire
@@ -587,42 +587,72 @@
         document.body.style.overflow = 'auto';
     }
 
-    // Purchase artwork
-    function purchaseArtwork(artworkId) {
-        alert(`Purchase functionality for artwork would be implemented here. This would connect to your payment processing system.`);
-    }
-
     // Inquire about artwork
     function inquireArtwork(artworkId) {
-        alert(`Inquiry form for artwork would be implemented here. This would allow customers to ask questions or request additional information.`);
+        // Redirect to contact page or open inquiry modal
+        window.location.href = `/contact?artwork=${artworkId}`;
     }
 
-    // Add to wishlist
-    function addToWishlist(id, title, artist, price, image) {
-        // Get current wishlist from localStorage
-        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-        
-        // Check if item already exists
-        const existingItem = wishlist.find(item => item.id === id);
-        if (existingItem) {
-            alert('This item is already in your wishlist!');
-            return;
+    // Add art to wishlist (backend integration)
+    async function addArtToWishlist(artworkId, title, artist, price, image) {
+        try {
+            const response = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    itemId: artworkId,
+                    name: `${title} by ${artist}`,
+                    price: price,
+                    image: image,
+                    type: 'art'
+                })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Added to wishlist successfully!');
+            } else {
+                alert(result.message || 'Failed to add to wishlist');
+            }
+        } catch (error) {
+            console.error('Error adding to wishlist:', error);
+            alert('Error adding to wishlist. Please try again.');
         }
-        
-        // Add new item to wishlist
-        wishlist.push({
-            id: id,
-            title: title,
-            artist: artist,
-            price: price,
-            image: image
-        });
-        
-        // Save to localStorage
-        localStorage.setItem('wishlist', JSON.stringify(wishlist));
-        
-        // Show success message
-        alert('Added to wishlist successfully!');
+    }
+
+    // Add art to cart (backend integration)
+    async function addArtToCart(artworkId, title, artist, price, image) {
+        try {
+            const response = await fetch('/api/cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    itemId: artworkId,
+                    name: `${title} by ${artist}`,
+                    price: price,
+                    image: image,
+                    quantity: 1,
+                    type: 'art'
+                })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Added to cart successfully!');
+                closeModal();
+            } else {
+                alert(result.message || 'Failed to add to cart');
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            alert('Error adding to cart. Please try again.');
+        }
     }
 
     // Close modal when clicking outside

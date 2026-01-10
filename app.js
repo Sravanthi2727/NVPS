@@ -806,17 +806,24 @@ app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
 
 app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
   try {
-    const { itemId, name, price, image } = req.body;
+    console.log('=== WISHLIST API CALLED ===');
+    console.log('Request body:', req.body);
+    console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
+    console.log('User object:', req.user);
+    
+    const { itemId, name, price, image, type } = req.body;
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
     
     if (!user) {
+      console.error('User not found in database');
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     // Check if item already exists in wishlist
     const existingItem = user.wishlist.find(item => item.itemId === itemId);
     if (existingItem) {
+      console.log('Item already exists in wishlist');
       return res.json({ success: false, message: 'Item already in wishlist' });
     }
 
@@ -827,26 +834,27 @@ app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
     });
 
     // Create wishlist item and add to wishlist array
-    const wishlistItem = { itemId, name, price, image };
+    const wishlistItem = { 
+      itemId, 
+      name, 
+      price, 
+      image,
+      type: type || 'menu' // Default to menu if not specified
+    };
     user.wishlist.push(wishlistItem);
     
     console.log('Wishlist item to add:', wishlistItem);
-    console.log('User wishlist after push:', user.wishlist);
 
     // Mark only wishlist as modified, preserve other fields
     user.markModified('wishlist');
     await user.save();
 
-    console.log('User after save:', {
-      name: user.name,
-      email: user.email,
-      wishlistLength: user.wishlist.length
-    });
+    console.log('Wishlist item added successfully');
+    res.json({ success: true, message: 'Item added to wishlist successfully' });
 
-    res.json({ success: true, message: 'Item added to wishlist' });
   } catch (error) {
     console.error('Wishlist add error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
   }
 });
 
@@ -910,21 +918,33 @@ app.get('/api/user/orders', async (req, res) => {
 
 app.post('/api/cart', ensureAuthenticated, async (req, res) => {
   try {
-    const { itemId, name, price, image, quantity } = req.body;
+    console.log('=== CART API CALLED ===');
+    console.log('Request body:', req.body);
+    console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
+    console.log('User object:', req.user);
+    
+    const { itemId, name, price, image, quantity, type } = req.body;
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
     
     if (!user) {
+      console.error('User not found in database');
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     // Check if item already exists in cart
     const existingItem = user.cart.find(item => item.itemId === itemId);
     if (existingItem) {
-      // Update quantity instead of adding duplicate
+      // For art items, don't allow duplicates (unique pieces)
+      if (type === 'art') {
+        console.log('Art item already in cart, preventing duplicate');
+        return res.json({ success: false, message: 'This artwork is already in your cart. Art pieces are unique and cannot be duplicated.' });
+      }
+      // For menu items, update quantity
       existingItem.quantity += (quantity || 1);
       user.markModified('cart');
       await user.save();
+      console.log('Menu item quantity updated');
       return res.json({ success: true, message: 'Item quantity updated' });
     }
 
@@ -935,26 +955,28 @@ app.post('/api/cart', ensureAuthenticated, async (req, res) => {
     });
 
     // Create cart item and add to cart array
-    const cartItem = { itemId, name, price, image, quantity: quantity || 1 };
+    const cartItem = { 
+      itemId, 
+      name, 
+      price, 
+      image, 
+      quantity: type === 'art' ? 1 : (quantity || 1), // Art items always quantity 1
+      type: type || 'menu' // Default to menu if not specified
+    };
     user.cart.push(cartItem);
     
     console.log('Cart item to add:', cartItem);
-    console.log('User cart after push:', user.cart);
 
     // Mark only cart as modified, preserve other fields
     user.markModified('cart');
     await user.save();
 
-    console.log('User after save:', {
-      name: user.name,
-      email: user.email,
-      cartLength: user.cart.length
-    });
+    console.log('Cart item added successfully');
+    res.json({ success: true, message: 'Item added to cart successfully' });
 
-    res.json({ success: true, message: 'Item added to cart' });
   } catch (error) {
     console.error('Cart add error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
   }
 });
 
@@ -1260,7 +1282,8 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
         name: item.name,
         price: item.price,
         image: item.image,
-        quantity: item.quantity
+        quantity: item.quantity,
+        type: item.type || 'menu' // Include item type in order
       })),
       totalAmount: totalAmount,
       status: 'pending'

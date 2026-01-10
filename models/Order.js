@@ -21,6 +21,11 @@ const orderItemSchema = new mongoose.Schema({
     type: Number,
     required: true,
     default: 1
+  },
+  type: {
+    type: String,
+    enum: ['menu', 'art'],
+    default: 'menu'
   }
 });
 
