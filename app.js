@@ -806,17 +806,24 @@ app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
 
 app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
   try {
-    const { itemId, name, price, image } = req.body;
+    console.log('=== WISHLIST API CALLED ===');
+    console.log('Request body:', req.body);
+    console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
+    console.log('User object:', req.user);
+    
+    const { itemId, name, price, image, type } = req.body;
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
     
     if (!user) {
+      console.error('User not found in database');
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     // Check if item already exists in wishlist
     const existingItem = user.wishlist.find(item => item.itemId === itemId);
     if (existingItem) {
+      console.log('Item already exists in wishlist');
       return res.json({ success: false, message: 'Item already in wishlist' });
     }
 
@@ -827,26 +834,27 @@ app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
     });
 
     // Create wishlist item and add to wishlist array
-    const wishlistItem = { itemId, name, price, image };
+    const wishlistItem = { 
+      itemId, 
+      name, 
+      price, 
+      image,
+      type: type || 'menu' // Default to menu if not specified
+    };
     user.wishlist.push(wishlistItem);
     
     console.log('Wishlist item to add:', wishlistItem);
-    console.log('User wishlist after push:', user.wishlist);
 
     // Mark only wishlist as modified, preserve other fields
     user.markModified('wishlist');
     await user.save();
 
-    console.log('User after save:', {
-      name: user.name,
-      email: user.email,
-      wishlistLength: user.wishlist.length
-    });
+    console.log('Wishlist item added successfully');
+    res.json({ success: true, message: 'Item added to wishlist successfully' });
 
-    res.json({ success: true, message: 'Item added to wishlist' });
   } catch (error) {
     console.error('Wishlist add error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
   }
 });
 
@@ -879,23 +887,64 @@ app.get('/api/cart', ensureAuthenticated, async (req, res) => {
   }
 });
 
+// User: Get user's orders
+app.get('/api/user/orders', async (req, res) => {
+  try {
+    console.log('=== USER ORDERS API CALLED ===');
+    console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
+    console.log('User object:', req.user);
+    
+    // For debugging, let's get all orders first
+    const allOrders = await Order.find().sort({ createdAt: -1 });
+    console.log('Total orders in database:', allOrders.length);
+    
+    if (req.isAuthenticated && req.isAuthenticated()) {
+      const userId = req.user._id || req.user.id;
+      console.log('Fetching orders for authenticated user:', userId);
+      
+      const userOrders = await Order.find({ userId: userId }).sort({ createdAt: -1 });
+      console.log(`Found ${userOrders.length} orders for user ${userId}`);
+      
+      res.json(userOrders);
+    } else {
+      console.log('User not authenticated, returning all orders for debugging');
+      res.json(allOrders);
+    }
+  } catch (error) {
+    console.error('Error fetching user orders:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch orders', error: error.message });
+  }
+});
+
 app.post('/api/cart', ensureAuthenticated, async (req, res) => {
   try {
-    const { itemId, name, price, image, quantity } = req.body;
+    console.log('=== CART API CALLED ===');
+    console.log('Request body:', req.body);
+    console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
+    console.log('User object:', req.user);
+    
+    const { itemId, name, price, image, quantity, type } = req.body;
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
     
     if (!user) {
+      console.error('User not found in database');
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     // Check if item already exists in cart
     const existingItem = user.cart.find(item => item.itemId === itemId);
     if (existingItem) {
-      // Update quantity instead of adding duplicate
+      // For art items, don't allow duplicates (unique pieces)
+      if (type === 'art') {
+        console.log('Art item already in cart, preventing duplicate');
+        return res.json({ success: false, message: 'This artwork is already in your cart. Art pieces are unique and cannot be duplicated.' });
+      }
+      // For menu items, update quantity
       existingItem.quantity += (quantity || 1);
       user.markModified('cart');
       await user.save();
+      console.log('Menu item quantity updated');
       return res.json({ success: true, message: 'Item quantity updated' });
     }
 
@@ -906,26 +955,28 @@ app.post('/api/cart', ensureAuthenticated, async (req, res) => {
     });
 
     // Create cart item and add to cart array
-    const cartItem = { itemId, name, price, image, quantity: quantity || 1 };
+    const cartItem = { 
+      itemId, 
+      name, 
+      price, 
+      image, 
+      quantity: type === 'art' ? 1 : (quantity || 1), // Art items always quantity 1
+      type: type || 'menu' // Default to menu if not specified
+    };
     user.cart.push(cartItem);
     
     console.log('Cart item to add:', cartItem);
-    console.log('User cart after push:', user.cart);
 
     // Mark only cart as modified, preserve other fields
     user.markModified('cart');
     await user.save();
 
-    console.log('User after save:', {
-      name: user.name,
-      email: user.email,
-      cartLength: user.cart.length
-    });
+    console.log('Cart item added successfully');
+    res.json({ success: true, message: 'Item added to cart successfully' });
 
-    res.json({ success: true, message: 'Item added to cart' });
   } catch (error) {
     console.error('Cart add error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
   }
 });
 
@@ -1231,14 +1282,19 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
         name: item.name,
         price: item.price,
         image: item.image,
-        quantity: item.quantity
+        quantity: item.quantity,
+        type: item.type || 'menu' // Include item type in order
       })),
       totalAmount: totalAmount,
       status: 'pending'
     });
 
+    console.log('Creating order for user:', user._id, 'with', user.cart.length, 'items');
+
     // Save order
     await newOrder.save();
+
+    console.log('Order saved successfully:', newOrder._id);
 
     // Clear user's cart
     user.cart = [];
@@ -1263,6 +1319,58 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
     console.error('Checkout error:', error);
     res.status(500).json({ success: false, message: 'Failed to place order. Please try again.' });
   }
+});
+
+// Simple test route
+app.get('/test-route', (req, res) => {
+  res.json({ message: 'Test route working!' });
+});
+
+// Debug: Get current user info (temporary for testing)
+app.get('/api/debug/user', ensureAuthenticated, async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    console.log('Current user:', user ? { id: user._id, name: user.name, email: user.email } : 'Not found');
+    res.json({ 
+      user: user ? {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        cartLength: user.cart ? user.cart.length : 0
+      } : null
+    });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Debug: Get all orders (temporary for testing)
+app.get('/api/debug/orders', async (req, res) => {
+  try {
+    const allOrders = await Order.find().populate('userId', 'name email');
+    console.log('All orders in database:', allOrders.length);
+    res.json({ 
+      total: allOrders.length, 
+      orders: allOrders.map(o => ({
+        id: o._id,
+        userId: o.userId,
+        customerName: o.customerName,
+        status: o.status,
+        total: o.totalAmount,
+        date: o.orderDate
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching all orders:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Test endpoint to check if routes are working
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working!', timestamp: new Date() });
 });
 
 // Admin: Get all orders

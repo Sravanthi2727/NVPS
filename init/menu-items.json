@@ -5,7 +5,7 @@
     "price": 160,
     "category": "cold",
     "subCategory": "robusta-cold-non-milk",
-    "image": "iced-americano.jpg",
+    "image": "iced_americano.jpg",
     "displayOrder": 1,
     "reviews": [
       {
@@ -68,7 +68,7 @@
     "price": 270,
     "category": "cold",
     "subCategory": "robusta-cold-milk",
-    "image": "iced-mocha-blend.jpg",
+    "image": "iced_mocha_blend.jpg",
     "displayOrder": 11,
     "reviews": [
       {
@@ -89,7 +89,7 @@
     "price": 225,
     "category": "manual-brew",
     "subCategory": "cold-brew",
-    "image": "cold brew.jpg",
+    "image": "cold_brew.jpg",
     "displayOrder": 40,
     "reviews": [
       {
@@ -166,5 +166,30 @@
         "comment": "Best croissant I've had! Nutella filling is perfect."
       }
     ]
+  },
+  {
+
+    "name": "Mocha",
+    "description": "Perfect blend of coffee and chocolate",
+    "price": 260,
+    "category": "cold",
+    "subCategory": "robusta-cold-milk",
+    "image": "mocha.jpg",
+    "displayOrder": 40,
+    "reviews": [
+      {
+        "customer": "Divya Krishnan",
+        "rating": 5,
+        "comment": "Smoothest cold brew I've ever had. No bitterness at all!"
+      },
+      {
+        "customer": "Arjun Pillai",
+        "rating": 5,
+        "comment": "Worth the wait! Complex flavors and so refreshing."
+    }
+    ]
   }
+  
+
+
 ]
