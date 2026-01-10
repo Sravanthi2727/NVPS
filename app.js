@@ -13,7 +13,7 @@ const connectDB = require('./config/database');
 const User = require('./models/User');
 const MenuItem = require('./models/MenuItem');
 const Artwork = require('./models/Artwork');
-const Workshop = require('./models/Workshop');
+const WorkshopModel = require('./models/Workshop');
 
 // Connect to database
 connectDB();
@@ -26,10 +26,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Database Models
-const User = require('./models/User');
 const Wishlist = require('./models/Wishlist');
 const Cart = require('./models/Cart');
-const Workshop = require('./models/Workshop');
 const Request = require('./models/Request');
 
 passport.serializeUser((user, done) => done(null, user));
@@ -148,6 +146,62 @@ app.get('/', (req, res) => {
 // Menu route - Dynamic
 app.get('/menu', async (req, res) => {
   try {
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      // Return static data if database is not connected
+      const staticMenu = {
+        cold: {
+          'robusta-cold-non-milk': [
+            {
+              name: 'Robusta Iced Americano',
+              description: 'Bold Robusta espresso with chilled water',
+              price: 160,
+              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+            },
+            {
+              name: 'Robusta Cold Brew',
+              description: '24-hour cold extracted Robusta',
+              price: 180,
+              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+            }
+          ],
+          'robusta-cold-milk': [
+            {
+              name: 'Robusta Iced Latte',
+              description: 'Smooth Robusta with cold milk',
+              price: 200,
+              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+            }
+          ]
+        },
+        hot: {
+          'robusta-hot-non-milk': [
+            {
+              name: 'Robusta Black Coffee',
+              description: 'Pure Robusta espresso',
+              price: 120,
+              image: '/assets/menu images/Iced latte &Iced Americano.jpeg'
+            }
+          ]
+        }
+      };
+      
+      res.render('menu', {
+        title: 'Our Menu - Rabuste Coffee',
+        description: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
+        currentPage: '/menu',
+        keywords: 'coffee menu, robusta coffee, café menu, coffee drinks, food menu',
+        ogTitle: 'Our Menu - Rabuste Coffee',
+        ogDescription: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
+        ogType: 'website',
+        ogUrl: 'https://rabustecoffee.com/menu',
+        ogImage: '/assets/coffee-bg.jpeg',
+        canonicalUrl: 'https://rabustecoffee.com/menu',
+        menuItems: staticMenu
+      });
+      return;
+    }
+    
     const menuItems = await MenuItem.find({ isAvailable: true })
       .sort({ category: 1, subCategory: 1, displayOrder: 1 });
     
@@ -185,6 +239,48 @@ app.get('/menu', async (req, res) => {
 // Gallery route - Dynamic
 app.get('/gallery', async (req, res) => {
   try {
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      // Return static data if database is not connected
+      const staticArtworks = [
+        {
+          _id: '1',
+          title: 'Sunset Coffee',
+          artist: 'Rabuste Artist',
+          category: 'painting',
+          price: 2500,
+          image: '/assets/artwork1.jpg',
+          description: 'Beautiful sunset painting',
+          isAvailable: true
+        },
+        {
+          _id: '2', 
+          title: 'Coffee Dreams',
+          artist: 'Local Artist',
+          category: 'photography',
+          price: 1800,
+          image: '/assets/artwork2.jpg',
+          description: 'Coffee shop photography',
+          isAvailable: true
+        }
+      ];
+      
+      res.render('gallery', {
+        title: 'Art Gallery - Rabuste Coffee',
+        description: 'Discover the vibrant art collection at Rabuste Coffee, where coffee culture meets contemporary art.',
+        currentPage: '/gallery',
+        keywords: 'art gallery, coffee art, contemporary art, café art collection',
+        ogTitle: 'Art Gallery - Rabuste Coffee',
+        ogDescription: 'Discover the vibrant art collection at Rabuste Coffee, where coffee culture meets contemporary art.',
+        ogType: 'website',
+        ogUrl: 'https://rabustecoffee.com/gallery',
+        ogImage: '/assets/photowall.jpeg',
+        canonicalUrl: 'https://rabustecoffee.com/gallery',
+        artworks: staticArtworks
+      });
+      return;
+    }
+    
     const artworks = await Artwork.find({ isAvailable: true })
       .sort({ displayOrder: 1, createdAt: -1 });
     
@@ -250,13 +346,49 @@ app.get('/franchise', (req, res) => {
 
 app.get('/workshops', async (req, res) => {
   try {
-    const upcomingWorkshops = await Workshop.find({ 
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      // Return static data if database is not connected
+      const staticWorkshops = {
+        upcoming: [
+          {
+            _id: '1',
+            title: 'Coffee Brewing Basics',
+            date: '2024-02-15',
+            image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
+            description: 'Learn the fundamentals of coffee brewing',
+            type: 'upcoming'
+          }
+        ],
+        past: [
+          {
+            _id: '2',
+            title: 'Latte Art Workshop',
+            date: '2024-01-10',
+            image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
+            description: 'Master the art of latte making',
+            type: 'past'
+          }
+        ]
+      };
+      
+      res.render('workshops', {
+        title: 'Workshops - Rabuste Coffee',
+        description: 'Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.',
+        currentPage: '/workshops',
+        upcomingWorkshops: staticWorkshops.upcoming,
+        pastWorkshops: staticWorkshops.past
+      });
+      return;
+    }
+    
+    const upcomingWorkshops = await WorkshopModel.find({ 
       type: 'upcoming', 
       isActive: true,
       date: { $gte: new Date() }
     }).sort({ date: 1, displayOrder: 1 });
     
-    const pastWorkshops = await Workshop.find({ 
+    const pastWorkshops = await WorkshopModel.find({ 
       type: 'past', 
       isActive: true 
     }).sort({ date: -1, displayOrder: 1 });
@@ -508,7 +640,7 @@ app.delete('/api/cart/:id', ensureAuthenticated, async (req, res) => {
 
 app.get('/api/workshops', ensureAuthenticated, async (req, res) => {
   try {
-    const workshops = await Workshop.find({ userId: req.user.id }).populate('workshopId');
+    const workshops = await WorkshopModel.find({ userId: req.user.id }).populate('workshopId');
     res.json(workshops);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching workshops' });
@@ -518,7 +650,7 @@ app.get('/api/workshops', ensureAuthenticated, async (req, res) => {
 app.post('/api/workshops', ensureAuthenticated, async (req, res) => {
   try {
     const { workshopId, workshopName, date } = req.body;
-    const registration = new Workshop({
+    const registration = new WorkshopModel({
       userId: req.user.id,
       workshopId,
       workshopName,
@@ -534,7 +666,7 @@ app.post('/api/workshops', ensureAuthenticated, async (req, res) => {
 
 app.delete('/api/workshops/:id', ensureAuthenticated, async (req, res) => {
   try {
-    await Workshop.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    await WorkshopModel.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Error canceling workshop registration' });
