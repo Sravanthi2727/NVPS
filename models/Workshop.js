@@ -1,27 +1,54 @@
 const mongoose = require('mongoose');
 
 const workshopSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  workshopId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Workshop',
-    required: true
-  },
-  workshopName: String,
-  date: String,
-  status: {
+
+  title: {
     type: String,
-    enum: ['registered', 'cancelled'],
-    default: 'registered'
+    required: true,
+    trim: true
   },
-  createdAt: {
+  description: {
+    type: String,
+    trim: true
+  },
+  date: {
     type: Date,
-    default: Date.now
+    required: true
+  },
+  image: {
+    type: String,
+    default: ''
+  },
+  type: {
+    type: String,
+    required: true,
+    enum: ['upcoming', 'past'],
+    index: true
+  },
+  category: {
+    type: String,
+    trim: true
+  },
+  meta: {
+    tags: [String],
+    duration: String,
+    level: String
+  },
+  galleryImages: [String],
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  displayOrder: {
+    type: Number,
+    default: 0
   }
+}, {
+  timestamps: true
 });
 
+// Index for efficient queries
+workshopSchema.index({ type: 1, date: 1, displayOrder: 1 });
+
 module.exports = mongoose.model('Workshop', workshopSchema);
+

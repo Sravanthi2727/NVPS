@@ -5,20 +5,25 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "optimize-images": "node scripts/optimize-images.js"
+    "optimize-images": "node scripts/optimize-images.js",
+    "init-artworks": "node init-artworks.js",
+    "init-menu-items": "node init-menu-items.js",
+    "init-workshops": "node init-workshops.js",
+    "init-all": "node init-artworks.js && node init-menu-items.js && node init-workshops.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "dotenv": "^16.4.5",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
     "express": "^5.2.1",
     "express-ejs-layouts": "^2.5.1",
-    "express-session": "^1.18.1",
-    "mongoose": "^9.0.2"
-    ,"passport": "^0.7.0",
+    "express-session": "^1.18.2",
+    "mongoose": "^9.0.2",
+    "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {
