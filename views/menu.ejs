@@ -173,6 +173,7 @@
         margin-bottom: 0.8rem;
         display: -webkit-box;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -310,7 +311,7 @@
                         <i class="fas fa-<%= category === 'cold' ? 'snowflake' : category === 'hot' ? 'fire' : category === 'manual-brew' ? 'coffee' : category === 'shakes-tea' ? 'blender' : 'utensils' %> me-3"></i>
                         <%= categoryNames[category] || category %>
                     </h2>
-                                                        <% Object.keys(menuItems[category]).forEach(subCategory => { %>
+                    <% Object.keys(menuItems[category]).forEach(subCategory => { %>
                         <h4 class="font-playfair fw-bold mb-4" style="color: var(--primary);">
                             <%= subCategoryNames[subCategory] || subCategory %>
                         </h4>
@@ -330,29 +331,40 @@
                                         <% } %>
                                         <div class="menu-card-footer">
                                             <span class="menu-card-price">₹<%= item.price %></span>
-                                            <button class="menu-card-add" onclick="addToCart('<%= item.name %>', <%= item.price %>)">
-                                                Add +
+                                            <% 
+const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image) : '';
+%>
+                                            <div class="menu-card-actions">
+                                                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn && currentUser) { %>
+                                                    <!-- User is logged in - show Add + button -->
+                                                    <button class="menu-card-add add-to-cart-btn" 
+                                                            data-item-id="<%= item._id %>" 
+                                                            data-item-name="<%= item.name %>" 
+                                                            data-item-price="<%= item.price %>" 
+                                                            data-item-image="<%= itemImage %>">
+                                                        Add +
+                                                    </button>
+                                                <% } else { %>
+                                                    <!-- User not logged in - show Sign Up button -->
+                                                    <a href="/signup" class="menu-card-add" style="text-decoration: none; display: inline-block; text-align: center;">
+                                                        Sign Up
+                                                    </a>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn && currentUser) { %>
+                                        <!-- Only show wishlist button if user is logged in -->
+                                        <div class="mt-2 d-flex gap-2 justify-content-center">
+                                            <button class="btn btn-sm btn-outline-warning add-to-wishlist-btn" 
+                                                    data-item-id="<%= item._id %>" 
+                                                    data-item-name="<%= item.name %>" 
+                                                    data-item-price="<%= item.price %>" 
+                                                    data-item-image="<%= itemImage %>" 
+                                                    style="font-size: 0.8rem;">
+                                                <i class="fas fa-heart me-1"></i> Wishlist
                                             </button>
                                         </div>
-                                        <% 
-const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image) : '';
-const addToCartData = JSON.stringify([item._id, item.name, item.price, itemImage]);
-const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemImage]);
-%>
-                                        <div class="mt-3 d-flex gap-2">
-                                            <% if (isLoggedIn && currentUser) { %>
-                                                <button class="btn btn-sm btn-outline-light" onclick="addToCart(...<%= addToCartData %>)">
-                                                    <i class="fas fa-cart-plus me-1"></i> Add to Cart
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="addToWishlist(...<%= addToWishlistData %>)">
-                                                    <i class="fas fa-heart me-1"></i> Wishlist
-                                                </button>
-                                            <% } else { %>
-                                                <a href="/signin" class="btn btn-sm btn-outline-light">
-                                                    <i class="fas fa-sign-in-alt me-1"></i> Sign in to Order
-                                                </a>
-                                            <% } %>
-                                        </div>
+                                        <% } %>
                                     </div>
                                 </div>
                             <% }); %>
@@ -383,35 +395,7 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemI
         }
     }
 
-    // Add to cart function
-    function addToCart(itemName, price) {
-        // Simple cart functionality - you can expand this
-        console.log('Added to cart:', itemName, price);
-        
-        // Show a simple notification
-        const notification = document.createElement('div');
-        notification.className = 'cart-notification';
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--gold);
-            color: var(--dark);
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            z-index: 1000;
-            animation: slideInRight 0.3s ease;
-        `;
-        notification.textContent = `${itemName} added to cart!`;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.animation = 'slideOutRight 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
-        }, 2000);
-    }
-
+    // Filter functionality
     document.addEventListener('DOMContentLoaded', function() {
         const filterButtons = document.querySelectorAll('.filter-btn');
         const menuSections = document.querySelectorAll('.menu-section');
@@ -434,16 +418,37 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemI
                 });
             });
         });
+
+        // Add event listeners for cart buttons
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-item-id');
+                const itemName = this.getAttribute('data-item-name');
+                const itemPrice = parseFloat(this.getAttribute('data-item-price'));
+                const itemImage = this.getAttribute('data-item-image');
+                
+                addToCartItem(itemId, itemName, itemPrice, itemImage);
+            });
+        });
+
+        // Add event listeners for wishlist buttons
+        document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-item-id');
+                const itemName = this.getAttribute('data-item-name');
+                const itemPrice = parseFloat(this.getAttribute('data-item-price'));
+                const itemImage = this.getAttribute('data-item-image');
+                
+                addToWishlistItem(itemId, itemName, itemPrice, itemImage);
+            });
+        });
     });
 
     // Cart and Wishlist functions
-    function addToCart(itemId, itemName, price, image) {
-        if (!<%= typeof isLoggedIn !== 'undefined' ? isLoggedIn : false %>) {
-            window.location.href = '/signin';
-            return;
-        }
+    function addToCartItem(itemId, itemName, price, image) {
+        console.log('Adding to cart:', { itemId, itemName, price, image });
         
-        fetch('/api/cart/add', {
+        fetch('/api/cart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -456,12 +461,22 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemI
                 quantity: 1
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Cart API response status:', response.status);
+            if (response.status === 401) {
+                // Not authenticated, redirect to signin
+                console.log('User not authenticated, redirecting to signin');
+                window.location.href = '/signin';
+                return;
+            }
+            return response.json();
+        })
         .then(data => {
-            if (data.success) {
+            console.log('Cart API response data:', data);
+            if (data && data.success) {
                 showNotification('Item added to cart!', 'success');
                 updateCartCount();
-            } else {
+            } else if (data) {
                 showNotification(data.message || 'Failed to add item to cart', 'error');
             }
         })
@@ -471,11 +486,8 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemI
         });
     }
 
-    function addToWishlist(itemId, itemName, price, image) {
-        if (!<%= typeof isLoggedIn !== 'undefined' ? isLoggedIn : false %>) {
-            window.location.href = '/signin';
-            return;
-        }
+    function addToWishlistItem(itemId, itemName, price, image) {
+        console.log('Adding to wishlist:', { itemId, itemName, price, image });
         
         fetch('/api/wishlist', {
             method: 'POST',
@@ -489,12 +501,19 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemI
                 image: image
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 401) {
+                // Not authenticated, redirect to signin
+                window.location.href = '/signin';
+                return;
+            }
+            return response.json();
+        })
         .then(data => {
-            if (data.success) {
+            if (data && data.success) {
                 showNotification('Item added to wishlist!', 'success');
                 updateWishlistCount();
-            } else {
+            } else if (data) {
                 showNotification(data.message || 'Failed to add item to wishlist', 'error');
             }
         })
@@ -504,10 +523,20 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemI
         });
     }
 
+    // Notification system
     function showNotification(message, type) {
+        console.log('Showing notification:', message, type);
+        
+        // Create notification element
         const notification = document.createElement('div');
-        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed top-0 end-0 m-3`;
-        notification.style.cssText = 'z-index: 9999; right: 20px; max-width: 300px;';
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+        notification.style.cssText = `
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 300px;
+            animation: slideInRight 0.3s ease;
+        `;
         notification.innerHTML = `
             <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
             ${message}
@@ -515,13 +544,19 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemI
         
         document.body.appendChild(notification);
         
+        // Auto remove after 3 seconds
         setTimeout(() => {
-            notification.remove();
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
         }, 3000);
     }
 
     function updateCartCount() {
-        // Update cart count in navbar
+        // Update cart count in navbar if element exists
         fetch('/api/cart/count')
         .then(response => response.json())
         .then(data => {
@@ -534,7 +569,7 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemI
     }
 
     function updateWishlistCount() {
-        // Update wishlist count in navbar
+        // Update wishlist count in navbar if element exists
         fetch('/api/wishlist/count')
         .then(response => response.json())
         .then(data => {
@@ -545,4 +580,31 @@ const addToWishlistData = JSON.stringify([item._id, item.name, item.price, itemI
         })
         .catch(error => console.error('Error updating wishlist count:', error));
     }
+
+    // Add CSS for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
 </script>

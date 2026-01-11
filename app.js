@@ -212,64 +212,12 @@ app.get("/", viewCacheMiddleware(600), (req, res) => {
 // Menu route - Dynamic
 app.get('/menu', async (req, res) => {
   try {
-    // Check if database is connected
-    if (mongoose.connection.readyState !== 1) {
-      // Return static data if database is not connected
-      const staticMenu = {
-        cold: {
-          'robusta-cold-non-milk': [
-            {
-              name: 'Robusta Iced Americano',
-              description: 'Bold Robusta espresso with chilled water',
-              price: 160,
-              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
-            },
-            {
-              name: 'Robusta Cold Brew',
-              description: '24-hour cold extracted Robusta',
-              price: 180,
-              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
-            }
-          ],
-          'robusta-cold-milk': [
-            {
-              name: 'Robusta Iced Latte',
-              description: 'Smooth Robusta with cold milk',
-              price: 200,
-              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
-            }
-          ]
-        },
-        hot: {
-          'robusta-hot-non-milk': [
-            {
-              name: 'Robusta Black Coffee',
-              description: 'Pure Robusta espresso',
-              price: 120,
-              image: '/assets/assets/menu_images/Iced latte &Iced Americano.jpeg'
-            }
-          ]
-        }
-      };
-      
-      res.render('menu', {
-        title: 'Our Menu - Rabuste Coffee',
-        description: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
-        currentPage: '/menu',
-        keywords: 'coffee menu, robusta coffee, café menu, coffee drinks, food menu',
-        ogTitle: 'Our Menu - Rabuste Coffee',
-        ogDescription: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
-        ogType: 'website',
-        ogUrl: 'https://rabustecoffee.com/menu',
-        ogImage: '/assets/coffee-bg.jpeg',
-        canonicalUrl: 'https://rabustecoffee.com/menu',
-        menuItems: staticMenu
-      });
-      return;
-    }
+    console.log('Menu route called, database state:', mongoose.connection.readyState);
     
     const menuItems = await MenuItem.find({ isAvailable: true })
       .sort({ category: 1, subCategory: 1, displayOrder: 1 });
+    
+    console.log('Found menu items:', menuItems.length);
     
     // Group items by category and subcategory
     const groupedMenu = {};
@@ -283,6 +231,8 @@ app.get('/menu', async (req, res) => {
       groupedMenu[item.category][item.subCategory].push(item);
     });
 
+    console.log('Grouped menu structure:', Object.keys(groupedMenu));
+
     res.render('menu', {
       title: 'Our Menu - Rabuste Coffee',
       description: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
@@ -294,61 +244,25 @@ app.get('/menu', async (req, res) => {
       ogUrl: 'https://rabustecoffee.com/menu',
       ogImage: '/assets/coffee-bg.jpeg',
       canonicalUrl: 'https://rabustecoffee.com/menu',
-      menuItems: groupedMenu
+      menuItems: groupedMenu,
+      isLoggedIn: req.isAuthenticated ? req.isAuthenticated() : false,
+      currentUser: req.user || null
     });
   } catch (error) {
     console.error('Menu route error:', error);
-    res.status(500).send('Error loading menu');
+    res.status(500).send('Error loading menu: ' + error.message);
   }
 });
 
 // Gallery route - Dynamic
 app.get('/gallery', async (req, res) => {
   try {
-    // Check if database is connected
-    if (mongoose.connection.readyState !== 1) {
-      // Return static data if database is not connected
-      const staticArtworks = [
-        {
-          _id: '1',
-          title: 'Sunset Coffee',
-          artist: 'Rabuste Artist',
-          category: 'painting',
-          price: 2500,
-          image: '/assets/artwork1.jpg',
-          description: 'Beautiful sunset painting',
-          isAvailable: true
-        },
-        {
-          _id: '2', 
-          title: 'Coffee Dreams',
-          artist: 'Local Artist',
-          category: 'photography',
-          price: 1800,
-          image: '/assets/artwork2.jpg',
-          description: 'Coffee shop photography',
-          isAvailable: true
-        }
-      ];
-      
-      res.render('gallery', {
-        title: 'Art Gallery - Rabuste Coffee',
-        description: 'Discover the vibrant art collection at Rabuste Coffee, where coffee culture meets contemporary art.',
-        currentPage: '/gallery',
-        keywords: 'art gallery, coffee art, contemporary art, café art collection',
-        ogTitle: 'Art Gallery - Rabuste Coffee',
-        ogDescription: 'Discover the vibrant art collection at Rabuste Coffee, where coffee culture meets contemporary art.',
-        ogType: 'website',
-        ogUrl: 'https://rabustecoffee.com/gallery',
-        ogImage: '/assets/photowall.jpeg',
-        canonicalUrl: 'https://rabustecoffee.com/gallery',
-        artworks: staticArtworks
-      });
-      return;
-    }
+    console.log('Gallery route called, database state:', mongoose.connection.readyState);
     
     const artworks = await Artwork.find({ isAvailable: true })
       .sort({ displayOrder: 1, createdAt: -1 });
+    
+    console.log('Found artworks:', artworks.length);
     
     res.render('gallery', {
       title: 'Art Gallery - Rabuste Coffee',
@@ -365,7 +279,7 @@ app.get('/gallery', async (req, res) => {
     });
   } catch (error) {
     console.error('Gallery route error:', error);
-    res.status(500).send('Error loading gallery');
+    res.status(500).send('Error loading gallery: ' + error.message);
   }
 });
 
@@ -1324,6 +1238,29 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
 // Simple test route
 app.get('/test-route', (req, res) => {
   res.json({ message: 'Test route working!' });
+});
+
+// Debug: Check menu items in database
+app.get('/api/debug/menu-items', async (req, res) => {
+  try {
+    const menuItems = await MenuItem.find();
+    console.log('Total menu items in database:', menuItems.length);
+    res.json({
+      total: menuItems.length,
+      items: menuItems.map(item => ({
+        id: item._id,
+        name: item.name,
+        category: item.category,
+        subCategory: item.subCategory,
+        price: item.price,
+        isAvailable: item.isAvailable,
+        image: item.image
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching menu items:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Debug: Get current user info (temporary for testing)

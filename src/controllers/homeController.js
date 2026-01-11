@@ -38,16 +38,36 @@ const homeController = {
     });
   },
 
-  // Menu page - serve HTML file
+  // Menu page
   getMenu: (req, res) => {
-    const path = require('path');
-    res.sendFile(path.join(__dirname, '../../public', 'menu.html'));
+    res.render('menu', {
+      title: 'Menu - Rabuste Coffee',
+      description: 'Explore our premium Robusta coffee menu featuring bold flavors and artistic presentations.',
+      currentPage: '/menu',
+      keywords: 'coffee menu, robusta coffee drinks, premium coffee, café menu, Rabuste Coffee menu',
+      ogTitle: 'Menu - Rabuste Coffee',
+      ogDescription: 'Explore our premium Robusta coffee menu featuring bold flavors and artistic presentations.',
+      ogType: 'website',
+      ogUrl: 'https://rabustecoffee.com/menu',
+      ogImage: '/assets/coffee-bg.jpeg',
+      canonicalUrl: 'https://rabustecoffee.com/menu'
+    });
   },
 
-  // Gallery page - serve HTML file
+  // Gallery page
   getGallery: (req, res) => {
-    const path = require('path');
-    res.sendFile(path.join(__dirname, '../../public', 'gallery.html'));
+    res.render('gallery', {
+      title: 'Gallery - Rabuste Coffee',
+      description: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+      currentPage: '/gallery',
+      keywords: 'art gallery, coffee shop art, artwork for sale, Rabuste Coffee gallery',
+      ogTitle: 'Gallery - Rabuste Coffee',
+      ogDescription: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+      ogType: 'website',
+      ogUrl: 'https://rabustecoffee.com/gallery',
+      ogImage: '/assets/coffee-bg.jpeg',
+      canonicalUrl: 'https://rabustecoffee.com/gallery'
+    });
   },
 
   // Workshops page
