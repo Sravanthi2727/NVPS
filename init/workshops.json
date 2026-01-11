@@ -70,16 +70,16 @@
     "type": "past",
     "category": "Coffee Education",
     "description": "Learn about the unique characteristics of Robusta coffee, its flavor profile, and why it's special. Tasting session included.",
-    "image": "/assets/workshops/coffee_art.jpg",
+    "image": "/assets/workshops/coffee-art.jpg",
     "meta": {
       "duration": "2 hours",
       "level": "Beginner",
       "tags": ["robusta", "coffee", "tasting"]
     },
     "galleryImages": [
-      "/assets/workshops/coffee_art-1.jpg",
-      "/assets/workshops/coffee_art-2.jpg",
-      "/assets/workshops/coffee_art-3.jpg"
+      "/assets/workshops/coffee-art-1.jpg",
+      "/assets/workshops/coffee-art-2.jpg",
+      "/assets/workshops/coffee-art-3.jpg"
     ],
     "isActive": true,
     "displayOrder": 1

@@ -756,7 +756,10 @@ section {
 } */
 
 .why-robusta-section {
-  background-image: url(https://images.unsplash.com/photo-1509042239860-f550ce710b93);
+  background-image: url(/assets/home_bg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 .signature-section {
