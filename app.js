@@ -798,6 +798,28 @@ app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
   }
 });
 
+// Check wishlist status for specific items
+app.get('/api/wishlist/check', ensureAuthenticated, async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.json({ success: false, items: [] });
+    }
+
+    const wishlistItems = user.wishlist || [];
+    res.json({ 
+      success: true, 
+      items: wishlistItems,
+      exists: wishlistItems.length > 0 
+    });
+  } catch (error) {
+    console.error('Error checking wishlist status:', error);
+    res.json({ success: false, items: [] });
+  }
+});
+
 app.post('/api/wishlist', ensureAuthenticated, async (req, res) => {
   try {
     console.log('=== WISHLIST API CALLED ===');

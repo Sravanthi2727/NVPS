@@ -7,6 +7,196 @@
         --dark: #0a0a0a;
         --darker: #000;
     }
+    .menu-card {
+        background: var(--secondary);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(214, 164, 90, 0.1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .menu-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 24px rgba(214, 164, 90, 0.25);
+    }
+
+    .menu-card-image {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+        background: var(--dark);
+    }
+
+    .menu-card:hover .menu-card-image {
+        transform: scale(1.08);
+    }
+
+    .menu-card-content {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .menu-card-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--gold);
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+        flex-shrink: 0;
+    }
+
+    .menu-card-description {
+        color: #ffffff;
+        font-size: 1rem;
+        line-height: 1.4;
+        margin-bottom: 1rem;
+        flex-grow: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 2.4rem;
+    }
+
+    .menu-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-top: auto;
+        min-height: 70px;
+    }
+
+    .menu-card-price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gold);
+        flex-shrink: 0;
+    }
+
+    .menu-card-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex-shrink: 0;
+        align-items: flex-end;
+        min-width: 140px;
+    }
+
+    .menu-card-buttons {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .menu-card-add {
+        background: var(--gold);
+        color: var(--dark);
+        border: none;
+        border-radius: 8px;
+        padding: 0.7rem 1.2rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .menu-card-wishlist {
+        background: transparent;
+        color: var(--gold);
+        border: 1px solid var(--gold);
+        border-radius: 8px;
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .menu-card-wishlist:hover {
+        background: var(--gold);
+        color: var(--dark);
+        transform: translateY(-1px);
+    }
+
+    .menu-card-wishlist.in-wishlist {
+        background: #dc3545;
+        color: #fff;
+        border-color: #dc3545;
+    }
+
+    .menu-card-wishlist.in-wishlist:hover {
+        background: #c82333;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    .menu-card-wishlist.in-wishlist i {
+        color: #ffffff;
+    }
+
+    /* Notification System */
+    .alert {
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        border: none;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        border: none;
+    }
+
+    .position-fixed {
+        position: fixed;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+
     .gallery-item {
         position: relative;
         margin-bottom: 30px;
@@ -422,20 +612,42 @@
             <% if (typeof artworks !== 'undefined' && artworks.length > 0) { %>
                 <% artworks.forEach(artwork => { %>
                     <div class="col-lg-4 col-md-6 mb-4" data-category="<%= artwork.category %>">
-                        <div class="gallery-item">
+                        <div class="menu-card">
                             <img src="<%= artwork.image.startsWith('/') ? artwork.image : '/assets/gallery/' + artwork.image %>" 
-                                 alt="<%= artwork.title %>" 
-                                 class="gallery-img"
+                                 class="menu-card-image" 
+                                 alt="<%= artwork.title %>"
                                  onerror="this.src='/assets/photowall.jpeg'">
-                            <div class="gallery-overlay">
-                                <h3 class="art-title"><%= artwork.title %></h3>
-                                <span class="art-artist">By <%= artwork.artist %></span>
-                                <% if (artwork.description) { %>
-                                    <p class="text-white small mb-2"><%= artwork.description %></p>
-                                <% } %>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="art-price">₹<%= artwork.price %></span>
-                                    <button class="btn btn-gold" onclick="showArtworkDetails('<%= artwork._id %>')">View Details</button>
+                            <div class="menu-card-content">
+                                <h5 class="menu-card-title"><%= artwork.title %></h5>
+                                <p class="menu-card-description">By <%= artwork.artist %></p>
+                                <div class="menu-card-footer">
+                                    <span class="menu-card-price">₹<%= artwork.price %></span>
+                                    <div class="menu-card-actions">
+                                        <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn && currentUser) { %>
+                                            <!-- User is logged in - show both buttons -->
+                                            <div class="menu-card-buttons">
+                                                <button class="menu-card-wishlist add-to-wishlist-btn" 
+                                                        data-item-id="<%= artwork._id %>" 
+                                                        data-item-name="<%= artwork.title %>" 
+                                                        data-item-price="<%= artwork.price %>" 
+                                                        data-item-image="<%= artwork.image.startsWith('/') ? artwork.image : '/assets/gallery/' + artwork.image %>">
+                                                    <i class="far fa-heart"></i>
+                                                </button>
+                                                <button class="menu-card-add add-to-cart-btn" 
+                                                        data-item-id="<%= artwork._id %>" 
+                                                        data-item-name="<%= artwork.title %>" 
+                                                        data-item-price="<%= artwork.price %>" 
+                                                        data-item-image="<%= artwork.image.startsWith('/') ? artwork.image : '/assets/gallery/' + artwork.image %>">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </button>
+                                            </div>
+                                        <% } else { %>
+                                            <!-- User not logged in - show Sign Up button -->
+                                            <a href="/signup" class="menu-card-add" style="text-decoration: none; display: inline-block; text-align: center;">
+                                                Sign Up
+                                            </a>
+                                        <% } %>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -585,6 +797,203 @@
     function closeModal() {
         document.getElementById('artworkModal').classList.remove('show');
         document.body.style.overflow = 'auto';
+    }
+
+    // Add event listeners for wishlist and cart buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wishlist button click handlers
+        document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
+            button.addEventListener('click', async function() {
+                const itemId = this.dataset.itemId;
+                const itemName = this.dataset.itemName;
+                const itemPrice = this.dataset.itemPrice;
+                const itemImage = this.dataset.itemImage;
+                
+                console.log('Adding to wishlist:', { itemId, itemName, itemPrice, itemImage });
+                
+                try {
+                    const response = await fetch('/api/wishlist', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            itemId: itemId,
+                            name: itemName,
+                            price: parseFloat(itemPrice),
+                            image: itemImage,
+                            type: 'art'
+                        })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Change button to active state
+                        this.classList.add('in-wishlist');
+                        this.querySelector('i').classList.remove('far');
+                        this.querySelector('i').classList.add('fas');
+                        
+                        showNotification('Item added to wishlist!', 'success');
+                        
+                        // Refresh user dashboard if it's open
+                        if (window.location.pathname.includes('/user-dashboard')) {
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        showNotification(result.message || 'Failed to add to wishlist', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error adding to wishlist:', error);
+                    showNotification('Error adding to wishlist. Please try again.', 'error');
+                }
+            });
+        });
+
+        // Cart button click handlers
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', async function() {
+                const itemId = this.dataset.itemId;
+                const itemName = this.dataset.itemName;
+                const itemPrice = this.dataset.itemPrice;
+                const itemImage = this.dataset.itemImage;
+                
+                console.log('Adding to cart:', { itemId, itemName, itemPrice, itemImage });
+                
+                try {
+                    const response = await fetch('/api/cart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            itemId: itemId,
+                            name: itemName,
+                            price: parseFloat(itemPrice),
+                            image: itemImage,
+                            quantity: 1,
+                            type: 'art'
+                        })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification('Added to cart successfully!', 'success');
+                    } else {
+                        showNotification(result.message || 'Failed to add to cart', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error adding to cart:', error);
+                    showNotification('Error adding to cart. Please try again.', 'error');
+                }
+            });
+        });
+
+        // Check if items are already in wishlist on page load
+        checkWishlistStatus();
+    });
+
+    // Check wishlist status for all items
+    async function checkWishlistStatus() {
+        try {
+            // Only check if user is logged in
+            if (typeof isLoggedIn === 'undefined' || !isLoggedIn) {
+                console.log('User not logged in, skipping wishlist check');
+                return;
+            }
+
+            console.log('Checking wishlist status...');
+            const response = await fetch('/api/wishlist/check', {
+                method: 'GET',
+                credentials: 'same-origin'
+            });
+            
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            if (!response.ok) {
+                console.log('Wishlist check failed:', response.status);
+                return;
+            }
+            
+            const result = await response.json();
+            console.log('Raw wishlist result:', result);
+            console.log('Result type:', typeof result);
+            console.log('Result.success:', result.success);
+            console.log('Result.items:', result.items);
+            console.log('Result.items type:', typeof result.items);
+            
+            if (result && result.items) {
+                const wishlistItemIds = result.items.map(item => {
+                    console.log('Processing item:', item, 'itemId type:', typeof item.itemId, 'itemId value:', item.itemId);
+                    return item.itemId ? item.itemId.toString() : null;
+                }).filter(id => id !== null);
+                
+                console.log('Final wishlist item IDs:', wishlistItemIds);
+                
+                document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
+                    const itemId = button.dataset.itemId.toString();
+                    console.log('Checking button for item:', itemId, 'in wishlist:', wishlistItemIds.includes(itemId));
+                    
+                    if (wishlistItemIds.includes(itemId)) {
+                        console.log('✅ Item found in wishlist, making button active');
+                        button.classList.add('in-wishlist');
+                        const icon = button.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('far');
+                            icon.classList.add('fas');
+                        }
+                    } else {
+                        console.log('❌ Item not in wishlist, ensuring button is normal');
+                        button.classList.remove('in-wishlist');
+                        const icon = button.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('fas');
+                            icon.classList.add('far');
+                        }
+                    }
+                });
+            } else {
+                console.log('No valid result or items found');
+            }
+        } catch (error) {
+            console.error('Error checking wishlist status:', error);
+        }
+    }
+
+    // Notification system
+    function showNotification(message, type) {
+        console.log('Showing notification:', message, type);
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+        notification.style.cssText = `
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 300px;
+            animation: slideInRight 0.3s ease;
+        `;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            ${message}
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
     }
 
     // Inquire about artwork
