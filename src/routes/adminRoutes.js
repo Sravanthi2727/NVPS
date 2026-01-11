@@ -34,4 +34,8 @@ router.post('/art-requests/:id/update', ensureAdmin, adminController.updateArtRe
 router.get('/workshop-requests', ensureAdmin, adminController.getWorkshopRequests);
 router.post('/workshop-requests/:id/update', ensureAdmin, adminController.updateWorkshopRequest);
 
+// Workshop creation
+router.post('/workshops/create', ensureAdmin, adminController.createWorkshop);
+router.post('/workshops/draft', ensureAdmin, adminController.saveWorkshopDraft);
+
 module.exports = router;

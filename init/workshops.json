@@ -16,7 +16,7 @@
     "displayOrder": 1
   },
   {
-    "title": "Morden Calligraphy",
+    "title": "Modern Calligraphy",
     "description": "Create beautiful latte art designs. From basic hearts to advanced rosettas and tulips. Perfect for baristas and coffee enthusiasts.",
     "date": "2026-03-15T14:00:00.000Z",
     "type": "upcoming",
@@ -25,7 +25,7 @@
     "meta": {
       "duration": "2.5 hours",
       "level": "Beginner",
-      "tags": ["Morden Calligraphy", "barista", "design"]
+      "tags": ["Modern Calligraphy", "barista", "design"]
     },
     "galleryImages": [],
     "isActive": true,
@@ -70,16 +70,16 @@
     "type": "past",
     "category": "Coffee Education",
     "description": "Learn about the unique characteristics of Robusta coffee, its flavor profile, and why it's special. Tasting session included.",
-    "image": "/assets/workshops/coffee_art.jpg",
+    "image": "/assets/workshops/coffee-art.jpg",
     "meta": {
       "duration": "2 hours",
       "level": "Beginner",
       "tags": ["robusta", "coffee", "tasting"]
     },
     "galleryImages": [
-      "/assets/workshops/coffee_art-1.jpg",
-      "/assets/workshops/coffee_art-2.jpg",
-      "/assets/workshops/coffee_art-3.jpg"
+      "/assets/workshops/coffee-art-1.jpg",
+      "/assets/workshops/coffee-art-2.jpg",
+      "/assets/workshops/coffee-art-3.jpg"
     ],
     "isActive": true,
     "displayOrder": 1

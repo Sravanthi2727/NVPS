@@ -388,22 +388,23 @@
     <!-- GOLD DIVIDER -->
     <div class="gold-divider"></div>
 
-    <!-- RIGHT : EMAIL -->
+    <!-- RIGHT : ORGANIZE WORKSHOP -->
     <div class="community-right">
-      <h2>Stay in Touch</h2>
+      <h2>Organize Your Workshop</h2>
 
       <p class="community-text">
-        Be the first to know about upcoming sessions,
-        new workshops, and special community events.
+        Have an idea for a creative workshop? Share your vision with us
+        and let's bring it to life at Rabuste.
       </p>
 
-      <form class="email-form">
-        <input type="email" placeholder="Your email address" required>
-        <button type="submit">Notify Me</button>
-      </form>
+      <button class="organize-btn" onclick="openOrganizeModal()">
+        <i class="fas fa-plus-circle"></i>
+        Propose Workshop
+      </button>
 
-      <p class="email-note">
-        No spam. Just thoughtful updates, when it matters.
+      <p class="organize-note">
+        Submit your workshop idea and we'll help you make it happen.
+        Perfect for artists, creators, and coffee enthusiasts.
       </p>
     </div>
 
@@ -430,6 +431,132 @@
   </div>
 </div>
 
+<!-- ORGANIZE WORKSHOP MODAL -->
+<div class="modal" id="organizeModal" onclick="closeOrganizeModal()">
+  <div class="modal-content organize-modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3><i class="fas fa-calendar-plus"></i> Propose Your Workshop</h3>
+      <button class="close-btn" onclick="closeOrganizeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <form class="workshop-organize-form" id="organizeWorkshopForm">
+      <!-- Basic Information -->
+      <div class="form-section">
+        <h4><i class="fas fa-info-circle"></i> Workshop Details</h4>
+        
+        <div class="form-group">
+          <input type="text" id="proposedTitle" placeholder="Workshop Title *" required>
+        </div>
+        
+        <div class="form-group">
+          <select id="proposedCategory" required>
+            <option value="">Select Category *</option>
+            <option value="coffee">☕ Coffee & Brewing</option>
+            <option value="art">🎨 Visual Arts</option>
+            <option value="craft">✂️ Crafts & Making</option>
+            <option value="wellness">🧘 Wellness & Mindfulness</option>
+            <option value="culinary">🍳 Culinary Arts</option>
+            <option value="music">🎵 Music & Performance</option>
+            <option value="writing">✍️ Writing & Literature</option>
+            <option value="photography">📸 Photography</option>
+            <option value="other">🔧 Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <textarea id="proposedDescription" placeholder="Describe your workshop idea, what participants will learn, and what makes it special... *" rows="3" required></textarea>
+        </div>
+      </div>
+
+      <!-- Organizer Information -->
+      <div class="form-section">
+        <h4><i class="fas fa-user"></i> About You</h4>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <input type="text" id="organizerName" placeholder="Your Name *" required>
+          </div>
+          <div class="form-group">
+            <input type="email" id="organizerEmail" placeholder="Email Address *" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <input type="tel" id="organizerPhone" placeholder="Phone Number">
+        </div>
+        
+        <div class="form-group">
+          <textarea id="organizerExperience" placeholder="Tell us about your experience and qualifications..." rows="2"></textarea>
+        </div>
+      </div>
+
+      <!-- Workshop Logistics -->
+      <div class="form-section">
+        <h4><i class="fas fa-cogs"></i> Workshop Details</h4>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <input type="number" id="proposedDuration" placeholder="Duration (hours) *" min="1" max="8" step="0.5" required>
+          </div>
+          <div class="form-group">
+            <input type="number" id="proposedCapacity" placeholder="Max Participants *" min="1" max="30" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <select id="proposedSkillLevel">
+              <option value="">Skill Level</option>
+              <option value="beginner">Beginner Friendly</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+              <option value="all-levels">All Levels</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="number" id="proposedPrice" placeholder="Suggested Price ($)" min="0" step="5">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <input type="date" id="preferredDate" placeholder="Preferred Date">
+        </div>
+      </div>
+
+      <!-- Additional Information -->
+      <div class="form-section">
+        <h4><i class="fas fa-plus-circle"></i> Additional Info</h4>
+        
+        <div class="form-group">
+          <textarea id="materialsNeeded" placeholder="What materials or equipment will you need?" rows="2"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <select id="collaborationType">
+            <option value="">How would you like to collaborate?</option>
+            <option value="lead-solo">Lead independently</option>
+            <option value="co-facilitate">Co-facilitate with team</option>
+            <option value="guest-instructor">Guest instructor</option>
+            <option value="one-time">One-time workshop</option>
+            <option value="series">Workshop series</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <textarea id="additionalNotes" placeholder="Any additional notes or special requirements?" rows="2"></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-paper-plane"></i>
+        Submit Proposal
+      </button>
+    </form>
+  </div>
+</div>
+
 <!-- GALLERY MODAL -->
 <div class="modal" id="galleryModal" onclick="closeGallery()">
   <div class="modal-content gallery" id="galleryContent"
@@ -445,6 +572,14 @@
 
 <!-- Workshops JS -->
 <script src="/js/workshops.js"></script>
+
+<!-- Back to Top Button -->
+<button id="back-to-top" title="Back to Top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Footer -->
+<%- include('partials/footer') %>
 
 </body>
 </html>

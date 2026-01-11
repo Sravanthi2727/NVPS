@@ -145,6 +145,64 @@ const homeController = {
       ogImage: '/assets/coffee-bg.jpeg',
       canonicalUrl: 'https://rabustecoffee.com/philosophy'
     });
+  },
+
+  // Workshop proposal submission
+  submitWorkshopProposal: async (req, res) => {
+    try {
+      const proposalData = req.body;
+      
+      // Validate required fields
+      const requiredFields = ['title', 'category', 'description', 'organizerName', 'organizerEmail', 'duration', 'capacity'];
+      const missingFields = requiredFields.filter(field => !proposalData[field]);
+      
+      if (missingFields.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Missing required fields: ${missingFields.join(', ')}`
+        });
+      }
+      
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(proposalData.organizerEmail)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please provide a valid email address'
+        });
+      }
+      
+      // Here you would save to database
+      // const WorkshopProposal = require('../../models/WorkshopProposal');
+      // const newProposal = new WorkshopProposal(proposalData);
+      // await newProposal.save();
+      
+      console.log('Workshop proposal received:', {
+        title: proposalData.title,
+        organizer: proposalData.organizerName,
+        email: proposalData.organizerEmail,
+        category: proposalData.category,
+        duration: proposalData.duration,
+        capacity: proposalData.capacity,
+        submittedAt: new Date().toISOString()
+      });
+      
+      // Here you could also send email notifications
+      // await sendProposalConfirmationEmail(proposalData.organizerEmail, proposalData);
+      // await sendProposalNotificationToAdmin(proposalData);
+      
+      res.json({
+        success: true,
+        message: 'Workshop proposal submitted successfully! We\'ll review it and get back to you within 3-5 business days.',
+        proposalId: Math.floor(Math.random() * 10000) + 1 // Mock ID
+      });
+    } catch (error) {
+      console.error('Error submitting workshop proposal:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to submit workshop proposal. Please try again later.'
+      });
+    }
   }
 };
 
