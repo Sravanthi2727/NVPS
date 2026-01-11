@@ -21,11 +21,7 @@ const User = require('./models/User');
 const MenuItem = require('./models/MenuItem');
 const Artwork = require('./models/Artwork');
 const WorkshopModel = require('./models/Workshop');
-<<<<<<< HEAD
 const WorkshopRegistration = require('./models/WorkshopRegistration');
-=======
-const TeamModel = require('./models/Team');
->>>>>>> 87f36f5f8e8f9d12a171406bf9d57dbb71a0b967
 
 // Connect to database
 connectDB();
