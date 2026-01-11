@@ -21,6 +21,7 @@ const User = require('./models/User');
 const MenuItem = require('./models/MenuItem');
 const Artwork = require('./models/Artwork');
 const WorkshopModel = require('./models/Workshop');
+const TeamModel = require('./models/Team');
 
 // Connect to database
 connectDB();
@@ -461,147 +462,206 @@ app.get("/franchise", (req, res) => {
 
 app.get("/workshops", async (req, res) => {
   console.log("Workshops route accessed");
-  try {
-    // Check if database is connected
-    if (mongoose.connection.readyState !== 1) {
-      console.log("Database not connected, using static data");
-      // Return static data if database is not connected
-      const staticWorkshops = {
-        upcoming: [
-          {
-            title: "Advanced Coffee Brewing",
-            description: "Master the art of precision brewing with advanced techniques. Learn pour-over methods, temperature control, and extraction principles.",
-            date: "2026-02-18T10:00:00.000Z",
-            type: "upcoming",
-            category: "Coffee",
-            image: "/assets/workshops/coffee-brewing.jpeg",
-            meta: {
-              duration: "3 hours",
-              level: "Intermediate",
-              tags: ["coffee", "brewing", "technique"]
-            }
-          },
-          {
-            title: "Modern Calligraphy",
-            description: "Create beautiful latte art designs. From basic hearts to advanced rosettas and tulips. Perfect for baristas and coffee enthusiasts.",
-            date: "2026-03-15T14:00:00.000Z",
-            type: "upcoming",
-            category: "Coffee Art",
-            image: "/assets/workshops/modern-calligraphy.jpg",
-            meta: {
-              duration: "2.5 hours",
-              level: "Beginner",
-              tags: ["Modern Calligraphy", "barista", "design"]
-            }
-          },
-          {
-            title: "Watercolor Painting Workshop",
-            description: "Explore the fluid beauty of watercolor painting. Learn techniques, color mixing, and create your own masterpiece in a relaxed café setting.",
-            date: "2026-04-10T11:00:00.000Z",
-            type: "upcoming",
-            category: "Art",
-            image: "/assets/workshops/watercolor.jpeg",
-            meta: {
-              duration: "3 hours",
-              level: "All Levels",
-              tags: ["watercolor", "painting", "art"]
-            }
-          },
-          {
-            title: "Beginner Pottery",
-            description: "Explore the fluid beauty of pottery. Learn techniques, clay handling, and create your own masterpiece in a relaxed café setting.",
-            date: "2026-04-10T11:00:00.000Z",
-            type: "upcoming",
-            category: "Art",
-            image: "/assets/workshops/pottery.jpg",
-            meta: {
-              duration: "3 hours",
-              level: "All Levels",
-              tags: ["Beginner Pottery", "clay", "art"]
-            }
-          }
-        ],
-        past: [
-          {
-            title: "Coffee Art Workshop",
-            date: "2025-11-20T10:00:00.000Z",
-            type: "past",
-            category: "Coffee Education",
-            description: "Learn about the unique characteristics of Robusta coffee, its flavor profile, and why it's special. Tasting session included.",
-            image: "/assets/workshops/coffee_art.jpg",
-            meta: {
-              duration: "2 hours",
-              level: "Beginner",
-              tags: ["robusta", "coffee", "tasting"]
-            },
-            galleryImages: [
-              "/assets/workshops/coffee_art-1.jpg",
-              "/assets/workshops/coffee_art-2.jpg",
-              "/assets/workshops/coffee_art-3.jpg"
-            ]
-          },
-          {
-            title: "Lino Cut Art Workshop",
-            date: "2025-10-15T14:00:00.000Z",
-            type: "past",
-            category: "Art",
-            description: "Hands-on printmaking workshop where participants created their own prints using simple techniques. Great for beginners!",
-            image: "/assets/workshops/printmaking.jpg",
-            meta: {
-              duration: "3 hours",
-              level: "Beginner",
-              tags: ["printmaking", "art", "craft"]
-            },
-            galleryImages: [
-              "/assets/workshops/printmaking-1.jpg",
-              "/assets/workshops/printmaking-2.jpg",
-              "/assets/workshops/printmaking-3.jpg"
-            ]
-          },
-          {
-            title: "Ganesha Making Workshop",
-            date: "2025-09-25T16:00:00.000Z",
-            type: "past",
-            category: "Clay Modelling",
-            description: "A mindful sculpting experience rooted in tradition",
-            image: "/assets/workshops/ganesha-making.jpg",
-            meta: {
-              duration: "2 hours",
-              level: "Intermediate",
-              tags: ["Guided Session", "tradition", "Clay Modelling"]
-            },
-            galleryImages: [
-              "/assets/workshops/cupping-1.jpg"
-            ]
-          }
+  
+  // Static data fallback
+  const staticWorkshops = {
+    upcoming: [
+      {
+        title: "Advanced Coffee Brewing",
+        description: "Master the art of precision brewing with advanced techniques. Learn pour-over methods, temperature control, and extraction principles.",
+        date: "2026-02-18T10:00:00.000Z",
+        type: "upcoming",
+        category: "Coffee",
+        image: "/assets/workshops/coffee-brewing.jpeg",
+        meta: {
+          duration: "3 hours",
+          level: "Intermediate",
+          tags: ["coffee", "brewing", "technique"]
+        }
+      },
+      {
+        title: "Modern Calligraphy",
+        description: "Create beautiful latte art designs. From basic hearts to advanced rosettas and tulips. Perfect for baristas and coffee enthusiasts.",
+        date: "2026-03-15T14:00:00.000Z",
+        type: "upcoming",
+        category: "Coffee Art",
+        image: "/assets/workshops/modern-calligraphy.jpg",
+        meta: {
+          duration: "2.5 hours",
+          level: "Beginner",
+          tags: ["Modern Calligraphy", "barista", "design"]
+        }
+      },
+      {
+        title: "Watercolor Painting Workshop",
+        description: "Explore the fluid beauty of watercolor painting. Learn techniques, color mixing, and create your own masterpiece in a relaxed café setting.",
+        date: "2026-04-10T11:00:00.000Z",
+        type: "upcoming",
+        category: "Art",
+        image: "/assets/workshops/watercolor.jpeg",
+        meta: {
+          duration: "3 hours",
+          level: "All Levels",
+          tags: ["watercolor", "painting", "art"]
+        }
+      },
+      {
+        title: "Beginner Pottery",
+        description: "Explore the fluid beauty of pottery. Learn techniques, clay handling, and create your own masterpiece in a relaxed café setting.",
+        date: "2026-04-10T11:00:00.000Z",
+        type: "upcoming",
+        category: "Art",
+        image: "/assets/workshops/pottery.jpg",
+        meta: {
+          duration: "3 hours",
+          level: "All Levels",
+          tags: ["Beginner Pottery", "clay", "art"]
+        }
+      }
+    ],
+    past: [
+      {
+        title: "Coffee Art Workshop",
+        date: "2025-11-20T10:00:00.000Z",
+        type: "past",
+        category: "Coffee Education",
+        description: "Learn about the unique characteristics of Robusta coffee, its flavor profile, and why it's special. Tasting session included.",
+        image: "/assets/workshops/coffee_art.jpg",
+        meta: {
+          duration: "2 hours",
+          level: "Beginner",
+          tags: ["robusta", "coffee", "tasting"]
+        },
+        galleryImages: [
+          "/assets/workshops/coffee_art-1.jpg",
+          "/assets/workshops/coffee_art-2.jpg",
+          "/assets/workshops/coffee_art-3.jpg"
         ]
-      };
-      
-      console.log("Rendering with static data - upcoming:", staticWorkshops.upcoming.length, "past:", staticWorkshops.past.length);
-      
-      res.render("workshops", {
-        title: "Workshops - Rabuste Coffee",
-        description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
-        currentPage: "/workshops",
-        upcomingWorkshops: staticWorkshops.upcoming,
-        pastWorkshops: staticWorkshops.past,
-        layout: false // Disable layout for this route
-      });
-      return;
-    }
-    
-    console.log("Database connected, fetching from database");
-    const upcomingWorkshops = await WorkshopModel.find({ 
-      type: 'upcoming', 
-      isActive: true,
-    }).sort({ date: 1, displayOrder: 1 });
-    
-    const pastWorkshops = await WorkshopModel.find({ 
-      type: 'past', 
-      isActive: true 
-    }).sort({ date: -1, displayOrder: 1 });
+      },
+      {
+        title: "Lino Cut Art Workshop",
+        date: "2025-10-15T14:00:00.000Z",
+        type: "past",
+        category: "Art",
+        description: "Hands-on printmaking workshop where participants created their own prints using simple techniques. Great for beginners!",
+        image: "/assets/workshops/printmaking.jpg",
+        meta: {
+          duration: "3 hours",
+          level: "Beginner",
+          tags: ["printmaking", "art", "craft"]
+        },
+        galleryImages: [
+          "/assets/workshops/printmaking-1.jpg",
+          "/assets/workshops/printmaking-2.jpg",
+          "/assets/workshops/printmaking-3.jpg"
+        ]
+      },
+      {
+        title: "Ganesha Making Workshop",
+        date: "2025-09-25T16:00:00.000Z",
+        type: "past",
+        category: "Clay Modelling",
+        description: "A mindful sculpting experience rooted in tradition",
+        image: "/assets/workshops/ganesha-making.jpg",
+        meta: {
+          duration: "2 hours",
+          level: "Intermediate",
+          tags: ["Guided Session", "tradition", "Clay Modelling"]
+        },
+        galleryImages: [
+          "/assets/workshops/cupping-1.jpg"
+        ]
+      }
+    ]
+  };
 
-    console.log("Database results - upcoming:", upcomingWorkshops.length, "past:", pastWorkshops.length);
+  const staticTeam = [
+    {
+      name: "Rajesh Kumar",
+      role: "Founder & CEO",
+      bio: "Visionary entrepreneur with 15+ years in F&B industry. Passionate about bringing Robusta coffee to the forefront of Indian coffee culture.",
+      avatar: "RK",
+      social: {
+        linkedin: "#",
+        twitter: "#"
+      }
+    },
+    {
+      name: "Priya Mehta",
+      role: "Co-Founder & COO",
+      bio: "Operations expert specializing in scalable café models. Led expansion of 30+ locations across India with focus on operational excellence.",
+      avatar: "PM",
+      social: {
+        linkedin: "#",
+        instagram: "#"
+      }
+    },
+    {
+      name: "Amit Sharma",
+      role: "Co-Founder & CTO",
+      bio: "Tech innovator building AI-powered coffee experiences. Former tech lead at major e-commerce platforms, now revolutionizing café technology.",
+      avatar: "AS",
+      social: {
+        linkedin: "#",
+        github: "#"
+      }
+    }
+  ];
+
+  try {
+    let upcomingWorkshops = [];
+    let pastWorkshops = [];
+    let teamMembers = [];
+
+    // Always try to fetch from database first
+    if (mongoose.connection.readyState === 1) {
+      console.log("Database connected, fetching from database");
+      
+      try {
+        // Fetch workshops from database
+        upcomingWorkshops = await WorkshopModel.find({ 
+          type: 'upcoming', 
+          isActive: true,
+        }).sort({ date: 1, displayOrder: 1 });
+        
+        pastWorkshops = await WorkshopModel.find({ 
+          type: 'past', 
+          isActive: true 
+        }).sort({ date: -1, displayOrder: 1 });
+
+        // Fetch team members from database
+        teamMembers = await TeamModel.find({ 
+          isActive: true 
+        }).sort({ displayOrder: 1 });
+
+        console.log("Database results - upcoming:", upcomingWorkshops.length, "past:", pastWorkshops.length, "team:", teamMembers.length);
+
+        // Use database data if available, otherwise fallback to static
+        if (upcomingWorkshops.length === 0 && pastWorkshops.length === 0) {
+          console.log("No workshops in database, using static data");
+          upcomingWorkshops = staticWorkshops.upcoming;
+          pastWorkshops = staticWorkshops.past;
+        }
+
+        if (teamMembers.length === 0) {
+          console.log("No team members in database, using static data");
+          teamMembers = staticTeam;
+        }
+      } catch (dbError) {
+        console.error('Database query error:', dbError);
+        // Fallback to static data on error
+        console.log("Database query failed, using static data");
+        upcomingWorkshops = staticWorkshops.upcoming;
+        pastWorkshops = staticWorkshops.past;
+        teamMembers = staticTeam;
+      }
+    } else {
+      console.log("Database not connected, using static data");
+      // Use static data if database is not connected
+      upcomingWorkshops = staticWorkshops.upcoming;
+      pastWorkshops = staticWorkshops.past;
+      teamMembers = staticTeam;
+    }
 
     res.render("workshops", {
       title: "Workshops - Rabuste Coffee",
@@ -609,11 +669,21 @@ app.get("/workshops", async (req, res) => {
       currentPage: "/workshops",
       upcomingWorkshops: upcomingWorkshops,
       pastWorkshops: pastWorkshops,
+      teamMembers: teamMembers,
       layout: false // Disable layout for this route
     });
   } catch (error) {
     console.error('Workshops route error:', error);
-    res.status(500).send('Error loading workshops');
+    // On any error, use static data as fallback
+    res.render("workshops", {
+      title: "Workshops - Rabuste Coffee",
+      description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
+      currentPage: "/workshops",
+      upcomingWorkshops: staticWorkshops.upcoming,
+      pastWorkshops: staticWorkshops.past,
+      teamMembers: staticTeam,
+      layout: false
+    });
   }
 });
 
