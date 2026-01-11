@@ -222,6 +222,38 @@
             color: #dc3545;
         }
 
+        /* Franchise status styles */
+        .franchise-status {
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+        }
+
+        .franchise-status.status-pending {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+
+        .franchise-status.status-approved {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .franchise-status.status-rejected {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        .franchise-status.status-under-review {
+            background-color: rgba(23, 162, 184, 0.2);
+            color: #17a2b8;
+            border: 1px solid #17a2b8;
+        }
+
         @media (max-width: 767.98px) {
             .sidebar {
                 position: relative;
@@ -283,6 +315,11 @@
           <li class="nav-item">
             <a class="nav-link" href="#workshops" data-bs-toggle="pill">
               <i class="bi bi-brush"></i> Workshops
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#franchise" data-bs-toggle="pill">
+              <i class="bi bi-shop"></i> Franchise
             </a>
           </li>
           <li class="nav-item">
@@ -357,6 +394,26 @@
           <h3 style="color: #d6a45a; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px rgba(214, 164, 90, 0.2);">Registered Workshops</h3>
           <div class="row" id="workshopItems">
             <!-- Workshop items will be dynamically loaded here -->
+          </div>
+        </div>
+
+        <!-- Franchise Tab -->
+        <div class="tab-pane fade" id="franchise">
+          <h3 style="color: #d6a45a; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px rgba(214, 164, 90, 0.2);">My Franchise Applications</h3>
+          
+          <!-- Franchise Applications List -->
+          <div id="franchiseApplications">
+            <!-- Franchise applications will be dynamically loaded here -->
+          </div>
+          
+          <!-- Empty State -->
+          <div id="emptyFranchiseState" class="text-center py-5" style="display: none;">
+            <i class="bi bi-shop" style="font-size: 4rem; color: #666;"></i>
+            <h4 style="color: #666; margin-top: 1rem;">No Franchise Applications</h4>
+            <p style="color: #999;">You haven't submitted any franchise applications yet.</p>
+            <a href="/franchise" class="btn" style="background-color: #d6a45a; border: none; color: #000; margin-top: 1rem;">
+              <i class="bi bi-shop me-2"></i>Apply for Franchise
+            </a>
           </div>
         </div>
 
@@ -474,6 +531,22 @@ async function fetchRequests() {
     return await response.json();
   } catch (error) {
     console.error('Error fetching requests:', error);
+    return [];
+  }
+}
+
+async function fetchFranchise() {
+  try {
+    console.log('Fetching user franchise applications...');
+    const response = await fetch('/api/user/franchise');
+    if (!response.ok) {
+      throw new Error('Failed to fetch franchise applications');
+    }
+    const data = await response.json();
+    console.log('Fetched franchise applications:', data);
+    return data.success ? data.applications : [];
+  } catch (error) {
+    console.error('Error fetching franchise applications:', error);
     return [];
   }
 }
@@ -759,6 +832,145 @@ function renderRequests(requests) {
   `).join('');
 }
 
+function renderFranchise(applications) {
+  console.log('renderFranchise called with:', applications);
+  const container = document.getElementById('franchiseApplications');
+  const emptyState = document.getElementById('emptyFranchiseState');
+  
+  if (!container) {
+    console.error('franchiseApplications container not found!');
+    return;
+  }
+  
+  if (!emptyState) {
+    console.error('emptyFranchiseState container not found!');
+    return;
+  }
+  
+  if (applications.length === 0) {
+    console.log('No franchise applications found, showing empty state');
+    container.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  console.log('Rendering', applications.length, 'franchise applications');
+  container.style.display = 'block';
+  emptyState.style.display = 'none';
+
+  container.innerHTML = applications.map(app => {
+    const statusColor = app.status === 'approved' ? 'success' : 
+                       app.status === 'pending' ? 'warning' : 
+                       app.status === 'under-review' ? 'info' :
+                       app.status === 'rejected' ? 'danger' : 'secondary';
+    
+    const statusIcon = app.status === 'approved' ? 'check-circle' : 
+                      app.status === 'pending' ? 'clock' : 
+                      app.status === 'under-review' ? 'hourglass-split' :
+                      app.status === 'rejected' ? 'x-circle' : 'question-circle';
+    
+    const submittedDate = new Date(app.submittedAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+
+    const reviewedDate = app.reviewedAt ? new Date(app.reviewedAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }) : null;
+
+    return `
+      <div class="card mb-3" style="background-color: #1a1a1a; border: 1px solid #333;">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #2a2a2a; border-bottom: 1px solid #333;">
+          <div>
+            <h6 class="mb-0" style="color: #d6a45a;">
+              <i class="bi bi-shop me-2"></i>Franchise Application
+            </h6>
+            <small style="color: #ccc;">Submitted: ${submittedDate}</small>
+          </div>
+          <span class="badge bg-${statusColor}">
+            <i class="bi bi-${statusIcon} me-1"></i>
+            ${app.status.charAt(0).toUpperCase() + app.status.slice(1).replace('-', ' ')}
+          </span>
+        </div>
+        <div class="card-body" style="color: #f5f2ee;">
+          <div class="row">
+            <div class="col-md-8">
+              <h6 style="color: #d6a45a; margin-bottom: 10px;">
+                <i class="bi bi-person me-2"></i>Application Details:
+              </h6>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <small class="fw-bold">Location:</small><br>
+                  <small style="color: #ccc;">${app.city}</small>
+                </div>
+                <div class="col-md-6">
+                  <small class="fw-bold">Investment Range:</small><br>
+                  <small style="color: #ccc;">${app.investmentRange}</small>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <small class="fw-bold">Timeline:</small><br>
+                  <small style="color: #ccc;">${app.expectedTimeline}</small>
+                </div>
+                <div class="col-md-6">
+                  <small class="fw-bold">Phone:</small><br>
+                  <small style="color: #ccc;">${app.phoneNumber}</small>
+                </div>
+              </div>
+              ${app.businessExperience ? `
+                <div class="mb-3">
+                  <small class="fw-bold">Business Experience:</small><br>
+                  <small style="color: #ccc;">${app.businessExperience}</small>
+                </div>
+              ` : ''}
+            </div>
+            <div class="col-md-4 text-end">
+              <div class="mb-2">
+                <small style="color: #ccc;">Application ID:</small><br>
+                <code style="color: #d6a45a;">#${app._id.slice(-6).toUpperCase()}</code>
+              </div>
+              ${reviewedDate ? `
+                <div class="mb-2">
+                  <small style="color: #ccc;">Reviewed:</small><br>
+                  <small style="color: #f5f2ee;">${reviewedDate}</small>
+                  ${app.reviewedBy ? `<br><small style="color: #ccc;">by ${app.reviewedBy}</small>` : ''}
+                </div>
+              ` : ''}
+              ${app.adminNotes ? `
+                <div class="alert alert-info" style="background-color: rgba(23, 162, 184, 0.1); border: 1px solid #17a2b8; color: #17a2b8; font-size: 0.8rem; padding: 0.5rem;">
+                  <strong>Admin Notes:</strong><br>
+                  ${app.adminNotes}
+                </div>
+              ` : ''}
+              ${app.status === 'pending' ? `
+                <small style="color: #f39c12;">
+                  <i class="bi bi-clock"></i> Under review by our team
+                </small>
+              ` : app.status === 'approved' ? `
+                <small style="color: #28a745;">
+                  <i class="bi bi-check-circle"></i> Congratulations! Application approved
+                </small>
+              ` : app.status === 'rejected' ? `
+                <small style="color: #dc3545;">
+                  <i class="bi bi-x-circle"></i> Application not approved
+                </small>
+              ` : app.status === 'under-review' ? `
+                <small style="color: #17a2b8;">
+                  <i class="bi bi-hourglass-split"></i> Currently under detailed review
+                </small>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 async function removeFromWishlist(itemId) {
   try {
     const response = await fetch(`/api/wishlist/${itemId}`, {
@@ -896,13 +1108,15 @@ document.addEventListener('DOMContentLoaded', async function() {
   const orders = await fetchOrders();
   const workshops = await fetchWorkshops();
   const requests = await fetchRequests();
+  const franchise = await fetchFranchise();
 
   console.log('Dashboard data loaded:', {
     wishlist: wishlist.length,
     cart: cart.length, 
     orders: orders.length,
     workshops: workshops.length,
-    requests: requests.length
+    requests: requests.length,
+    franchise: franchise.length
   });
 
   renderWishlist(wishlist);
@@ -910,6 +1124,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   renderOrders(orders);
   renderWorkshops(workshops);
   renderRequests(requests);
+  renderFranchise(franchise);
 
   // Auto-refresh wishlist every 5 seconds
   setInterval(async () => {

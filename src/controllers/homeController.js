@@ -38,36 +38,16 @@ const homeController = {
     });
   },
 
-  // Menu page
+  // Menu page - serve HTML file
   getMenu: (req, res) => {
-    res.render('menu', {
-      title: 'Menu - Rabuste Coffee',
-      description: 'Explore our premium Robusta coffee menu featuring bold flavors and artistic presentations.',
-      currentPage: '/menu',
-      keywords: 'coffee menu, robusta coffee drinks, premium coffee, café menu, Rabuste Coffee menu',
-      ogTitle: 'Menu - Rabuste Coffee',
-      ogDescription: 'Explore our premium Robusta coffee menu featuring bold flavors and artistic presentations.',
-      ogType: 'website',
-      ogUrl: 'https://rabustecoffee.com/menu',
-      ogImage: '/assets/coffee-bg.jpeg',
-      canonicalUrl: 'https://rabustecoffee.com/menu'
-    });
+    const path = require('path');
+    res.sendFile(path.join(__dirname, '../../public', 'menu.html'));
   },
 
-  // Gallery page
+  // Gallery page - serve HTML file
   getGallery: (req, res) => {
-    res.render('gallery', {
-      title: 'Gallery - Rabuste Coffee',
-      description: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
-      currentPage: '/gallery',
-      keywords: 'art gallery, coffee shop art, artwork for sale, Rabuste Coffee gallery',
-      ogTitle: 'Gallery - Rabuste Coffee',
-      ogDescription: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
-      ogType: 'website',
-      ogUrl: 'https://rabustecoffee.com/gallery',
-      ogImage: '/assets/coffee-bg.jpeg',
-      canonicalUrl: 'https://rabustecoffee.com/gallery'
-    });
+    const path = require('path');
+    res.sendFile(path.join(__dirname, '../../public', 'gallery.html'));
   },
 
   // Workshops page
@@ -145,64 +125,6 @@ const homeController = {
       ogImage: '/assets/coffee-bg.jpeg',
       canonicalUrl: 'https://rabustecoffee.com/philosophy'
     });
-  },
-
-  // Workshop proposal submission
-  submitWorkshopProposal: async (req, res) => {
-    try {
-      const proposalData = req.body;
-      
-      // Validate required fields
-      const requiredFields = ['title', 'category', 'description', 'organizerName', 'organizerEmail', 'duration', 'capacity'];
-      const missingFields = requiredFields.filter(field => !proposalData[field]);
-      
-      if (missingFields.length > 0) {
-        return res.status(400).json({
-          success: false,
-          message: `Missing required fields: ${missingFields.join(', ')}`
-        });
-      }
-      
-      // Email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(proposalData.organizerEmail)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Please provide a valid email address'
-        });
-      }
-      
-      // Here you would save to database
-      // const WorkshopProposal = require('../../models/WorkshopProposal');
-      // const newProposal = new WorkshopProposal(proposalData);
-      // await newProposal.save();
-      
-      console.log('Workshop proposal received:', {
-        title: proposalData.title,
-        organizer: proposalData.organizerName,
-        email: proposalData.organizerEmail,
-        category: proposalData.category,
-        duration: proposalData.duration,
-        capacity: proposalData.capacity,
-        submittedAt: new Date().toISOString()
-      });
-      
-      // Here you could also send email notifications
-      // await sendProposalConfirmationEmail(proposalData.organizerEmail, proposalData);
-      // await sendProposalNotificationToAdmin(proposalData);
-      
-      res.json({
-        success: true,
-        message: 'Workshop proposal submitted successfully! We\'ll review it and get back to you within 3-5 business days.',
-        proposalId: Math.floor(Math.random() * 10000) + 1 // Mock ID
-      });
-    } catch (error) {
-      console.error('Error submitting workshop proposal:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Failed to submit workshop proposal. Please try again later.'
-      });
-    }
   }
 };
 

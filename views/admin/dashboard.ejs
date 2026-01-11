@@ -276,6 +276,9 @@
                 <a href="/admin/workshop-requests">
                     <i class="fas fa-calendar-alt"></i>Workshop Requests
                 </a>
+                <a href="/admin/franchise">
+                    <i class="fas fa-store"></i>Franchise Applications
+                </a>
                 
                 <hr style="border-color: #333; margin: 1rem 1.5rem;">
                 
@@ -306,7 +309,7 @@
                 <!-- Dashboard Content -->
                 <div class="row g-4 mb-4">
                     <!-- Cart Requests Card -->
-                    <div class="col-md-6 col-lg-4">
+                    <div class="col-md-6 col-lg-3">
                         <div class="admin-card">
                             <h3><i class="fas fa-shopping-cart me-2"></i>Cart Requests</h3>
                             <div class="admin-card-number">12</div>
@@ -316,7 +319,7 @@
                     </div>
 
                     <!-- Art Requests Card -->
-                    <div class="col-md-6 col-lg-4">
+                    <div class="col-md-6 col-lg-3">
                         <div class="admin-card">
                             <h3><i class="fas fa-palette me-2"></i>Art Requests</h3>
                             <div class="admin-card-number">5</div>
@@ -326,12 +329,22 @@
                     </div>
 
                     <!-- Workshop Requests Card -->
-                    <div class="col-md-6 col-lg-4">
+                    <div class="col-md-6 col-lg-3">
                         <div class="admin-card">
                             <h3><i class="fas fa-calendar-alt me-2"></i>Workshop Requests</h3>
                             <div class="admin-card-number">8</div>
                             <div class="admin-card-subtitle">Pending bookings</div>
                             <a href="/admin/workshop-requests" class="btn btn-primary">Manage Workshops</a>
+                        </div>
+                    </div>
+
+                    <!-- Franchise Applications Card -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="admin-card">
+                            <h3><i class="fas fa-store me-2"></i>Franchise Applications</h3>
+                            <div class="admin-card-number" id="franchiseCount">-</div>
+                            <div class="admin-card-subtitle">Pending applications</div>
+                            <a href="/admin/franchise" class="btn btn-primary">Review Applications</a>
                         </div>
                     </div>
                 </div>
@@ -409,6 +422,23 @@
                 !toggle.contains(e.target) && 
                 sidebar.classList.contains('show')) {
                 sidebar.classList.remove('show');
+            }
+        });
+
+        // Load franchise count on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('/api/admin/franchise');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        const pendingCount = data.applications.filter(app => app.status === 'pending').length;
+                        document.getElementById('franchiseCount').textContent = pendingCount;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading franchise count:', error);
+                document.getElementById('franchiseCount').textContent = '0';
             }
         });
     </script>

@@ -51,6 +51,7 @@ const Wishlist = require('./models/Wishlist');
 const Cart = require('./models/Cart');
 const Request = require('./models/Request');
 const Order = require('./models/Order');
+const Franchise = require('./models/Franchise');
 
 // Controllers
 const adminController = require('./src/controllers/adminController');
@@ -370,7 +371,86 @@ app.get("/franchise", (req, res) => {
       "$150K - $200K",
       "$200K+",
     ],
+    isLoggedIn: res.locals.isLoggedIn || false,
+    currentUser: res.locals.currentUser || null
   });
+});
+
+// Franchise application submission
+app.post("/franchise", ensureAuthenticated, async (req, res) => {
+  try {
+    const {
+      fullName,
+      phoneNumber,
+      city,
+      investmentRange,
+      expectedTimeline,
+      businessExperience
+    } = req.body;
+
+    // Use the authenticated user's email
+    const email = req.user.email;
+
+    // Validate required fields
+    if (!fullName || !phoneNumber || !city || !investmentRange || !expectedTimeline) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please fill in all required fields'
+      });
+    }
+
+    // Check if application already exists for this user
+    const existingApplication = await Franchise.findOne({ 
+      $or: [
+        { userId: req.user._id || req.user.id },
+        { email: email.toLowerCase() }
+      ]
+    });
+    
+    if (existingApplication) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have already submitted a franchise application. Check your dashboard for status updates.'
+      });
+    }
+
+    // Create new franchise application
+    const franchiseApplication = new Franchise({
+      userId: req.user._id || req.user.id,
+      fullName: fullName.trim(),
+      email: email.toLowerCase().trim(),
+      phoneNumber: phoneNumber.trim(),
+      city: city.trim(),
+      investmentRange,
+      expectedTimeline,
+      businessExperience: businessExperience ? businessExperience.trim() : '',
+      status: 'pending'
+    });
+
+    await franchiseApplication.save();
+
+    console.log('New franchise application submitted:', {
+      id: franchiseApplication._id,
+      name: franchiseApplication.fullName,
+      email: franchiseApplication.email,
+      city: franchiseApplication.city,
+      investmentRange: franchiseApplication.investmentRange,
+      userId: franchiseApplication.userId
+    });
+
+    res.json({
+      success: true,
+      message: 'Your franchise application has been submitted successfully! You can track its status in your dashboard.',
+      applicationId: franchiseApplication._id
+    });
+
+  } catch (error) {
+    console.error('Franchise application error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'An error occurred while submitting your application. Please try again.'
+    });
+  }
 });
 
 app.get("/workshops", async (req, res) => {
@@ -827,6 +907,39 @@ app.get('/api/user/orders', async (req, res) => {
   } catch (error) {
     console.error('Error fetching user orders:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch orders', error: error.message });
+  }
+});
+
+// User: Get user's franchise applications
+app.get('/api/user/franchise', async (req, res) => {
+  try {
+    console.log('=== USER FRANCHISE API CALLED ===');
+    console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
+    console.log('User object:', req.user);
+    
+    if (req.isAuthenticated && req.isAuthenticated()) {
+      const userId = req.user._id || req.user.id;
+      const userEmail = req.user.email;
+      
+      console.log('Fetching franchise applications for user:', userId, userEmail);
+      
+      // Find applications by userId or email (for backward compatibility)
+      const userApplications = await Franchise.find({
+        $or: [
+          { userId: userId },
+          { email: userEmail }
+        ]
+      }).sort({ submittedAt: -1 });
+      
+      console.log(`Found ${userApplications.length} franchise applications for user`);
+      
+      res.json({ success: true, applications: userApplications });
+    } else {
+      res.status(401).json({ success: false, message: 'Authentication required' });
+    }
+  } catch (error) {
+    console.error('Error fetching user franchise applications:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch franchise applications', error: error.message });
   }
 });
 
@@ -1310,6 +1423,57 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!', timestamp: new Date() });
 });
 
+// Debug: Create test franchise application
+app.post('/api/debug/create-franchise', async (req, res) => {
+  try {
+    const testApplication = new Franchise({
+      fullName: 'Test Applicant',
+      email: 'test@example.com',
+      phoneNumber: '1234567890',
+      city: 'Mumbai',
+      investmentRange: '$75K - $100K',
+      expectedTimeline: '6-12 months',
+      businessExperience: 'I have 5 years of retail experience',
+      status: 'pending'
+    });
+
+    await testApplication.save();
+    console.log('Test franchise application created:', testApplication._id);
+    
+    res.json({ 
+      success: true, 
+      message: 'Test application created',
+      application: testApplication
+    });
+  } catch (error) {
+    console.error('Error creating test application:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Debug: Get all franchise applications (temporary for testing)
+app.get('/api/debug/franchise', async (req, res) => {
+  try {
+    const allApplications = await Franchise.find().sort({ submittedAt: -1 });
+    console.log('All franchise applications in database:', allApplications.length);
+    res.json({ 
+      total: allApplications.length, 
+      applications: allApplications.map(app => ({
+        id: app._id,
+        name: app.fullName,
+        email: app.email,
+        city: app.city,
+        status: app.status,
+        submittedAt: app.submittedAt,
+        userId: app.userId
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching all franchise applications:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Admin: Get all orders
 app.get('/api/admin/orders', ensureAdmin, async (req, res) => {
   try {
@@ -1354,6 +1518,64 @@ app.post('/api/admin/orders/:id/status', ensureAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error updating order status:', error);
     res.status(500).json({ success: false, message: 'Failed to update order status' });
+  }
+});
+
+// Admin: Get all franchise applications
+app.get('/api/admin/franchise', ensureAdmin, async (req, res) => {
+  try {
+    console.log('=== ADMIN FRANCHISE API CALLED ===');
+    const applications = await Franchise.find()
+      .sort({ submittedAt: -1 });
+
+    console.log('Found franchise applications:', applications.length);
+    applications.forEach(app => {
+      console.log(`- ${app.fullName} (${app.email}) - ${app.status} - ${app.submittedAt}`);
+    });
+
+    res.json({ success: true, applications });
+  } catch (error) {
+    console.error('Error fetching franchise applications:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch franchise applications' });
+  }
+});
+
+// Admin: Update franchise application status
+app.post('/api/admin/franchise/:id/status', ensureAdmin, async (req, res) => {
+  try {
+    const { status, adminNotes, reviewedBy } = req.body;
+    const applicationId = req.params.id;
+
+    if (!['pending', 'approved', 'rejected', 'under-review'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status' });
+    }
+
+    const application = await Franchise.findByIdAndUpdate(
+      applicationId,
+      { 
+        status: status,
+        adminNotes: adminNotes || '',
+        reviewedBy: reviewedBy || 'Admin',
+        reviewedAt: new Date()
+      },
+      { new: true }
+    );
+
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+
+    console.log('Franchise application status updated:', {
+      applicationId: application._id,
+      newStatus: status,
+      applicant: application.fullName,
+      reviewedBy: reviewedBy
+    });
+
+    res.json({ success: true, application });
+  } catch (error) {
+    console.error('Error updating franchise application status:', error);
+    res.status(500).json({ success: false, message: 'Failed to update application status' });
   }
 });
 
@@ -1417,11 +1639,89 @@ const adminRoutes = require('./src/routes/adminRoutes');
 // Use admin routes
 app.use('/admin', adminRoutes);
 
+// Admin Dashboard Routes
+app.get("/admin", ensureAdmin, async (req, res) => {
+  try {
+    // Get recent franchise applications for activity feed
+    const recentFranchiseApplications = await Franchise.find()
+      .sort({ submittedAt: -1 })
+      .limit(3);
 
+    // Mock recent activity data (you can replace with actual data from other models)
+    const recentActivity = [
+      ...recentFranchiseApplications.map(app => ({
+        type: 'Franchise',
+        customer: app.fullName,
+        email: app.email,
+        details: `${app.city} - ${app.investmentRange}`,
+        date: new Date(app.submittedAt).toLocaleDateString(),
+        status: app.status
+      })),
+      {
+        type: 'Cart',
+        customer: 'Neha Sharma',
+        email: 'nehasharma.221006@gmail.com',
+        details: 'Iced Latte +2 more',
+        date: 'Jan 11, 2026',
+        status: 'completed'
+      },
+      {
+        type: 'Cart',
+        customer: 'Neha Sharma',
+        email: 'nehasharma.221006@gmail.com',
+        details: 'Hazelnut',
+        date: 'Jan 11, 2026',
+        status: 'pending'
+      }
+    ].slice(0, 5); // Limit to 5 recent activities
 
+    res.render("admin/dashboard", {
+      title: 'Admin Dashboard - Rabuste Coffee',
+      description: 'Admin dashboard for managing Rabuste Coffee operations.',
+      currentPage: '/admin',
+      layout: false,
+      recentActivity: recentActivity
+    });
+  } catch (error) {
+    console.error('Error loading admin dashboard:', error);
+    res.render("admin/dashboard", {
+      title: 'Admin Dashboard - Rabuste Coffee',
+      description: 'Admin dashboard for managing Rabuste Coffee operations.',
+      currentPage: '/admin',
+      layout: false,
+      recentActivity: []
+    });
+  }
+});
 
+app.get("/admin/cart-requests", ensureAdmin, (req, res) => {
+  res.render("admin/cart-requests", {
+    title: 'Cart Requests - Admin Dashboard',
+    description: 'Manage cart requests and orders.',
+    currentPage: '/admin/cart-requests',
+    layout: false
+  });
+});
 
-app.get("/admin/users", (req, res) => {
+app.get("/admin/art-requests", ensureAdmin, (req, res) => {
+  res.render("admin/art-requests", {
+    title: 'Art Requests - Admin Dashboard',
+    description: 'Manage art submissions and requests.',
+    currentPage: '/admin/art-requests',
+    layout: false
+  });
+});
+
+app.get("/admin/workshop-requests", ensureAdmin, (req, res) => {
+  res.render("admin/workshop-requests", {
+    title: 'Workshop Requests - Admin Dashboard',
+    description: 'Manage workshop bookings and requests.',
+    currentPage: '/admin/workshop-requests',
+    layout: false
+  });
+});
+
+app.get("/admin/users", ensureAdmin, (req, res) => {
   // Mock data - replace with actual database queries
   const users = [
     {
@@ -1457,6 +1757,19 @@ app.get("/admin/users", (req, res) => {
     users,
     additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
     additionalJS: '<script src="/js/admin.js"></script>'
+  });
+});
+
+// Admin: Franchise applications management
+app.get("/admin/franchise", ensureAdmin, (req, res) => {
+  console.log('Admin franchise page accessed');
+  res.render("admin/franchise", {
+    title: 'Franchise Applications - Admin Dashboard',
+    description: 'Manage franchise applications, review and approve/reject applications.',
+    currentPage: '/admin/franchise',
+    additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+    additionalJS: '<script src="/js/admin-franchise.js"></script>',
+    layout: false // Disable layout for admin pages
   });
 });
 
