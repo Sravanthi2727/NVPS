@@ -21,11 +21,11 @@ function createTestApp() {
     res.render('franchise', {
       title: "Franchise Opportunities - Rabuste Coffee",
       investmentRanges: [
-        "$50K - $75K",
-        "$75K - $100K", 
-        "$100K - $150K",
-        "$150K - $200K",
-        "$200K+"
+        "₹50K - ₹75K",
+        "₹75K - ₹100K", 
+        "₹100K - ₹150K",
+        "₹150K - ₹200K",
+        "₹200K+"
       ]
     });
   });

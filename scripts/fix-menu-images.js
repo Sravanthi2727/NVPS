@@ -47,7 +47,7 @@ const imageMappings = {
 // Replace all image paths
 let replacementsCount = 0;
 for (const [oldPath, newPath] of Object.entries(imageMappings)) {
-  const regex = new RegExp(oldPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+  const regex = new RegExp(oldPath.replace(/[.*+?^${}()|[\]\\]/g, '\\₹&'), 'g');
   const matches = menuContent.match(regex);
   if (matches) {
     menuContent = menuContent.replace(regex, newPath);

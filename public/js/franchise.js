@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
         required: true,
         minLength: 2,
         maxLength: 50,
-        pattern: /^[a-zA-Z\s'-]+$/,
+        pattern: /^[a-zA-Z\s'-]+₹/,
         errorMessages: {
           required: 'Full name is required',
           minLength: 'Name must be at least 2 characters',
@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       email: {
         required: true,
-        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+₹/,
         errorMessages: {
           required: 'Email address is required',
           pattern: 'Please enter a valid email address'
@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
         required: true,
         minLength: 3,
         maxLength: 100,
-        pattern: /^[a-zA-Z\s,.-]+$/,
+        pattern: /^[a-zA-Z\s,.-]+₹/,
         errorMessages: {
           required: 'City & State is required',
           minLength: 'Please enter at least city and state',
@@ -476,9 +476,9 @@ document.addEventListener('DOMContentLoaded', function() {
         let value = this.value.replace(/\D/g, '');
         
         if (value.length >= 6) {
-          value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+          value = value.replace(/(\d{3})(\d{3})(\d{4})/, '(₹1) ₹2-₹3');
         } else if (value.length >= 3) {
-          value = value.replace(/(\d{3})(\d{0,3})/, '($1) $2');
+          value = value.replace(/(\d{3})(\d{0,3})/, '(₹1) ₹2');
         }
         
         this.value = value;
@@ -1500,7 +1500,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * @returns {boolean} - True if valid email format
  */
 function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+₹/;
   return emailRegex.test(email);
 }
 
@@ -1511,7 +1511,7 @@ function isValidEmail(email) {
  */
 function formatPhoneNumber(phone) {
   const cleaned = phone.replace(/\D/g, '');
-  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})₹/);
   
   if (match) {
     return `(${match[1]}) ${match[2]}-${match[3]}`;

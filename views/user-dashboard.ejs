@@ -214,7 +214,7 @@
 
         .status-approved {
             background-color: rgba(40, 167, 69, 0.2);
-            color: #28a745;
+            color: var(--gold);
         }
 
         .status-rejected {
@@ -238,8 +238,8 @@
 
         .franchise-status.status-approved {
             background-color: rgba(40, 167, 69, 0.2);
-            color: #28a745;
-            border: 1px solid #28a745;
+            color:var(--gold);
+            border: 1px solidvar(--gold);
         }
 
         .franchise-status.status-rejected {
@@ -566,8 +566,9 @@ function renderWishlist(items) {
       <div class="col-md-6 col-lg-4 mb-4">
         <div class="card">
           <div class="card-body">
+            
             <h5 class="card-title">${item.name}</h5>
-            <p class="card-text">Price: $${item.price}</p>
+            <p class="card-text">Price: ₹${item.price}</p>
             <div class="d-flex gap-2">
               <button class="btn btn-sm" style="background-color: #d6a45a; border: none; color: #000;" onclick="moveToCart('${item.itemId}', '${item.name}', ${item.price})">Move to Cart</button>
               <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeFromWishlist('${item.itemId}')">Remove</button>
@@ -595,6 +596,12 @@ function renderCart(items) {
   let total = 0;
   const itemsHtml = items.map(item => {
     total += item.price * item.quantity;
+    
+    // Check if this is an art item - multiple ways to detect
+    const isArtItem = item.type === 'art' || 
+                     (item.image && item.image.includes('/assets/gallery/')) ||
+                     (item.name && (item.name.includes('by ') || item.name.includes('Wilderness') || item.name.includes('Mountain') || item.name.includes('Serenity')));
+    
     return `
       <div class="col-12 mb-3">
         <div class="card">
@@ -605,17 +612,26 @@ function renderCart(items) {
               </div>
               <div class="col-md-4">
                 <h5>${item.name}</h5>
-                <p>$${item.price} each</p>
+                <p>₹${item.price} each</p>
+                ${isArtItem ? '<small style="color: #d6a45a;"><i class="bi bi-palette"></i> Unique Art Piece</small>' : ''}
               </div>
               <div class="col-md-3">
-                <div class="input-group">
-                  <button class="btn btn-outline-secondary" onclick="updateQuantity('${item.itemId}', -1)">-</button>
-                  <input type="number" class="form-control text-center" value="${item.quantity}" min="1" readonly>
-                  <button class="btn btn-outline-secondary" onclick="updateQuantity('${item.itemId}', 1)">+</button>
-                </div>
+                ${isArtItem ? `
+                  <div class="text-center">
+                    <span class="badge" style="background-color: #d6a45a; color: #000; font-size: 0.9rem; padding: 0.4rem 0.8rem;">
+                      <i class="bi bi-palette"></i> Unique Art
+                    </span>
+                  </div>
+                ` : `
+                  <div class="input-group">
+                    <button class="btn btn-outline-secondary" onclick="updateQuantity('${item.itemId}', -1)">-</button>
+                    <input type="number" class="form-control text-center" value="${item.quantity}" min="1" readonly>
+                    <button class="btn btn-outline-secondary" onclick="updateQuantity('${item.itemId}', 1)">+</button>
+                  </div>
+                `}
               </div>
               <div class="col-md-2">
-                <h5>$${(item.price * item.quantity).toFixed(2)}</h5>
+                <h5>₹${(item.price * item.quantity).toFixed(2)}</h5>
               </div>
               <div class="col-md-1">
                 <button class="btn btn-outline-danger" onclick="removeFromCart('${item.itemId}')">
@@ -635,7 +651,7 @@ function renderCart(items) {
         <div class="card-body">
           <div class="row">
             <div class="col-md-8">
-              <h4 style="color: #d6a45a; font-weight: bold;">Total: $${total.toFixed(2)}</h4>
+              <h4 style="color: #d6a45a; font-weight: bold;">Total: ₹${total.toFixed(2)}</h4>
             </div>
             <div class="col-md-4 text-end">
               <button class="btn" id="checkoutBtn" style="background-color: #d6a45a; border: none; color: #000;" onclick="proceedToCheckout()">Proceed to Checkout</button>
@@ -747,7 +763,7 @@ function renderOrders(orders) {
                   <i class="bi bi-clock"></i> Order is being prepared
                 </small>
               ` : order.status === 'completed' ? `
-                <small style="color: #28a745;">
+                <small style="color:var(--gold);">
                   <i class="bi bi-check-circle"></i> Order completed
                 </small>
               ` : order.status === 'cancelled' ? `
@@ -951,7 +967,7 @@ function renderFranchise(applications) {
                   <i class="bi bi-clock"></i> Under review by our team
                 </small>
               ` : app.status === 'approved' ? `
-                <small style="color: #28a745;">
+                <small style="color:var(--gold);">
                   <i class="bi bi-check-circle"></i> Congratulations! Application approved
                 </small>
               ` : app.status === 'rejected' ? `
@@ -1039,6 +1055,16 @@ async function updateQuantity(itemId, change) {
     
     if (!item) {
       console.error('Item not found in cart:', itemId);
+      return;
+    }
+    
+    // Check if this is an art item - art items cannot have quantity changed
+    const isArtItem = item.type === 'art' || 
+                     (item.image && item.image.includes('/assets/gallery/')) ||
+                     (item.name && (item.name.includes('by ') || item.name.includes('Wilderness') || item.name.includes('Mountain') || item.name.includes('Serenity')));
+    
+    if (isArtItem) {
+      showToast('Art pieces are unique items and cannot have quantity changed. You can only remove them from cart.', 'info');
       return;
     }
     
@@ -1355,11 +1381,11 @@ function showCheckoutSuccess(orderId, totalAmount) {
         </div>
         <div class="modal-body text-center" style="color: #f5f2ee;">
           <div class="mb-3">
-            <i class="bi bi-check-circle" style="font-size: 3rem; color: #28a745;"></i>
+            <i class="bi bi-check-circle" style="font-size: 3rem; color:var(--gold);"></i>
           </div>
           <h4 style="color: #d6a45a;">Thank You!</h4>
           <p>Your order has been placed successfully and is now being processed.</p>
-          <div class="alert alert-success" style="background-color: rgba(40, 167, 69, 0.1); border: 1px solid #28a745; color: #28a745;">
+          <div class="alert alert-success" style="background-color: rgba(40, 167, 69, 0.1); border: 1px solidvar(--gold); color:var(--gold);">
             <strong>Order ID:</strong> #${orderId.toString().slice(-6).toUpperCase()}<br>
             <strong>Total Amount:</strong> ₹${totalAmount.toFixed(2)}
           </div>

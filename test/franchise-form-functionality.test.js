@@ -208,7 +208,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
           required: true,
           minLength: 2,
           maxLength: 50,
-          pattern: /^[a-zA-Z\s'-]+$/,
+          pattern: /^[a-zA-Z\s'-]+₹/,
           errorMessages: {
             required: 'Full name is required',
             minLength: 'Name must be at least 2 characters',
@@ -218,7 +218,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
         },
         email: {
           required: true,
-          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+₹/,
           errorMessages: {
             required: 'Email address is required',
             pattern: 'Please enter a valid email address'
@@ -226,7 +226,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
         },
         phone: {
           required: true,
-          pattern: /^[\+]?[1-9][\d]{0,15}$/,
+          pattern: /^[\+]?[1-9][\d]{0,15}₹/,
           errorMessages: {
             required: 'Phone number is required',
             pattern: 'Please enter a valid phone number'
@@ -236,7 +236,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
           required: true,
           minLength: 3,
           maxLength: 100,
-          pattern: /^[a-zA-Z\s,.-]+$/,
+          pattern: /^[a-zA-Z\s,.-]+₹/,
           errorMessages: {
             required: 'City & State is required',
             minLength: 'Please enter at least city and state',
@@ -268,7 +268,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
     });
 
     test('should validate email format and show appropriate error messages', () => {
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+₹/;
       
       // Test valid email formats
       expect(emailPattern.test('user@example.com')).toBe(true);
@@ -284,7 +284,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
     });
 
     test('should validate phone number format and show appropriate error messages', () => {
-      const phonePattern = /^[\+]?[1-9][\d]{0,15}$/;
+      const phonePattern = /^[\+]?[1-9][\d]{0,15}₹/;
       
       // Test valid phone formats (after cleaning)
       expect(phonePattern.test('1234567890')).toBe(true);
@@ -299,7 +299,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
     });
 
     test('should validate name format and length requirements', () => {
-      const namePattern = /^[a-zA-Z\s'-]+$/;
+      const namePattern = /^[a-zA-Z\s'-]+₹/;
       
       // Test valid name formats
       expect(namePattern.test('John Doe')).toBe(true);
@@ -321,7 +321,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
     });
 
     test('should validate city/state format and requirements', () => {
-      const cityStatePattern = /^[a-zA-Z\s,.-]+$/;
+      const cityStatePattern = /^[a-zA-Z\s,.-]+₹/;
       
       // Test valid city/state formats
       expect(cityStatePattern.test('Austin, TX')).toBe(true);
@@ -348,7 +348,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
       mockFormElements.email.value = 'john@example.com';
       mockFormElements.phone.value = '5551234567';
       mockFormElements.cityState.value = 'Austin, TX';
-      mockFormElements.investmentRange.value = '$100K - $150K';
+      mockFormElements.investmentRange.value = '₹100K - ₹150K';
       mockFormElements.message.value = 'Interested in franchise opportunity';
       mockFormElements.acknowledgment.checked = true;
 
@@ -362,7 +362,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
           email: 'john@example.com',
           phone: '5551234567',
           cityState: 'Austin, TX',
-          investmentRange: '$100K - $150K',
+          investmentRange: '₹100K - ₹150K',
           message: 'Interested in franchise opportunity',
           acknowledgment: true
         }
@@ -374,7 +374,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
         email: 'john@example.com',
         phone: '5551234567',
         cityState: 'Austin, TX',
-        investmentRange: '$100K - $150K',
+        investmentRange: '₹100K - ₹150K',
         message: 'Interested in franchise opportunity',
         acknowledgment: true
       };
@@ -383,7 +383,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
       expect(expectedFormData.fullName).toBe('John Doe');
       expect(expectedFormData.email).toBe('john@example.com');
       expect(expectedFormData.acknowledgment).toBe(true);
-      expect(expectedFormData.investmentRange).toBe('$100K - $150K');
+      expect(expectedFormData.investmentRange).toBe('₹100K - ₹150K');
     });
 
     test('should show success message and hide form after successful submission', () => {
@@ -596,7 +596,7 @@ describe('Franchise Form Functionality Unit Tests', () => {
       mockFormElements.email.value = 'jane@example.com';
       mockFormElements.phone.value = '5559876543';
       mockFormElements.cityState.value = 'Denver, CO';
-      mockFormElements.investmentRange.value = '$150K - $200K';
+      mockFormElements.investmentRange.value = '₹150K - ₹200K';
       mockFormElements.message.value = 'Looking for franchise opportunities in Colorado';
       mockFormElements.acknowledgment.checked = true;
       
@@ -648,20 +648,20 @@ describe('Franchise Form Functionality Unit Tests', () => {
 
     test('should include all required investment range options', () => {
       const investmentRanges = [
-        "$50K - $75K",
-        "$75K - $100K", 
-        "$100K - $150K",
-        "$150K - $200K",
-        "$200K+"
+        "₹50K - ₹75K",
+        "₹75K - ₹100K", 
+        "₹100K - ₹150K",
+        "₹150K - ₹200K",
+        "₹200K+"
       ];
       
       // Test that all investment ranges are available
       expect(investmentRanges).toHaveLength(5);
-      expect(investmentRanges).toContain("$50K - $75K");
-      expect(investmentRanges).toContain("$75K - $100K");
-      expect(investmentRanges).toContain("$100K - $150K");
-      expect(investmentRanges).toContain("$150K - $200K");
-      expect(investmentRanges).toContain("$200K+");
+      expect(investmentRanges).toContain("₹50K - ₹75K");
+      expect(investmentRanges).toContain("₹75K - ₹100K");
+      expect(investmentRanges).toContain("₹100K - ₹150K");
+      expect(investmentRanges).toContain("₹150K - ₹200K");
+      expect(investmentRanges).toContain("₹200K+");
     });
 
     test('should validate acknowledgment checkbox requirement', () => {

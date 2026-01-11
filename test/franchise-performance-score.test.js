@@ -277,7 +277,7 @@ describe('Franchise Page Performance Score Properties', () => {
           
           // Verify images are optimized for performance
           images.forEach(img => {
-            expect(img.src).toMatch(/\.(webp|jpg|jpeg|png)$/i);
+            expect(img.src).toMatch(/\.(webp|jpg|jpeg|png)₹/i);
             expect(img.naturalWidth).toBeGreaterThan(0);
             expect(img.naturalHeight).toBeGreaterThan(0);
             
@@ -471,7 +471,7 @@ describe('Franchise Page Performance Score Properties', () => {
           // Verify images are properly optimized
           images.forEach(img => {
             // Images should use modern formats for better compression
-            expect(img.src).toMatch(/\.(webp|avif|jpg|jpeg|png)$/i);
+            expect(img.src).toMatch(/\.(webp|avif|jpg|jpeg|png)₹/i);
             
             // Images should have appropriate loading attributes
             if (img.loading) {

@@ -400,7 +400,7 @@ describe('Franchise Page AI Assistant Non-Interference Properties', () => {
           const images = mockDocument.querySelectorAll('img');
           images.forEach(img => {
             expect(img.complete).toBe(true);
-            expect(img.src).toMatch(/\.(webp|jpg|jpeg|png)$/i);
+            expect(img.src).toMatch(/\.(webp|jpg|jpeg|png)₹/i);
           });
           
           // Test that form functionality is preserved
@@ -725,7 +725,7 @@ describe('Franchise Page AI Assistant Non-Interference Properties', () => {
           const images = mockDocument.querySelectorAll('img');
           images.forEach(img => {
             expect(img.complete).toBe(true);
-            expect(img.src).toMatch(/\.(webp|jpg|jpeg|png)$/i);
+            expect(img.src).toMatch(/\.(webp|jpg|jpeg|png)₹/i);
           });
         }
       ),

@@ -38,16 +38,36 @@ const homeController = {
     });
   },
 
-  // Menu page - serve HTML file
+  // Menu page
   getMenu: (req, res) => {
-    const path = require('path');
-    res.sendFile(path.join(__dirname, '../../public', 'menu.html'));
+    res.render('menu', {
+      title: 'Menu - Rabuste Coffee',
+      description: 'Explore our premium Robusta coffee menu featuring bold flavors and artistic presentations.',
+      currentPage: '/menu',
+      keywords: 'coffee menu, robusta coffee drinks, premium coffee, café menu, Rabuste Coffee menu',
+      ogTitle: 'Menu - Rabuste Coffee',
+      ogDescription: 'Explore our premium Robusta coffee menu featuring bold flavors and artistic presentations.',
+      ogType: 'website',
+      ogUrl: 'https://rabustecoffee.com/menu',
+      ogImage: '/assets/coffee-bg.jpeg',
+      canonicalUrl: 'https://rabustecoffee.com/menu'
+    });
   },
 
-  // Gallery page - serve HTML file
+  // Gallery page
   getGallery: (req, res) => {
-    const path = require('path');
-    res.sendFile(path.join(__dirname, '../../public', 'gallery.html'));
+    res.render('gallery', {
+      title: 'Gallery - Rabuste Coffee',
+      description: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+      currentPage: '/gallery',
+      keywords: 'art gallery, coffee shop art, artwork for sale, Rabuste Coffee gallery',
+      ogTitle: 'Gallery - Rabuste Coffee',
+      ogDescription: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+      ogType: 'website',
+      ogUrl: 'https://rabustecoffee.com/gallery',
+      ogImage: '/assets/coffee-bg.jpeg',
+      canonicalUrl: 'https://rabustecoffee.com/gallery'
+    });
   },
 
   // Workshops page
@@ -64,7 +84,7 @@ const homeController = {
   getFranchise: (req, res) => {
     res.render('franchise', {
       title: 'Franchise Opportunities - Partner with Rabuste Coffee',
-      description: 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support and proven business model. Investment range $75K-$150K.',
+      description: 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support and proven business model. Investment range ₹75K-₹150K.',
       currentPage: '/franchise',
       keywords: 'coffee franchise, robusta coffee franchise, café franchise opportunities, premium coffee business, franchise investment, coffee shop franchise',
       ogTitle: 'Franchise Opportunities - Partner with Rabuste Coffee',
@@ -74,11 +94,11 @@ const homeController = {
       ogImage: '/assets/coffee-bg.jpeg',
       canonicalUrl: 'https://rabustecoffee.com/franchise',
       investmentRanges: [
-        '$50K - $75K',
-        '$75K - $100K',
-        '$100K - $150K',
-        '$150K - $200K',
-        '$200K+'
+        '₹50K - ₹75K',
+        '₹75K - ₹100K',
+        '₹100K - ₹150K',
+        '₹150K - ₹200K',
+        '₹200K+'
       ]
     });
   },
@@ -125,6 +145,64 @@ const homeController = {
       ogImage: '/assets/coffee-bg.jpeg',
       canonicalUrl: 'https://rabustecoffee.com/philosophy'
     });
+  },
+
+  // Workshop proposal submission
+  submitWorkshopProposal: async (req, res) => {
+    try {
+      const proposalData = req.body;
+      
+      // Validate required fields
+      const requiredFields = ['title', 'category', 'description', 'organizerName', 'organizerEmail', 'duration', 'capacity'];
+      const missingFields = requiredFields.filter(field => !proposalData[field]);
+      
+      if (missingFields.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Missing required fields: ${missingFields.join(', ')}`
+        });
+      }
+      
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+₹/;
+      if (!emailRegex.test(proposalData.organizerEmail)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please provide a valid email address'
+        });
+      }
+      
+      // Here you would save to database
+      // const WorkshopProposal = require('../../models/WorkshopProposal');
+      // const newProposal = new WorkshopProposal(proposalData);
+      // await newProposal.save();
+      
+      console.log('Workshop proposal received:', {
+        title: proposalData.title,
+        organizer: proposalData.organizerName,
+        email: proposalData.organizerEmail,
+        category: proposalData.category,
+        duration: proposalData.duration,
+        capacity: proposalData.capacity,
+        submittedAt: new Date().toISOString()
+      });
+      
+      // Here you could also send email notifications
+      // await sendProposalConfirmationEmail(proposalData.organizerEmail, proposalData);
+      // await sendProposalNotificationToAdmin(proposalData);
+      
+      res.json({
+        success: true,
+        message: 'Workshop proposal submitted successfully! We\'ll review it and get back to you within 3-5 business days.',
+        proposalId: Math.floor(Math.random() * 10000) + 1 // Mock ID
+      });
+    } catch (error) {
+      console.error('Error submitting workshop proposal:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to submit workshop proposal. Please try again later.'
+      });
+    }
   }
 };
 

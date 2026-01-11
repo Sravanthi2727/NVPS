@@ -38,7 +38,7 @@
 //     return new Promise((resolve) => {
 //       // Try WebP first if supported
 //       if (window.imageOptimizer && window.imageOptimizer.supportsWebP) {
-//         const webpPath = basePath.replace(/\.(png|jpg|jpeg)$/, '.webp');
+//         const webpPath = basePath.replace(/\.(png|jpg|jpeg)₹/, '.webp');
 //         const webpTexture = loader.load(
 //           webpPath,
 //           (texture) => resolve(texture),
