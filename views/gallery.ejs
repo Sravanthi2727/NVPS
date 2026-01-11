@@ -583,6 +583,71 @@
             padding: 1rem;
         }
     }
+
+    /* Payment Modal Styles */
+    .payment-options {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .payment-option {
+        border: 2px solid rgba(214, 164, 90, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(214, 164, 90, 0.05);
+    }
+
+    .payment-option:hover {
+        border-color: var(--gold);
+        background: rgba(214, 164, 90, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(214, 164, 90, 0.2);
+    }
+
+    .payment-option.selected {
+        border-color: var(--gold);
+        background: rgba(214, 164, 90, 0.15);
+        box-shadow: 0 0 20px rgba(214, 164, 90, 0.3);
+    }
+
+    .payment-option-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .payment-option-content div {
+        flex: 1;
+    }
+
+    .payment-option-content h5 {
+        color: var(--gold);
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .payment-option-content p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    #confirmPaymentBtn:disabled {
+        background: #666;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    #confirmPaymentBtn:not(:disabled):hover {
+        background: var(--gold-soft);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(214, 164, 90, 0.4);
+    }
 </style>
 
 <section class="hero-section position-relative overflow-hidden">
@@ -638,7 +703,7 @@
                                                         data-item-name="<%= artwork.title %>" 
                                                         data-item-price="<%= artwork.price %>" 
                                                         data-item-image="<%= artwork.image.startsWith('/') ? artwork.image : '/assets/gallery/' + artwork.image %>">
-                                                    <i class="fas fa-shopping-cart"></i>
+                                                    Buy Now
                                                 </button>
                                             </div>
                                         <% } else { %>
@@ -673,6 +738,53 @@
         </div>
         <div class="modal-body" id="modalBody">
             <!-- Content will be dynamically inserted here -->
+        </div>
+    </div>
+</div>
+
+<!-- Payment Options Modal -->
+<div id="paymentModal" class="artwork-modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <div class="artwork-main-info">
+                <h3 style="color: var(--gold); margin: 0;">Choose Payment Method</h3>
+            </div>
+            <button class="modal-close" onclick="closePaymentModal()">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 2rem;">
+            <div id="paymentItemDetails" style="background: rgba(214, 164, 90, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+                <!-- Item details will be inserted here -->
+            </div>
+            
+            <div class="payment-options">
+                <h4 style="color: var(--gold); margin-bottom: 1rem;">Select Payment Method:</h4>
+                
+                <div class="payment-option" onclick="selectPaymentMethod('cash')" id="cashOption">
+                    <div class="payment-option-content">
+                        <i class="fas fa-money-bill-wave" style="font-size: 2rem; color: var(--gold);"></i>
+                        <div>
+                            <h5>Pay by Cash</h5>
+                            <p>Pay when you visit our café to collect the artwork</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="payment-option" onclick="selectPaymentMethod('online')" id="onlineOption">
+                    <div class="payment-option-content">
+                        <i class="fas fa-credit-card" style="font-size: 2rem; color: var(--gold);"></i>
+                        <div>
+                            <h5>Pay Online</h5>
+                            <p>Secure payment via Razorpay (Cards, UPI, Net Banking)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-actions" style="margin-top: 2rem; text-align: center;">
+                <button id="confirmPaymentBtn" class="btn" style="background: var(--gold); color: #000; padding: 0.8rem 2rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;" disabled onclick="confirmPayment()">
+                    Confirm Purchase
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -754,6 +866,10 @@
                 });
             }
 
+            // Update navbar counts
+            updateCartCount();
+            updateWishlistCount();
+
             // Update UI based on loaded state
             updateAllButtonStates();
         } catch (error) {
@@ -800,12 +916,12 @@
     // Update cart button state for art items
     function updateCartButtonState(button, inCart) {
         if (inCart) {
-            button.innerHTML = '<i class="fas fa-check"></i> In Cart';
-            button.style.backgroundColor = 'var(--gold)';
+            button.innerHTML = '<i class="fas fa-check"></i> Purchased';
+            button.style.backgroundColor = '#28a745';
             button.style.color = '#fff';
             button.disabled = true;
         } else {
-            button.innerHTML = '<i class="fas fa-shopping-cart"></i>';
+            button.innerHTML = 'Buy Now';
             button.style.backgroundColor = 'var(--gold)';
             button.style.color = 'var(--dark)';
             button.disabled = false;
@@ -850,6 +966,7 @@
             if (data && data.success) {
                 wishlistItems.add(itemId);
                 updateWishlistButtonState(buttonElement, true);
+                updateWishlistCount();
                 showNotification('Item added to wishlist!', 'success');
             } else if (data) {
                 showNotification(data.message || 'Failed to add item to wishlist', 'error');
@@ -870,6 +987,7 @@
             if (data && data.success) {
                 wishlistItems.delete(itemId);
                 updateWishlistButtonState(buttonElement, false);
+                updateWishlistCount();
                 showNotification('Item removed from wishlist!', 'success');
             } else {
                 showNotification(data.message || 'Failed to remove item from wishlist', 'error');
@@ -882,25 +1000,100 @@
     }
 
     function addToCartItem(itemId, itemName, price, image, buttonElement) {
-        console.log('Adding to cart:', { itemId, itemName, price, image });
+        console.log('Opening payment modal for:', { itemId, itemName, price, image });
         
         if (cartItems.has(itemId)) {
             showNotification('This artwork is already in your cart. Art pieces are unique!', 'error');
             return;
         }
         
+        // Open payment modal instead of directly adding to cart
+        openPaymentModal(itemId, itemName, price, image);
+    }
+
+    // Payment modal functions
+    let currentPaymentItem = null;
+    let selectedPaymentMethod = null;
+
+    function openPaymentModal(itemId, itemName, price, image) {
+        currentPaymentItem = { itemId, itemName, price, image };
+        
+        // Update item details in modal
+        const itemDetails = document.getElementById('paymentItemDetails');
+        itemDetails.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <img src="${image}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;" alt="${itemName}">
+                <div>
+                    <h5 style="color: var(--gold); margin: 0 0 0.5rem 0;">${itemName}</h5>
+                    <p style="color: var(--text); margin: 0; font-size: 1.2rem; font-weight: 600;">₹${price}</p>
+                </div>
+            </div>
+        `;
+        
+        // Reset selection
+        selectedPaymentMethod = null;
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        document.getElementById('confirmPaymentBtn').disabled = true;
+        
+        // Show modal
+        document.getElementById('paymentModal').classList.add('show');
+    }
+
+    function closePaymentModal() {
+        document.getElementById('paymentModal').classList.remove('show');
+        currentPaymentItem = null;
+        selectedPaymentMethod = null;
+    }
+
+    function selectPaymentMethod(method) {
+        selectedPaymentMethod = method;
+        
+        // Update UI
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        
+        if (method === 'cash') {
+            document.getElementById('cashOption').classList.add('selected');
+        } else if (method === 'online') {
+            document.getElementById('onlineOption').classList.add('selected');
+        }
+        
+        // Enable confirm button
+        document.getElementById('confirmPaymentBtn').disabled = false;
+    }
+
+    function confirmPayment() {
+        if (!currentPaymentItem || !selectedPaymentMethod) {
+            showNotification('Please select a payment method', 'error');
+            return;
+        }
+        
+        if (selectedPaymentMethod === 'cash') {
+            // Add to cart for cash payment
+            addToCartDirectly(currentPaymentItem);
+        } else if (selectedPaymentMethod === 'online') {
+            // Redirect to Razorpay
+            initiateOnlinePayment(currentPaymentItem);
+        }
+    }
+
+    function addToCartDirectly(item) {
         fetch('/api/cart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                itemId: itemId,
-                name: itemName,
-                price: price,
-                image: image,
+                itemId: item.itemId,
+                name: item.itemName,
+                price: item.price,
+                image: item.image,
                 quantity: 1,
-                type: 'art'
+                type: 'art',
+                paymentMethod: 'cash'
             })
         })
         .then(response => {
@@ -912,9 +1105,14 @@
         })
         .then(data => {
             if (data && data.success) {
-                cartItems.set(itemId, 1);
-                updateCartButtonState(buttonElement, true);
-                showNotification('Artwork added to cart!', 'success');
+                cartItems.set(item.itemId, 1);
+                const buttonElement = document.querySelector(`[data-item-id="${item.itemId}"].add-to-cart-btn`);
+                if (buttonElement) {
+                    updateCartButtonState(buttonElement, true);
+                }
+                updateCartCount();
+                showNotification('Artwork added to cart! Pay when you visit our café.', 'success');
+                closePaymentModal();
             } else if (data) {
                 showNotification(data.message || 'Failed to add item to cart', 'error');
             }
@@ -924,6 +1122,208 @@
             showNotification('Failed to add item to cart', 'error');
         });
     }
+
+    function initiateOnlinePayment(item) {
+        console.log('=== STARTING PAYMENT ===');
+        console.log('Item:', item);
+        
+        // Check if Razorpay is loaded first
+        if (typeof Razorpay === 'undefined') {
+            console.error('❌ Razorpay SDK not loaded');
+            showNotification('Razorpay not loaded. Please refresh the page.', 'error');
+            return;
+        }
+        
+        console.log('✅ Razorpay SDK loaded');
+        
+        // Skip API call and directly open Razorpay (like quick-test)
+        const options = {
+            key: 'rzp_test_S2a2ZZ2ERWzWeB', // Your working key
+            amount: Math.round(item.price * 100), // Convert to paise
+            currency: 'INR',
+            name: 'Rabuste Coffee',
+            description: 'Art Purchase - ' + item.itemName,
+            handler: function (response) {
+                console.log('✅ Payment successful:', response);
+                showNotification('Payment successful! Payment ID: ' + response.razorpay_payment_id, 'success');
+                
+                // Close payment modal
+                closePaymentModal();
+                
+                // You can add order creation logic here if needed
+                console.log('Payment completed for item:', item.itemName);
+            },
+            prefill: {
+                name: 'Customer',
+                email: 'customer@example.com',
+                contact: '9999999999'
+            },
+            theme: {
+                color: '#d6a45a'
+            },
+            modal: {
+                ondismiss: function() {
+                    console.log('Payment cancelled');
+                    showNotification('Payment cancelled', 'warning');
+                }
+            }
+        };
+        
+        console.log('Opening Razorpay with options:', options);
+        console.log('Amount: ₹' + item.price + ' = ' + (item.price * 100) + ' paise');
+        
+        try {
+            const rzp = new Razorpay(options);
+            
+            rzp.on('payment.failed', function (response) {
+                console.error('❌ Payment failed:', response.error);
+                showNotification('Payment failed: ' + response.error.description, 'error');
+            });
+            
+            rzp.open();
+            console.log('✅ Razorpay opened successfully');
+            
+        } catch (error) {
+            console.error('❌ Error opening Razorpay:', error);
+            showNotification('Error: ' + error.message, 'error');
+        }
+    }
+
+    function openRazorpayCheckout(order, item) {
+        console.log('=== RAZORPAY DEBUG ===');
+        console.log('Opening Razorpay with order:', order);
+        console.log('Item details:', item);
+        console.log('Amount in paise:', order.amount);
+        console.log('Amount in rupees:', order.amount / 100);
+        
+        // Check if Razorpay is loaded
+        if (typeof Razorpay === 'undefined') {
+            console.error('Razorpay SDK not loaded');
+            showNotification('Razorpay SDK not loaded. Please refresh the page.', 'error');
+            return;
+        }
+
+        const options = {
+            key: order.razorpayKeyId,
+            amount: order.amount, // This should already be in paise
+            currency: order.currency,
+            name: 'Rabuste Coffee',
+            description: `Purchase: ${item.itemName}`,
+            image: '/assets/logo-icon.png',
+            order_id: order.id,
+            handler: function (response) {
+                console.log('✅ Payment successful:', response);
+                showNotification('Payment successful! Processing order...', 'success');
+                verifyPayment(response, item);
+            },
+            prefill: {
+                name: order.customerName,
+                email: order.customerEmail,
+                contact: order.customerPhone || ''
+            },
+            notes: {
+                itemId: item.itemId,
+                itemName: item.itemName,
+                itemType: 'art'
+            },
+            theme: {
+                color: '#d6a45a'
+            },
+            modal: {
+                ondismiss: function() {
+                    console.log('Payment cancelled by user');
+                    showNotification('Payment cancelled', 'warning');
+                }
+            }
+        };
+
+        console.log('Final Razorpay options:', options);
+
+        try {
+            const rzp = new Razorpay(options);
+            
+            rzp.on('payment.failed', function (response) {
+                console.error('❌ Payment failed:', response.error);
+                showNotification('Payment failed: ' + response.error.description, 'error');
+            });
+            
+            rzp.open();
+            console.log('Razorpay modal opened successfully');
+        } catch (error) {
+            console.error('Error opening Razorpay:', error);
+            showNotification('Error opening payment gateway: ' + error.message, 'error');
+        }
+    }
+
+    function verifyPayment(paymentResponse, item) {
+        fetch('/api/verify-payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                paymentResponse,
+                itemId: item.itemId,
+                itemName: item.itemName,
+                price: item.price,
+                image: item.image
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.success) {
+                showNotification('Payment successful! Your artwork purchase is confirmed.', 'success');
+                closePaymentModal();
+                
+                // Update UI
+                const buttonElement = document.querySelector(`[data-item-id="${item.itemId}"].add-to-cart-btn`);
+                if (buttonElement) {
+                    buttonElement.innerHTML = '<i class="fas fa-check"></i> Purchased';
+                    buttonElement.style.backgroundColor = '#28a745';
+                    buttonElement.disabled = true;
+                }
+            } else {
+                showNotification(data.message || 'Payment verification failed', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error verifying payment:', error);
+            showNotification('Payment verification failed', 'error');
+        });
+    }
+
+    // Update navbar counts
+    function updateCartCount() {
+        // Update cart count in navbar if element exists
+        fetch('/api/cart/count')
+        .then(response => response.json())
+        .then(data => {
+            const cartCount = document.querySelector('.cart-count');
+            if (cartCount) {
+                cartCount.textContent = data.count || 0;
+            }
+        })
+        .catch(error => console.error('Error updating cart count:', error));
+    }
+
+    function updateWishlistCount() {
+        // Update wishlist count in navbar if element exists
+        fetch('/api/wishlist/count')
+        .then(response => response.json())
+        .then(data => {
+            const wishlistCount = document.querySelector('.wishlist-count');
+            if (wishlistCount) {
+                wishlistCount.textContent = data.count || 0;
+            }
+        })
+        .catch(error => console.error('Error updating wishlist count:', error));
+    }
+
+    // Make payment functions globally available
+    window.openPaymentModal = openPaymentModal;
+    window.closePaymentModal = closePaymentModal;
+    window.selectPaymentMethod = selectPaymentMethod;
+    window.confirmPayment = confirmPayment;
 
     // Notification system
     function showNotification(message, type) {
@@ -944,3 +1344,6 @@
         }, 3000);
     }
 </script>
+
+<!-- Razorpay Checkout Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>

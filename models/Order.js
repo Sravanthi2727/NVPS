@@ -53,6 +53,28 @@ const orderSchema = new mongoose.Schema({
     enum: ['pending', 'completed', 'cancelled'],
     default: 'pending'
   },
+  paymentMethod: {
+    type: String,
+    enum: ['online', 'cash', 'cod'],
+    default: 'online'
+  },
+  paymentId: {
+    type: String,
+    default: ''
+  },
+  deliveryAddress: {
+    name: String,
+    phone: String,
+    address: String,
+    city: String,
+    state: String,
+    pincode: String
+  },
+  orderType: {
+    type: String,
+    enum: ['menu', 'art', 'mixed'],
+    default: 'menu'
+  },
   orderDate: {
     type: Date,
     default: Date.now

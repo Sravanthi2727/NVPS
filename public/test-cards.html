@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Test Cards - Rabuste Coffee</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #f5f2ee;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #d6a45a;
+        }
+        .text-gold {
+            color: #d6a45a;
+        }
+        .table-dark {
+            background: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2 class="text-gold mb-0">🧪 Razorpay Test Cards</h2>
+                        <p class="mb-0">Use these test card numbers for testing payments</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <strong>⚠️ Important:</strong> Your Razorpay is in TEST mode. Use only these test card numbers.
+                        </div>
+
+                        <h4 class="text-gold">✅ Successful Payment Cards</h4>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Card Number</th>
+                                        <th>Expiry</th>
+                                        <th>CVV</th>
+                                        <th>Card Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>4111 1111 1111 1111</code></td>
+                                        <td>Any future date</td>
+                                        <td>Any 3 digits</td>
+                                        <td>Visa</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>5555 5555 5555 4444</code></td>
+                                        <td>Any future date</td>
+                                        <td>Any 3 digits</td>
+                                        <td>Mastercard</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>4000 0000 0000 0002</code></td>
+                                        <td>Any future date</td>
+                                        <td>Any 3 digits</td>
+                                        <td>Visa (Debit)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h4 class="text-gold mt-4">❌ Failed Payment Cards (for testing failures)</h4>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Card Number</th>
+                                        <th>Expiry</th>
+                                        <th>CVV</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>4000 0000 0000 0010</code></td>
+                                        <td>Any future date</td>
+                                        <td>Any 3 digits</td>
+                                        <td>Card Declined</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>4000 0000 0000 0069</code></td>
+                                        <td>Any future date</td>
+                                        <td>Any 3 digits</td>
+                                        <td>Expired Card</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h4 class="text-gold mt-4">💳 UPI Testing</h4>
+                        <div class="alert alert-info">
+                            <strong>UPI ID for testing:</strong> <code>success@razorpay</code><br>
+                            <strong>For failed UPI:</strong> <code>failure@razorpay</code>
+                        </div>
+
+                        <h4 class="text-gold mt-4">🏦 Net Banking Testing</h4>
+                        <div class="alert alert-info">
+                            <strong>Test Bank:</strong> Select any bank and use the test credentials provided by Razorpay in the test environment.
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <a href="/user-dashboard" class="btn btn-outline-warning">← Back to Dashboard</a>
+                            <a href="/gallery" class="btn btn-outline-warning ms-2">Test in Gallery →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

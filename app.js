@@ -21,6 +21,7 @@ const User = require('./models/User');
 const MenuItem = require('./models/MenuItem');
 const Artwork = require('./models/Artwork');
 const WorkshopModel = require('./models/Workshop');
+const WorkshopRegistration = require('./models/WorkshopRegistration');
 
 // Connect to database
 connectDB();
@@ -787,10 +788,104 @@ app.get('/user-dashboard', ensureAuthenticated, (req, res) => {
 });
 
 // API Routes for dynamic data
-app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
+
+// Test endpoint to add sample data
+app.post('/api/debug/add-test-data', ensureAuthenticated, async (req, res) => {
   try {
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.json({ error: 'User not found' });
+    }
+    
+    // Add test cart items (using simple string IDs for testing)
+    const testCartItem = {
+      itemId: '507f1f77bcf86cd799439011',
+      name: 'Test Coffee',
+      price: 150,
+      image: '/assets/menu_images/coffee.jpg',
+      quantity: 2,
+      type: 'menu'
+    };
+    
+    const testArtItem = {
+      itemId: '507f1f77bcf86cd799439012',
+      name: 'Test Artwork by Artist',
+      price: 5000,
+      image: '/assets/gallery/test-art.jpg',
+      quantity: 1,
+      type: 'art'
+    };
+    
+    // Add test wishlist items
+    const testWishlistItem = {
+      itemId: '507f1f77bcf86cd799439013',
+      name: 'Test Wishlist Item',
+      price: 200,
+      image: '/assets/menu_images/test.jpg'
+    };
+    
+    // Clear existing data and add test data
+    user.cart = [testCartItem, testArtItem];
+    user.wishlist = [testWishlistItem];
+    
+    user.markModified('cart');
+    user.markModified('wishlist');
+    await user.save();
+    
+    res.json({
+      success: true,
+      message: 'Test data added',
+      cartCount: user.cart.length,
+      wishlistCount: user.wishlist.length
+    });
+  } catch (error) {
+    console.error('Error adding test data:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Debug endpoint to check user data
+app.get('/api/debug/user', ensureAuthenticated, async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.json({ error: 'User not found', userId: req.user._id || req.user.id });
+    }
+    
+    res.json({
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+      cartCount: user.cart ? user.cart.length : 0,
+      wishlistCount: user.wishlist ? user.wishlist.length : 0,
+      cart: user.cart || [],
+      wishlist: user.wishlist || []
+    });
+  } catch (error) {
+    console.error('Debug user error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/wishlist', ensureAuthenticated, async (req, res) => {
+  try {
+    console.log('=== WISHLIST API CALLED ===');
+    console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
+    console.log('User object:', req.user ? { id: req.user._id || req.user.id, email: req.user.email } : 'No user');
+    
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      console.log('User not found in database');
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    console.log('User wishlist:', user.wishlist ? user.wishlist.length : 0, 'items');
     res.json(user.wishlist || []);
   } catch (error) {
     console.error('Error fetching wishlist:', error);
@@ -894,8 +989,19 @@ app.delete('/api/wishlist/:itemId', ensureAuthenticated, async (req, res) => {
 
 app.get('/api/cart', ensureAuthenticated, async (req, res) => {
   try {
+    console.log('=== CART API CALLED ===');
+    console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
+    console.log('User object:', req.user ? { id: req.user._id || req.user.id, email: req.user.email } : 'No user');
+    
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      console.log('User not found in database');
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    console.log('User cart:', user.cart ? user.cart.length : 0, 'items');
     res.json(user.cart || []);
   } catch (error) {
     console.error('Error fetching cart:', error);
@@ -1010,7 +1116,8 @@ app.post('/api/cart', ensureAuthenticated, async (req, res) => {
       price, 
       image, 
       quantity: type === 'art' ? 1 : (quantity || 1), // Art items always quantity 1
-      type: type || 'menu' // Default to menu if not specified
+      type: type || 'menu', // Default to menu if not specified
+      paymentMethod: req.body.paymentMethod || 'online' // Add payment method
     };
     user.cart.push(cartItem);
     
@@ -1049,36 +1156,386 @@ app.delete('/api/cart/:itemId', ensureAuthenticated, async (req, res) => {
 
 app.get('/api/workshops', ensureAuthenticated, async (req, res) => {
   try {
-    const workshops = await WorkshopModel.find({ userId: req.user.id }).populate('workshopId');
-    res.json(workshops);
+    const registrations = await WorkshopRegistration.find({ userId: req.user.id }).populate('workshopId');
+    res.json(registrations);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching workshops' });
+    res.status(500).json({ error: 'Error fetching workshop registrations' });
   }
 });
 
 app.post('/api/workshops', ensureAuthenticated, async (req, res) => {
   try {
-    const { workshopId, workshopName, date } = req.body;
-    const registration = new WorkshopModel({
+    const { workshopId, workshopName, workshopDate, participantName, participantEmail, participantPhone } = req.body;
+    
+    // Check if user is already registered for this workshop
+    const existingRegistration = await WorkshopRegistration.findOne({
+      userId: req.user.id,
+      workshopId: workshopId
+    });
+    
+    if (existingRegistration) {
+      return res.status(400).json({ error: 'You are already registered for this workshop' });
+    }
+    
+    const registration = new WorkshopRegistration({
       userId: req.user.id,
       workshopId,
       workshopName,
-      date,
+      workshopDate: new Date(workshopDate),
+      participantName,
+      participantEmail,
+      participantPhone,
       status: 'registered'
     });
+    
     await registration.save();
-    res.json({ success: true, item: registration });
+    res.json({ success: true, registration: registration });
   } catch (error) {
+    console.error('Workshop registration error:', error);
     res.status(500).json({ error: 'Error registering for workshop' });
   }
 });
 
 app.delete('/api/workshops/:id', ensureAuthenticated, async (req, res) => {
   try {
-    await WorkshopModel.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    await WorkshopRegistration.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Error canceling workshop registration' });
+  }
+});
+
+// Workshop proposal submission endpoint
+app.post('/submit-workshop-proposal', async (req, res) => {
+  try {
+    const proposalData = req.body;
+    
+    // Create a new request with the workshop proposal data
+    const request = new Request({
+      userId: req.isAuthenticated() ? req.user.id : null,
+      type: 'conduct-workshop',
+      title: proposalData.title,
+      description: proposalData.description,
+      details: {
+        category: proposalData.category,
+        organizerName: proposalData.organizerName,
+        organizerEmail: proposalData.organizerEmail,
+        organizerPhone: proposalData.organizerPhone,
+        organizerExperience: proposalData.organizerExperience,
+        duration: proposalData.duration,
+        capacity: proposalData.capacity,
+        skillLevel: proposalData.skillLevel,
+        price: proposalData.price,
+        preferredDate: proposalData.preferredDate,
+        materialsNeeded: proposalData.materialsNeeded,
+        collaborationType: proposalData.collaborationType,
+        additionalNotes: proposalData.additionalNotes
+      },
+      status: 'pending',
+      submittedDate: new Date()
+    });
+    
+    await request.save();
+    
+    res.json({ 
+      success: true, 
+      message: 'Workshop proposal submitted successfully! We will review it and get back to you soon.' 
+    });
+  } catch (error) {
+    console.error('Error submitting workshop proposal:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to submit workshop proposal. Please try again.' 
+    });
+  }
+});
+
+// Simple test payment endpoint (no auth required)
+app.post('/api/test-payment', async (req, res) => {
+  try {
+    console.log('Test payment endpoint called');
+    
+    // Simple response without Razorpay SDK for testing
+    const testOrder = {
+      id: 'test_order_' + Date.now(),
+      amount: 10000, // ₹100 in paise
+      currency: 'INR',
+      razorpayKeyId: 'rzp_test_S2a2ZZ2ERWzWeB', // Your key
+      customerName: 'Test User',
+      customerEmail: 'test@example.com',
+      customerPhone: '9999999999'
+    };
+    
+    console.log('Sending test order:', testOrder);
+    
+    res.json({
+      success: true,
+      order: testOrder,
+      message: 'Test order created successfully'
+    });
+  } catch (error) {
+    console.error('Test payment error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Test payment failed: ' + error.message
+    });
+  }
+});
+
+// Main payment order creation endpoint
+app.post('/api/create-payment-order', ensureAuthenticated, async (req, res) => {
+  try {
+    const { itemId, name, price, image, type } = req.body;
+    
+    console.log('Creating payment order for:', { name, price, type });
+    
+    // Convert rupees to paise (multiply by 100)
+    const amountInPaise = Math.round(price * 100);
+    
+    console.log(`Price conversion: ₹${price} → ${amountInPaise} paise`);
+    
+    const order = {
+      id: 'order_' + Date.now(),
+      amount: amountInPaise, // Amount in paise
+      currency: 'INR',
+      razorpayKeyId: process.env.RAZORPAY_KEY_ID,
+      customerName: req.user.name,
+      customerEmail: req.user.email,
+      customerPhone: req.user.phone || ''
+    };
+    
+    console.log('Created payment order:', order);
+    
+    res.json({
+      success: true,
+      order: order
+    });
+  } catch (error) {
+    console.error('Error creating payment order:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create payment order: ' + error.message
+    });
+  }
+});
+
+// Test payment verification (no auth required)
+app.post('/api/test-verify', async (req, res) => {
+  try {
+    const { paymentResponse } = req.body;
+    console.log('Test payment verification:', paymentResponse);
+    
+    res.json({
+      success: true,
+      message: 'Test payment verified successfully',
+      paymentId: paymentResponse.razorpay_payment_id
+    });
+  } catch (error) {
+    console.error('Test verification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Test verification failed'
+    });
+  }
+});
+
+app.post('/api/verify-payment', ensureAuthenticated, async (req, res) => {
+  try {
+    const { paymentResponse, itemId, itemName, price, image } = req.body;
+    
+    // Verify payment signature using Razorpay SDK
+    const crypto = require('crypto');
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(paymentResponse.razorpay_order_id + '|' + paymentResponse.razorpay_payment_id)
+      .digest('hex');
+
+    if (expectedSignature !== paymentResponse.razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment verification failed - Invalid signature'
+      });
+    }
+    
+    console.log('Payment verification successful:', paymentResponse);
+    
+    // Create order record
+    const orderItems = [{
+      itemId: itemId,
+      name: itemName,
+      price: price,
+      quantity: 1,
+      image: image,
+      type: 'art'
+    }];
+    
+    const order = new Order({
+      userId: req.user._id || req.user.id,
+      customerName: req.user.name,
+      customerEmail: req.user.email,
+      items: orderItems,
+      totalAmount: price,
+      status: 'completed', // Since payment is verified
+      paymentMethod: 'online',
+      paymentId: paymentResponse.razorpay_payment_id,
+      orderDate: new Date()
+    });
+    
+    await order.save();
+    
+    res.json({
+      success: true,
+      message: 'Payment verified and order created successfully',
+      orderId: order._id
+    });
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Payment verification failed: ' + error.message
+    });
+  }
+});
+
+// Art Checkout API endpoints
+app.post('/api/art-checkout', ensureAuthenticated, async (req, res) => {
+  try {
+    const { items, deliveryAddress, paymentMethod, orderType } = req.body;
+    
+    // Calculate total
+    const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Create order
+    const order = new Order({
+      userId: req.user.id,
+      items: items.map(item => ({
+        itemId: item.itemId,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image,
+        type: 'art'
+      })),
+      totalAmount: totalAmount,
+      status: paymentMethod === 'cod' ? 'pending' : 'completed',
+      paymentMethod: paymentMethod,
+      deliveryAddress: deliveryAddress,
+      orderType: 'art',
+      orderDate: new Date()
+    });
+    
+    await order.save();
+    
+    // Remove art items from user's cart
+    const User = require('./models/User');
+    const user = await User.findById(req.user.id);
+    const artItemIds = items.map(item => item.itemId);
+    user.cart = user.cart.filter(cartItem => !artItemIds.includes(cartItem.itemId));
+    user.markModified('cart');
+    await user.save();
+    
+    res.json({
+      success: true,
+      message: 'Art order placed successfully',
+      orderId: order._id
+    });
+  } catch (error) {
+    console.error('Art checkout error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to place art order'
+    });
+  }
+});
+
+app.post('/api/create-art-payment-order', ensureAuthenticated, async (req, res) => {
+  try {
+    const { items, deliveryAddress, paymentMethod, orderType } = req.body;
+    
+    // Calculate total in rupees
+    const totalAmountInRupees = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Convert to paise (multiply by 100)
+    const totalAmountInPaise = Math.round(totalAmountInRupees * 100);
+    
+    console.log(`Art payment: ₹${totalAmountInRupees} → ${totalAmountInPaise} paise`);
+    
+    const order = {
+      id: 'order_art_' + Date.now(),
+      amount: totalAmountInPaise, // Amount in paise
+      currency: 'INR',
+      razorpayKeyId: process.env.RAZORPAY_KEY_ID,
+      customerName: req.user.name,
+      customerEmail: req.user.email,
+      customerPhone: req.user.phone || deliveryAddress.phone
+    };
+    
+    console.log('Created art payment order:', order);
+    
+    res.json({
+      success: true,
+      order: order
+    });
+  } catch (error) {
+    console.error('Error creating art payment order:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create art payment order: ' + error.message
+    });
+  }
+});
+
+app.post('/api/verify-art-payment', ensureAuthenticated, async (req, res) => {
+  try {
+    const { paymentResponse, orderData } = req.body;
+    
+    // In a real implementation, verify the payment signature with Razorpay
+    console.log('Art payment verification:', paymentResponse);
+    
+    // Calculate total
+    const totalAmount = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Create order record
+    const order = new Order({
+      userId: req.user.id,
+      items: orderData.items.map(item => ({
+        itemId: item.itemId,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image,
+        type: 'art'
+      })),
+      totalAmount: totalAmount,
+      status: 'completed', // Since payment is successful
+      paymentMethod: 'online',
+      paymentId: paymentResponse.razorpay_payment_id,
+      deliveryAddress: orderData.deliveryAddress,
+      orderType: 'art',
+      orderDate: new Date()
+    });
+    
+    await order.save();
+    
+    // Remove art items from user's cart
+    const User = require('./models/User');
+    const user = await User.findById(req.user.id);
+    const artItemIds = orderData.items.map(item => item.itemId);
+    user.cart = user.cart.filter(cartItem => !artItemIds.includes(cartItem.itemId));
+    user.markModified('cart');
+    await user.save();
+    
+    res.json({
+      success: true,
+      message: 'Art payment verified and order created successfully',
+      orderId: order._id
+    });
+  } catch (error) {
+    console.error('Error verifying art payment:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Art payment verification failed'
+    });
   }
 });
 
@@ -1305,6 +1762,7 @@ app.delete('/api/cart/remove/:itemId', async (req, res) => {
 // Checkout API - Convert cart to order
 app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
   try {
+    const { orderType = 'menu', items } = req.body;
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
     
@@ -1312,12 +1770,26 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    if (!user.cart || user.cart.length === 0) {
+    // Use provided items or get from user cart
+    let cartItems = items || user.cart;
+    
+    if (!cartItems || cartItems.length === 0) {
       return res.status(400).json({ success: false, message: 'Cart is empty' });
     }
 
+    // Filter items based on order type if not provided
+    if (!items && orderType === 'menu') {
+      cartItems = user.cart.filter(item => item.type !== 'art' && 
+                                   !(item.image && item.image.includes('/assets/gallery/')) &&
+                                   !(item.name && (item.name.includes('by ') || item.name.includes('Wilderness') || item.name.includes('Mountain') || item.name.includes('Serenity'))));
+    }
+
+    if (cartItems.length === 0) {
+      return res.status(400).json({ success: false, message: `No ${orderType} items in cart` });
+    }
+
     // Calculate total amount
-    const totalAmount = user.cart.reduce((total, item) => {
+    const totalAmount = cartItems.reduce((total, item) => {
       return total + (item.price * item.quantity);
     }, 0);
 
@@ -1326,27 +1798,39 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
       userId: user._id,
       customerName: user.name || user.displayName,
       customerEmail: user.email,
-      items: user.cart.map(item => ({
+      items: cartItems.map(item => ({
         itemId: item.itemId,
         name: item.name,
         price: item.price,
         image: item.image,
         quantity: item.quantity,
-        type: item.type || 'menu' // Include item type in order
+        type: item.type || 'menu'
       })),
       totalAmount: totalAmount,
-      status: 'pending'
+      status: 'pending',
+      paymentMethod: 'cash', // Menu items are typically cash/pickup
+      orderType: orderType
     });
 
-    console.log('Creating order for user:', user._id, 'with', user.cart.length, 'items');
+    console.log('Creating order for user:', user._id, 'with', cartItems.length, 'items');
 
     // Save order
     await newOrder.save();
 
     console.log('Order saved successfully:', newOrder._id);
 
-    // Clear user's cart
-    user.cart = [];
+    // Remove processed items from user's cart
+    if (!items) {
+      // If no specific items provided, remove the filtered items
+      const processedItemIds = cartItems.map(item => item.itemId);
+      user.cart = user.cart.filter(cartItem => !processedItemIds.includes(cartItem.itemId));
+    } else {
+      // If specific items provided, remove those
+      const processedItemIds = items.map(item => item.itemId);
+      user.cart = user.cart.filter(cartItem => !processedItemIds.includes(cartItem.itemId));
+    }
+    
+    user.markModified('cart');
     await user.save();
 
     console.log('Order created:', {
@@ -1354,7 +1838,8 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
       customer: user.name || user.displayName,
       email: user.email,
       totalAmount: totalAmount,
-      itemCount: newOrder.items.length
+      itemCount: newOrder.items.length,
+      orderType: orderType
     });
 
     res.json({ 
@@ -1394,26 +1879,6 @@ app.get('/api/debug/menu-items', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching menu items:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Debug: Get current user info (temporary for testing)
-app.get('/api/debug/user', ensureAuthenticated, async (req, res) => {
-  try {
-    const User = require('./models/User');
-    const user = await User.findById(req.user._id || req.user.id);
-    console.log('Current user:', user ? { id: user._id, name: user.name, email: user.email } : 'Not found');
-    res.json({ 
-      user: user ? {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        cartLength: user.cart ? user.cart.length : 0
-      } : null
-    });
-  } catch (error) {
-    console.error('Error fetching user:', error);
     res.status(500).json({ error: error.message });
   }
 });

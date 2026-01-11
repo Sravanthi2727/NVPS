@@ -36,7 +36,10 @@ document.querySelectorAll('.countdown').forEach(el => {
 });
 
 // REGISTER
-function openRegister(name, date) {
+let currentWorkshopId = null;
+
+function openRegister(name, date, workshopId) {
+  currentWorkshopId = workshopId;
   document.getElementById('workshopName').value = name;
   document.getElementById('workshopDate').value = date;
   document.getElementById('registerModal').style.display = 'flex';
@@ -121,13 +124,58 @@ function handleEscapeKey(e) {
 // Make functions globally available
 window.openOrganizeModal = openOrganizeModal;
 window.closeOrganizeModal = closeOrganizeModal;
-  }
-}
 
-document.getElementById('registerForm').addEventListener('submit', e => {
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  alert('Registration successful!');
-  closeRegister();
+  
+  const formData = new FormData(e.target);
+  const workshopName = document.getElementById('workshopName').value;
+  const workshopDate = document.getElementById('workshopDate').value;
+  
+  // Get form values
+  const participantName = formData.get('name') || e.target.querySelector('input[placeholder="Your Name"]').value;
+  const participantEmail = formData.get('email') || e.target.querySelector('input[type="email"]').value;
+  const participantPhone = formData.get('phone') || e.target.querySelector('input[type="tel"]').value;
+  
+  if (!participantName || !participantEmail || !participantPhone) {
+    alert('Please fill in all required fields');
+    return;
+  }
+  
+  if (!currentWorkshopId) {
+    alert('Workshop ID not found. Please try again.');
+    return;
+  }
+  
+  try {
+    const response = await fetch('/api/workshops', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        workshopId: currentWorkshopId,
+        workshopName,
+        workshopDate,
+        participantName,
+        participantEmail,
+        participantPhone
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      alert('Registration successful! You will receive a confirmation email shortly.');
+      closeRegister();
+      e.target.reset();
+    } else {
+      alert(result.error || 'Registration failed. Please try again.');
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    alert('Registration failed. Please check your connection and try again.');
+  }
 });
 
 // GALLERY
@@ -364,7 +412,7 @@ function clearValidationError(e) {
 }
 
 function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+₹/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 

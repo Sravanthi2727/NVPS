@@ -1,0 +1,50 @@
+/* Gallery CSS - Basic styles for gallery page */
+
+.gallery-section {
+    padding: 2rem 0;
+}
+
+.gallery-item {
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+}
+
+.gallery-img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    padding: 1rem;
+    color: white;
+    border-radius: 0 0 8px 8px;
+}
+
+.art-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.art-artist {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 0.5rem;
+}
+
+.art-price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #d6a45a;
+}

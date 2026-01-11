@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Razorpay Test</title>
+    <style>
+        body { background: #000; color: #fff; font-family: Arial; text-align: center; padding: 50px; }
+        button { background: #d6a45a; color: #000; border: none; padding: 20px; font-size: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Quick Razorpay Test</h1>
+    <button onclick="quickTest()">Pay ₹10</button>
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        function quickTest() {
+            console.log('Quick test started');
+            document.getElementById('result').innerHTML = 'Testing...';
+            
+            if (!window.Razorpay) {
+                document.getElementById('result').innerHTML = '❌ Razorpay not loaded';
+                return;
+            }
+
+            var options = {
+                key: 'rzp_test_S2a2ZZ2ERWzWeB',
+                amount: 1000, // ₹10
+                currency: 'INR',
+                name: 'Quick Test',
+                description: 'Test Payment',
+                handler: function (response) {
+                    document.getElementById('result').innerHTML = '✅ Success: ' + response.razorpay_payment_id;
+                },
+                modal: {
+                    ondismiss: function() {
+                        document.getElementById('result').innerHTML = '❌ Cancelled';
+                    }
+                }
+            };
+
+            try {
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response) {
+                    document.getElementById('result').innerHTML = '❌ Failed: ' + response.error.description;
+                });
+                rzp1.open();
+                document.getElementById('result').innerHTML = '✅ Razorpay opened';
+            } catch (e) {
+                document.getElementById('result').innerHTML = '❌ Error: ' + e.message;
+            }
+        }
+    </script>
+</body>
+</html>

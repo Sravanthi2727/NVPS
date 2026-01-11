@@ -28,6 +28,19 @@
       padding-top: 76px; /* Account for fixed navbar */
     }
     
+    /* No workshops state */
+    .no-workshops {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #666;
+      font-style: italic;
+    }
+    
+    .no-workshops p {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    
     /* Workshop Hero Animations */
     .hero {
         position: relative;
@@ -158,11 +171,19 @@
       <!-- 2. Next Workshop Highlight -->
       <div class="why-mini highlight">
         <h3>Next Workshop</h3>
-        <p class="highlight-title">Advanced Coffee Brewing</p>
-        <span class="highlight-date">18 Feb 2026</span>
-        <p class="highlight-note">
-          Our closest upcoming session — limited seats available.
-        </p>
+        <% if (typeof upcomingWorkshops !== 'undefined' && upcomingWorkshops.length > 0) { %>
+          <p class="highlight-title"><%= upcomingWorkshops[0].title %></p>
+          <span class="highlight-date"><%= new Date(upcomingWorkshops[0].date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+          <p class="highlight-note">
+            Our closest upcoming session — limited seats available.
+          </p>
+        <% } else { %>
+          <p class="highlight-title">No Upcoming Workshops</p>
+          <span class="highlight-date">Stay Tuned</span>
+          <p class="highlight-note">
+            New workshops coming soon. Check back later!
+          </p>
+        <% } %>
       </div>
 
       <!-- 3. Who It's For -->
@@ -195,83 +216,32 @@
   <h2>Upcoming Workshops</h2>
 
   <div class="grid upcoming-grid">
+    <% if (typeof upcomingWorkshops !== 'undefined' && upcomingWorkshops.length > 0) { %>
+      <% upcomingWorkshops.forEach(workshop => { %>
+        <!-- <%= workshop.title %> -->
+        <div class="workshop-card" data-workshop-id="<%= workshop._id %>"></div>
+          <div class="workshop-img">
+            <img src="<%= workshop.image || 'https://images.unsplash.com/photo-1509042239860-f550ce710b93' %>"
+                 alt="<%= workshop.title %>">
+          </div>
 
-    <!-- Advanced Coffee Brewing -->
-    <div class="workshop-card">
-      <div class="workshop-img">
-        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93"
-             alt="Advanced Coffee Brewing">
+          <div class="workshop-content">
+            <h3><%= workshop.title %></h3>
+            <div class="meta">📅 <%= new Date(workshop.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %></div>
+            <div class="countdown" data-date="<%= workshop.date %>"></div>
+
+            <button class="register-btn"
+              onclick="openRegister('<%= workshop.title %>','<%= new Date(workshop.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %>', '<%= workshop._id %>')"></button>
+              Register
+            </button>
+          </div>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <div class="no-workshops">
+        <p>No upcoming workshops at the moment. Check back soon!</p>
       </div>
-
-      <div class="workshop-content">
-        <h3>Advanced Coffee Brewing</h3>
-        <div class="meta">📅 18 Feb 2026</div>
-        <div class="countdown" data-date="2026-02-18"></div>
-
-        <button class="register-btn"
-          onclick="openRegister('Advanced Coffee Brewing','18 Feb 2026')">
-          Register
-        </button>
-      </div>
-    </div>
-
-    <!-- Watercolor Techniques -->
-    <div class="workshop-card">
-      <div class="workshop-img">
-        <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f"
-             alt="Watercolor Techniques">
-      </div>
-
-      <div class="workshop-content">
-        <h3>Watercolor Techniques</h3>
-        <div class="meta">📅 3 Mar 2026</div>
-        <div class="countdown" data-date="2026-03-03"></div>
-
-        <button class="register-btn"
-          onclick="openRegister('Watercolor Techniques','3 Mar 2026')">
-          Register
-        </button>
-      </div>
-    </div>
-
-    <!-- Modern Calligraphy -->
-    <div class="workshop-card">
-      <div class="workshop-img">
-        <img src="assets/workshops/modern-calligraphy.jpg"
-             alt="Modern Calligraphy">
-      </div>
-
-      <div class="workshop-content">
-        <h3>Modern Calligraphy</h3>
-        <div class="meta">📅 20 Mar 2026</div>
-        <div class="countdown" data-date="2026-03-20"></div>
-
-        <button class="register-btn"
-          onclick="openRegister('Modern Calligraphy','20 Mar 2026')">
-          Register
-        </button>
-      </div>
-    </div>
-
-    <!-- Beginner Pottery -->
-    <div class="workshop-card">
-      <div class="workshop-img">
-        <img src="assets/workshops/pottery.jpg"
-             alt="Beginner Pottery">
-      </div>
-
-      <div class="workshop-content">
-        <h3>Beginner Pottery</h3>
-        <div class="meta">📅 5 Apr 2026</div>
-        <div class="countdown" data-date="2026-04-05"></div>
-
-        <button class="register-btn"
-          onclick="openRegister('Beginner Pottery','5 Apr 2026')">
-          Register
-        </button>
-      </div>
-    </div>
-
+    <% } %>
   </div>
 </section>
 
@@ -280,83 +250,50 @@
   <h2>Past Workshops</h2>
 
   <div class="grid">
+    <% if (typeof pastWorkshops !== 'undefined' && pastWorkshops.length > 0) { %>
+      <% pastWorkshops.forEach(workshop => { %>
+        <!-- <%= workshop.title %> -->
+        <div class="card clickable"
+          onclick="openGallery(<%= JSON.stringify(workshop.galleryImages || []) %>)">
+          <img src="<%= workshop.image || 'https://images.unsplash.com/photo-1509042239860-f550ce710b93' %>" alt="<%= workshop.title %>">
 
-    <!-- Coffee Art Workshop -->
-    <div class="card clickable"
-      onclick="openGallery([
-        'assets/workshops/coffee-art/1.jpg',
-        'assets/workshops/coffee-art/3.jpg',
-        'assets/workshops/coffee-art/4.jpg'
-      ])">
-      <img src="assets/workshops/coffee-art/2.jpg" alt="Coffee Art Workshop">
+          <div class="card-content">
+            <h3><%= workshop.title %></h3>
 
-      <div class="card-content">
-        <h3>Coffee Art Workshop</h3>
+            <div class="meta">
+              <% if (workshop.meta && workshop.meta.tags && workshop.meta.tags.length > 0) { %>
+                <span class="meta-item">
+                  <% if (workshop.category === 'Coffee' || workshop.category === 'Coffee Education') { %>☕<% } 
+                     else if (workshop.category === 'Art') { %>🎨<% } 
+                     else if (workshop.category === 'Clay Modelling') { %>🪔<% } 
+                     else { %>🖨️<% } %> 
+                  <%= workshop.meta.tags[0] %>
+                </span>
+                <span class="dot">·</span>
+                <span class="meta-item"><%= workshop.meta.level || 'All Levels' %></span>
+              <% } else { %>
+                <span class="meta-item">
+                  <% if (workshop.category === 'Coffee' || workshop.category === 'Coffee Education') { %>☕ Coffee<% } 
+                     else if (workshop.category === 'Art') { %>🎨 Art<% } 
+                     else if (workshop.category === 'Clay Modelling') { %>🪔 Clay Modelling<% } 
+                     else { %>🖨️ Workshop<% } %>
+                </span>
+                <span class="dot">·</span>
+                <span class="meta-item">Hands-on</span>
+              <% } %>
+            </div>
 
-        <div class="meta">
-          <span class="meta-item">☕ Latte Art</span>
-          <span class="dot">·</span>
-          <span class="meta-item">Hands-on</span>
+            <p class="card-desc">
+              <%= workshop.description || 'A creative workshop experience at Rabuste Coffee.' %>
+            </p>
+          </div>
         </div>
-
-        <p class="card-desc">
-          Guided session focused on <span class="highlight">precision</span>
-          and creative coffee techniques.
-        </p>
+      <% }); %>
+    <% } else { %>
+      <div class="no-workshops">
+        <p>No past workshops to display yet.</p>
       </div>
-    </div>
-
-    <!-- Lino Cut Art Workshop -->
-    <div class="card clickable"
-      onclick="openGallery([
-        'assets/workshops/lino-cut/1.jpg',
-        'assets/workshops/lino-cut/4.jpg',
-        'assets/workshops/lino-cut/3.jpg'
-      ])">
-      <img src="assets/workshops/lino-cut/2.jpg" alt="Lino Cut Art Workshop">
-
-      <div class="card-content">
-        <h3>Lino Cut Art Workshop</h3>
-
-        <div class="meta">
-          <span class="meta-item">🖨️ Printmaking</span>
-          <span class="dot">·</span>
-          <span class="meta-item">Beginner-friendly</span>
-        </div>
-
-        <p class="card-desc">
-          Explore traditional printmaking through
-          <span class="highlight">intentional</span> mark-making.
-        </p>
-      </div>
-    </div>
-
-    <!-- Ganesha Making Workshop -->
-    <div class="card clickable"
-      onclick="openGallery([
-        'https://images.unsplash.com/photo-1609334761843-3a62c88a5f7a',
-        'https://images.unsplash.com/photo-1602223116515-1a0c1e6b2b9a',
-        'https://images.unsplash.com/photo-1567598508481-65934c7f19c6'
-      ])">
-      <img src="assets/workshops/ganesha-making/1.jpg"
-           alt="Ganesha Making Workshop">
-
-      <div class="card-content">
-        <h3>Ganesha Making Workshop</h3>
-
-        <div class="meta">
-          <span class="meta-item">🪔 Clay Modelling</span>
-          <span class="dot">·</span>
-          <span class="meta-item">Guided Session</span>
-        </div>
-
-        <p class="card-desc">
-          A mindful sculpting experience rooted in
-          <span class="highlight">tradition</span> and creativity.
-        </p>
-      </div>
-    </div>
-
+    <% } %>
   </div>
 </section>
 
@@ -422,9 +359,9 @@
       <input id="workshopName" readonly>
       <input id="workshopDate" readonly>
 
-      <input placeholder="Your Name" required>
-      <input type="email" placeholder="Email" required>
-      <input type="tel" placeholder="Phone Number" required>
+      <input name="name" placeholder="Your Name" required>
+      <input name="email" type="email" placeholder="Email" required>
+      <input name="phone" type="tel" placeholder="Phone Number" required>
 
       <button type="submit">Confirm Registration</button>
     </form>
