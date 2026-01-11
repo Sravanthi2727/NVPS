@@ -362,7 +362,7 @@
                                             <span class="badge bg-info me-1"><%= item %></span>
                                         <% }); %>
                                     </td>
-                                    <td class="fw-bold">$<%= request.total.toFixed(2) %></td>
+                                    <td class="fw-bold">₹<%= request.total.toFixed(2) %></td>
                                     <td><%= new Date(request.date).toLocaleDateString() %></td>
                                     <td>
                                         <span class="badge bg-<%= request.status === 'completed' ? 'success' : request.status === 'pending' ? 'warning' : request.status === 'cancelled' ? 'danger' : 'secondary' %>">

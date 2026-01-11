@@ -21,11 +21,11 @@ function createTestApp() {
     res.render('franchise', {
       title: "Franchise Opportunities - Rabuste Coffee",
       investmentRanges: [
-        "$50K - $75K",
-        "$75K - $100K", 
-        "$100K - $150K",
-        "$150K - $200K",
-        "$200K+"
+        "₹50K - ₹75K",
+        "₹75K - ₹100K", 
+        "₹100K - ₹150K",
+        "₹150K - ₹200K",
+        "₹200K+"
       ]
     });
   });
@@ -123,7 +123,7 @@ describe('Franchise Business Model Content Unit Tests', () => {
               'Streamlined operations focused on quality coffee, light food, and community experiences. Perfect for busy urban locations with high foot traffic and strong profit potential.',
               'Efficient 500-1,200 sq ft footprint maximizes revenue per square foot while minimizing overhead costs and setup complexity for optimal business performance.',
               'Target high-traffic urban areas, business districts, and cultural neighborhoods where our unique Robusta positioning resonates with discerning customers and drives market success.',
-              'Initial investment range of $75K-$150K with projected break-even within 12-18 months. Strong unit economics driven by premium positioning and operational efficiency for excellent ROI.'
+              'Initial investment range of ₹75K-₹150K with projected break-even within 12-18 months. Strong unit economics driven by premium positioning and operational efficiency for excellent ROI.'
             ];
             return { textContent: descriptions[index] };
           }
@@ -300,7 +300,7 @@ describe('Franchise Business Model Content Unit Tests', () => {
       expect(response.text).toContain('Streamlined operations focused on quality coffee');
       expect(response.text).toContain('500-1,200 sq ft footprint');
       expect(response.text).toContain('high-traffic urban areas');
-      expect(response.text).toContain('$75K-$150K');
+      expect(response.text).toContain('₹75K-₹150K');
       expect(response.text).toContain('12-18 months');
     });
 
@@ -347,7 +347,7 @@ describe('Franchise Business Model Content Unit Tests', () => {
       expect(response.text).toContain('unit economics');
       
       // Test that investment information uses realistic ranges
-      expect(response.text).toMatch(/\$\d+K-\$\d+K/); // Format like $75K-$150K
+      expect(response.text).toMatch(/\₹\d+K-\₹\d+K/); // Format like ₹75K-₹150K
       expect(response.text).toMatch(/\d+-\d+\s+months/); // Format like 12-18 months
       
       // Test that content avoids placeholder text
@@ -673,7 +673,7 @@ describe('Franchise Business Model Content Unit Tests', () => {
         .expect(200);
       
       // Test that content includes key investor-focused metrics
-      expect(response.text).toContain('$75K-$150K'); // Investment range
+      expect(response.text).toContain('₹75K-₹150K'); // Investment range
       expect(response.text).toContain('12-18 months'); // Break-even timeline
       expect(response.text).toContain('500-1,200 sq ft'); // Space requirements
       

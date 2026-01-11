@@ -41,8 +41,8 @@ describe('Franchise Page SEO Markup Completeness Property Tests', () => {
       metaDescription: {
         tagName: 'META',
         name: 'description',
-        content: 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and $75K-$150K investment range.',
-        getAttribute: (attr) => attr === 'name' ? 'description' : attr === 'content' ? 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and $75K-$150K investment range.' : null
+        content: 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and ₹75K-₹150K investment range.',
+        getAttribute: (attr) => attr === 'name' ? 'description' : attr === 'content' ? 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and ₹75K-₹150K investment range.' : null
       },
       
       metaKeywords: {
@@ -70,8 +70,8 @@ describe('Franchise Page SEO Markup Completeness Property Tests', () => {
       ogDescription: {
         tagName: 'META',
         property: 'og:description',
-        content: 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and $75K-$150K investment range.',
-        getAttribute: (attr) => attr === 'property' ? 'og:description' : attr === 'content' ? 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and $75K-$150K investment range.' : null
+        content: 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and ₹75K-₹150K investment range.',
+        getAttribute: (attr) => attr === 'property' ? 'og:description' : attr === 'content' ? 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and ₹75K-₹150K investment range.' : null
       },
       
       ogType: {
@@ -140,7 +140,7 @@ describe('Franchise Page SEO Markup Completeness Property Tests', () => {
           "@context": "https://schema.org",
           "@type": "WebPage",
           "name": "Franchise Opportunities - Partner with Rabuste Coffee",
-          "description": "Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and $75K-$150K investment range.",
+          "description": "Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support, proven business model, and ₹75K-₹150K investment range.",
           "url": "https://rabustecoffee.com/franchise"
         }),
         getAttribute: (attr) => attr === 'type' ? 'application/ld+json' : null
@@ -571,7 +571,7 @@ describe('Franchise Page SEO Markup Completeness Property Tests', () => {
             
             if (validationLevel === 'attributes') {
               // Lang attribute should be valid
-              expect(mockDocument.documentElement.lang).toMatch(/^[a-z]{2}(-[A-Z]{2})?$/);
+              expect(mockDocument.documentElement.lang).toMatch(/^[a-z]{2}(-[A-Z]{2})?₹/);
               
               // Title should be descriptive
               if (titleTag) {
@@ -639,7 +639,7 @@ describe('Franchise Page SEO Markup Completeness Property Tests', () => {
             
             // URLs should follow SEO-friendly structure
             if (canonicalUrl) {
-              expect(canonicalUrl).toMatch(/\/franchise$/); // Clean URL structure
+              expect(canonicalUrl).toMatch(/\/franchise₹/); // Clean URL structure
               expect(canonicalUrl).not.toMatch(/\?/); // No query parameters in canonical
             }
           }

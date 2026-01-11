@@ -32,7 +32,7 @@ async function checkFranchiseApplications() {
         email: 'test@example.com',
         phoneNumber: '1234567890',
         city: 'Mumbai',
-        investmentRange: '$75K - $100K',
+        investmentRange: '₹75K - ₹100K',
         expectedTimeline: '6-12 months',
         businessExperience: 'Test experience',
         status: 'pending'

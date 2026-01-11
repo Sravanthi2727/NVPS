@@ -540,7 +540,7 @@ describe('Franchise Page Asset Optimization Property Tests', () => {
               expect(dataSrc).toBeTruthy();
               
               // Should use optimized format in data-src
-              expect(dataSrc).toMatch(/\.webp$/);
+              expect(dataSrc).toMatch(/\.webp₹/);
               expect(dataSrc).toMatch(/-(320w|640w|1024w)/);
             }
             

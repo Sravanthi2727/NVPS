@@ -44,7 +44,7 @@ async function initMenuItems() {
         existingItem.isAvailable = true;
         existingItem.reviews = itemData.reviews || [];
         await existingItem.save();
-        console.log(`✓ Updated: "${itemData.name}" - ₹${itemData.price}`);
+        console.log(`✓ Updated: "${itemData.name}" - $${itemData.price}`);
         created++;
         continue;
       }
@@ -63,7 +63,7 @@ async function initMenuItems() {
       });
       
       await menuItem.save();
-      console.log(`✓ Created: "${itemData.name}" - ₹${itemData.price}`);
+      console.log(`✓ Created: "${itemData.name}" - $${itemData.price}`);
       created++;
     }
     

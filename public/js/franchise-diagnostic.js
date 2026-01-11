@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     position: fixed;
     top: 10px;
     right: 10px;
-    background: ${healthScore === totalChecks ? '#28a745' : '#ffc107'};
+    background: ${healthScore === totalChecks ? 'var(--gold)' : '#ffc107'};
     color: white;
     padding: 8px 12px;
     border-radius: 4px;

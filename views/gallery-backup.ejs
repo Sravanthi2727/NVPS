@@ -678,18 +678,150 @@
 </div>
 
 <script>
+    // Highlight keywords in description
+    function highlightKeywords(text) {
+        const keywords = [
+            'abstract', 'painting', 'photography', 'sculpture', 'digital', 'art',
+            'artist', 'canvas', 'bronze', 'clay', 'oil', 'watercolor', 'landscape',
+            'portrait', 'modern', 'contemporary', 'urban', 'nature', 'sunset',
+            'city', 'mountains', 'wilderness', 'flow', 'dreams', 'serenity',
+            'golden', 'lights', 'eternal', 'mountain', 'digital', 'photography'
+        ];
+        
+        let highlightedText = text;
+        keywords.forEach(keyword => {
+            const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+            highlightedText = highlightedText.replace(regex, `<span class="highlight">${keyword}</span>`);
+        });
+        
+        return highlightedText;
+    }
+
+    // Artwork details functionality
+    async function showArtworkDetails(artworkId) {
+        console.log('Showing details for artwork ID:', artworkId);
+        console.log('Type of artworkId:', typeof artworkId);
+        
+        try {
+            const response = await fetch(`/api/artwork/${artworkId}`);
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Error response:', errorText);
+                throw new Error(`Artwork not found (Status: ${response.status})`);
+            }
+            
+            const artwork = await response.json();
+            console.log('Artwork data received:', artwork);
+            
+            // Update modal header
+            const modalHeader = document.getElementById('modalHeaderInfo');
+            modalHeader.innerHTML = `
+                <h2 class="artwork-detail-title">${artwork.title}</h2>
+                <p class="artwork-detail-artist">By ${artwork.artist}</p>
+            `;
+            
+            // Update modal body
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="${artwork.image.startsWith('/') ? artwork.image : '/assets/gallery/' + artwork.image}" 
+                             alt="${artwork.title}" 
+                             class="artwork-detail-img"
+                             onerror="this.src='/assets/photowall.jpeg'">
+                        <p class="artwork-detail-description">${highlightKeywords(artwork.description || 'No description available.')}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="artwork-price-display">
+                            <span class="price-label">Price:</span>
+                            <span class="price-value">₹${artwork.price}</span>
+                        </div>
+                        
+                        <div class="artwork-detail-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Category:</span>
+                                <span class="meta-value">${artwork.category}</span>
+                            </div>
+                            ${artwork.year ? `
+                            <div class="meta-item">
+                                <span class="meta-label">Year:</span>
+                                <span class="meta-value">${artwork.year}</span>
+                            </div>` : ''}
+                            ${artwork.medium ? `
+                            <div class="meta-item">
+                                <span class="meta-label">Medium:</span>
+                                <span class="meta-value">${artwork.medium}</span>
+                            </div>` : ''}
+                            ${artwork.dimensions ? `
+                            <div class="meta-item">
+                                <span class="meta-label">Dimensions:</span>
+                                <span class="meta-value">${artwork.dimensions}</span>
+                            </div>` : ''}
+                            <div class="meta-item">
+                                <span class="meta-label">Availability:</span>
+                                <span class="meta-value">${artwork.availability || 'In Stock'}</span>
+                            </div>
+                            ${artwork.shipping ? `
+                            <div class="meta-item">
+                                <span class="meta-label">Shipping:</span>
+                                <span class="meta-value">${artwork.shipping}</span>
+                            </div>` : ''}
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button class="btn btn-gold" onclick="addArtToWishlist('${artwork._id}', '${artwork.title}', '${artwork.artist}', ${artwork.price}, '${artwork.image}')">
+                                <i class="fas fa-heart me-2"></i>Add to Wishlist
+                            </button>
+                            <button class="btn btn-outline-light" onclick="addArtToCart('${artwork._id}', '${artwork.title}', '${artwork.artist}', ${artwork.price}, '${artwork.image}')">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                            <button class="btn btn-outline-light" onclick="inquireArtwork('${artwork._id}')">
+                                <i class="fas fa-envelope me-2"></i>Inquire
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('artworkModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        } catch (error) {
+            console.error('Error fetching artwork details:', error);
+            alert('Error loading artwork details: ' + error.message + '. Please try again.');
+        }
+    }
+
+    // Close modal
+    function closeModal() {
+        document.getElementById('artworkModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+
     // State management for wishlist and cart
     const wishlistItems = new Set();
     const cartItems = new Map();
+    
+    // Define isLoggedIn variable for JavaScript
+    const isLoggedIn = <%= typeof isLoggedIn !== 'undefined' && isLoggedIn ? 'true' : 'false' %>;
+    console.log('User logged in:', isLoggedIn);
 
     // Add event listeners for wishlist and cart buttons
     document.addEventListener('DOMContentLoaded', function() {
-        // Load initial state
-        loadInitialState();
+        // Only load initial state if user is logged in
+        if (isLoggedIn) {
+            loadInitialState();
+        }
 
         // Wishlist button click handlers
         document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
             button.addEventListener('click', function() {
+                if (!isLoggedIn) {
+                    window.location.href = '/signin';
+                    return;
+                }
+                
                 const itemId = this.getAttribute('data-item-id');
                 const itemName = this.getAttribute('data-item-name');
                 const itemPrice = parseFloat(this.getAttribute('data-item-price'));
@@ -702,33 +834,17 @@
         // Cart button click handlers
         document.querySelectorAll('.add-to-cart-btn').forEach(button => {
             button.addEventListener('click', function() {
+                if (!isLoggedIn) {
+                    window.location.href = '/signin';
+                    return;
+                }
+                
                 const itemId = this.getAttribute('data-item-id');
                 const itemName = this.getAttribute('data-item-name');
                 const itemPrice = parseFloat(this.getAttribute('data-item-price'));
                 const itemImage = this.getAttribute('data-item-image');
                 
                 addToCartItem(itemId, itemName, itemPrice, itemImage, this);
-            });
-        });
-
-        // Category filter functionality
-        const filterButtons = document.querySelectorAll('.category-btn');
-        const galleryItems = document.querySelectorAll('[data-category]');
-        
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                
-                const filter = this.getAttribute('data-filter');
-                
-                galleryItems.forEach(item => {
-                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
             });
         });
     });
@@ -778,8 +894,29 @@
         });
     }
 
+    // Update cart button state for art items
+    function updateCartButtonState(button, inCart) {
+        if (inCart) {
+            // Show "In Cart" state for art items
+            button.innerHTML = '<i class="fas fa-check"></i> In Cart';
+            button.style.backgroundColor = 'var(--gold)';
+            button.style.color = '#fff';
+            button.style.cursor = 'default';
+            button.disabled = true;
+        } else {
+            // Show "Add to Cart" state
+            button.innerHTML = '<i class="fas fa-shopping-cart"></i>';
+            button.style.backgroundColor = 'var(--gold)';
+            button.style.color = 'var(--dark)';
+            button.style.cursor = 'pointer';
+            button.disabled = false;
+        }
+    }
+
     // Update wishlist button state
     function updateWishlistButtonState(button, inWishlist) {
+        button.disabled = false; // Always enable button for toggling
+        
         if (inWishlist) {
             button.classList.add('in-wishlist');
             const icon = button.querySelector('i');
@@ -797,34 +934,27 @@
         }
     }
 
-    // Update cart button state for art items
-    function updateCartButtonState(button, inCart) {
-        if (inCart) {
-            button.innerHTML = '<i class="fas fa-check"></i> In Cart';
-            button.style.backgroundColor = 'var(--gold)';
-            button.style.color = '#fff';
-            button.disabled = true;
-        } else {
-            button.innerHTML = '<i class="fas fa-shopping-cart"></i>';
-            button.style.backgroundColor = 'var(--gold)';
-            button.style.color = 'var(--dark)';
-            button.disabled = false;
-        }
-    }
-
     // Toggle wishlist item
     function toggleWishlistItem(itemId, itemName, price, image, buttonElement) {
         const inWishlist = wishlistItems.has(itemId);
         
         if (inWishlist) {
+            // Remove from wishlist
             removeFromWishlist(itemId, buttonElement);
         } else {
+            // Add to wishlist
             addToWishlistItem(itemId, itemName, price, image, buttonElement);
         }
     }
 
     function addToWishlistItem(itemId, itemName, price, image, buttonElement) {
         console.log('Adding to wishlist:', { itemId, itemName, price, image });
+        
+        // Show loading state
+        const originalIcon = buttonElement.querySelector('i');
+        const originalClass = originalIcon.className;
+        originalIcon.className = 'fas fa-spinner fa-spin';
+        buttonElement.disabled = true;
         
         fetch('/api/wishlist', {
             method: 'POST',
@@ -848,35 +978,63 @@
         })
         .then(data => {
             if (data && data.success) {
+                // Update local state
                 wishlistItems.add(itemId);
+                
+                // Update button state
                 updateWishlistButtonState(buttonElement, true);
+                
                 showNotification('Item added to wishlist!', 'success');
             } else if (data) {
+                // Reset button
+                originalIcon.className = originalClass;
+                buttonElement.disabled = false;
                 showNotification(data.message || 'Failed to add item to wishlist', 'error');
             }
         })
         .catch(error => {
             console.error('Error adding to wishlist:', error);
+            // Reset button
+            originalIcon.className = originalClass;
+            buttonElement.disabled = false;
             showNotification('Failed to add item to wishlist', 'error');
         });
     }
 
     function removeFromWishlist(itemId, buttonElement) {
-        fetch('/api/wishlist/' + itemId, {
+        console.log('Removing from wishlist:', itemId);
+        
+        // Show loading state
+        const originalIcon = buttonElement.querySelector('i');
+        const originalClass = originalIcon.className;
+        originalIcon.className = 'fas fa-spinner fa-spin';
+        buttonElement.disabled = true;
+        
+        fetch(`/api/wishlist/${itemId}`, {
             method: 'DELETE'
         })
         .then(response => response.json())
         .then(data => {
             if (data && data.success) {
+                // Update local state
                 wishlistItems.delete(itemId);
+                
+                // Update button state
                 updateWishlistButtonState(buttonElement, false);
+                
                 showNotification('Item removed from wishlist!', 'success');
             } else {
+                // Reset button
+                originalIcon.className = originalClass;
+                buttonElement.disabled = false;
                 showNotification(data.message || 'Failed to remove item from wishlist', 'error');
             }
         })
         .catch(error => {
             console.error('Error removing from wishlist:', error);
+            // Reset button
+            originalIcon.className = originalClass;
+            buttonElement.disabled = false;
             showNotification('Failed to remove item from wishlist', 'error');
         });
     }
@@ -884,10 +1042,16 @@
     function addToCartItem(itemId, itemName, price, image, buttonElement) {
         console.log('Adding to cart:', { itemId, itemName, price, image });
         
+        // Check if art item is already in cart
         if (cartItems.has(itemId)) {
             showNotification('This artwork is already in your cart. Art pieces are unique!', 'error');
             return;
         }
+        
+        // Show loading state
+        const originalText = buttonElement.innerHTML;
+        buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        buttonElement.disabled = true;
         
         fetch('/api/cart', {
             method: 'POST',
@@ -912,28 +1076,51 @@
         })
         .then(data => {
             if (data && data.success) {
+                // Update local state - art items always have quantity 1
                 cartItems.set(itemId, 1);
+                
+                // Update button state to show it's in cart
                 updateCartButtonState(buttonElement, true);
+                
                 showNotification('Artwork added to cart!', 'success');
             } else if (data) {
+                // Reset button
+                buttonElement.innerHTML = originalText;
+                buttonElement.disabled = false;
                 showNotification(data.message || 'Failed to add item to cart', 'error');
             }
         })
         .catch(error => {
             console.error('Error adding to cart:', error);
+            // Reset button
+            buttonElement.innerHTML = originalText;
+            buttonElement.disabled = false;
             showNotification('Failed to add item to cart', 'error');
         });
     }
 
     // Notification system
     function showNotification(message, type) {
+        console.log('Showing notification:', message, type);
+        
+        // Create notification element
         const notification = document.createElement('div');
-        notification.className = 'alert alert-' + (type === 'success' ? 'success' : 'danger') + ' position-fixed';
-        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 300px; animation: slideInRight 0.3s ease;';
-        notification.innerHTML = '<i class="fas fa-' + (type === 'success' ? 'check-circle' : 'exclamation-circle') + '"></i> ' + message;
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+        notification.style.cssText = `
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 300px;
+            animation: slideInRight 0.3s ease;
+        `;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            ${message}
+        `;
         
         document.body.appendChild(notification);
         
+        // Auto remove after 3 seconds
         setTimeout(() => {
             notification.style.animation = 'slideOutRight 0.3s ease';
             setTimeout(() => {
@@ -943,4 +1130,149 @@
             }, 300);
         }, 3000);
     }
+
+    // Inquire about artwork
+    function inquireArtwork(artworkId) {
+        // Redirect to contact page or open inquiry modal
+        window.location.href = `/contact?artwork=${artworkId}`;
+    }
+
+    // Add art to wishlist (from modal)
+    async function addArtToWishlist(artworkId, title, artist, price, image) {
+        console.log('Adding to wishlist from modal:', { artworkId, title, artist, price, image });
+        
+        try {
+            const response = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    itemId: artworkId,
+                    name: `${title} by ${artist}`,
+                    price: price,
+                    image: image,
+                    type: 'art'
+                })
+            });
+
+            if (response.status === 401) {
+                window.location.href = '/signin';
+                return;
+            }
+
+            const result = await response.json();
+            console.log('Wishlist response:', result);
+            
+            if (result.success) {
+                // Update local state
+                wishlistItems.add(artworkId);
+                
+                // Update all wishlist buttons for this item
+                document.querySelectorAll(`[data-item-id="${artworkId}"]`).forEach(button => {
+                    if (button.classList.contains('add-to-wishlist-btn')) {
+                        updateWishlistButtonState(button, true);
+                    }
+                });
+                
+                showNotification('Added to wishlist successfully!', 'success');
+            } else {
+                showNotification(result.message || 'Failed to add to wishlist', 'error');
+            }
+        } catch (error) {
+            console.error('Error adding to wishlist:', error);
+            showNotification('Error adding to wishlist. Please try again.', 'error');
+        }
+    }
+
+    // Add art to cart (from modal)
+    async function addArtToCart(artworkId, title, artist, price, image) {
+        console.log('Adding to cart from modal:', { artworkId, title, artist, price, image });
+        
+        // Check if art item is already in cart
+        if (cartItems.has(artworkId)) {
+            showNotification('This artwork is already in your cart. Art pieces are unique!', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    itemId: artworkId,
+                    name: `${title} by ${artist}`,
+                    price: price,
+                    image: image,
+                    quantity: 1,
+                    type: 'art'
+                })
+            });
+
+            if (response.status === 401) {
+                window.location.href = '/signin';
+                return;
+            }
+
+            const result = await response.json();
+            console.log('Cart response:', result);
+            
+            if (result.success) {
+                // Update local state - art items always have quantity 1
+                cartItems.set(artworkId, 1);
+                
+                // Update all cart buttons for this item
+                document.querySelectorAll(`[data-item-id="${artworkId}"]`).forEach(button => {
+                    if (button.classList.contains('add-to-cart-btn')) {
+                        updateCartButtonState(button, true);
+                    }
+                });
+                
+                showNotification('Artwork added to cart successfully!', 'success');
+                closeModal();
+            } else {
+                showNotification(result.message || 'Failed to add to cart', 'error');
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            showNotification('Error adding to cart. Please try again.
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('artworkModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.category-btn');
+        const galleryItems = document.querySelectorAll('[data-category]');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
 </script>

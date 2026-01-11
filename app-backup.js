@@ -182,7 +182,7 @@ app.get('/about', (req, res) => {
 app.get('/franchise', (req, res) => {
   res.render('franchise', {
     title: 'Franchise Opportunities - Partner with Rabuste Coffee',
-    description: 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support and proven business model. Investment range $75K-$150K.',
+    description: 'Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support and proven business model. Investment range ₹75K-₹150K.',
     currentPage: '/franchise',
     keywords: 'coffee franchise, robusta coffee franchise, café franchise opportunities, premium coffee business, franchise investment, coffee shop franchise',
     ogTitle: 'Franchise Opportunities - Partner with Rabuste Coffee',
@@ -192,11 +192,11 @@ app.get('/franchise', (req, res) => {
     ogImage: '/assets/coffee-bg.jpeg',
     canonicalUrl: 'https://rabustecoffee.com/franchise',
     investmentRanges: [
-      '$50K - $75K',
-      '$75K - $100K',
-      '$100K - $150K',
-      '$150K - $200K',
-      '$200K+'
+      '₹50K - ₹75K',
+      '₹75K - ₹100K',
+      '₹100K - ₹150K',
+      '₹150K - ₹200K',
+      '₹200K+'
     ]
   });
 });

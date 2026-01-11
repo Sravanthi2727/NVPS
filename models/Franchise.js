@@ -30,7 +30,7 @@ const franchiseSchema = new mongoose.Schema({
   investmentRange: {
     type: String,
     required: true,
-    enum: ['$50K - $75K', '$75K - $100K', '$100K - $150K', '$150K - $200K', '$200K+']
+    enum: ['₹50K - ₹75K', '₹75K - ₹100K', '₹100K - ₹150K', '₹150K - ₹200K', '₹200K+']
   },
   expectedTimeline: {
     type: String,

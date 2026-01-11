@@ -353,7 +353,7 @@ app.get("/franchise", (req, res) => {
   res.render("franchise", {
     title: "Franchise Opportunities - Partner with Rabuste Coffee",
     description:
-      "Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support and proven business model. Investment range $75K-$150K.",
+      "Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support and proven business model. Investment range ₹75K-₹150K.",
     currentPage: "/franchise",
     keywords:
       "coffee franchise, robusta coffee franchise, café franchise opportunities, premium coffee business, franchise investment, coffee shop franchise",
@@ -365,11 +365,11 @@ app.get("/franchise", (req, res) => {
     ogImage: "/assets/coffee-bg.jpeg",
     canonicalUrl: "https://rabustecoffee.com/franchise",
     investmentRanges: [
-      "$50K - $75K",
-      "$75K - $100K",
-      "$100K - $150K",
-      "$150K - $200K",
-      "$200K+",
+      "₹50K - ₹75K",
+      "₹75K - ₹100K",
+      "₹100K - ₹150K",
+      "₹150K - ₹200K",
+      "₹200K+",
     ],
     isLoggedIn: res.locals.isLoggedIn || false,
     currentUser: res.locals.currentUser || null
@@ -1453,7 +1453,7 @@ app.post('/api/debug/create-franchise', async (req, res) => {
       email: 'test@example.com',
       phoneNumber: '1234567890',
       city: 'Mumbai',
-      investmentRange: '$75K - $100K',
+      investmentRange: '₹75K - ₹100K',
       expectedTimeline: '6-12 months',
       businessExperience: 'I have 5 years of retail experience',
       status: 'pending'
@@ -1844,3 +1844,4 @@ const port = process.env.PORT || 3001;
 app.listen(port, () => console.log(`Server running on port ${port}`));
 
 module.exports = app;
+
