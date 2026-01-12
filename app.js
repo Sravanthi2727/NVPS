@@ -482,167 +482,23 @@ app.post("/franchise", ensureAuthenticated, async (req, res) => {
 });
 
 app.get("/workshops", async (req, res) => {
-  console.log("Workshops route accessed");
+  console.log("Workshops route accessed - fetching dynamic data from database");
   
-  // Static data fallback
-  const staticWorkshops = {
-    upcoming: [
-      {
-        title: "Advanced Coffee Brewing",
-        description: "Master the art of precision brewing with advanced techniques. Learn pour-over methods, temperature control, and extraction principles.",
-        date: "2026-02-18T10:00:00.000Z",
-        type: "upcoming",
-        category: "Coffee",
-        image: "/assets/workshops/coffee-brewing.jpeg",
-        meta: {
-          duration: "3 hours",
-          level: "Intermediate",
-          tags: ["coffee", "brewing", "technique"]
-        }
-      },
-      {
-        title: "Modern Calligraphy",
-        description: "Create beautiful latte art designs. From basic hearts to advanced rosettas and tulips. Perfect for baristas and coffee enthusiasts.",
-        date: "2026-03-15T14:00:00.000Z",
-        type: "upcoming",
-        category: "Coffee Art",
-        image: "/assets/workshops/modern-calligraphy.jpg",
-        meta: {
-          duration: "2.5 hours",
-          level: "Beginner",
-          tags: ["Modern Calligraphy", "barista", "design"]
-        }
-      },
-      {
-        title: "Watercolor Painting Workshop",
-        description: "Explore the fluid beauty of watercolor painting. Learn techniques, color mixing, and create your own masterpiece in a relaxed café setting.",
-        date: "2026-04-10T11:00:00.000Z",
-        type: "upcoming",
-        category: "Art",
-        image: "/assets/workshops/watercolor.jpeg",
-        meta: {
-          duration: "3 hours",
-          level: "All Levels",
-          tags: ["watercolor", "painting", "art"]
-        }
-      },
-      {
-        title: "Beginner Pottery",
-        description: "Explore the fluid beauty of pottery. Learn techniques, clay handling, and create your own masterpiece in a relaxed café setting.",
-        date: "2026-04-10T11:00:00.000Z",
-        type: "upcoming",
-        category: "Art",
-        image: "/assets/workshops/pottery.jpg",
-        meta: {
-          duration: "3 hours",
-          level: "All Levels",
-          tags: ["Beginner Pottery", "clay", "art"]
-        }
-      }
-    ],
-    past: [
-      {
-        title: "Coffee Art Workshop",
-        date: "2025-11-20T10:00:00.000Z",
-        type: "past",
-        category: "Coffee Education",
-        description: "Learn about the unique characteristics of Robusta coffee, its flavor profile, and why it's special. Tasting session included.",
-        image: "/assets/workshops/coffee_art.jpg",
-        meta: {
-          duration: "2 hours",
-          level: "Beginner",
-          tags: ["robusta", "coffee", "tasting"]
-        },
-        galleryImages: [
-          "/assets/workshops/coffee_art-1.jpg",
-          "/assets/workshops/coffee_art-2.jpg",
-          "/assets/workshops/coffee_art-3.jpg"
-        ]
-      },
-      {
-        title: "Lino Cut Art Workshop",
-        date: "2025-10-15T14:00:00.000Z",
-        type: "past",
-        category: "Art",
-        description: "Hands-on printmaking workshop where participants created their own prints using simple techniques. Great for beginners!",
-        image: "/assets/workshops/printmaking.jpg",
-        meta: {
-          duration: "3 hours",
-          level: "Beginner",
-          tags: ["printmaking", "art", "craft"]
-        },
-        galleryImages: [
-          "/assets/workshops/printmaking-1.jpg",
-          "/assets/workshops/printmaking-2.jpg",
-          "/assets/workshops/printmaking-3.jpg"
-        ]
-      },
-      {
-        title: "Ganesha Making Workshop",
-        date: "2025-09-25T16:00:00.000Z",
-        type: "past",
-        category: "Clay Modelling",
-        description: "A mindful sculpting experience rooted in tradition",
-        image: "/assets/workshops/ganesha-making.jpg",
-        meta: {
-          duration: "2 hours",
-          level: "Intermediate",
-          tags: ["Guided Session", "tradition", "Clay Modelling"]
-        },
-        galleryImages: [
-          "/assets/workshops/cupping-1.jpg"
-        ]
-      }
-    ]
-  };
-
-  const staticTeam = [
-    {
-      name: "Rajesh Kumar",
-      role: "Founder & CEO",
-      bio: "Visionary entrepreneur with 15+ years in F&B industry. Passionate about bringing Robusta coffee to the forefront of Indian coffee culture.",
-      avatar: "RK",
-      social: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    },
-    {
-      name: "Priya Mehta",
-      role: "Co-Founder & COO",
-      bio: "Operations expert specializing in scalable café models. Led expansion of 30+ locations across India with focus on operational excellence.",
-      avatar: "PM",
-      social: {
-        linkedin: "#",
-        instagram: "#"
-      }
-    },
-    {
-      name: "Amit Sharma",
-      role: "Co-Founder & CTO",
-      bio: "Tech innovator building AI-powered coffee experiences. Former tech lead at major e-commerce platforms, now revolutionizing café technology.",
-      avatar: "AS",
-      social: {
-        linkedin: "#",
-        github: "#"
-      }
-    }
-  ];
-
   try {
     let upcomingWorkshops = [];
     let pastWorkshops = [];
     let teamMembers = [];
 
-    // Always try to fetch from database first
+    // Always try to fetch from database first - make it truly dynamic
     if (mongoose.connection.readyState === 1) {
-      console.log("Database connected, fetching from database");
+      console.log("Database connected, fetching dynamic workshop data");
       
       try {
-        // Fetch workshops from database
+        // Fetch workshops from database - dynamic data only
         upcomingWorkshops = await WorkshopModel.find({ 
           type: 'upcoming', 
           isActive: true,
+          date: { $gte: new Date() } // Only show future workshops
         }).sort({ date: 1, displayOrder: 1 });
         
         pastWorkshops = await WorkshopModel.find({ 
@@ -650,38 +506,49 @@ app.get("/workshops", async (req, res) => {
           isActive: true 
         }).sort({ date: -1, displayOrder: 1 });
 
-        // Fetch team members from database
-        teamMembers = await TeamModel.find({ 
-          isActive: true 
-        }).sort({ displayOrder: 1 });
-
-        console.log("Database results - upcoming:", upcomingWorkshops.length, "past:", pastWorkshops.length, "team:", teamMembers.length);
-
-        // Use database data if available, otherwise fallback to static
-        if (upcomingWorkshops.length === 0 && pastWorkshops.length === 0) {
-          console.log("No workshops in database, using static data");
-          upcomingWorkshops = staticWorkshops.upcoming;
-          pastWorkshops = staticWorkshops.past;
+        // Fetch team members from database if TeamModel exists
+        try {
+          const TeamModel = require('./models/Team');
+          teamMembers = await TeamModel.find({ 
+            isActive: true 
+          }).sort({ displayOrder: 1 });
+        } catch (teamError) {
+          console.log("Team model not available, skipping team members");
+          teamMembers = [];
         }
 
-        if (teamMembers.length === 0) {
-          console.log("No team members in database, using static data");
-          teamMembers = staticTeam;
-        }
+        console.log("Dynamic database results - upcoming:", upcomingWorkshops.length, "past:", pastWorkshops.length, "team:", teamMembers.length);
+
+        // Convert Mongoose documents to plain objects to ensure _id is properly serialized
+        const ensureId = (doc) => {
+          const plain = doc?.toObject ? doc.toObject() : doc || {};
+          if (plain._id) {
+            plain._id = String(plain._id);
+          } else if (plain.id) {
+            plain._id = String(plain.id);
+          } else {
+            // Fallback: generate an id so front-end registration never breaks
+            plain._id = new mongoose.Types.ObjectId().toString();
+          }
+          return plain;
+        };
+
+        upcomingWorkshops = upcomingWorkshops.map(ensureId);
+        pastWorkshops = pastWorkshops.map(ensureId);
+
       } catch (dbError) {
         console.error('Database query error:', dbError);
-        // Fallback to static data on error
-        console.log("Database query failed, using static data");
-        upcomingWorkshops = staticWorkshops.upcoming;
-        pastWorkshops = staticWorkshops.past;
-        teamMembers = staticTeam;
+        // On error, return empty arrays - no static fallback to force dynamic data
+        upcomingWorkshops = [];
+        pastWorkshops = [];
+        teamMembers = [];
       }
     } else {
-      console.log("Database not connected, using static data");
-      // Use static data if database is not connected
-      upcomingWorkshops = staticWorkshops.upcoming;
-      pastWorkshops = staticWorkshops.past;
-      teamMembers = staticTeam;
+      console.log("Database not connected - returning empty arrays. Please ensure database is connected for dynamic workshop data.");
+      // Return empty arrays if database is not connected - no static fallback
+      upcomingWorkshops = [];
+      pastWorkshops = [];
+      teamMembers = [];
     }
 
     res.render("workshops", {
@@ -695,14 +562,14 @@ app.get("/workshops", async (req, res) => {
     });
   } catch (error) {
     console.error('Workshops route error:', error);
-    // On any error, use static data as fallback
+    // On any error, return empty arrays - truly dynamic approach
     res.render("workshops", {
       title: "Workshops - Rabuste Coffee",
       description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
       currentPage: "/workshops",
-      upcomingWorkshops: staticWorkshops.upcoming,
-      pastWorkshops: staticWorkshops.past,
-      teamMembers: staticTeam,
+      upcomingWorkshops: [],
+      pastWorkshops: [],
+      teamMembers: [],
       layout: false
     });
   }
@@ -1301,6 +1168,71 @@ app.get('/api/workshops', ensureAuthenticated, async (req, res) => {
   }
 });
 
+// Public workshop registration endpoint (no authentication required)
+app.post('/api/workshops/register', async (req, res) => {
+  try {
+    const { workshopId, workshopName, workshopDate, participantName, participantEmail, participantPhone } = req.body;
+    
+    // Validate required fields
+    if (!workshopId || !workshopName || !workshopDate || !participantName || !participantEmail || !participantPhone) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'All fields are required' 
+      });
+    }
+
+    // Validate workshop exists
+    const workshop = await WorkshopModel.findById(workshopId);
+    if (!workshop) {
+      return res.status(404).json({ 
+        success: false,
+        error: 'Workshop not found' 
+      });
+    }
+
+    // Check if email is already registered for this workshop
+    const existingRegistration = await WorkshopRegistration.findOne({
+      participantEmail: participantEmail,
+      workshopId: workshopId
+    });
+    
+    if (existingRegistration) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'This email is already registered for this workshop' 
+      });
+    }
+    
+    // Get userId if user is authenticated, otherwise null for public registration
+    const userId = req.isAuthenticated && req.isAuthenticated() && req.user ? req.user.id : null;
+    
+    const registration = new WorkshopRegistration({
+      userId: userId,
+      workshopId,
+      workshopName,
+      workshopDate: new Date(workshopDate),
+      participantName,
+      participantEmail,
+      participantPhone,
+      status: 'registered'
+    });
+    
+    await registration.save();
+    res.json({ 
+      success: true, 
+      message: 'Registration successful! You will receive a confirmation email shortly.',
+      registration: registration 
+    });
+  } catch (error) {
+    console.error('Workshop registration error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Error registering for workshop. Please try again.' 
+    });
+  }
+});
+
+// Authenticated workshop registration endpoint (for logged-in users)
 app.post('/api/workshops', ensureAuthenticated, async (req, res) => {
   try {
     const { workshopId, workshopName, workshopDate, participantName, participantEmail, participantPhone } = req.body;
@@ -1312,7 +1244,10 @@ app.post('/api/workshops', ensureAuthenticated, async (req, res) => {
     });
     
     if (existingRegistration) {
-      return res.status(400).json({ error: 'You are already registered for this workshop' });
+      return res.status(400).json({ 
+        success: false,
+        error: 'You are already registered for this workshop' 
+      });
     }
     
     const registration = new WorkshopRegistration({
@@ -1330,7 +1265,10 @@ app.post('/api/workshops', ensureAuthenticated, async (req, res) => {
     res.json({ success: true, registration: registration });
   } catch (error) {
     console.error('Workshop registration error:', error);
-    res.status(500).json({ error: 'Error registering for workshop' });
+    res.status(500).json({ 
+      success: false,
+      error: 'Error registering for workshop' 
+    });
   }
 });
 

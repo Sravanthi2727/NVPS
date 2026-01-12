@@ -38,15 +38,85 @@ document.querySelectorAll('.countdown').forEach(el => {
 // REGISTER
 let currentWorkshopId = null;
 
-function openRegister(name, date, workshopId) {
-  currentWorkshopId = workshopId;
-  document.getElementById('workshopName').value = name;
-  document.getElementById('workshopDate').value = date;
-  document.getElementById('registerModal').style.display = 'flex';
+// Handle register button click using data attributes (more reliable)
+function handleRegisterClick(button) {
+  const workshopId = button.getAttribute('data-workshop-id');
+  const workshopTitle = button.getAttribute('data-workshop-title');
+  const workshopDate = button.getAttribute('data-workshop-date');
+  
+  console.log('handleRegisterClick called with:', { workshopId, workshopTitle, workshopDate });
+  
+  if (!workshopId || workshopId.trim() === '' || workshopId === 'undefined' || workshopId === 'null') {
+    console.error('Invalid workshop ID from button:', workshopId);
+    showNotification('Workshop ID is missing. Please refresh the page and try again.', 'error');
+    return;
+  }
+  
+  openRegister(workshopTitle, workshopDate, workshopId);
 }
+
+function openRegister(name, date, workshopId) {
+  console.log('openRegister called with:', { name, date, workshopId });
+  
+  // Ensure workshopId is a valid string
+  const validWorkshopId = workshopId && workshopId.trim() !== '' && workshopId !== 'undefined' && workshopId !== 'null' 
+    ? String(workshopId).trim() 
+    : null;
+  
+  if (!validWorkshopId) {
+    console.error('Invalid workshop ID:', workshopId);
+    showNotification('Workshop ID is missing. Please refresh the page and try again.', 'error');
+    return;
+  }
+  
+  currentWorkshopId = validWorkshopId;
+  
+  // Set form values
+  const workshopIdInput = document.getElementById('workshopId');
+  const workshopNameInput = document.getElementById('workshopName');
+  const workshopDateInput = document.getElementById('workshopDate');
+  
+  if (!workshopIdInput) {
+    console.error('workshopId input field not found');
+    showNotification('Registration form error. Please refresh the page.', 'error');
+    return;
+  }
+  
+  workshopIdInput.value = validWorkshopId;
+  
+  if (workshopNameInput) {
+    workshopNameInput.value = name || '';
+  }
+  
+  if (workshopDateInput) {
+    workshopDateInput.value = date || '';
+  }
+  
+  const modal = document.getElementById('registerModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Prevent body scroll
+  } else {
+    console.error('Registration modal not found');
+    showNotification('Registration modal not found. Please refresh the page.', 'error');
+  }
+  
+  console.log('Registration modal opened with workshopId:', validWorkshopId);
+}
+
+// Make function globally available
+window.handleRegisterClick = handleRegisterClick;
+window.openRegister = openRegister;
 
 function closeRegister() {
   document.getElementById('registerModal').style.display = 'none';
+  document.body.style.overflow = 'auto'; // Restore body scroll
+  // Reset form
+  const form = document.getElementById('registerForm');
+  if (form) {
+    form.reset();
+  }
+  currentWorkshopId = null;
 }
 
 // ORGANIZE WORKSHOP MODAL
@@ -125,56 +195,97 @@ function handleEscapeKey(e) {
 window.openOrganizeModal = openOrganizeModal;
 window.closeOrganizeModal = closeOrganizeModal;
 
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const formData = new FormData(e.target);
-  const workshopName = document.getElementById('workshopName').value;
-  const workshopDate = document.getElementById('workshopDate').value;
-  
-  // Get form values
-  const participantName = formData.get('name') || e.target.querySelector('input[placeholder="Your Name"]').value;
-  const participantEmail = formData.get('email') || e.target.querySelector('input[type="email"]').value;
-  const participantPhone = formData.get('phone') || e.target.querySelector('input[type="tel"]').value;
-  
-  if (!participantName || !participantEmail || !participantPhone) {
-    alert('Please fill in all required fields');
-    return;
-  }
-  
-  if (!currentWorkshopId) {
-    alert('Workshop ID not found. Please try again.');
-    return;
-  }
-  
-  try {
-    const response = await fetch('/api/workshops', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        workshopId: currentWorkshopId,
-        workshopName,
-        workshopDate,
-        participantName,
-        participantEmail,
-        participantPhone
-      })
+// Wait for DOM to be ready before adding event listener
+document.addEventListener('DOMContentLoaded', () => {
+  const registerForm = document.getElementById('registerForm');
+  if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+      
+      const workshopIdInput = document.getElementById('workshopId');
+      const workshopId = (workshopIdInput && workshopIdInput.value) ? workshopIdInput.value.trim() : (currentWorkshopId ? String(currentWorkshopId).trim() : null);
+      const workshopName = document.getElementById('workshopName').value;
+      const workshopDate = document.getElementById('workshopDate').value;
+      const participantName = document.getElementById('participantName').value;
+      const participantEmail = document.getElementById('participantEmail').value;
+      const participantPhone = document.getElementById('participantPhone').value;
+      
+      console.log('Form submission - workshopId:', workshopId, 'currentWorkshopId:', currentWorkshopId);
+      
+      // Validate form
+      if (!participantName || !participantEmail || !participantPhone) {
+        showNotification('Please fill in all required fields', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        return;
+      }
+      
+      if (!workshopId || workshopId === '' || workshopId === 'undefined' || workshopId === 'null') {
+        console.error('Workshop ID validation failed:', {
+          workshopId: workshopId,
+          workshopIdInputValue: workshopIdInput ? workshopIdInput.value : 'input not found',
+          currentWorkshopId: currentWorkshopId
+        });
+        showNotification('Workshop ID not found. Please close and reopen the registration form.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        return;
+      }
+      
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(participantEmail)) {
+        showNotification('Please enter a valid email address', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        return;
+      }
+      
+      console.log('Submitting registration with workshopId:', workshopId);
+      
+      try {
+        // Use public registration endpoint that works for both authenticated and non-authenticated users
+        const response = await fetch('/api/workshops/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            workshopId: workshopId,
+            workshopName: workshopName,
+            workshopDate: workshopDate,
+            participantName: participantName,
+            participantEmail: participantEmail,
+            participantPhone: participantPhone
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showNotification(result.message || 'Registration successful! You will receive a confirmation email shortly.', 'success');
+          setTimeout(() => {
+            closeRegister();
+          }, 1500);
+        } else {
+          showNotification(result.error || 'Registration failed. Please try again.', 'error');
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        showNotification('Registration failed. Please check your connection and try again.', 'error');
+      } finally {
+        // Restore button state
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
     });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      alert('Registration successful! You will receive a confirmation email shortly.');
-      closeRegister();
-      e.target.reset();
-    } else {
-      alert(result.error || 'Registration failed. Please try again.');
-    }
-  } catch (error) {
-    console.error('Registration error:', error);
-    alert('Registration failed. Please check your connection and try again.');
   }
 });
 
