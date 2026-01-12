@@ -65,6 +65,16 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  role: {
+    type: String,
+    enum: ['customer', 'staff', 'admin'],
+    default: 'customer'
+  },
+  status: {
+    type: String,
+    enum: ['active', 'inactive', 'suspended'],
+    default: 'active'
+  },
   cart: [cartItemSchema],
   wishlist: [wishlistItemSchema],
   registered: [{

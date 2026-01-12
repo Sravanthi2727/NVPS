@@ -112,48 +112,83 @@ const adminController = {
   },
 
   // Workshop Requests Management
-  getWorkshopRequests: (req, res) => {
+  getWorkshopRequests: async (req, res) => {
     try {
-      // Mock data - in real app, fetch from database
-      const workshopRequests = [
-        // Workshop Bookings (existing workshops)
-        {
-          id: 1,
-          type: 'booking',
-          customerName: 'Alice Johnson',
-          email: 'alice@example.com',
-          workshop: 'Coffee Brewing Basics',
-          date: '2024-01-15',
-          participants: 2,
-          status: 'pending',
-          requestDate: '2024-01-08'
-        },
-        {
-          id: 2,
-          type: 'booking',
-          customerName: 'Bob Wilson',
-          email: 'bob@example.com',
-          workshop: 'Latte Art Masterclass',
-          date: '2024-01-20',
-          participants: 1,
-          status: 'approved',
-          requestDate: '2024-01-07'
-        },
-        // Workshop Proposals (new workshop ideas from users)
-        {
-          id: 3,
-          type: 'proposal',
-          organizerName: 'Sarah Martinez',
-          email: 'sarah@example.com',
-          title: 'Digital Art & Coffee',
-          category: 'art',
-          description: 'Combining digital art creation with coffee appreciation',
-          duration: 3,
-          capacity: 12,
-          status: 'pending',
-          requestDate: '2024-01-09'
-        }
-      ];
+      const WorkshopRegistration = require('../../models/WorkshopRegistration');
+      const Request = require('../../models/Request');
+      
+      // Fetch workshop registrations (bookings)
+      const registrations = await WorkshopRegistration.find()
+        .populate('workshopId', 'title date meta')
+        .populate('userId', 'name email')
+        .sort({ registrationDate: -1 });
+      
+      // Fetch workshop proposals (conduct-workshop requests)
+      const proposals = await Request.find({ type: 'conduct-workshop' })
+        .populate('userId', 'name email')
+        .sort({ createdAt: -1 });
+      
+      // Map registrations to workshopRequests format
+      const registrationRequests = registrations.map((reg, index) => ({
+        id: reg._id.toString(),
+        type: 'booking',
+        customerName: reg.participantName || (reg.userId && reg.userId.name) || '',
+        name: reg.participantName || (reg.userId && reg.userId.name) || '',
+        email: reg.participantEmail || (reg.userId && reg.userId.email) || '',
+        phone: reg.participantPhone || '',
+        workshop: reg.workshopName || (reg.workshopId && reg.workshopId.title) || '',
+        title: reg.workshopName || (reg.workshopId && reg.workshopId.title) || '',
+        date: reg.workshopDate,
+        duration: reg.workshopId && reg.workshopId.meta && reg.workshopId.meta.duration ? reg.workshopId.meta.duration : '',
+        participants: 1, // Each registration is for 1 participant
+        capacity: reg.workshopId && reg.workshopId.meta && reg.workshopId.meta.capacity ? reg.workshopId.meta.capacity : '',
+        price: reg.workshopId && reg.workshopId.meta && reg.workshopId.meta.price ? reg.workshopId.meta.price : '',
+        status: reg.status === 'registered' ? 'pending' : reg.status === 'confirmed' ? 'approved' : reg.status,
+        requestDate: reg.registrationDate || reg.createdAt,
+        submittedDate: reg.registrationDate || reg.createdAt,
+        createdAt: reg.createdAt,
+        // Additional details for modal
+        workshopId: reg.workshopId ? reg.workshopId._id.toString() : '',
+        notes: reg.notes || ''
+      }));
+      
+      // Map proposals to workshopRequests format
+      const proposalRequests = proposals.map((proposal, index) => ({
+        id: proposal._id.toString(),
+        type: 'proposal',
+        customerName: proposal.details && proposal.details.organizerName ? proposal.details.organizerName : (proposal.userId && proposal.userId.name) || '',
+        name: proposal.details && proposal.details.organizerName ? proposal.details.organizerName : (proposal.userId && proposal.userId.name) || '',
+        organizerName: proposal.details && proposal.details.organizerName ? proposal.details.organizerName : '',
+        email: proposal.details && proposal.details.organizerEmail ? proposal.details.organizerEmail : (proposal.userId && proposal.userId.email) || '',
+        phone: proposal.details && proposal.details.organizerPhone ? proposal.details.organizerPhone : '',
+        workshop: proposal.title || '',
+        title: proposal.title || '',
+        category: proposal.details && proposal.details.category ? proposal.details.category : '',
+        description: proposal.description || '',
+        date: proposal.details && proposal.details.preferredDate ? proposal.details.preferredDate : '',
+        duration: proposal.details && proposal.details.duration ? proposal.details.duration + ' hrs' : '',
+        participants: proposal.details && proposal.details.capacity ? proposal.details.capacity : '',
+        capacity: proposal.details && proposal.details.capacity ? proposal.details.capacity : '',
+        price: proposal.details && proposal.details.price ? proposal.details.price : '',
+        skillLevel: proposal.details && proposal.details.skillLevel ? proposal.details.skillLevel : '',
+        materialsNeeded: proposal.details && proposal.details.materialsNeeded ? proposal.details.materialsNeeded : '',
+        collaborationType: proposal.details && proposal.details.collaborationType ? proposal.details.collaborationType : '',
+        additionalNotes: proposal.details && proposal.details.additionalNotes ? proposal.details.additionalNotes : '',
+        organizerExperience: proposal.details && proposal.details.organizerExperience ? proposal.details.organizerExperience : '',
+        status: proposal.status || 'pending',
+        requestDate: proposal.submittedDate || proposal.createdAt,
+        submittedDate: proposal.submittedDate || proposal.createdAt,
+        createdAt: proposal.createdAt
+      }));
+      
+      // Combine both types of requests
+      const workshopRequests = [...registrationRequests, ...proposalRequests].sort((a, b) => {
+        const dateA = new Date(a.requestDate || a.submittedDate || a.createdAt);
+        const dateB = new Date(b.requestDate || b.submittedDate || b.createdAt);
+        return dateB - dateA; // Most recent first
+      });
+      
+      console.log(`Loaded ${registrationRequests.length} workshop registrations and ${proposalRequests.length} workshop proposals`);
       
       res.render("admin/workshop-requests", {
         title: 'Workshop Requests - Rabuste Admin',
@@ -166,7 +201,16 @@ const adminController = {
       });
     } catch (error) {
       console.error('Error in getWorkshopRequests:', error);
-      res.status(500).send('Error loading workshop requests');
+      res.status(500).render("admin/workshop-requests", {
+        title: 'Workshop Requests - Rabuste Admin',
+        description: 'Manage workshop booking requests and proposals.',
+        currentPage: '/admin/workshop-requests',
+        workshopRequests: [],
+        layout: false,
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>',
+        error: 'Error loading workshop requests: ' + error.message
+      });
     }
   },
 
@@ -299,12 +343,62 @@ const adminController = {
   },
 
   // Update workshop request status
-  updateWorkshopRequest: (req, res) => {
-    const { id } = req.params;
-    const { status } = req.body;
-    // Update workshop request status in database
-    console.log(`Updating workshop request ${id} to status: ${status}`);
-    res.redirect("/admin/workshop-requests");
+  updateWorkshopRequest: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      
+      const WorkshopRegistration = require('../../models/WorkshopRegistration');
+      const Request = require('../../models/Request');
+      const mongoose = require('mongoose');
+      
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ success: false, message: 'Invalid request ID' });
+      }
+      
+      // Try to find in WorkshopRegistration first (bookings)
+      let registration = await WorkshopRegistration.findById(id);
+      if (registration) {
+        // Map admin status to registration status
+        let registrationStatus = status;
+        if (status === 'approved') {
+          registrationStatus = 'confirmed';
+        } else if (status === 'rejected') {
+          registrationStatus = 'cancelled';
+        } else if (status === 'completed') {
+          registrationStatus = 'completed';
+        }
+        
+        registration.status = registrationStatus;
+        await registration.save();
+        
+        console.log(`Updated workshop registration ${id} to status: ${registrationStatus}`);
+        return res.redirect("/admin/workshop-requests");
+      }
+      
+      // Try to find in Request (proposals)
+      let proposal = await Request.findById(id);
+      if (proposal) {
+        // Validate status for Request model
+        const validStatuses = ['pending', 'approved', 'rejected'];
+        if (validStatuses.includes(status)) {
+          proposal.status = status;
+          await proposal.save();
+          
+          console.log(`Updated workshop proposal ${id} to status: ${status}`);
+          return res.redirect("/admin/workshop-requests");
+        } else {
+          return res.status(400).json({ success: false, message: 'Invalid status for proposal' });
+        }
+      }
+      
+      // If neither found
+      return res.status(404).json({ success: false, message: 'Workshop request not found' });
+      
+    } catch (error) {
+      console.error('Error updating workshop request:', error);
+      return res.status(500).json({ success: false, message: 'Error updating workshop request: ' + error.message });
+    }
   },
 
   // Create new workshop
@@ -378,12 +472,133 @@ const adminController = {
   },
 
   // Update user
-  updateUser: (req, res) => {
-    const { id } = req.params;
-    const { role, status } = req.body;
-    // Update user role/status in database
-    console.log(`Updating user ${id} - role: ${role}, status: ${status}`);
-    res.redirect("/admin/users");
+  updateUser: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { role, status } = req.body;
+      
+      const User = require('../../models/User');
+      
+      // Validate inputs
+      if (role && !['customer', 'staff', 'admin'].includes(role)) {
+        console.error('Invalid role:', role);
+        return res.redirect("/admin/users?error=invalid_role");
+      }
+      
+      if (status && !['active', 'inactive', 'suspended'].includes(status)) {
+        console.error('Invalid status:', status);
+        return res.redirect("/admin/users?error=invalid_status");
+      }
+      
+      // Update user in database
+      const updateData = {};
+      if (role) updateData.role = role;
+      if (status) updateData.status = status;
+      updateData.updatedAt = new Date();
+      
+      const updatedUser = await User.findByIdAndUpdate(
+        id,
+        updateData,
+        { new: true }
+      );
+      
+      if (!updatedUser) {
+        console.error('User not found:', id);
+        return res.redirect("/admin/users?error=user_not_found");
+      }
+      
+      console.log(`User updated successfully:`, {
+        userId: id,
+        newRole: role,
+        newStatus: status,
+        name: updatedUser.name
+      });
+      
+      res.redirect("/admin/users?success=user_updated");
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.redirect("/admin/users?error=update_failed");
+    }
+  },
+
+  // Get users
+  getUsers: async (req, res) => {
+    try {
+      const User = require('../../models/User');
+      
+      // Fetch all users from database
+      const users = await User.find()
+        .sort({ createdAt: -1 });
+      
+      // Transform users to match view expectations
+      const transformedUsers = users.map(user => ({
+        id: user._id,
+        name: user.name || 'Unknown User',
+        email: user.email || 'No Email',
+        role: user.role || 'customer',
+        status: user.status || 'active',
+        joinDate: user.createdAt
+      }));
+      
+      console.log(`Loaded ${users.length} users`);
+      
+      res.render("admin/users", {
+        title: 'User Management - Rabuste Admin',
+        description: 'Manage user accounts and permissions.',
+        currentPage: '/admin/users',
+        users: transformedUsers,
+        layout: false,
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>'
+      });
+    } catch (error) {
+      console.error('Error in getUsers:', error);
+      res.status(500).render("admin/users", {
+        title: 'User Management - Rabuste Admin',
+        description: 'Manage user accounts and permissions.',
+        currentPage: '/admin/users',
+        users: [],
+        layout: false,
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>',
+        error: 'Error loading users: ' + error.message
+      });
+    }
+  },
+
+  // Franchise Applications Management
+  getFranchise: async (req, res) => {
+    try {
+      const Franchise = require('../../models/Franchise');
+      
+      // Fetch all franchise applications from database
+      const applications = await Franchise.find()
+        .sort({ submittedAt: -1 });
+      
+      console.log(`Loaded ${applications.length} franchise applications`);
+      
+      res.render("admin/franchise", {
+        title: 'Franchise Applications - Rabuste Admin',
+        description: 'Manage franchise applications and approvals.',
+        currentPage: '/admin/franchise',
+        applications: applications,
+        layout: false,
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>'
+      });
+    } catch (error) {
+      console.error('Error in getFranchise:', error);
+      res.status(500).render("admin/franchise", {
+        title: 'Franchise Applications - Rabuste Admin',
+        description: 'Manage franchise applications and approvals.',
+        currentPage: '/admin/franchise',
+        applications: [],
+        layout: false,
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>',
+        error: 'Error loading franchise applications: ' + error.message
+      });
+    }
   }
 };
 

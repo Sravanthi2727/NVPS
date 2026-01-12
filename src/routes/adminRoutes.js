@@ -38,4 +38,11 @@ router.post('/workshop-requests/:id/update', ensureAdmin, adminController.update
 router.post('/workshops/create', ensureAdmin, adminController.createWorkshop);
 router.post('/workshops/draft', ensureAdmin, adminController.saveWorkshopDraft);
 
+// Franchise applications management
+router.get('/franchise', ensureAdmin, adminController.getFranchise);
+
+// User management
+router.get('/users', ensureAdmin, adminController.getUsers);
+router.post('/users/:id/update', ensureAdmin, adminController.updateUser);
+
 module.exports = router;

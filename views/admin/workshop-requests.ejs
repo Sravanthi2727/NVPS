@@ -638,10 +638,13 @@
                                 <tr>
                                     <th>Request ID</th>
                                     <th>Type</th>
-                                    <th>Customer/Organizer</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
                                     <th>Workshop/Title</th>
                                     <th>Date/Duration</th>
                                     <th>Participants/Capacity</th>
+                                    <th>Price</th>
                                     <th>Request Date</th>
                                     <th>Status</th>
                                     <th>Actions</th>
@@ -651,18 +654,15 @@
                                 <% workshopRequests.forEach(request => { %>
                                 <tr>
                                     <td>#WS<%= request.id.toString().padStart(3, '0') %></td>
-                                    <td>
-                                        <strong><%= request.customerName %></strong><br>
-                                        <small style="color: #ccc;"><%= request.email %></small>
-                                    </td>
-                                    <td>
-                                        <strong><%= request.workshop %></strong>
-                                    </td>
-                                    <td class="fw-bold"><%= new Date(request.date).toLocaleDateString() %></td>
-                                    <td>
-                                        <span class="badge bg-info"><%= request.participants %> person<%= request.participants > 1 ? 's' : '' %></span>
-                                    </td>
-                                    <td><%= new Date(request.requestDate).toLocaleDateString() %></td>
+                                    <td><%= request.type || 'registration' %></td>
+                                    <td><strong><%= request.customerName || request.name || '' %></strong></td>
+                                    <td><%= request.email || '' %></td>
+                                    <td><%= request.phone || '' %></td>
+                                    <td><strong><%= request.workshop || request.title || '' %></strong></td>
+                                    <td class="fw-bold"><%= request.date ? new Date(request.date).toLocaleDateString() : (request.duration ? request.duration + ' hrs' : '') %></td>
+                                    <td><%= request.participants || request.capacity ? (request.participants || request.capacity) + ' person' + ((request.participants || request.capacity) > 1 ? 's' : '') : '' %></td>
+                                    <td><%= request.price ? '₹' + request.price : '' %></td>
+                                    <td><%= new Date(request.requestDate || request.submittedDate || request.createdAt).toLocaleDateString() %></td>
                                     <td>
                                         <% if (request.status === 'pending') { %>
                                             <span class="badge bg-warning">Pending</span>
@@ -1497,31 +1497,69 @@
         });
         
         function viewWorkshopRequest(requestId) {
-            // Mock workshop request details - replace with actual API call
+            // Find request data from global workshopRequests
+            const requests = <%- JSON.stringify(workshopRequests || []) %>;
+            const request = requests.find(req => req.id == requestId);
+            
+            if (!request) {
+                alert('Request not found');
+                return;
+            }
+            
             const requestDetails = `
                 <div class="workshop-request-details">
                     <h6 class="text-warning">Workshop Request #WS${requestId.toString().padStart(3, '0')}</h6>
                     <div class="row">
                         <div class="col-md-6">
-                            <strong class="text-warning">Customer Information:</strong>
-                            <p class="text-light">Alice Johnson<br>alice@example.com<br>+1 (555) 987-6543</p>
+                            <strong class="text-warning">Personal Information:</strong>
+                            <p class="text-light">
+                                Name: ${request.customerName || request.name || ''}<br>
+                                Email: ${request.email || ''}<br>
+                                Phone: ${request.phone || ''}
+                            </p>
                         </div>
                         <div class="col-md-6">
                             <strong class="text-warning">Request Information:</strong>
-                            <p class="text-light">Request Date: January 8, 2024<br>Status: Pending<br>Participants: 2 people</p>
+                            <p class="text-light">
+                                Type: ${request.type || 'registration'}<br>
+                                Request Date: ${new Date(request.requestDate || request.submittedDate || request.createdAt).toLocaleDateString()}<br>
+                                Status: ${request.status}
+                            </p>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <strong class="text-warning">Workshop Details:</strong>
-                            <p class="text-light">Workshop: Coffee Brewing Basics<br>
-                            Preferred Date: January 15, 2024<br>
-                            Time: 2:00 PM - 4:00 PM<br>
-                            Duration: 2 hours</p>
+                            <p class="text-light">
+                                Workshop: ${request.workshop || request.title || ''}<br>
+                                Date: ${request.date ? new Date(request.date).toLocaleDateString() : ''}<br>
+                                Duration: ${request.duration ? request.duration + ' hrs' : ''}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong class="text-warning">Capacity & Pricing:</strong>
+                            <p class="text-light">
+                                Participants: ${request.participants || request.capacity || ''}<br>
+                                Price: ${request.price ? '₹' + request.price : ''}
+                            </p>
                         </div>
                     </div>
-                    <strong class="text-warning">Special Requirements:</strong>
-                    <p class="text-light">Vegetarian refreshments requested. One participant has mobility requirements.</p>
+                    ${request.description ? `
+                    <div class="row">
+                        <div class="col-12">
+                            <strong class="text-warning">Description:</strong>
+                            <p class="text-light">${request.description}</p>
+                        </div>
+                    </div>
+                    ` : ''}
+                    ${request.specialRequirements ? `
+                    <div class="row">
+                        <div class="col-12">
+                            <strong class="text-warning">Special Requirements:</strong>
+                            <p class="text-light">${request.specialRequirements}</p>
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
             `;
             

@@ -57,6 +57,9 @@ const Franchise = require('./models/Franchise');
 // Controllers
 const adminController = require('./src/controllers/adminController');
 
+// Routes
+const adminRoutes = require('./src/routes/adminRoutes');
+
 // Admin middleware
 function ensureAdmin(req, res, next) {
   // Simple admin check - in production, implement proper admin authentication
@@ -191,6 +194,9 @@ app.use((req, res, next) => {
 
 // Add user data middleware after passport setup
 app.use(getUserData);
+
+// Mount admin routes
+app.use('/admin', adminRoutes);
 
 // Home route - Cache for 10 minutes
 app.get("/", viewCacheMiddleware(600), (req, res) => {
@@ -2616,9 +2622,6 @@ app.get("/logout", (req, res, next) => {
     res.redirect("/");
   });
 });
-
-// Import admin routes
-const adminRoutes = require('./src/routes/adminRoutes');
 
 // Use admin routes - All admin routes are now handled by MVC structure
 app.use('/admin', adminRoutes);
