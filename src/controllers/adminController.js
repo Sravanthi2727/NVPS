@@ -113,39 +113,61 @@ const adminController = {
 
   // Workshop Requests Management
   getWorkshopRequests: (req, res) => {
-    // Mock data - replace with actual database queries
-    const workshopRequests = [
-      {
-        id: 1,
-        customerName: 'Alice Johnson',
-        email: 'alice@example.com',
-        workshop: 'Coffee Brewing Basics',
-        date: '2024-01-15',
-        participants: 2,
-        status: 'pending',
-        requestDate: '2024-01-08'
-      },
-      {
-        id: 2,
-        customerName: 'Bob Wilson',
-        email: 'bob@example.com',
-        workshop: 'Latte Art Masterclass',
-        date: '2024-01-20',
-        participants: 1,
-        status: 'approved',
-        requestDate: '2024-01-07'
-      }
-    ];
-    
-    res.render("admin/workshop-requests", {
-      title: 'Workshop Requests - Admin Dashboard',
-      description: 'Manage workshop booking requests and schedules.',
-      currentPage: '/admin/workshop-requests',
-      workshopRequests,
-      layout: false,
-      additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-      additionalJS: '<script src="/js/admin.js"></script>'
-    });
+    try {
+      // Mock data - in real app, fetch from database
+      const workshopRequests = [
+        // Workshop Bookings (existing workshops)
+        {
+          id: 1,
+          type: 'booking',
+          customerName: 'Alice Johnson',
+          email: 'alice@example.com',
+          workshop: 'Coffee Brewing Basics',
+          date: '2024-01-15',
+          participants: 2,
+          status: 'pending',
+          requestDate: '2024-01-08'
+        },
+        {
+          id: 2,
+          type: 'booking',
+          customerName: 'Bob Wilson',
+          email: 'bob@example.com',
+          workshop: 'Latte Art Masterclass',
+          date: '2024-01-20',
+          participants: 1,
+          status: 'approved',
+          requestDate: '2024-01-07'
+        },
+        // Workshop Proposals (new workshop ideas from users)
+        {
+          id: 3,
+          type: 'proposal',
+          organizerName: 'Sarah Martinez',
+          email: 'sarah@example.com',
+          title: 'Digital Art & Coffee',
+          category: 'art',
+          description: 'Combining digital art creation with coffee appreciation',
+          duration: 3,
+          capacity: 12,
+          status: 'pending',
+          requestDate: '2024-01-09'
+        }
+      ];
+      
+      res.render("admin/workshop-requests", {
+        title: 'Workshop Requests - Rabuste Admin',
+        description: 'Manage workshop booking requests and proposals.',
+        currentPage: '/admin/workshop-requests',
+        workshopRequests,
+        layout: false,
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>'
+      });
+    } catch (error) {
+      console.error('Error in getWorkshopRequests:', error);
+      res.status(500).send('Error loading workshop requests');
+    }
   },
 
   // Art Requests Management (Art Purchase Orders)
