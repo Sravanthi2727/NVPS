@@ -528,6 +528,12 @@ app.get("/workshops", async (req, res) => {
             plain._id = String(plain.id);
           } else {
             // Fallback: generate an id so front-end registration never breaks
+            console.warn('Workshop missing _id, generating temporary ID:', plain.title || 'Unknown');
+            plain._id = new mongoose.Types.ObjectId().toString();
+          }
+          // Ensure _id is never empty or undefined
+          if (!plain._id || plain._id === 'undefined' || plain._id === 'null') {
+            console.error('Workshop _id is invalid after processing:', plain.title || 'Unknown', plain._id);
             plain._id = new mongoose.Types.ObjectId().toString();
           }
           return plain;
@@ -535,6 +541,16 @@ app.get("/workshops", async (req, res) => {
 
         upcomingWorkshops = upcomingWorkshops.map(ensureId);
         pastWorkshops = pastWorkshops.map(ensureId);
+        
+        // Debug: Log first workshop to verify _id is set
+        if (upcomingWorkshops.length > 0) {
+          console.log('Sample upcoming workshop:', {
+            title: upcomingWorkshops[0].title,
+            _id: upcomingWorkshops[0]._id,
+            _idType: typeof upcomingWorkshops[0]._id,
+            _idLength: upcomingWorkshops[0]._id ? upcomingWorkshops[0]._id.length : 0
+          });
+        }
 
       } catch (dbError) {
         console.error('Database query error:', dbError);

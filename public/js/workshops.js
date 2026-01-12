@@ -44,10 +44,29 @@ function handleRegisterClick(button) {
   const workshopTitle = button.getAttribute('data-workshop-title');
   const workshopDate = button.getAttribute('data-workshop-date');
   
-  console.log('handleRegisterClick called with:', { workshopId, workshopTitle, workshopDate });
+  console.log('handleRegisterClick called with:', { 
+    workshopId, 
+    workshopTitle, 
+    workshopDate,
+    buttonAttributes: {
+      'data-workshop-id': button.getAttribute('data-workshop-id'),
+      'data-workshop-title': button.getAttribute('data-workshop-title'),
+      'data-workshop-date': button.getAttribute('data-workshop-date')
+    }
+  });
   
-  if (!workshopId || workshopId.trim() === '' || workshopId === 'undefined' || workshopId === 'null') {
-    console.error('Invalid workshop ID from button:', workshopId);
+  // Check if workshopId is valid
+  if (!workshopId || 
+      workshopId.trim() === '' || 
+      workshopId === 'undefined' || 
+      workshopId === 'null' ||
+      workshopId === 'NaN') {
+    console.error('Invalid workshop ID from button:', {
+      workshopId: workshopId,
+      type: typeof workshopId,
+      length: workshopId ? workshopId.length : 0,
+      buttonHTML: button.outerHTML.substring(0, 200)
+    });
     showNotification('Workshop ID is missing. Please refresh the page and try again.', 'error');
     return;
   }

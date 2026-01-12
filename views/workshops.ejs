@@ -237,11 +237,32 @@
             <div class="countdown" data-date="<%= workshop.date %>"></div>
             <p class="workshop-description"><%= workshop.description || '' %></p>
 
+            <% 
+              // Ensure workshop ID is properly set
+              let workshopId = '';
+              if (workshop._id && workshop._id !== 'undefined' && workshop._id !== 'null') {
+                workshopId = String(workshop._id).trim();
+              } else if (workshop.id && workshop.id !== 'undefined' && workshop.id !== 'null') {
+                workshopId = String(workshop.id).trim();
+              }
+              
+              // Validate workshopId is not empty
+              if (!workshopId || workshopId === '' || workshopId === 'undefined' || workshopId === 'null') {
+                console.error('Workshop missing valid ID:', {
+                  title: workshop.title,
+                  _id: workshop._id,
+                  id: workshop.id,
+                  hasId: !!workshop._id,
+                  hasIdField: !!workshop.id
+                });
+              }
+            %>
             <button class="register-btn"
-              data-workshop-id="<%= String(workshop._id || workshop.id || '') %>"
+              data-workshop-id="<%= workshopId %>"
               data-workshop-title="<%= workshop.title.replace(/"/g, '&quot;') %>"
               data-workshop-date="<%= new Date(workshop.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %>"
-              onclick="handleRegisterClick(this)">
+              onclick="handleRegisterClick(this)"
+              <%= !workshopId ? 'disabled title="Workshop ID missing - cannot register"' : '' %>>
               Register
             </button>
           </div>
