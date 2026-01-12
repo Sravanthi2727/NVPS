@@ -528,7 +528,9 @@ async function fetchWishlist() {
 async function fetchCart() {
   try {
     console.log('Fetching cart...');
-    const response = await fetch('/api/cart');
+    const response = await fetch('/api/cart', {
+      credentials: 'include' // Include session cookies
+    });
     console.log('Cart response status:', response.status);
     
     if (!response.ok) {
@@ -547,7 +549,9 @@ async function fetchCart() {
 // Update navbar counts
 function updateCartCount() {
   // Update cart count in navbar if element exists
-  fetch('/api/cart/count')
+  fetch('/api/cart/count', {
+    credentials: 'include' // Include session cookies
+  })
   .then(response => response.json())
   .then(data => {
     const cartCount = document.querySelector('.cart-count');
@@ -560,7 +564,9 @@ function updateCartCount() {
 
 function updateWishlistCount() {
   // Update wishlist count in navbar if element exists
-  fetch('/api/wishlist/count')
+  fetch('/api/wishlist/count', {
+    credentials: 'include' // Include session cookies
+  })
   .then(response => response.json())
   .then(data => {
     const wishlistCount = document.querySelector('.wishlist-count');
@@ -574,7 +580,9 @@ function updateWishlistCount() {
 async function fetchOrders() {
   try {
     console.log('Fetching user orders...');
-    const response = await fetch('/api/user/orders');
+    const response = await fetch('/api/user/orders', {
+      credentials: 'include' // Include session cookies
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch orders');
     }
@@ -642,21 +650,29 @@ function renderWishlist(items) {
     `;
   } else {
     console.log('Rendering', items.length, 'wishlist items');
-    container.innerHTML = items.map(item => `
+    container.innerHTML = items.map(item => {
+      // Detect if item is art or menu item
+      const isArtItem = (item.type === 'art') || 
+                        (item.image && (item.image.includes('/assets/gallery/') || item.image.includes('/gallery/'))) ||
+                        (item.name && (item.name.includes('by ') || item.name.includes('Wilderness') || item.name.includes('Mountain') || item.name.includes('Serenity')));
+      
+      return `
       <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card">
+        <div class="card ${isArtItem ? 'art-item-card' : 'menu-item-card'}">
           <div class="card-body">
-            
+            ${item.image ? `<img src="${item.image}" class="img-fluid rounded mb-2" alt="${item.name}" style="max-height: 150px; width: 100%; object-fit: cover;">` : ''}
             <h5 class="card-title">${item.name}</h5>
             <p class="card-text">Price: ₹${item.price}</p>
-            <div class="d-flex gap-2">
+            ${isArtItem ? '<small style="color: #d6a45a;"><i class="bi bi-palette"></i> Art Piece</small>' : '<small style="color: #28a745;"><i class="bi bi-cup-hot"></i> Menu Item</small>'}
+            <div class="d-flex gap-2 mt-2">
               <button class="btn btn-sm" style="background-color: #d6a45a; border: none; color: #000;" onclick="moveToCart('${item.itemId}', '${item.name}', ${item.price})">Move to Cart</button>
               <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeFromWishlist('${item.itemId}')">Remove</button>
             </div>
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 }
 
@@ -2150,7 +2166,7 @@ async function processArtOrder(orderData) {
     if (result.success) {
       // Close payment modal
       const paymentModal = bootstrap.Modal.getInstance(document.getElementById('artPaymentModal'));
-      paymentModal.hide();
+      if (paymentModal) paymentModal.hide();
       
       // Show success message
       showArtOrderSuccess(result.orderId, orderData);
@@ -2159,6 +2175,11 @@ async function processArtOrder(orderData) {
       const updatedCart = await fetchCart();
       renderCart(updatedCart);
       updateCartCount();
+      
+      // Refresh orders
+      const updatedOrders = await fetchOrders();
+      renderOrders(updatedOrders);
+      window.allOrders = updatedOrders;
     } else {
       showToast(result.message || 'Failed to place art order', 'error');
     }
@@ -2192,18 +2213,12 @@ async function initiateArtOnlinePayment(orderData) {
       currency: 'INR',
       name: 'Rabuste Coffee',
       description: 'Art Purchase',
-      handler: function (response) {
+      handler: async function (response) {
         console.log('✅ Payment successful:', response);
-        showToast('Payment successful! Payment ID: ' + response.razorpay_payment_id, 'success');
+        showToast('Payment successful! Creating order...', 'success');
         
-        // Close payment modal
-        const paymentModal = bootstrap.Modal.getInstance(document.getElementById('artPaymentModal'));
-        if (paymentModal) paymentModal.hide();
-        
-        // Show success
-        showArtOrderSuccess('ORDER_' + Date.now(), orderData);
-        
-        console.log('Art payment completed');
+        // Verify payment and create order
+        await verifyArtPayment(response, orderData);
       },
       prefill: {
         name: orderData.deliveryAddress.name,
@@ -2242,6 +2257,92 @@ async function initiateArtOnlinePayment(orderData) {
   } catch (error) {
     console.error('Art payment initiation error:', error);
     showToast('Failed to initiate art payment', 'error');
+  }
+}
+
+// Create art order after successful payment
+async function createArtOrderAfterPayment(paymentResponse, orderData) {
+  try {
+    console.log('=== CREATING ART ORDER ===');
+    console.log('Payment Response:', paymentResponse);
+    console.log('Order Data:', orderData);
+    
+    const requestBody = {
+      paymentResponse: paymentResponse,
+      orderData: orderData,
+      userId: 'test_user_' + Date.now()
+    };
+    
+    console.log('Sending request body:', requestBody);
+    
+    const response = await fetch('/api/create-art-order-after-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // Include session cookies
+      body: JSON.stringify(requestBody)
+    });
+    
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
+    
+    // Check if response is ok
+    if (!response.ok) {
+      console.error('Response not ok:', response.status, response.statusText);
+      showToast('Server error: ' + response.status + ' ' + response.statusText, 'error');
+      return;
+    }
+    
+    // Get response text first to debug
+    const responseText = await response.text();
+    console.log('Raw response text:', responseText);
+    
+    // Try to parse JSON
+    let result;
+    try {
+      result = JSON.parse(responseText);
+      console.log('Parsed JSON result:', result);
+    } catch (jsonError) {
+      console.error('JSON parse error:', jsonError);
+      console.error('Response text that failed to parse:', responseText);
+      showToast('Invalid server response. Check console for details.', 'error');
+      return;
+    }
+    
+    if (result.success) {
+      console.log('✅ Art request created:', result.requestId);
+      
+      // Close payment modal
+      const paymentModal = bootstrap.Modal.getInstance(document.getElementById('artPaymentModal'));
+      if (paymentModal) paymentModal.hide();
+      
+      // Show success message
+      showToast('🎉 Art request submitted successfully! Request ID: ' + result.requestId.slice(-6).toUpperCase(), 'success');
+      
+      // Refresh cart and requests
+      setTimeout(async () => {
+        try {
+          const updatedCart = await fetchCart();
+          renderCart(updatedCart);
+          updateCartCount();
+          
+          const updatedRequests = await fetchRequests();
+          renderRequests(updatedRequests);
+          
+          showToast('✅ Art request created! Check "Requests" tab.', 'success');
+        } catch (refreshError) {
+          console.error('Error refreshing data:', refreshError);
+        }
+      }, 1000);
+      
+    } else {
+      console.error('❌ Failed to create art request:', result.message);
+      showToast('Payment successful but failed to create request: ' + result.message, 'error');
+    }
+  } catch (error) {
+    console.error('❌ Error creating art order:', error);
+    showToast('Payment successful but network error: ' + error.message, 'error');
   }
 }
 
@@ -2321,7 +2422,7 @@ async function verifyArtPayment(paymentResponse, orderData) {
     if (result.success) {
       // Close payment modal
       const paymentModal = bootstrap.Modal.getInstance(document.getElementById('artPaymentModal'));
-      paymentModal.hide();
+      if (paymentModal) paymentModal.hide();
       
       showToast('Payment successful! Your art order is confirmed.', 'success');
       showArtOrderSuccess(result.orderId, orderData);
@@ -2330,6 +2431,11 @@ async function verifyArtPayment(paymentResponse, orderData) {
       const updatedCart = await fetchCart();
       renderCart(updatedCart);
       updateCartCount();
+      
+      // Refresh orders
+      const updatedOrders = await fetchOrders();
+      renderOrders(updatedOrders);
+      window.allOrders = updatedOrders;
     } else {
       showToast(result.message || 'Payment verification failed', 'error');
     }
@@ -2436,7 +2542,7 @@ window.checkUserData = async function() {
 
 </body>
 </html>
-// Debug functions
+<!-- // Debug functions
 window.addTestData = async function() {
   try {
     const response = await fetch('/api/debug/add-test-data', {
@@ -2476,7 +2582,7 @@ window.checkUserData = async function() {
     console.error('Error checking user data:', error);
     alert('Error checking user data: ' + error.message);
   }
-};
+}; -->
 
 </script>
 

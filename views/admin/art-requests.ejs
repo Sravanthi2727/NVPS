@@ -317,127 +317,167 @@
                 <!-- Art Requests Content -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <p style="color: #ccc;">Manage artwork submissions and gallery requests</p>
+                        <p style="color: #ccc;">Manage art purchase orders from customers</p>
                     </div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addArtModal">
-                        <i class="fas fa-plus me-2"></i>Add Art Request
-                    </button>
                 </div>
 
                 <!-- Filters -->
                 <div class="admin-card mb-4">
                     <div class="row g-3">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label class="form-label" style="color: #d6a45a;">Status</label>
                             <select class="form-select bg-dark text-light border-secondary" id="statusFilter">
                                 <option value="">All Status</option>
                                 <option value="pending">Pending</option>
-                                <option value="approved">Approved</option>
-                                <option value="rejected">Rejected</option>
-                                <option value="displayed">Displayed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label" style="color: #d6a45a;">Art Type</label>
-                            <select class="form-select bg-dark text-light border-secondary" id="typeFilter">
-                                <option value="">All Types</option>
-                                <option value="painting">Painting</option>
-                                <option value="photography">Photography</option>
-                                <option value="digital">Digital Art</option>
-                                <option value="sculpture">Sculpture</option>
+                        <div class="col-md-4">
+                            <label class="form-label" style="color: #d6a45a;">Payment Method</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="paymentFilter">
+                                <option value="">All Payment Methods</option>
+                                <option value="online">Online</option>
+                                <option value="cod">Cash on Delivery</option>
+                                <option value="cash">Cash</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" style="color: #d6a45a;">Search</label>
-                            <input type="text" class="form-control bg-dark text-light border-secondary" placeholder="Search by artist name or title..." id="searchInput">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">&nbsp;</label>
-                            <button class="btn btn-outline-primary w-100" onclick="clearFilters()">
-                                <i class="fas fa-times me-2"></i>Clear
-                            </button>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" placeholder="Search by customer name or email..." id="searchInput">
                         </div>
                     </div>
                 </div>
 
                 <!-- Art Requests Table -->
                 <div class="admin-card">
-                    <h3 class="mb-3">Art Submissions</h3>
+                    <h3 class="mb-3">Art Purchase Orders</h3>
                     <div class="admin-table">
                         <table class="table table-dark">
                             <thead>
                                 <tr>
-                                    <th>Artist</th>
-                                    <th>Artwork</th>
-                                    <th>Type</th>
-                                    <th>Submission Date</th>
+                                    <th>Customer</th>
+                                    <th>Art Items</th>
+                                    <th>Address</th>
+                                    <th>Payment</th>
+                                    <th>Total</th>
+                                    <th>Order Date</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% artRequests.forEach(request => { %>
-                                <tr>
-                                    <td>
-                                        <strong><%= request.artistName %></strong><br>
-                                        <small style="color: #ccc;"><%= request.email %></small>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="<%= request.thumbnail %>" alt="<%= request.title %>" 
-                                                 class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                                            <div>
-                                                <strong><%= request.title %></strong><br>
-                                                <small style="color: #ccc;"><%= request.description %></small>
+                                <% if (artRequests && artRequests.length > 0) { %>
+                                    <% artRequests.forEach(order => { %>
+                                    <tr>
+                                        <td>
+                                            <strong><%= order.customerName %></strong><br>
+                                            <small style="color: #ccc;"><%= order.customerEmail %></small>
+                                        </td>
+                                        <td>
+                                            <% if (order.items && order.items.length > 0) { %>
+                                                <% order.items.forEach((item, index) => { %>
+                                                    <div class="mb-2">
+                                                        <div class="d-flex align-items-center">
+                                                            <% if (item.image) { %>
+                                                                <img src="<%= item.image %>" alt="<%= item.name %>" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 8px;">
+                                                            <% } else { %>
+                                                                <div style="width: 40px; height: 40px; background: #d6a45a; border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-right: 8px;">
+                                                                    <i class="fas fa-palette" style="color: #000; font-size: 14px;"></i>
+                                                                </div>
+                                                            <% } %>
+                                                            <div>
+                                                                <strong style="font-size: 0.9rem;"><%= item.name %></strong><br>
+                                                                <small style="color: #ccc;">Qty: <%= item.quantity %> × ₹<%= item.price %></small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <span style="color: #ccc;">No items</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (order.deliveryAddress) { %>
+                                                <small style="color: #ccc; line-height: 1.6;">
+                                                    <%= order.deliveryAddress.name %><br>
+                                                    <%= order.deliveryAddress.phone %><br>
+                                                    <%= order.deliveryAddress.address %><br>
+                                                    <%= order.deliveryAddress.city %><% if (order.deliveryAddress.state) { %>, <%= order.deliveryAddress.state %><% } %><br>
+                                                    <%= order.deliveryAddress.pincode %>
+                                                </small>
+                                            <% } else { %>
+                                                <span style="color: #999;">No address</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (order.paymentMethod === 'online') { %>
+                                                <span class="badge bg-success">Online</span>
+                                            <% } else if (order.paymentMethod === 'cod') { %>
+                                                <span class="badge bg-warning">COD</span>
+                                            <% } else if (order.paymentMethod === 'cash') { %>
+                                                <span class="badge bg-info">Cash</span>
+                                            <% } else { %>
+                                                <span class="badge bg-secondary"><%= order.paymentMethod || 'N/A' %></span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <strong style="color: #d6a45a;">₹<%= order.totalAmount %></strong>
+                                        </td>
+                                        <td>
+                                            <%= new Date(order.orderDate || order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                        </td>
+                                        <td>
+                                            <% if (order.status === 'pending') { %>
+                                                <span class="badge bg-warning">Pending</span>
+                                            <% } else if (order.status === 'completed') { %>
+                                                <span class="badge bg-success">Completed</span>
+                                            <% } else if (order.status === 'cancelled') { %>
+                                                <span class="badge bg-danger">Cancelled</span>
+                                            <% } else { %>
+                                                <span class="badge bg-secondary"><%= order.status %></span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-primary" 
+                                                    data-order-id="<%= order._id %>"
+                                                    data-customer-name="<%= (order.customerName || '').replace(/"/g, '&quot;') %>"
+                                                    data-customer-email="<%= (order.customerEmail || '').replace(/"/g, '&quot;') %>"
+                                                    data-address="<%= order.deliveryAddress ? JSON.stringify(order.deliveryAddress).replace(/"/g, '&quot;') : '' %>"
+                                                    data-payment="<%= order.paymentMethod || '' %>"
+                                                    data-total="<%= order.totalAmount || 0 %>"
+                                                    data-items="<%= JSON.stringify(order.items || []).replace(/"/g, '&quot;') %>"
+                                                    onclick="viewOrderDetailsFromButton(this)">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <% if (order.status === 'pending') { %>
+                                                <form method="POST" action="/admin/art-requests/<%= order._id %>/update" class="d-inline">
+                                                    <input type="hidden" name="status" value="completed">
+                                                    <button type="submit" class="btn btn-sm btn-success" title="Mark as Completed">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="POST" action="/admin/art-requests/<%= order._id %>/update" class="d-inline">
+                                                    <input type="hidden" name="status" value="cancelled">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Cancel Order">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </form>
+                                                <% } %>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-info"><%= request.type %></span>
-                                    </td>
-                                    <td><%= request.submissionDate %></td>
-                                    <td>
-                                        <% if (request.status === 'pending') { %>
-                                            <span class="badge bg-warning">Pending</span>
-                                        <% } else if (request.status === 'approved') { %>
-                                            <span class="badge bg-success">Approved</span>
-                                        <% } else if (request.status === 'rejected') { %>
-                                            <span class="badge bg-danger">Rejected</span>
-                                        <% } else if (request.status === 'displayed') { %>
-                                            <span class="badge bg-primary">Displayed</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" onclick="viewArt('<%= request.id %>')">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <% if (request.status === 'pending') { %>
-                                            <form method="POST" action="/admin/art-requests/<%= request.id %>/update" class="d-inline">
-                                                <input type="hidden" name="status" value="approved">
-                                                <button type="submit" class="btn btn-sm btn-success">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                            </form>
-                                            <form method="POST" action="/admin/art-requests/<%= request.id %>/update" class="d-inline">
-                                                <input type="hidden" name="status" value="rejected">
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </form>
-                                            <% } %>
-                                            <% if (request.status === 'approved') { %>
-                                            <form method="POST" action="/admin/art-requests/<%= request.id %>/update" class="d-inline">
-                                                <input type="hidden" name="status" value="displayed">
-                                                <button type="submit" class="btn btn-sm btn-primary">
-                                                    <i class="fas fa-image"></i>
-                                                </button>
-                                            </form>
-                                            <% } %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }); %>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="8" class="text-center" style="color: #ccc; padding: 2rem;">
+                                            <i class="fas fa-palette" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i><br>
+                                            No art purchase orders found.<br>
+                                            <small>Art purchase orders will appear here when customers buy art items.</small>
+                                        </td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
@@ -467,13 +507,136 @@
             }
         });
         
-        function viewArt(id) {
-            alert('View art details for ID: ' + id);
+        function viewOrderDetailsFromButton(button) {
+            const orderId = button.getAttribute('data-order-id');
+            const customerName = button.getAttribute('data-customer-name');
+            const customerEmail = button.getAttribute('data-customer-email');
+            const paymentMethod = button.getAttribute('data-payment');
+            const totalAmount = parseFloat(button.getAttribute('data-total')) || 0;
+            
+            let deliveryAddress = null;
+            const addressStr = button.getAttribute('data-address');
+            if (addressStr) {
+                try {
+                    deliveryAddress = JSON.parse(addressStr.replace(/&quot;/g, '"'));
+                } catch (e) {
+                    console.error('Error parsing address:', e);
+                }
+            }
+            
+            let items = [];
+            const itemsStr = button.getAttribute('data-items');
+            if (itemsStr) {
+                try {
+                    items = JSON.parse(itemsStr.replace(/&quot;/g, '"'));
+                } catch (e) {
+                    console.error('Error parsing items:', e);
+                }
+            }
+            
+            viewOrderDetails(orderId, customerName, customerEmail, deliveryAddress, paymentMethod, totalAmount, items);
+        }
+        
+        function viewOrderDetails(orderId, customerName, customerEmail, deliveryAddress, paymentMethod, totalAmount, items) {
+            // Parse items if it's a string
+            if (typeof items === 'string') {
+                items = JSON.parse(items.replace(/&quot;/g, '"'));
+            }
+            if (typeof deliveryAddress === 'string') {
+                deliveryAddress = JSON.parse(deliveryAddress.replace(/&quot;/g, '"'));
+            }
+            
+            // Build items HTML
+            let itemsHtml = '';
+            if (items && items.length > 0) {
+                items.forEach(item => {
+                    itemsHtml += `
+                        <div class="d-flex align-items-center mb-3 p-2" style="background: #1a1a1a; border-radius: 4px;">
+                            ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; margin-right: 12px;">` : ''}
+                            <div style="flex: 1;">
+                                <strong>${item.name}</strong><br>
+                                <small style="color: #ccc;">Quantity: ${item.quantity} × ₹${item.price} = ₹${item.quantity * item.price}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Build address HTML
+            let addressHtml = 'No address provided';
+            if (deliveryAddress) {
+                addressHtml = `
+                    <strong>${deliveryAddress.name || ''}</strong><br>
+                    ${deliveryAddress.phone ? `<small>Phone: ${deliveryAddress.phone}</small><br>` : ''}
+                    ${deliveryAddress.address || ''}<br>
+                    ${deliveryAddress.city || ''}${deliveryAddress.state ? `, ${deliveryAddress.state}` : ''}<br>
+                    ${deliveryAddress.pincode || ''}
+                `;
+            }
+            
+            // Create and show modal with order details
+            const modalHtml = `
+                <div class="modal fade" id="orderModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content" style="background: #111; color: #fff; border: 1px solid #d6a45a;">
+                            <div class="modal-header" style="border-bottom: 1px solid #d6a45a;">
+                                <h5 class="modal-title" style="color: #d6a45a;">Art Order Details</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <h6 style="color: #d6a45a;">Customer Information</h6>
+                                        <p><strong>Name:</strong> ${customerName}</p>
+                                        <p><strong>Email:</strong> ${customerEmail}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <h6 style="color: #d6a45a;">Payment Information</h6>
+                                        <p><strong>Payment Method:</strong> ${paymentMethod === 'online' ? 'Online Payment' : paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'cash' ? 'Cash' : paymentMethod}</p>
+                                        <p><strong>Total Amount:</strong> <span style="color: #d6a45a; font-size: 1.2rem;">₹${totalAmount}</span></p>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <h6 style="color: #d6a45a;">Delivery Address</h6>
+                                    <div style="color: #ccc; line-height: 1.8;">
+                                        ${addressHtml}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <h6 style="color: #d6a45a;">Art Items</h6>
+                                    ${itemsHtml || '<p style="color: #ccc;">No items found</p>'}
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="border-top: 1px solid #d6a45a;">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('orderModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('orderModal'));
+            modal.show();
+            
+            // Clean up modal after it's hidden
+            document.getElementById('orderModal').addEventListener('hidden.bs.modal', function() {
+                this.remove();
+            });
         }
 
         function clearFilters() {
             document.getElementById('statusFilter').value = '';
-            document.getElementById('typeFilter').value = '';
+            document.getElementById('paymentFilter').value = '';
             document.getElementById('searchInput').value = '';
         }
     </script>

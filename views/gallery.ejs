@@ -1000,15 +1000,15 @@
     }
 
     function addToCartItem(itemId, itemName, price, image, buttonElement) {
-        console.log('Opening payment modal for:', { itemId, itemName, price, image });
+        console.log('Adding to cart:', { itemId, itemName, price, image });
         
         if (cartItems.has(itemId)) {
             showNotification('This artwork is already in your cart. Art pieces are unique!', 'error');
             return;
         }
         
-        // Open payment modal instead of directly adding to cart
-        openPaymentModal(itemId, itemName, price, image);
+        // Add directly to cart
+        addToCartDirectly({ itemId, itemName, price, image });
     }
 
     // Payment modal functions
@@ -1092,8 +1092,7 @@
                 price: item.price,
                 image: item.image,
                 quantity: 1,
-                type: 'art',
-                paymentMethod: 'cash'
+                type: 'art'
             })
         })
         .then(response => {
@@ -1145,13 +1144,10 @@
             description: 'Art Purchase - ' + item.itemName,
             handler: function (response) {
                 console.log('✅ Payment successful:', response);
-                showNotification('Payment successful! Payment ID: ' + response.razorpay_payment_id, 'success');
+                showNotification('Payment successful! Creating order...', 'success');
                 
-                // Close payment modal
-                closePaymentModal();
-                
-                // You can add order creation logic here if needed
-                console.log('Payment completed for item:', item.itemName);
+                // Create order after successful payment
+                createOrderAfterPayment(response, item);
             },
             prefill: {
                 name: 'Customer',
@@ -1187,6 +1183,48 @@
             console.error('❌ Error opening Razorpay:', error);
             showNotification('Error: ' + error.message, 'error');
         }
+    }
+
+    // Create order after successful payment
+    function createOrderAfterPayment(paymentResponse, item) {
+        console.log('Creating order for item:', item.itemName);
+        
+        fetch('/api/create-order-after-payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                paymentResponse: paymentResponse,
+                itemId: item.itemId,
+                itemName: item.itemName,
+                price: item.price,
+                image: item.image
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('✅ Order created:', data.orderId);
+                showNotification('🎉 Order placed successfully! Order ID: ' + data.orderId.slice(-6).toUpperCase(), 'success');
+                
+                // Close payment modal
+                closePaymentModal();
+                
+                // Show success message
+                setTimeout(() => {
+                    showNotification('Your order is now pending. Check "My Orders" in dashboard.', 'info');
+                }, 2000);
+                
+            } else {
+                console.error('❌ Failed to create order:', data.message);
+                showNotification('Payment successful but failed to create order. Contact support.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error creating order:', error);
+            showNotification('Payment successful but failed to create order. Contact support.', 'error');
+        });
     }
 
     function openRazorpayCheckout(order, item) {

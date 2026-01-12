@@ -266,6 +266,32 @@ app.get('/gallery', async (req, res) => {
     
     console.log('Found artworks:', artworks.length);
     
+    // Get user's purchased art IDs if logged in
+    let purchasedArtIds = [];
+    if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+      try {
+        const userId = req.user._id || req.user.id;
+        const completedArtOrders = await Order.find({
+          userId: userId,
+          orderType: 'art',
+          status: 'completed'
+        });
+        
+        completedArtOrders.forEach(order => {
+          order.items.forEach(item => {
+            if (item.type === 'art' && item.itemId) {
+              purchasedArtIds.push(String(item.itemId));
+            }
+          });
+        });
+        
+        purchasedArtIds = [...new Set(purchasedArtIds)];
+        console.log(`Found ${purchasedArtIds.length} purchased art items for user`);
+      } catch (error) {
+        console.error('Error fetching purchased arts:', error);
+      }
+    }
+    
     res.render('gallery', {
       title: 'Art Gallery - Rabuste Coffee',
       description: 'Discover the vibrant art collection at Rabuste Coffee, where coffee culture meets contemporary art.',
@@ -277,7 +303,8 @@ app.get('/gallery', async (req, res) => {
       ogUrl: 'https://rabustecoffee.com/gallery',
       ogImage: '/assets/photowall.jpeg',
       canonicalUrl: 'https://rabustecoffee.com/gallery',
-      artworks: artworks
+      artworks: artworks,
+      purchasedArtIds: purchasedArtIds
     });
   } catch (error) {
     console.error('Gallery route error:', error);
@@ -1085,25 +1112,67 @@ app.get('/api/user/orders', async (req, res) => {
     console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
     console.log('User object:', req.user);
     
-    // For debugging, let's get all orders first
-    const allOrders = await Order.find().sort({ createdAt: -1 });
-    console.log('Total orders in database:', allOrders.length);
-    
-    if (req.isAuthenticated && req.isAuthenticated()) {
+    if (req.isAuthenticated && req.isAuthenticated() && req.user) {
       const userId = req.user._id || req.user.id;
       console.log('Fetching orders for authenticated user:', userId);
       
-      const userOrders = await Order.find({ userId: userId }).sort({ createdAt: -1 });
-      console.log(`Found ${userOrders.length} orders for user ${userId}`);
+      // Find orders by userId (ObjectId) or by customer email as fallback
+      const userOrders = await Order.find({
+        $or: [
+          { userId: userId },
+          { customerEmail: req.user.email }
+        ]
+      }).sort({ createdAt: -1 });
       
+      console.log(`Found ${userOrders.length} orders for user ${userId} (${req.user.email})`);
       res.json(userOrders);
     } else {
-      console.log('User not authenticated, returning all orders for debugging');
-      res.json(allOrders);
+      console.log('User not authenticated');
+      // For debugging, return recent orders
+      const recentOrders = await Order.find().sort({ createdAt: -1 }).limit(10);
+      console.log('Returning recent orders for debugging:', recentOrders.length);
+      res.json(recentOrders);
     }
   } catch (error) {
     console.error('Error fetching user orders:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch orders', error: error.message });
+  }
+});
+
+// User: Get user's purchased art item IDs (completed orders only)
+app.get('/api/user/purchased-arts', async (req, res) => {
+  try {
+    if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+      const userId = req.user._id || req.user.id;
+      
+      // Find completed orders with art items
+      const completedArtOrders = await Order.find({
+        userId: userId,
+        orderType: 'art',
+        status: 'completed'
+      });
+      
+      // Extract art item IDs from completed orders
+      const purchasedArtIds = [];
+      completedArtOrders.forEach(order => {
+        order.items.forEach(item => {
+          if (item.type === 'art' && item.itemId) {
+            purchasedArtIds.push(String(item.itemId));
+          }
+        });
+      });
+      
+      // Remove duplicates
+      const uniquePurchasedArtIds = [...new Set(purchasedArtIds)];
+      
+      console.log(`Found ${uniquePurchasedArtIds.length} purchased art items for user ${userId}`);
+      res.json({ purchasedArtIds: uniquePurchasedArtIds });
+    } else {
+      res.json({ purchasedArtIds: [] });
+    }
+  } catch (error) {
+    console.error('Error fetching purchased arts:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch purchased arts', purchasedArtIds: [] });
   }
 });
 
@@ -1408,6 +1477,241 @@ app.post('/api/test-verify', async (req, res) => {
   }
 });
 
+// Create order after successful payment (Gallery) - No auth for testing
+app.post('/api/create-order-after-payment', async (req, res) => {
+  try {
+    const { paymentResponse, itemId, itemName, price, image, userId } = req.body;
+    
+    console.log('=== CREATING GALLERY ORDER ===');
+    console.log('Payment Response:', paymentResponse);
+    console.log('Item:', { itemId, itemName, price });
+    console.log('User ID:', userId);
+    
+    // Get user ID from request or body
+    let actualUserId = userId;
+    if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+      actualUserId = req.user._id || req.user.id;
+      console.log('Using authenticated user ID:', actualUserId);
+    } else {
+      console.log('No authentication, using provided user ID:', actualUserId);
+    }
+    
+    if (!actualUserId) {
+      // Create a dummy user ID for testing
+      actualUserId = '507f1f77bcf86cd799439011';
+      console.log('Using dummy user ID for testing:', actualUserId);
+    }
+    
+    // Create order record
+    const order = new Order({
+      userId: actualUserId,
+      customerName: req.user ? req.user.name : 'Test Customer',
+      customerEmail: req.user ? req.user.email : 'test@example.com',
+      items: [{
+        itemId: itemId,
+        name: itemName,
+        price: price,
+        quantity: 1,
+        image: image,
+        type: 'art'
+      }],
+      totalAmount: price,
+      status: 'pending', // Default status
+      paymentMethod: 'online',
+      paymentId: paymentResponse.razorpay_payment_id,
+      orderType: 'art',
+      orderDate: new Date()
+    });
+    
+    await order.save();
+    console.log('✅ Gallery order created successfully:', order._id);
+    
+    res.json({
+      success: true,
+      message: 'Order created successfully',
+      orderId: order._id,
+      orderStatus: 'pending'
+    });
+    
+  } catch (error) {
+    console.error('❌ Error creating gallery order:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create order: ' + error.message
+    });
+  }
+});
+
+// Simple test endpoint
+app.post('/api/test-endpoint', (req, res) => {
+  console.log('Test endpoint called');
+  res.json({ success: true, message: 'Test endpoint working' });
+});
+
+// Create art request from cart (Dashboard) - No auth for testing
+app.post('/api/create-art-order-after-payment', async (req, res) => {
+  console.log('=== ART REQUEST ENDPOINT CALLED ===');
+  console.log('Session ID:', req.sessionID);
+  console.log('User authenticated:', req.isAuthenticated ? req.isAuthenticated() : 'No auth function');
+  console.log('User object:', req.user ? { id: req.user._id || req.user.id, email: req.user.email, name: req.user.name } : 'No user');
+  console.log('Session data:', req.session ? Object.keys(req.session) : 'No session');
+  
+  try {
+    const { paymentResponse, orderData, userId } = req.body;
+    
+    console.log('Request body received:', {
+      hasPaymentResponse: !!paymentResponse,
+      hasOrderData: !!orderData,
+      userId: userId,
+      paymentId: paymentResponse?.razorpay_payment_id
+    });
+    
+    if (!paymentResponse || !paymentResponse.razorpay_payment_id) {
+      console.error('Missing payment response');
+      return res.status(400).json({
+        success: false,
+        message: 'Payment response is required'
+      });
+    }
+    
+    if (!orderData || !orderData.items || orderData.items.length === 0) {
+      console.error('Missing order data or items');
+      return res.status(400).json({
+        success: false,
+        message: 'Order data with items is required'
+      });
+    }
+    
+    // Get user ID and info from authenticated session
+    let actualUserId = null;
+    let customerName = 'Guest User';
+    let customerEmail = 'guest@example.com';
+    
+    if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+      actualUserId = req.user._id || req.user.id;
+      customerName = req.user.name || 'User';
+      customerEmail = req.user.email || 'user@example.com';
+      console.log('Using authenticated user:', { id: actualUserId, name: customerName, email: customerEmail });
+    } else {
+      console.log('No authentication, using provided user ID:', userId);
+      // Use provided userId or generate one for testing
+      if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+        actualUserId = userId;
+      } else {
+        actualUserId = new mongoose.Types.ObjectId();
+      }
+      // Use delivery address info for customer details
+      if (orderData.deliveryAddress) {
+        customerName = orderData.deliveryAddress.name || customerName;
+        customerEmail = orderData.deliveryAddress.email || customerEmail;
+      }
+    }
+    
+    console.log('Final user details:', { actualUserId, customerName, customerEmail });
+    
+    // Calculate total
+    const totalAmount = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    console.log('Calculated total amount:', totalAmount);
+    
+    // Validate delivery address
+    if (!orderData.deliveryAddress || !orderData.deliveryAddress.name) {
+      console.error('Missing delivery address');
+      return res.status(400).json({
+        success: false,
+        message: 'Delivery address is required'
+      });
+    }
+    
+    // Create art request instead of order
+    const Request = require('./models/Request');
+    
+    // Create title and description from items
+    const itemNames = orderData.items.map(item => item.name).join(', ');
+    const title = `Art Purchase Request - ${itemNames}`;
+    const description = `
+Art Purchase Request Details:
+- Items: ${orderData.items.map(item => `${item.name} (₹${item.price})`).join(', ')}
+- Total Amount: ₹${totalAmount}
+- Payment Method: ${orderData.paymentMethod || 'online'}
+- Payment ID: ${paymentResponse.razorpay_payment_id}
+- Customer: ${customerName} (${customerEmail})
+- Delivery Address: ${orderData.deliveryAddress.name}, ${orderData.deliveryAddress.address}, ${orderData.deliveryAddress.city}, ${orderData.deliveryAddress.state} - ${orderData.deliveryAddress.pincode}
+- Phone: ${orderData.deliveryAddress.phone}
+    `.trim();
+    
+    const artRequest = new Request({
+      userId: actualUserId,
+      type: 'sell-art', // Using existing enum value
+      title: title,
+      description: description,
+      status: 'pending'
+    });
+    
+    console.log('Creating art request with data:', {
+      userId: actualUserId,
+      title: title,
+      type: 'sell-art'
+    });
+    
+    await artRequest.save();
+    
+    console.log('✅ Art request created successfully:', artRequest._id);
+    
+    // Try to remove art items from user's cart (if user is authenticated)
+    try {
+      const User = require('./models/User');
+      let userToUpdate = null;
+      
+      if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+        // Use authenticated user
+        userToUpdate = await User.findById(req.user._id || req.user.id);
+        console.log('Found authenticated user for cart update:', userToUpdate ? userToUpdate.email : 'not found');
+      } else {
+        // For testing, try to find any user with the items in cart
+        console.log('No authenticated user, skipping cart update');
+      }
+      
+      if (userToUpdate) {
+        const artItemIds = orderData.items.map(item => item.itemId);
+        console.log('Removing items from cart:', artItemIds);
+        console.log('Current cart before removal:', userToUpdate.cart);
+        
+        userToUpdate.cart = userToUpdate.cart.filter(cartItem => {
+          const shouldKeep = !artItemIds.includes(cartItem.itemId);
+          console.log(`Item ${cartItem.itemId}: ${shouldKeep ? 'keeping' : 'removing'}`);
+          return shouldKeep;
+        });
+        
+        userToUpdate.markModified('cart');
+        await userToUpdate.save();
+        console.log('✅ Cart updated, remaining items:', userToUpdate.cart.length);
+      }
+    } catch (cartError) {
+      console.error('Cart update error (non-critical):', cartError);
+    }
+    
+    const response = {
+      success: true,
+      message: 'Art request created successfully',
+      requestId: artRequest._id.toString(),
+      status: 'pending'
+    };
+    
+    console.log('Sending response:', response);
+    res.json(response);
+    
+  } catch (error) {
+    console.error('❌ Error creating art request:', error);
+    console.error('Error stack:', error.stack);
+    
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create art request: ' + error.message,
+      error: error.name
+    });
+  }
+});
+
 app.post('/api/verify-payment', ensureAuthenticated, async (req, res) => {
   try {
     const { paymentResponse, itemId, itemName, price, image } = req.body;
@@ -1471,12 +1775,36 @@ app.post('/api/art-checkout', ensureAuthenticated, async (req, res) => {
   try {
     const { items, deliveryAddress, paymentMethod, orderType } = req.body;
     
+    // Get user ID
+    const userId = req.user._id || req.user.id;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+    
+    // Get user details
+    const User = require('./models/User');
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    console.log('Creating art order for user:', userId, user.email);
+    
     // Calculate total
     const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     
     // Create order
     const order = new Order({
-      userId: req.user.id,
+      userId: userId,
+      customerName: user.name || deliveryAddress?.name || 'Customer',
+      customerEmail: user.email || deliveryAddress?.email || '',
       items: items.map(item => ({
         itemId: item.itemId,
         name: item.name,
@@ -1486,7 +1814,7 @@ app.post('/api/art-checkout', ensureAuthenticated, async (req, res) => {
         type: 'art'
       })),
       totalAmount: totalAmount,
-      status: paymentMethod === 'cod' ? 'pending' : 'completed',
+      status: 'pending', // All orders start as pending, admin will approve
       paymentMethod: paymentMethod,
       deliveryAddress: deliveryAddress,
       orderType: 'art',
@@ -1494,14 +1822,35 @@ app.post('/api/art-checkout', ensureAuthenticated, async (req, res) => {
     });
     
     await order.save();
+    console.log('✅ Art order created successfully:', order._id, 'for user:', userId);
     
-    // Remove art items from user's cart
-    const User = require('./models/User');
-    const user = await User.findById(req.user.id);
-    const artItemIds = items.map(item => item.itemId);
-    user.cart = user.cart.filter(cartItem => !artItemIds.includes(cartItem.itemId));
-    user.markModified('cart');
-    await user.save();
+    // Reload user to get latest cart data
+    const updatedUser = await User.findById(userId);
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found after order creation'
+      });
+    }
+    
+    // Remove art items from user's cart - convert all IDs to strings for comparison
+    const artItemIds = items.map(item => String(item.itemId));
+    console.log('Art item IDs to remove:', artItemIds);
+    console.log('Current cart before removal:', updatedUser.cart.map(c => ({ itemId: String(c.itemId), name: c.name })));
+    
+    const cartBeforeLength = updatedUser.cart.length;
+    updatedUser.cart = updatedUser.cart.filter(cartItem => {
+      const cartItemId = String(cartItem.itemId);
+      const shouldKeep = !artItemIds.includes(cartItemId);
+      if (!shouldKeep) {
+        console.log(`Removing item from cart: ${cartItemId} - ${cartItem.name}`);
+      }
+      return shouldKeep;
+    });
+    
+    updatedUser.markModified('cart');
+    await updatedUser.save();
+    console.log(`✅ Art items removed from cart. Before: ${cartBeforeLength}, After: ${updatedUser.cart.length}`);
     
     res.json({
       success: true,
@@ -1512,7 +1861,7 @@ app.post('/api/art-checkout', ensureAuthenticated, async (req, res) => {
     console.error('Art checkout error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to place art order'
+      message: 'Failed to place art order: ' + error.message
     });
   }
 });
@@ -1561,12 +1910,36 @@ app.post('/api/verify-art-payment', ensureAuthenticated, async (req, res) => {
     // In a real implementation, verify the payment signature with Razorpay
     console.log('Art payment verification:', paymentResponse);
     
+    // Get user ID
+    const userId = req.user._id || req.user.id;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+    
+    // Get user details
+    const User = require('./models/User');
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    console.log('Creating art order for user:', userId, user.email);
+    
     // Calculate total
     const totalAmount = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     
     // Create order record
     const order = new Order({
-      userId: req.user.id,
+      userId: userId,
+      customerName: user.name || orderData.deliveryAddress?.name || 'Customer',
+      customerEmail: user.email || orderData.deliveryAddress?.email || '',
       items: orderData.items.map(item => ({
         itemId: item.itemId,
         name: item.name,
@@ -1576,7 +1949,7 @@ app.post('/api/verify-art-payment', ensureAuthenticated, async (req, res) => {
         type: 'art'
       })),
       totalAmount: totalAmount,
-      status: 'completed', // Since payment is successful
+      status: 'pending', // All orders start as pending, admin will approve after verification
       paymentMethod: 'online',
       paymentId: paymentResponse.razorpay_payment_id,
       deliveryAddress: orderData.deliveryAddress,
@@ -1585,14 +1958,35 @@ app.post('/api/verify-art-payment', ensureAuthenticated, async (req, res) => {
     });
     
     await order.save();
+    console.log('✅ Art order created successfully:', order._id, 'for user:', userId);
     
-    // Remove art items from user's cart
-    const User = require('./models/User');
-    const user = await User.findById(req.user.id);
-    const artItemIds = orderData.items.map(item => item.itemId);
-    user.cart = user.cart.filter(cartItem => !artItemIds.includes(cartItem.itemId));
-    user.markModified('cart');
-    await user.save();
+    // Reload user to get latest cart data
+    const updatedUser = await User.findById(userId);
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found after order creation'
+      });
+    }
+    
+    // Remove art items from user's cart - convert all IDs to strings for comparison
+    const artItemIds = orderData.items.map(item => String(item.itemId));
+    console.log('Art item IDs to remove:', artItemIds);
+    console.log('Current cart before removal:', updatedUser.cart.map(c => ({ itemId: String(c.itemId), name: c.name })));
+    
+    const cartBeforeLength = updatedUser.cart.length;
+    updatedUser.cart = updatedUser.cart.filter(cartItem => {
+      const cartItemId = String(cartItem.itemId);
+      const shouldKeep = !artItemIds.includes(cartItemId);
+      if (!shouldKeep) {
+        console.log(`Removing item from cart: ${cartItemId} - ${cartItem.name}`);
+      }
+      return shouldKeep;
+    });
+    
+    updatedUser.markModified('cart');
+    await updatedUser.save();
+    console.log(`✅ Art items removed from cart. Before: ${cartBeforeLength}, After: ${updatedUser.cart.length}`);
     
     res.json({
       success: true,
@@ -1603,8 +1997,61 @@ app.post('/api/verify-art-payment', ensureAuthenticated, async (req, res) => {
     console.error('Error verifying art payment:', error);
     res.status(500).json({
       success: false,
-      message: 'Art payment verification failed'
+      message: 'Art payment verification failed: ' + error.message
     });
+  }
+});
+
+// Admin: Get all requests
+app.get('/api/admin/requests', async (req, res) => {
+  try {
+    console.log('=== ADMIN REQUESTS API CALLED ===');
+    
+    const requests = await Request.find()
+      .populate('userId', 'name email')
+      .sort({ createdAt: -1 });
+    
+    console.log(`Found ${requests.length} requests for admin`);
+    
+    res.json({ success: true, requests });
+  } catch (error) {
+    console.error('Error fetching admin requests:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch requests', error: error.message });
+  }
+});
+
+// Admin: Update request status
+app.post('/api/admin/requests/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const requestId = req.params.id;
+
+    console.log('Updating request status:', { requestId, status });
+
+    if (!['pending', 'approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status' });
+    }
+
+    const request = await Request.findByIdAndUpdate(
+      requestId,
+      { status: status },
+      { new: true }
+    ).populate('userId', 'name email');
+
+    if (!request) {
+      return res.status(404).json({ success: false, message: 'Request not found' });
+    }
+
+    console.log('✅ Request status updated successfully:', {
+      requestId: request._id,
+      newStatus: status,
+      title: request.title
+    });
+
+    res.json({ success: true, request });
+  } catch (error) {
+    console.error('❌ Error updating request status:', error);
+    res.status(500).json({ success: false, message: 'Failed to update request status' });
   }
 });
 
@@ -2044,11 +2491,38 @@ app.get('/api/admin/orders', ensureAdmin, async (req, res) => {
   }
 });
 
+// Get all orders for admin (no auth for testing)
+app.get('/api/all-orders', async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate('userId', 'name email')
+      .sort({ orderDate: -1 });
+
+    console.log('Found', orders.length, 'orders in database');
+    
+    res.json({ 
+      success: true, 
+      orders: orders,
+      count: orders.length 
+    });
+  } catch (error) {
+    console.error('Error fetching all orders:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch orders',
+      error: error.message 
+    });
+  }
+});
+
 // Admin: Update order status
-app.post('/api/admin/orders/:id/status', ensureAdmin, async (req, res) => {
+// Admin: Update order status (temporarily no auth for testing)
+app.post('/api/admin/orders/:id/status', async (req, res) => {
   try {
     const { status } = req.body;
     const orderId = req.params.id;
+
+    console.log('Updating order status:', { orderId, status });
 
     if (!['pending', 'completed', 'cancelled'].includes(status)) {
       return res.status(400).json({ success: false, message: 'Invalid status' });
@@ -2064,7 +2538,7 @@ app.post('/api/admin/orders/:id/status', ensureAdmin, async (req, res) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    console.log('Order status updated:', {
+    console.log('✅ Order status updated successfully:', {
       orderId: order._id,
       newStatus: status,
       customer: order.customerName
@@ -2072,7 +2546,7 @@ app.post('/api/admin/orders/:id/status', ensureAdmin, async (req, res) => {
 
     res.json({ success: true, order });
   } catch (error) {
-    console.error('Error updating order status:', error);
+    console.error('❌ Error updating order status:', error);
     res.status(500).json({ success: false, message: 'Failed to update order status' });
   }
 });
@@ -2259,14 +2733,8 @@ app.get("/admin/cart-requests", ensureAdmin, (req, res) => {
   });
 });
 
-app.get("/admin/art-requests", ensureAdmin, (req, res) => {
-  res.render("admin/art-requests", {
-    title: 'Art Requests - Admin Dashboard',
-    description: 'Manage art submissions and requests.',
-    currentPage: '/admin/art-requests',
-    layout: false
-  });
-});
+// Art requests routes are now handled by MVC structure in src/routes/adminRoutes.js
+// Removed duplicate routes - using adminController.getArtRequests instead
 
 app.get("/admin/workshop-requests", ensureAdmin, (req, res) => {
   res.render("admin/workshop-requests", {

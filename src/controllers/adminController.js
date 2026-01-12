@@ -148,54 +148,54 @@ const adminController = {
     });
   },
 
-  // Art Requests Management
-  getArtRequests: (req, res) => {
-    // Mock data - replace with actual database queries
-    const artRequests = [
-      {
-        id: 1,
-        artistName: 'Sarah Martinez',
-        email: 'sarah@example.com',
-        title: 'Coffee Bean Dreams',
-        description: 'Abstract painting inspired by coffee culture',
-        type: 'painting',
-        thumbnail: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=100&h=100&fit=crop',
-        submissionDate: '2024-01-08',
-        status: 'pending'
-      },
-      {
-        id: 2,
-        artistName: 'Mike Wilson',
-        email: 'mike@example.com',
-        title: 'Morning Brew',
-        description: 'Photography series of coffee preparation',
-        type: 'photography',
-        thumbnail: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&h=100&fit=crop',
-        submissionDate: '2024-01-07',
-        status: 'approved'
-      },
-      {
-        id: 3,
-        artistName: 'Emma Chen',
-        email: 'emma@example.com',
-        title: 'Digital Café',
-        description: 'Digital art representation of modern café life',
-        type: 'digital',
-        thumbnail: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=100&h=100&fit=crop',
-        submissionDate: '2024-01-06',
-        status: 'displayed'
-      }
-    ];
-    
-    res.render("admin/art-requests", {
-      title: 'Art Requests - Admin Dashboard',
-      description: 'Manage artwork submissions and gallery requests.',
-      currentPage: '/admin/art-requests',
-      artRequests,
-      layout: false,
-      additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-      additionalJS: '<script src="/js/admin.js"></script>'
-    });
+  // Art Requests Management (Art Purchase Orders)
+  getArtRequests: async (req, res) => {
+    try {
+      const Order = require('../../models/Order');
+      
+      // Fetch art orders from database
+      const artOrders = await Order.find({ orderType: 'art' })
+        .populate('userId', 'name email')
+        .sort({ createdAt: -1 });
+
+      // Transform orders to match the expected format
+      const artRequests = artOrders.map(order => ({
+        _id: order._id,
+        customerName: order.customerName,
+        customerEmail: order.customerEmail,
+        items: order.items,
+        totalAmount: order.totalAmount,
+        status: order.status,
+        paymentMethod: order.paymentMethod,
+        deliveryAddress: order.deliveryAddress,
+        orderDate: order.orderDate,
+        createdAt: order.createdAt,
+        userId: order.userId
+      }));
+
+      res.render("admin/art-requests", {
+        title: 'Art Requests - Admin Dashboard',
+        description: 'Manage artwork purchase orders and requests.',
+        currentPage: '/admin/art-requests',
+        artRequests,
+        layout: false,
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>'
+      });
+    } catch (error) {
+      console.error('Error fetching art orders:', error);
+      
+      // Fallback to empty array if database fails
+      res.render("admin/art-requests", {
+        title: 'Art Requests - Admin Dashboard',
+        description: 'Manage artwork purchase orders and requests.',
+        currentPage: '/admin/art-requests',
+        artRequests: [],
+        layout: false,
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>'
+      });
+    }
   },
 
   // Update cart request status (now order status)
@@ -238,12 +238,42 @@ const adminController = {
   },
 
   // Update art request status
-  updateArtRequest: (req, res) => {
-    const { id } = req.params;
-    const { status } = req.body;
-    // Update art request status in database
-    console.log(`Updating art request ${id} to status: ${status}`);
-    res.redirect("/admin/art-requests");
+  updateArtRequest: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      
+      const Order = require('../../models/Order');
+      
+      // Validate status
+      if (!['pending', 'completed', 'cancelled'].includes(status)) {
+        console.error('Invalid status:', status);
+        return res.redirect("/admin/art-requests?error=invalid_status");
+      }
+
+      // Update order status in database
+      const updatedOrder = await Order.findByIdAndUpdate(
+        id,
+        { status: status },
+        { new: true }
+      );
+
+      if (!updatedOrder) {
+        console.error('Order not found:', id);
+        return res.redirect("/admin/art-requests?error=order_not_found");
+      }
+
+      console.log(`Art order status updated successfully:`, {
+        orderId: id,
+        newStatus: status,
+        customer: updatedOrder.customerName
+      });
+
+      res.redirect("/admin/art-requests?success=status_updated");
+    } catch (error) {
+      console.error('Error updating art order status:', error);
+      res.redirect("/admin/art-requests?error=update_failed");
+    }
   },
 
   // Update workshop request status
