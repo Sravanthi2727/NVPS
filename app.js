@@ -214,6 +214,16 @@ app.get("/", viewCacheMiddleware(600), (req, res) => {
     ogUrl: "https://rabustecoffee.com",
     ogImage: "/assets/coffee-bg.jpeg",
     canonicalUrl: "https://rabustecoffee.com",
+    user: req.user || null
+  });
+});
+
+// Loading route - For showing loading screen during page transitions
+app.get("/loading", (req, res) => {
+  res.render("loading", {
+    title: "Loading... | Rabuste Coffee",
+    description: "Please wait while we prepare your Rabuste Coffee experience.",
+    currentPage: "/loading"
   });
 });
 
