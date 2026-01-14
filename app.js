@@ -251,6 +251,58 @@ app.get('/menu', async (req, res) => {
 
     console.log('Grouped menu structure:', Object.keys(groupedMenu));
 
+    // Get AI recommendations based on user's cart
+    let recommendedItems = [];
+    try {
+      // Check if user is logged in and has cart items
+      if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+        const User = require('./models/User');
+        const user = await User.findById(req.user._id || req.user.id);
+        
+        if (user && user.cart && user.cart.length > 0) {
+          console.log('🛒 User has', user.cart.length, 'items in cart');
+          
+          // Get last added item from cart
+          const lastCartItem = user.cart[user.cart.length - 1];
+          console.log('🤖 Getting AI recommendations for:', lastCartItem.name);
+          
+          try {
+            const aiUrl = `https://nvps-ixb0.onrender.com/recommend?drink=${encodeURIComponent(lastCartItem.name)}`;
+            const aiResponse = await fetch(aiUrl);
+            
+            if (aiResponse.ok) {
+              const aiData = await aiResponse.json();
+              console.log('AI response:', aiData);
+              
+              if (aiData.recommendations && aiData.recommendations.length > 0) {
+                // Get recommended items from database based on AI suggestions
+                recommendedItems = await MenuItem.find({
+                  name: { $in: aiData.recommendations },
+                  isAvailable: true
+                }).limit(6);
+                
+                console.log('✨ Found', recommendedItems.length, 'AI-based recommendations');
+              }
+            }
+          } catch (aiError) {
+            console.log('AI API error:', aiError.message);
+          }
+        }
+      }
+      
+      // If no AI recommendations (empty cart or AI failed), show random popular items
+      if (recommendedItems.length === 0) {
+        console.log('📊 No AI recommendations, showing popular items');
+        recommendedItems = await MenuItem.aggregate([
+          { $match: { isAvailable: true } },
+          { $sample: { size: 6 } }
+        ]);
+        console.log('✨ Loaded', recommendedItems.length, 'popular items');
+      }
+    } catch (recError) {
+      console.log('Error loading recommendations:', recError.message);
+    }
+
     res.render('menu', {
       title: 'Our Menu - Rabuste Coffee',
       description: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
@@ -263,6 +315,7 @@ app.get('/menu', async (req, res) => {
       ogImage: '/assets/coffee-bg.jpeg',
       canonicalUrl: 'https://rabustecoffee.com/menu',
       menuItems: groupedMenu,
+      recommendedItems: recommendedItems,
       isLoggedIn: req.isAuthenticated ? req.isAuthenticated() : false,
       currentUser: req.user || null
     });
@@ -2053,12 +2106,18 @@ app.post('/api/requests', ensureAuthenticated, async (req, res) => {
 
 // Cart API routes
 app.post('/api/cart/add', async (req, res) => {
+  console.log('=== CART ADD API CALLED ===');
+  console.log('Request body:', req.body);
+  
   try {
     if (!req.isAuthenticated()) {
+      console.log('User not authenticated');
       return res.status(401).json({ success: false, message: 'Please login first' });
     }
 
     const { itemId, name, price, image, quantity = 1 } = req.body;
+    console.log('Adding item to cart:', { itemId, name, price });
+    
     const User = require('./models/User');
     const user = await User.findById(req.user._id || req.user.id);
     
@@ -2072,12 +2131,39 @@ app.post('/api/cart/add', async (req, res) => {
       cartLength: user.cart.length
     });
 
-    // Create cart item and add to cart array
-    const cartItem = { itemId, name, price, image, quantity };
-    user.cart.push(cartItem);
+    // Clean up duplicates first (merge items with same itemId)
+    const cleanedCart = [];
+    const itemMap = new Map();
     
-    console.log('Cart item to add:', cartItem);
-    console.log('User cart after push:', user.cart);
+    user.cart.forEach(item => {
+      const key = String(item.itemId);
+      if (itemMap.has(key)) {
+        itemMap.get(key).quantity += item.quantity;
+      } else {
+        itemMap.set(key, { ...item.toObject() });
+      }
+    });
+    
+    itemMap.forEach(item => cleanedCart.push(item));
+    user.cart = cleanedCart;
+    
+    console.log('Cart after cleanup:', user.cart.length, 'items');
+
+    // Check if item already exists in cart
+    const existingItemIndex = user.cart.findIndex(item => String(item.itemId) === String(itemId));
+    
+    if (existingItemIndex !== -1) {
+      // Item exists, update quantity
+      user.cart[existingItemIndex].quantity += quantity;
+      console.log('Updated existing item quantity:', user.cart[existingItemIndex]);
+    } else {
+      // New item, add to cart
+      const cartItem = { itemId, name, price, image, quantity };
+      user.cart.push(cartItem);
+      console.log('Added new item to cart:', cartItem);
+    }
+    
+    console.log('User cart after update:', user.cart);
 
     // Mark only cart as modified, preserve other fields
     user.markModified('cart');
@@ -2089,7 +2175,75 @@ app.post('/api/cart/add', async (req, res) => {
       cartLength: user.cart.length
     });
 
-    res.json({ success: true, message: 'Item added to cart' });
+    // Get AI recommendations
+    let recommendations = [];
+    try {
+      console.log('🤖 Fetching AI recommendations for:', name);
+      const aiUrl = `https://nvps-ixb0.onrender.com/recommend?drink=${encodeURIComponent(name)}`;
+      console.log('AI API URL:', aiUrl);
+      
+      const aiResponse = await fetch(aiUrl);
+      console.log('AI API response status:', aiResponse.status);
+      
+      if (aiResponse.ok) {
+        const aiData = await aiResponse.json();
+        console.log('AI response data:', JSON.stringify(aiData, null, 2));
+        
+        if (aiData.recommendations && aiData.recommendations.length > 0) {
+          const MenuItem = require('./models/MenuItem');
+          
+          // Get all recommended items (not just 4)
+          recommendations = await MenuItem.find({
+            name: { $in: aiData.recommendations },
+            isAvailable: true
+          });
+          
+          console.log('✅ Found', recommendations.length, 'recommendations from AI');
+        } else {
+          console.log('⚠️ AI returned no recommendations');
+        }
+      } else {
+        console.log('❌ AI API returned error status:', aiResponse.status);
+        const errorText = await aiResponse.text();
+        console.log('Error response:', errorText);
+      }
+    } catch (aiError) {
+      console.log('❌ AI recommendation error (non-critical):', aiError.message);
+      
+      // Fallback: Get similar items from same category
+      try {
+        console.log('🔄 Using fallback recommendations...');
+        const MenuItem = require('./models/MenuItem');
+        const addedItem = await MenuItem.findById(itemId);
+        
+        if (addedItem) {
+          recommendations = await MenuItem.find({
+            category: addedItem.category,
+            _id: { $ne: itemId },
+            isAvailable: true
+          }).limit(6);
+          
+          console.log('✅ Using', recommendations.length, 'fallback recommendations');
+        }
+      } catch (fallbackError) {
+        console.log('❌ Fallback recommendations error:', fallbackError.message);
+      }
+    }
+
+    console.log('📤 Sending response with', recommendations.length, 'recommendations');
+    
+    res.json({ 
+      success: true, 
+      message: 'Item added to cart',
+      recommendations: recommendations.map(item => ({
+        _id: item._id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        category: item.category,
+        description: item.description
+      }))
+    });
   } catch (error) {
     console.error('Cart add error:', error);
     res.status(500).json({ success: false, message: 'Server error' });

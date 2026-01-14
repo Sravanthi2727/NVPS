@@ -214,34 +214,21 @@ const adminController = {
     }
   },
 
-  // Art Requests Management (Art Purchase Orders)
+  // Art Requests Management (Art Purchase Requests)
   getArtRequests: async (req, res) => {
     try {
-      const Order = require('../../models/Order');
+      const Request = require('../../models/Request');
       
-      // Fetch art orders from database
-      const artOrders = await Order.find({ orderType: 'art' })
+      // Fetch art purchase requests from database
+      const artRequests = await Request.find({ type: 'sell-art' })
         .populate('userId', 'name email')
         .sort({ createdAt: -1 });
 
-      // Transform orders to match the expected format
-      const artRequests = artOrders.map(order => ({
-        _id: order._id,
-        customerName: order.customerName,
-        customerEmail: order.customerEmail,
-        items: order.items,
-        totalAmount: order.totalAmount,
-        status: order.status,
-        paymentMethod: order.paymentMethod,
-        deliveryAddress: order.deliveryAddress,
-        orderDate: order.orderDate,
-        createdAt: order.createdAt,
-        userId: order.userId
-      }));
+      console.log(`Found ${artRequests.length} art purchase requests`);
 
       res.render("admin/art-requests", {
         title: 'Art Requests - Admin Dashboard',
-        description: 'Manage artwork purchase orders and requests.',
+        description: 'Manage artwork purchase requests.',
         currentPage: '/admin/art-requests',
         artRequests,
         layout: false,
@@ -249,12 +236,12 @@ const adminController = {
         additionalJS: '<script src="/js/admin.js"></script>'
       });
     } catch (error) {
-      console.error('Error fetching art orders:', error);
+      console.error('Error fetching art requests:', error);
       
       // Fallback to empty array if database fails
       res.render("admin/art-requests", {
         title: 'Art Requests - Admin Dashboard',
-        description: 'Manage artwork purchase orders and requests.',
+        description: 'Manage artwork purchase requests.',
         currentPage: '/admin/art-requests',
         artRequests: [],
         layout: false,
@@ -309,35 +296,35 @@ const adminController = {
       const { id } = req.params;
       const { status } = req.body;
       
-      const Order = require('../../models/Order');
+      const Request = require('../../models/Request');
       
       // Validate status
-      if (!['pending', 'completed', 'cancelled'].includes(status)) {
+      if (!['pending', 'approved', 'rejected'].includes(status)) {
         console.error('Invalid status:', status);
         return res.redirect("/admin/art-requests?error=invalid_status");
       }
 
-      // Update order status in database
-      const updatedOrder = await Order.findByIdAndUpdate(
+      // Update request status in database
+      const updatedRequest = await Request.findByIdAndUpdate(
         id,
         { status: status },
         { new: true }
       );
 
-      if (!updatedOrder) {
-        console.error('Order not found:', id);
-        return res.redirect("/admin/art-requests?error=order_not_found");
+      if (!updatedRequest) {
+        console.error('Request not found:', id);
+        return res.redirect("/admin/art-requests?error=request_not_found");
       }
 
-      console.log(`Art order status updated successfully:`, {
-        orderId: id,
+      console.log(`Art request status updated successfully:`, {
+        requestId: id,
         newStatus: status,
-        customer: updatedOrder.customerName
+        title: updatedRequest.title
       });
 
       res.redirect("/admin/art-requests?success=status_updated");
     } catch (error) {
-      console.error('Error updating art order status:', error);
+      console.error('Error updating art request status:', error);
       res.redirect("/admin/art-requests?error=update_failed");
     }
   },

@@ -318,9 +318,14 @@
 
     /* Wishlist States */
     .menu-card-wishlist.in-wishlist {
-        background: var(--gold);
-        color: var(--dark);
-        border-color: var(--gold);
+        background: var(--gold) !important;
+        color: var(--dark) !important;
+        border-color: var(--gold) !important;
+    }
+
+    .menu-card-wishlist.in-wishlist:hover {
+        background: var(--gold-soft) !important;
+        color: var(--dark) !important;
     }
 
     .menu-card-wishlist.in-wishlist:hover::after {
@@ -328,7 +333,7 @@
     }
 
     .menu-card-wishlist.in-wishlist i {
-        color: #dc3545;
+        color: #dc3545 !important;
     }
 
     /* Responsive adjustments */
@@ -424,6 +429,71 @@
     };
     %>
     
+    <!-- Recommended Items Section -->
+    <% if (typeof recommendedItems !== 'undefined' && recommendedItems && recommendedItems.length > 0) { %>
+        <section class="py-5 menu-section" style="background: var(--secondary);" data-category="recommended">
+            <div class="container py-5">
+                <h2 class="font-playfair fs-2 fw-bold mb-3 text-center" style="color: var(--primary);">
+                    <i class="fas fa-star me-3"></i>
+                    Recommended for You
+                </h2>
+                <p class="text-center mb-5" style="color: var(--gold-soft); font-size: 1.1rem;">
+                    Our AI-powered picks just for you
+                </p>
+                <div class="menu-grid">
+                    <% recommendedItems.forEach(item => { %>
+                        <div class="menu-card" style="border: 2px solid var(--gold); box-shadow: 0 0 20px rgba(214, 164, 90, 0.3);">
+                            <% if (item.image) { %>
+                                <img src="<%= item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image %>" 
+                                     class="menu-card-image" 
+                                     alt="<%= item.name %>"
+                                     onerror="this.src='/assets/placeholder-food.jpg'">
+                            <% } %>
+                            <div class="menu-card-content">
+                                <div style="position: absolute; top: 10px; right: 10px; background: var(--gold); color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
+                                    ⭐ Recommended
+                                </div>
+                                <h5 class="menu-card-title"><%= item.name %></h5>
+                                <% if (item.description) { %>
+                                    <p class="menu-card-description"><%= item.description %></p>
+                                <% } %>
+                                <div class="menu-card-footer">
+                                    <span class="menu-card-price">₹<%= item.price %></span>
+                                    <% 
+const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image) : '';
+%>
+                                    <div class="menu-card-actions">
+                                        <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn && currentUser) { %>
+                                            <div class="menu-card-buttons">
+                                                <button class="menu-card-wishlist" 
+                                                        data-item-id="<%= item._id %>"
+                                                        onclick="toggleWishlistItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
+                                                    <i class="far fa-heart"></i>
+                                                </button>
+                                                <button class="menu-card-add" 
+                                                        data-item-id="<%= item._id %>"
+                                                        data-item-name="<%= item.name.replace(/'/g, "\\'") %>"
+                                                        data-item-price="<%= item.price %>"
+                                                        data-item-image="<%= itemImage %>"
+                                                        onclick="addToCartItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
+                                                    Add +
+                                                </button>
+                                            </div>
+                                        <% } else { %>
+                                            <a href="/signup" class="menu-card-add" style="text-decoration: none; display: inline-block; text-align: center;">
+                                                Sign Up
+                                            </a>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </section>
+    <% } %>
+    
     <% if (typeof menuItems !== 'undefined' && Object.keys(menuItems).length > 0) { %>
         <% Object.keys(menuItems).forEach(category => { %>
             <section class="py-5 menu-section" style="background: var(--secondary);" data-category="<%= category %>">
@@ -459,18 +529,17 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                                 <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn && currentUser) { %>
                                                     <!-- User is logged in - show both buttons -->
                                                     <div class="menu-card-buttons">
-                                                        <button class="menu-card-wishlist add-to-wishlist-btn" 
-                                                                data-item-id="<%= item._id %>" 
-                                                                data-item-name="<%= item.name %>" 
-                                                                data-item-price="<%= item.price %>" 
-                                                                data-item-image="<%= itemImage %>">
+                                                        <button class="menu-card-wishlist" 
+                                                                data-item-id="<%= item._id %>"
+                                                                onclick="toggleWishlistItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
                                                             <i class="far fa-heart"></i>
                                                         </button>
-                                                        <button class="menu-card-add add-to-cart-btn" 
-                                                                data-item-id="<%= item._id %>" 
-                                                                data-item-name="<%= item.name %>" 
-                                                                data-item-price="<%= item.price %>" 
-                                                                data-item-image="<%= itemImage %>">
+                                                        <button class="menu-card-add" 
+                                                                data-item-id="<%= item._id %>"
+                                                                data-item-name="<%= item.name.replace(/'/g, "\\'") %>"
+                                                                data-item-price="<%= item.price %>"
+                                                                data-item-image="<%= itemImage %>"
+                                                                onclick="addToCartItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
                                                             Add +
                                                         </button>
                                                     </div>
@@ -530,6 +599,92 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
         };
     }
 
+    // Cart and Wishlist functions - Define immediately for onclick handlers
+    window.addToCartItem = function(itemId, itemName, price, image, buttonElement) {
+        console.log('🛒 Adding to cart:', { itemId, itemName, price, image });
+        
+        // Prevent multiple simultaneous calls
+        if (buttonElement && buttonElement.disabled) return;
+        if (buttonElement) buttonElement.disabled = true;
+        
+        // Optimistically update UI
+        const currentQuantity = cartItems.get(itemId) || 0;
+        const newQuantity = currentQuantity + 1;
+        cartItems.set(itemId, newQuantity);
+        if (buttonElement) updateCartButtonState(buttonElement, newQuantity, itemId, itemName, price, image);
+        
+        fetch('/api/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                itemId: itemId,
+                name: itemName,
+                price: price,
+                image: image,
+                quantity: 1
+            })
+        })
+        .then(response => {
+            console.log('📡 Cart API response status:', response.status);
+            if (response.status === 401) {
+                console.log('🔒 User not authenticated, redirecting to signin');
+                window.location.href = '/signin';
+                return;
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('📦 Cart API response data:', data);
+            if (data && data.success) {
+                showNotification('Item added to cart!', 'success');
+                updateCartCount();
+                
+                // Show recommendations if available
+                console.log('🔍 Checking recommendations:', data.recommendations);
+                if (data.recommendations && Array.isArray(data.recommendations) && data.recommendations.length > 0) {
+                    console.log('✅ Showing', data.recommendations.length, 'recommendations');
+                    showRecommendations(data.recommendations, itemName);
+                } else {
+                    console.log('⚠️ No recommendations received from server');
+                }
+            } else if (data) {
+                // Revert optimistic update on failure
+                const revertQuantity = Math.max(0, newQuantity - 1);
+                cartItems.set(itemId, revertQuantity);
+                if (buttonElement) updateCartButtonState(buttonElement, revertQuantity);
+                showNotification(data.message || 'Failed to add item to cart', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error adding to cart:', error);
+            // Revert optimistic update on error
+            const revertQuantity = Math.max(0, newQuantity - 1);
+            cartItems.set(itemId, revertQuantity);
+            if (buttonElement) updateCartButtonState(buttonElement, revertQuantity, itemId, itemName, price, image);
+            showNotification('Failed to add item to cart', 'error');
+        })
+        .finally(() => {
+            if (buttonElement) buttonElement.disabled = false;
+        });
+    };
+
+    window.toggleWishlistItem = function(itemId, itemName, price, image, buttonElement) {
+        const inWishlist = wishlistItems.has(String(itemId));
+        
+        if (inWishlist) {
+            // Remove from wishlist
+            removeFromWishlist(String(itemId), buttonElement);
+        } else {
+            // Add to wishlist
+            addToWishlistItem(String(itemId), itemName, price, image, buttonElement);
+        }
+    };
+
+    console.log('✅ Global functions defined');
+
     // Filter functionality
     document.addEventListener('DOMContentLoaded', async function() {
         const filterButtons = document.querySelectorAll('.filter-btn');
@@ -556,100 +711,125 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                 });
             });
         });
-
-        // Add event listeners for cart buttons
-        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const itemId = this.getAttribute('data-item-id');
-                const itemName = this.getAttribute('data-item-name');
-                const itemPrice = parseFloat(this.getAttribute('data-item-price'));
-                const itemImage = this.getAttribute('data-item-image');
-                
-                addToCartItem(itemId, itemName, itemPrice, itemImage, this);
-            });
-        });
-
-        // Add event listeners for wishlist buttons
-        document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const itemId = this.getAttribute('data-item-id');
-                const itemName = this.getAttribute('data-item-name');
-                const itemPrice = parseFloat(this.getAttribute('data-item-price'));
-                const itemImage = this.getAttribute('data-item-image');
-                
-                toggleWishlistItem(itemId, itemName, itemPrice, itemImage, this);
-            });
-        });
+        
+        console.log('✅ Menu page loaded successfully');
     });
 
     // Load initial cart and wishlist state
     async function loadInitialState() {
         try {
+            console.log('🔄 Loading initial cart and wishlist state...');
+            
             // Load cart items
             const cartResponse = await fetch('/api/cart');
             if (cartResponse.ok) {
                 const cart = await cartResponse.json();
+                console.log('📦 Loaded cart:', cart);
                 cart.forEach(item => {
-                    cartItems.set(item.itemId, item.quantity);
+                    cartItems.set(String(item.itemId), item.quantity);
                 });
+                console.log('✅ Cart items loaded:', cartItems.size);
             }
 
             // Load wishlist items
             const wishlistResponse = await fetch('/api/wishlist');
             if (wishlistResponse.ok) {
                 const wishlist = await wishlistResponse.json();
+                console.log('❤️ Loaded wishlist:', wishlist);
                 wishlist.forEach(item => {
-                    wishlistItems.add(item.itemId);
+                    wishlistItems.add(String(item.itemId));
                 });
+                console.log('✅ Wishlist items loaded:', wishlistItems.size);
             }
 
             // Update UI based on loaded state
             updateAllButtonStates();
         } catch (error) {
-            console.log('Could not load initial state (user might not be logged in)');
+            console.log('⚠️ Could not load initial state:', error.message);
         }
     }
 
     // Update all button states based on current cart and wishlist
     function updateAllButtonStates() {
-        // Update cart buttons
-        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        console.log('🔄 Updating all button states...');
+        
+        // Find all cart buttons (using class menu-card-add)
+        const cartButtons = document.querySelectorAll('.menu-card-add');
+        console.log('Found', cartButtons.length, 'cart buttons');
+        
+        cartButtons.forEach(button => {
             const itemId = button.getAttribute('data-item-id');
-            const quantity = cartItems.get(itemId) || 0;
-            updateCartButtonState(button, quantity);
+            if (itemId) {
+                const quantity = cartItems.get(String(itemId)) || 0;
+                if (quantity > 0) {
+                    console.log('Setting quantity', quantity, 'for item', itemId);
+                    const itemName = button.getAttribute('data-item-name');
+                    const itemPrice = button.getAttribute('data-item-price');
+                    const itemImage = button.getAttribute('data-item-image');
+                    updateCartButtonState(button, quantity, itemId, itemName, itemPrice, itemImage);
+                }
+            }
         });
 
-        // Update wishlist buttons
-        document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
+        // Find all wishlist buttons
+        const wishlistButtons = document.querySelectorAll('.menu-card-wishlist');
+        console.log('Found', wishlistButtons.length, 'wishlist buttons');
+        
+        wishlistButtons.forEach(button => {
             const itemId = button.getAttribute('data-item-id');
-            const inWishlist = wishlistItems.has(itemId);
-            updateWishlistButtonState(button, inWishlist);
+            if (itemId) {
+                const inWishlist = wishlistItems.has(String(itemId));
+                if (inWishlist) {
+                    updateWishlistButtonState(button, true);
+                }
+            }
         });
+        
+        console.log('✅ All button states updated');
     }
 
     // Update cart button state (Add+ vs quantity controls)
     function updateCartButtonState(button, quantity) {
+        if (!button) {
+            console.warn('updateCartButtonState called with null button');
+            return;
+        }
+        
+        const itemId = button.getAttribute('data-item-id') || button.dataset.itemId;
+        const itemName = button.getAttribute('data-item-name') || button.dataset.itemName;
+        const itemPrice = button.getAttribute('data-item-price') || button.dataset.itemPrice;
+        const itemImage = button.getAttribute('data-item-image') || button.dataset.itemImage;
+        
         if (quantity > 0) {
             // Show quantity controls
             button.innerHTML = `
                 <div class="quantity-controls">
-                    <button class="quantity-btn" onclick="event.stopPropagation(); changeQuantity('${button.getAttribute('data-item-id')}', -1)">−</button>
+                    <button class="quantity-btn" onclick="event.stopPropagation(); window.changeQuantity('${itemId}', -1)">−</button>
                     <span class="quantity-display">${quantity}</span>
-                    <button class="quantity-btn" onclick="event.stopPropagation(); changeQuantity('${button.getAttribute('data-item-id')}', 1)">+</button>
+                    <button class="quantity-btn" onclick="event.stopPropagation(); window.changeQuantity('${itemId}', 1)">+</button>
                 </div>
             `;
             button.style.padding = '0.2rem';
             button.style.pointerEvents = 'auto';
         } else {
-            // Show Add+ button
+            // Show Add+ button with onclick
             button.innerHTML = 'Add +';
             button.style.padding = '0.5rem 1rem';
             button.style.pointerEvents = 'auto';
+            // Re-attach onclick handler
+            button.onclick = function() {
+                window.addToCartItem(itemId, itemName, itemPrice, itemImage, this);
+            };
         }
     }
 
     // Update wishlist button state (visual feedback)
     function updateWishlistButtonState(button, inWishlist) {
+        if (!button) {
+            console.warn('updateWishlistButtonState called with null button');
+            return;
+        }
+        
         if (inWishlist) {
             button.classList.add('in-wishlist');
             button.innerHTML = '<i class="fas fa-heart"></i>';
@@ -659,25 +839,167 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
         }
     }
 
-    // Cart and Wishlist functions
-    function addToCartItem(itemId, itemName, price, image, buttonElement) {
-        console.log('Adding to cart:', { itemId, itemName, price, image });
+    // Show AI recommendations modal (custom implementation without Bootstrap dependency)
+    function showRecommendations(recommendations, addedItemName) {
+        if (!recommendations || recommendations.length === 0) {
+            console.log('No recommendations to show');
+            return;
+        }
         
-        // Prevent multiple simultaneous calls
-        if (buttonElement.disabled) return;
-        buttonElement.disabled = true;
+        console.log('✨ Showing recommendations modal with', recommendations.length, 'items');
         
-        // Optimistically update UI
-        const currentQuantity = cartItems.get(itemId) || 0;
-        const newQuantity = currentQuantity + 1;
-        cartItems.set(itemId, newQuantity);
-        updateCartButtonState(buttonElement, newQuantity);
+        // Remove existing modal if any
+        const existingModal = document.getElementById('recommendationsModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
         
-        fetch('/api/cart', {
+        const modalHtml = `
+            <div id="recommendationsModal" onclick="if(event.target.id === 'recommendationsModal') closeRecommendationsModal()" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 999999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                animation: fadeIn 0.3s ease;
+            ">
+                <div style="
+                    background: #0a0a0a;
+                    border: 2px solid #d6a45a;
+                    border-radius: 12px;
+                    max-width: 1200px;
+                    width: 100%;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    position: relative;
+                ">
+                    <div style="
+                        padding: 20px;
+                        border-bottom: 1px solid #d6a45a;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        position: sticky;
+                        top: 0;
+                        background: #0a0a0a;
+                        z-index: 1;
+                    ">
+                        <h5 style="color: #d6a45a; margin: 0; font-size: 1.5rem;">
+                            <i class="bi bi-stars"></i> Recommended for you with ${addedItemName}
+                        </h5>
+                        <button onclick="closeRecommendationsModal()" style="
+                            background: transparent;
+                            border: none;
+                            color: #d6a45a;
+                            font-size: 2rem;
+                            cursor: pointer;
+                            padding: 0;
+                            width: 40px;
+                            height: 40px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        ">&times;</button>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="
+                            display: grid;
+                            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                            gap: 20px;
+                        ">
+                            ${recommendations.map(item => `
+                                <div style="
+                                    background: rgba(20, 20, 20, 0.9);
+                                    border: 1px solid rgba(214, 164, 90, 0.3);
+                                    border-radius: 12px;
+                                    overflow: hidden;
+                                    transition: transform 0.3s ease;
+                                " onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 180px; object-fit: cover;">` : 
+                                    `<div style="width: 100%; height: 180px; background: linear-gradient(135deg, #d6a45a 0%, #b8884a 100%); display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-cup-hot" style="font-size: 3rem; color: #000;"></i>
+                                    </div>`}
+                                    <div style="padding: 15px;">
+                                        <h6 style="color: #d6a45a; font-weight: 600; margin-bottom: 8px;">${item.name}</h6>
+                                        <p style="color: #ccc; font-size: 0.85rem; margin-bottom: 12px; min-height: 40px;">${item.description || item.category || ''}</p>
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <span style="color: #d6a45a; font-weight: bold; font-size: 1.2rem;">₹${item.price}</span>
+                                            <button onclick="addRecommendedItem('${item._id}', '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.image || ''}')" style="
+                                                background: #d6a45a;
+                                                color: #000;
+                                                border: none;
+                                                padding: 8px 16px;
+                                                border-radius: 8px;
+                                                font-weight: 600;
+                                                cursor: pointer;
+                                                transition: all 0.3s ease;
+                                            " onmouseover="this.style.background='#e3b873'" onmouseout="this.style.background='#d6a45a'">
+                                                <i class="bi bi-cart-plus"></i> Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div style="
+                        padding: 20px;
+                        border-top: 1px solid #d6a45a;
+                        text-align: center;
+                        position: sticky;
+                        bottom: 0;
+                        background: #0a0a0a;
+                    ">
+                        <button onclick="closeRecommendationsModal()" style="
+                            background: #d6a45a;
+                            color: #000;
+                            border: none;
+                            padding: 12px 32px;
+                            border-radius: 8px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            font-size: 1rem;
+                        ">Continue Shopping</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        document.body.style.overflow = 'hidden';
+        
+        console.log('✅ Modal displayed successfully');
+    }
+    
+    // Close recommendations modal
+    function closeRecommendationsModal() {
+        const modal = document.getElementById('recommendationsModal');
+        if (modal) {
+            modal.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => {
+                modal.remove();
+                document.body.style.overflow = '';
+            }, 300);
+        }
+    }
+    
+    // Add recommended item to cart
+    function addRecommendedItem(itemId, itemName, price, image) {
+        // Close the recommendations modal first
+        closeRecommendationsModal();
+        
+        fetch('/api/cart/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({
                 itemId: itemId,
                 name: itemName,
@@ -686,39 +1008,22 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                 quantity: 1
             })
         })
-        .then(response => {
-            console.log('Cart API response status:', response.status);
-            if (response.status === 401) {
-                // Not authenticated, redirect to signin
-                console.log('User not authenticated, redirecting to signin');
-                window.location.href = '/signin';
-                return;
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            console.log('Cart API response data:', data);
             if (data && data.success) {
-                showNotification('Item added to cart!', 'success');
+                showNotification(`${itemName} added to cart!`, 'success');
                 updateCartCount();
-            } else if (data) {
-                // Revert optimistic update on failure
-                const revertQuantity = Math.max(0, newQuantity - 1);
-                cartItems.set(itemId, revertQuantity);
-                updateCartButtonState(buttonElement, revertQuantity);
-                showNotification(data.message || 'Failed to add item to cart', 'error');
+                
+                // Update cart items map
+                const currentQuantity = cartItems.get(itemId) || 0;
+                cartItems.set(itemId, currentQuantity + 1);
+            } else {
+                showNotification(data.message || 'Failed to add item', 'error');
             }
         })
         .catch(error => {
-            console.error('Error adding to cart:', error);
-            // Revert optimistic update on error
-            const revertQuantity = Math.max(0, newQuantity - 1);
-            cartItems.set(itemId, revertQuantity);
-            updateCartButtonState(buttonElement, revertQuantity);
+            console.error('Error adding recommended item:', error);
             showNotification('Failed to add item to cart', 'error');
-        })
-        .finally(() => {
-            buttonElement.disabled = false;
         });
     }
 
@@ -734,19 +1039,19 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
         
         pendingOperations.add(operationKey);
         
-        const currentQuantity = cartItems.get(itemId) || 0;
+        const currentQuantity = cartItems.get(String(itemId)) || 0;
         const newQuantity = Math.max(0, currentQuantity + change);
         
         console.log(`Changing quantity for ${itemId}: ${currentQuantity} -> ${newQuantity}`);
         
         if (newQuantity <= 0) {
             // Remove item from cart
-            removeFromCart(itemId).finally(() => {
+            removeFromCart(String(itemId)).finally(() => {
                 pendingOperations.delete(operationKey);
             });
         } else {
             // Update quantity
-            updateCartQuantity(itemId, newQuantity).finally(() => {
+            updateCartQuantity(String(itemId), newQuantity).finally(() => {
                 pendingOperations.delete(operationKey);
             });
         }
@@ -754,8 +1059,8 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
 
     // Update cart quantity
     function updateCartQuantity(itemId, newQuantity) {
-        // Prevent multiple simultaneous calls
-        const button = document.querySelector(`[data-item-id="${itemId}"].add-to-cart-btn`);
+        // Find the button by data-item-id attribute (using menu-card-add class)
+        const button = document.querySelector(`.menu-card-add[data-item-id="${itemId}"]`);
         if (button && button.disabled) return Promise.resolve();
         
         if (button) button.disabled = true;
@@ -771,21 +1076,27 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
         .then(data => {
             if (data && data.success) {
                 // Update local state
-                cartItems.set(itemId, newQuantity);
+                cartItems.set(String(itemId), newQuantity);
                 
                 // Update button state
                 if (button) {
-                    updateCartButtonState(button, newQuantity);
+                    const itemName = button.getAttribute('data-item-name');
+                    const itemPrice = button.getAttribute('data-item-price');
+                    const itemImage = button.getAttribute('data-item-image');
+                    updateCartButtonState(button, newQuantity, itemId, itemName, itemPrice, itemImage);
                 }
                 
                 updateCartCount();
             } else {
                 showNotification('Failed to update quantity', 'error');
                 // Revert local state on failure
-                const button = document.querySelector(`[data-item-id="${itemId}"].add-to-cart-btn`);
-                if (button) {
+                const revertButton = document.querySelector(`.menu-card-add[data-item-id="${itemId}"]`);
+                if (revertButton) {
                     const revertQuantity = cartItems.get(itemId) || 0;
-                    updateCartButtonState(button, revertQuantity);
+                    const itemName = revertButton.getAttribute('data-item-name');
+                    const itemPrice = revertButton.getAttribute('data-item-price');
+                    const itemImage = revertButton.getAttribute('data-item-image');
+                    updateCartButtonState(revertButton, revertQuantity, itemId, itemName, itemPrice, itemImage);
                 }
             }
         })
@@ -793,10 +1104,13 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
             console.error('Error updating quantity:', error);
             showNotification('Failed to update quantity', 'error');
             // Revert local state on error
-            const button = document.querySelector(`[data-item-id="${itemId}"].add-to-cart-btn`);
-            if (button) {
+            const revertButton = document.querySelector(`.menu-card-add[data-item-id="${itemId}"]`);
+            if (revertButton) {
                 const revertQuantity = cartItems.get(itemId) || 0;
-                updateCartButtonState(button, revertQuantity);
+                const itemName = revertButton.getAttribute('data-item-name');
+                const itemPrice = revertButton.getAttribute('data-item-price');
+                const itemImage = revertButton.getAttribute('data-item-image');
+                updateCartButtonState(revertButton, revertQuantity, itemId, itemName, itemPrice, itemImage);
             }
         })
         .finally(() => {
@@ -813,12 +1127,15 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
         .then(data => {
             if (data && data.success) {
                 // Update local state
-                cartItems.delete(itemId);
+                cartItems.delete(String(itemId));
                 
                 // Update button state
-                const button = document.querySelector(`[data-item-id="${itemId}"].add-to-cart-btn`);
+                const button = document.querySelector(`.menu-card-add[data-item-id="${itemId}"]`);
                 if (button) {
-                    updateCartButtonState(button, 0);
+                    const itemName = button.getAttribute('data-item-name');
+                    const itemPrice = button.getAttribute('data-item-price');
+                    const itemImage = button.getAttribute('data-item-image');
+                    updateCartButtonState(button, 0, itemId, itemName, itemPrice, itemImage);
                 }
                 
                 updateCartCount();
@@ -833,18 +1150,6 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
         });
     }
 
-    // Toggle wishlist item
-    function toggleWishlistItem(itemId, itemName, price, image, buttonElement) {
-        const inWishlist = wishlistItems.has(itemId);
-        
-        if (inWishlist) {
-            // Remove from wishlist
-            removeFromWishlist(itemId, buttonElement);
-        } else {
-            // Add to wishlist
-            addToWishlistItem(itemId, itemName, price, image, buttonElement);
-        }
-    }
 
     function addToWishlistItem(itemId, itemName, price, image, buttonElement) {
         console.log('Adding to wishlist:', { itemId, itemName, price, image });
@@ -854,6 +1159,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({
                 itemId: itemId,
                 name: itemName,
@@ -872,7 +1178,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
         .then(data => {
             if (data && data.success) {
                 // Update local state
-                wishlistItems.add(itemId);
+                wishlistItems.add(String(itemId));
                 
                 // Update button state
                 updateWishlistButtonState(buttonElement, true);
@@ -891,13 +1197,14 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
 
     function removeFromWishlist(itemId, buttonElement) {
         fetch(`/api/wishlist/${itemId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include'
         })
         .then(response => response.json())
         .then(data => {
             if (data && data.success) {
                 // Update local state
-                wishlistItems.delete(itemId);
+                wishlistItems.delete(String(itemId));
                 
                 // Update button state
                 updateWishlistButtonState(buttonElement, false);
@@ -996,6 +1303,31 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                 opacity: 0;
             }
         }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
     `;
     document.head.appendChild(style);
+    
+    // Assign remaining helper functions to window
+    window.changeQuantity = changeQuantity;
+    window.addRecommendedItem = addRecommendedItem;
+    window.closeRecommendationsModal = closeRecommendationsModal;
+    
+    console.log('✅ All functions exposed globally');
 </script>
