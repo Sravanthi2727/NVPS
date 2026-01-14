@@ -335,30 +335,26 @@ app.get('/gallery', async (req, res) => {
     
     console.log('Found artworks:', artworks.length);
     
-    // Get user's purchased art IDs if logged in
+    // Get ALL purchased art IDs (from all completed orders, not just current user)
     let purchasedArtIds = [];
-    if (req.isAuthenticated && req.isAuthenticated() && req.user) {
-      try {
-        const userId = req.user._id || req.user.id;
-        const completedArtOrders = await Order.find({
-          userId: userId,
-          orderType: 'art',
-          status: 'completed'
+    try {
+      const completedArtOrders = await Order.find({
+        orderType: 'art',
+        status: 'completed'
+      });
+      
+      completedArtOrders.forEach(order => {
+        order.items.forEach(item => {
+          if (item.type === 'art' && item.itemId) {
+            purchasedArtIds.push(String(item.itemId));
+          }
         });
-        
-        completedArtOrders.forEach(order => {
-          order.items.forEach(item => {
-            if (item.type === 'art' && item.itemId) {
-              purchasedArtIds.push(String(item.itemId));
-            }
-          });
-        });
-        
-        purchasedArtIds = [...new Set(purchasedArtIds)];
-        console.log(`Found ${purchasedArtIds.length} purchased art items for user`);
-      } catch (error) {
-        console.error('Error fetching purchased arts:', error);
-      }
+      });
+      
+      purchasedArtIds = [...new Set(purchasedArtIds)];
+      console.log(`Found ${purchasedArtIds.length} purchased art items (all users)`);
+    } catch (error) {
+      console.error('Error fetching purchased arts:', error);
     }
     
     res.render('gallery', {

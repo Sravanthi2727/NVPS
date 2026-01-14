@@ -214,21 +214,21 @@ const adminController = {
     }
   },
 
-  // Art Requests Management (Art Purchase Requests)
+  // Art Requests Management (Art Purchase Orders)
   getArtRequests: async (req, res) => {
     try {
-      const Request = require('../../models/Request');
+      const Order = require('../../models/Order');
       
-      // Fetch art purchase requests from database
-      const artRequests = await Request.find({ type: 'sell-art' })
+      // Fetch art purchase orders from database
+      const artRequests = await Order.find({ orderType: 'art' })
         .populate('userId', 'name email')
         .sort({ createdAt: -1 });
 
-      console.log(`Found ${artRequests.length} art purchase requests`);
+      console.log(`Found ${artRequests.length} art purchase orders`);
 
       res.render("admin/art-requests", {
         title: 'Art Requests - Admin Dashboard',
-        description: 'Manage artwork purchase requests.',
+        description: 'Manage artwork purchase orders.',
         currentPage: '/admin/art-requests',
         artRequests,
         layout: false,
@@ -241,7 +241,7 @@ const adminController = {
       // Fallback to empty array if database fails
       res.render("admin/art-requests", {
         title: 'Art Requests - Admin Dashboard',
-        description: 'Manage artwork purchase requests.',
+        description: 'Manage artwork purchase orders.',
         currentPage: '/admin/art-requests',
         artRequests: [],
         layout: false,
@@ -290,41 +290,81 @@ const adminController = {
     }
   },
 
-  // Update art request status
+  // Update art request status (Order status)
   updateArtRequest: async (req, res) => {
     try {
       const { id } = req.params;
       const { status } = req.body;
       
-      const Request = require('../../models/Request');
+      const Order = require('../../models/Order');
       
       // Validate status
-      if (!['pending', 'approved', 'rejected'].includes(status)) {
+      if (!['pending', 'completed', 'cancelled'].includes(status)) {
         console.error('Invalid status:', status);
         return res.redirect("/admin/art-requests?error=invalid_status");
       }
 
-      // Update request status in database
-      const updatedRequest = await Request.findByIdAndUpdate(
+      // Update order status in database
+      const updatedOrder = await Order.findByIdAndUpdate(
         id,
         { status: status },
         { new: true }
       );
 
-      if (!updatedRequest) {
-        console.error('Request not found:', id);
-        return res.redirect("/admin/art-requests?error=request_not_found");
+      if (!updatedOrder) {
+        console.error('Order not found:', id);
+        return res.redirect("/admin/art-requests?error=order_not_found");
       }
 
-      console.log(`Art request status updated successfully:`, {
-        requestId: id,
+      // If order is completed, remove purchased art from all users' carts and wishlists
+      if (status === 'completed' && updatedOrder.orderType === 'art') {
+        const User = require('../../models/User');
+        const artItemIds = updatedOrder.items.map(item => String(item.itemId));
+        
+        // Get all users and remove items from their carts and wishlists
+        const users = await User.find({});
+        for (const user of users) {
+          let updated = false;
+          
+          // Remove from cart
+          const cartBeforeLength = user.cart.length;
+          user.cart = user.cart.filter(cartItem => {
+            const cartItemId = String(cartItem.itemId);
+            return !artItemIds.includes(cartItemId);
+          });
+          if (user.cart.length !== cartBeforeLength) {
+            user.markModified('cart');
+            updated = true;
+          }
+          
+          // Remove from wishlist
+          const wishlistBeforeLength = user.wishlist.length;
+          user.wishlist = user.wishlist.filter(wishlistItem => {
+            const wishlistItemId = String(wishlistItem.itemId);
+            return !artItemIds.includes(wishlistItemId);
+          });
+          if (user.wishlist.length !== wishlistBeforeLength) {
+            user.markModified('wishlist');
+            updated = true;
+          }
+          
+          if (updated) {
+            await user.save();
+          }
+        }
+        
+        console.log(`Removed purchased art items from all users' carts and wishlists:`, artItemIds);
+      }
+
+      console.log(`Art order status updated successfully:`, {
+        orderId: id,
         newStatus: status,
-        title: updatedRequest.title
+        customer: updatedOrder.customerName
       });
 
       res.redirect("/admin/art-requests?success=status_updated");
     } catch (error) {
-      console.error('Error updating art request status:', error);
+      console.error('Error updating art order status:', error);
       res.redirect("/admin/art-requests?error=update_failed");
     }
   },

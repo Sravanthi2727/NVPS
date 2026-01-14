@@ -793,6 +793,13 @@
     // State management for wishlist and cart
     const wishlistItems = new Set();
     const cartItems = new Map();
+    // All purchased art IDs (from all completed orders)
+    <% if (typeof purchasedArtIds !== 'undefined' && purchasedArtIds) { %>
+    const purchasedArtIdsArray = <%- JSON.stringify(purchasedArtIds) %>;
+    const purchasedArtIds = new Set(purchasedArtIdsArray);
+    <% } else { %>
+    const purchasedArtIds = new Set();
+    <% } %>
 
     // Add event listeners for wishlist and cart buttons
     document.addEventListener('DOMContentLoaded', function() {
@@ -889,8 +896,9 @@
         // Update cart buttons
         document.querySelectorAll('.add-to-cart-btn').forEach(button => {
             const itemId = button.getAttribute('data-item-id');
+            const isPurchased = purchasedArtIds.has(itemId);
             const inCart = cartItems.has(itemId);
-            updateCartButtonState(button, inCart);
+            updateCartButtonState(button, isPurchased, inCart);
         });
     }
 
@@ -914,13 +922,21 @@
     }
 
     // Update cart button state for art items
-    function updateCartButtonState(button, inCart) {
-        if (inCart) {
+    function updateCartButtonState(button, isPurchased, inCart) {
+        if (isPurchased) {
+            // Item is purchased by someone
             button.innerHTML = '<i class="fas fa-check"></i> Purchased';
             button.style.backgroundColor = '#28a745';
             button.style.color = '#fff';
             button.disabled = true;
+        } else if (inCart) {
+            // Item is in user's cart
+            button.innerHTML = '<i class="fas fa-shopping-cart"></i> In Your Cart';
+            button.style.backgroundColor = '#ffc107';
+            button.style.color = '#000';
+            button.disabled = true;
         } else {
+            // Item is available
             button.innerHTML = 'Buy Now';
             button.style.backgroundColor = 'var(--gold)';
             button.style.color = 'var(--dark)';
@@ -1107,7 +1123,10 @@
                 cartItems.set(item.itemId, 1);
                 const buttonElement = document.querySelector(`[data-item-id="${item.itemId}"].add-to-cart-btn`);
                 if (buttonElement) {
-                    updateCartButtonState(buttonElement, true);
+                    // Check if art is purchased or in cart
+                    const isPurchased = purchasedArtIds.has(item.itemId);
+                    const inCart = cartItems.has(item.itemId);
+                    updateCartButtonState(buttonElement, isPurchased, inCart);
                 }
                 updateCartCount();
                 showNotification('Artwork added to cart! Pay when you visit our café.', 'success');
