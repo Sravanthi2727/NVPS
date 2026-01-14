@@ -2,13 +2,19 @@ from flask import Flask, request, jsonify
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics.pairwise import cosine_similarity
+import os
 
 app = Flask(__name__)
 
+# ================= PATH SETUP =================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "../data")
+
 # ================= DATA =================
-drinks = pd.read_csv("../data/drinks.csv")
-food = pd.read_csv("../data/food.csv")
-pairing = pd.read_csv("../data/pairing.csv")
+drinks = pd.read_csv(os.path.join(DATA_DIR, "drinks.csv"))
+food = pd.read_csv(os.path.join(DATA_DIR, "food.csv"))
+pairing = pd.read_csv(os.path.join(DATA_DIR, "pairing.csv"))
+
 
 # ================= MODEL =================
 encoder = LabelEncoder()
@@ -67,4 +73,6 @@ def recommend():
     return jsonify(recommend_model(drink))
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    import os
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
