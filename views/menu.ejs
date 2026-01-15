@@ -475,7 +475,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                                         data-item-name="<%= item.name.replace(/'/g, "\\'") %>"
                                                         data-item-price="<%= item.price %>"
                                                         data-item-image="<%= itemImage %>"
-                                                        onclick="addToCartItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
+                                                        onclick="addToCartItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>', '<%= itemImage %>', this)">
                                                     Add +
                                                 </button>
                                             </div>
@@ -531,7 +531,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                                     <div class="menu-card-buttons">
                                                         <button class="menu-card-wishlist" 
                                                                 data-item-id="<%= item._id %>"
-                                                                onclick="toggleWishlistItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
+                                                                onclick="toggleWishlistItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>', '<%= itemImage %>', this)"
                                                             <i class="far fa-heart"></i>
                                                         </button>
                                                         <button class="menu-card-add" 
@@ -539,13 +539,14 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                                                 data-item-name="<%= item.name.replace(/'/g, "\\'") %>"
                                                                 data-item-price="<%= item.price %>"
                                                                 data-item-image="<%= itemImage %>"
-                                                                onclick="addToCartItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
+                                                                onclick="addToCartItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>', '<%= itemImage %>', this)">
                                                             Add +
                                                         </button>
                                                     </div>
                                                 <% } else { %>
                                                     <!-- User not logged in - show Sign Up button -->
                                                     <a href="/signup" class="menu-card-add" style="text-decoration: none; display: inline-block; text-align: center;">
+                                                        Sign Up to Add
                                                         Sign Up
                                                     </a>
                                                 <% } %>

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     
     <!-- Google Fonts -->
+    <link rel="stylesheet" href="/css/admin-mobile.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -457,21 +458,21 @@
 
             tbody.innerHTML = filteredApplications.map(app => `
                 <tr>
-                    <td>
+                    <td data-label="Applicant">
                         <strong>${app.fullName}</strong><br>
                         <small class="text-muted">${app.email}</small>
                     </td>
-                    <td>${app.phoneNumber}</td>
-                    <td>${app.city}</td>
-                    <td>${app.investmentRange}</td>
-                    <td>${app.expectedTimeline}</td>
-                    <td>
+                    <td data-label="Phone">${app.phoneNumber}</td>
+                    <td data-label="City">${app.city}</td>
+                    <td data-label="Investment">${app.investmentRange}</td>
+                    <td data-label="Timeline">${app.expectedTimeline}</td>
+                    <td data-label="Status">
                         <span class="status-badge status-${app.status}">
                             ${app.status.charAt(0).toUpperCase() + app.status.slice(1).replace('-', ' ')}
                         </span>
                     </td>
-                    <td>${new Date(app.submittedAt).toLocaleDateString()}</td>
-                    <td>
+                    <td data-label="Submitted">${new Date(app.submittedAt).toLocaleDateString()}</td>
+                    <td data-label="Actions">
                         <div class="action-buttons">
                             <button class="btn-action btn-view" onclick="viewApplication('${app._id}')" title="View Details">
                                 <i class="bi bi-eye"></i>
