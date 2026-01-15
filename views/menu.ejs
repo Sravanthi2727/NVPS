@@ -1,5 +1,385 @@
+<style>
+    :root {
+        --gold: #d6a45a;
+        --gold-soft: #e3b873;
+        --text: #f5f2ee;
+        --muted: rgba(245, 242, 238, 0.7);
+        --dark: #0a0a0a;
+        --darker: #000;
+        --primary: #f5f2ee;
+        --secondary: #0a0a0a;
+    }
+    .menu-section {
+        padding: 2rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .menu-section:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(214, 164, 90, 0.3), transparent);
+    }
+    .menu-item {
+        background: rgba(20, 20, 20, 0.8);
+        border: 1px solid rgba(214, 164, 90, 0.2);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .menu-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border-color: rgba(214, 164, 90, 0.4);
+    }
+    .menu-item h5 {
+        color: var(--gold);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .price-tag {
+        background: var(--gold);
+        color: #000;
+        padding: 0.25rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+    .filter-btn {
+        background: transparent;
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        padding: 0.5rem 1.5rem;
+        margin: 0.25rem;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+    .filter-btn:hover, .filter-btn.active {
+        background: var(--gold);
+        color: #000;
+        border-color: var(--gold);
+    }
+    .hero-section {
+        position: relative;
+        padding: 8rem 0 4rem;
+    }
+    .hero-section h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: var(--gold);
+    }
+    .menu-hover-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-left: 1rem;
+    }
+    .reviews-btn {
+        background-color: var(--gold);
+        color: var(--dark);
+        border: none;
+        border-radius: 20px;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
 
-<link rel="stylesheet" href="/css/menu.css">
+    .reviews-btn:hover {
+        background-color: var(--gold-soft);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(214, 164, 90, 0.4);
+    }
+
+    .reviews-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Swiggy-style Menu Cards */
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .menu-card {
+        background: var(--secondary);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        position: relative;
+        height: 420px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .menu-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 24px rgba(214, 164, 90, 0.25);
+    }
+
+    .menu-card-image {
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        object-position: center;
+        border-radius: 16px 16px 0 0;
+        transition: transform 0.3s ease;
+        flex-shrink: 0;
+        background: var(--dark);
+    }
+
+    .menu-card:hover .menu-card-image {
+        transform: scale(1.08);
+    }
+
+    .menu-card-content {
+        padding: 1.2rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .menu-card-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.6rem;
+        line-height: 1.2;
+        flex-shrink: 0;
+    }
+
+    .menu-card-description {
+        color: var(--gold-soft);
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-bottom: 0.8rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-grow: 1;
+        min-height: 2.4rem;
+        max-height: 2.4rem;
+    }
+
+    .menu-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-top: 0.8rem;
+        border-top: 1px solid rgba(214, 164, 90, 0.2);
+        margin-top: auto;
+        flex-shrink: 0;
+        min-height: 70px;
+    }
+
+    .menu-card-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--gold);
+        flex-shrink: 0;
+    }
+
+    .menu-card-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex-shrink: 0;
+        align-items: flex-end;
+        min-width: 120px;
+    }
+
+    .menu-card-buttons {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .menu-card-add {
+        background: var(--gold);
+        color: var(--dark);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .menu-card-wishlist {
+        background: transparent;
+        color: var(--gold);
+        border: 1px solid var(--gold);
+        border-radius: 8px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        flex-shrink: 0;
+        white-space: nowrap;
+        position: relative;
+    }
+
+    .menu-card-wishlist:hover {
+        background: var(--gold);
+        color: var(--dark);
+        transform: translateY(-1px);
+    }
+
+    .menu-card-wishlist:hover::after {
+        content: 'Add to Wishlist';
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        z-index: 1000;
+        margin-bottom: 5px;
+    }
+
+    /* Quantity Controls */
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        background: var(--gold);
+        border-radius: 8px;
+        padding: 0.2rem;
+        gap: 0.5rem;
+        min-width: 100px;
+        justify-content: space-between;
+    }
+
+    .quantity-btn {
+        background: transparent;
+        border: none;
+        color: var(--dark);
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        min-width: 25px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+    }
+
+    .quantity-btn:hover {
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .quantity-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .quantity-display {
+        color: var(--dark);
+        font-weight: bold;
+        font-size: 0.9rem;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    /* Wishlist States */
+    .menu-card-wishlist.in-wishlist {
+        background: var(--gold) !important;
+        color: var(--dark) !important;
+        border-color: var(--gold) !important;
+    }
+
+    .menu-card-wishlist.in-wishlist:hover {
+        background: var(--gold-soft) !important;
+        color: var(--dark) !important;
+    }
+
+    .menu-card-wishlist.in-wishlist:hover::after {
+        content: 'Remove from Wishlist';
+    }
+
+    .menu-card-wishlist.in-wishlist i {
+        color: #dc3545 !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+        .menu-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 900px) {
+        .menu-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .menu-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .menu-card {
+            height: 380px;
+        }
+        
+        .menu-card-image {
+            height: 160px;
+        }
+
+        .menu-card-actions {
+            min-width: 100px;
+        }
+
+        .menu-card-buttons {
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .menu-card-add, .menu-card-wishlist {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
+</style>
+
 <section class="hero-section text-center">
     <div class="hero-content">
         <img src="/assets/logo-icon.png" alt="Rabuste Coffee Logo" class="hero-logo" style="display:block; margin:0 auto 20px auto; width:120px;">
@@ -56,8 +436,7 @@
         <section class="py-5 menu-section" style="background: var(--secondary);" data-category="recommended">
             <div class="container py-5">
                 <h2 class="font-playfair fs-2 fw-bold mb-3 text-center" style="color: var(--primary);">
-                    <i class="fas fa-star me-3"></i>
-                    Recommended for You
+                    ★ Recommended for You
                 </h2>
                 <p class="text-center mb-5" style="color: var(--gold-soft); font-size: 1.1rem;">
                     Our AI-powered picks just for you
@@ -90,14 +469,14 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                                 <button class="menu-card-wishlist" 
                                                         data-item-id="<%= item._id %>"
                                                         onclick="toggleWishlistItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
-                                                    <i class="far fa-heart"></i>
+                                                    <span style="color: #dc3545;">♥</span>
                                                 </button>
                                                 <button class="menu-card-add" 
                                                         data-item-id="<%= item._id %>"
                                                         data-item-name="<%= item.name.replace(/'/g, "\\'") %>"
                                                         data-item-price="<%= item.price %>"
                                                         data-item-image="<%= itemImage %>"
-                                                        onclick="addToCartItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>', '<%= itemImage %>', this)">
+                                                        onclick="addToCartItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
                                                     Add +
                                                 </button>
                                             </div>
@@ -121,7 +500,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
             <section class="py-5 menu-section" style="background: var(--secondary);" data-category="<%= category %>">
                 <div class="container py-5">
                     <h2 class="font-playfair fs-2 fw-bold mb-5 text-center" style="color: var(--primary);">
-                        <i class="fas fa-<%= category === 'cold' ? 'snowflake' : category === 'hot' ? 'fire' : category === 'manual-brew' ? 'coffee' : category === 'shakes-tea' ? 'blender' : 'utensils' %> me-3"></i>
+                        <i class="fas fa-<%= category === 'cold' ? '❄️' : category === 'hot' ? '🔥' : category === 'manual-brew' ? '☕' : category === 'shakes-tea' ? '🥤' : '🍽️' %> me-3"></i>
                         <%= categoryNames[category] || category %>
                     </h2>
                     <% Object.keys(menuItems[category]).forEach(subCategory => { %>
@@ -153,22 +532,21 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                                     <div class="menu-card-buttons">
                                                         <button class="menu-card-wishlist" 
                                                                 data-item-id="<%= item._id %>"
-                                                                onclick="toggleWishlistItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>', '<%= itemImage %>', this)"
-                                                            <i class="far fa-heart"></i>
+                                                                onclick="toggleWishlistItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
+                                                            <span style="color: #dc3545;">♥</span>
                                                         </button>
                                                         <button class="menu-card-add" 
                                                                 data-item-id="<%= item._id %>"
                                                                 data-item-name="<%= item.name.replace(/'/g, "\\'") %>"
                                                                 data-item-price="<%= item.price %>"
                                                                 data-item-image="<%= itemImage %>"
-                                                                onclick="addToCartItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>', '<%= itemImage %>', this)">
+                                                                onclick="addToCartItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
                                                             Add +
                                                         </button>
                                                     </div>
                                                 <% } else { %>
                                                     <!-- User not logged in - show Sign Up button -->
                                                     <a href="/signup" class="menu-card-add" style="text-decoration: none; display: inline-block; text-align: center;">
-                                                        Sign Up to Add
                                                         Sign Up
                                                     </a>
                                                 <% } %>
@@ -458,7 +836,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
             button.innerHTML = '<i class="fas fa-heart"></i>';
         } else {
             button.classList.remove('in-wishlist');
-            button.innerHTML = '<i class="far fa-heart"></i>';
+            button.innerHTML = '<span style="color: #dc3545;">♥</span>';
         }
     }
 
@@ -546,7 +924,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                 " onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                                     ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 180px; object-fit: cover;">` : 
                                     `<div style="width: 100%; height: 180px; background: linear-gradient(135deg, #d6a45a 0%, #b8884a 100%); display: flex; align-items: center; justify-content: center;">
-                                        <i class="bi bi-cup-hot" style="font-size: 3rem; color: #000;"></i>
+                                        <i class="bi bi-cup-hot" style="font-size: 3rem; color: #000;">☕</i>
                                     </div>`}
                                     <div style="padding: 15px;">
                                         <h6 style="color: #d6a45a; font-weight: 600; margin-bottom: 8px;">${item.name}</h6>
@@ -563,7 +941,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                                 cursor: pointer;
                                                 transition: all 0.3s ease;
                                             " onmouseover="this.style.background='#e3b873'" onmouseout="this.style.background='#d6a45a'">
-                                                <i class="bi bi-cart-plus"></i> Add
+                                                <span>🛒</span> Add
                                             </button>
                                         </div>
                                     </div>
@@ -859,7 +1237,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
             animation: slideInRight 0.3s ease;
         `;
         notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span class="${type === 'success' ? '✓' : '⚠️'}"></span>
             ${message}
         `;
         
