@@ -639,7 +639,13 @@ app.get("/workshops", async (req, res) => {
       upcomingWorkshops: upcomingWorkshops,
       pastWorkshops: pastWorkshops,
       teamMembers: teamMembers,
-      layout: false // Disable layout for this route
+      additionalCSS: `
+        <link rel="stylesheet" href="/css/workshops.css">
+        <link rel="stylesheet" href="/css/gallery.css">
+      `,
+      additionalJS: `
+        <script src="/js/workshops.js"></script>
+      `
     });
   } catch (error) {
     console.error('Workshops route error:', error);
@@ -651,7 +657,13 @@ app.get("/workshops", async (req, res) => {
       upcomingWorkshops: [],
       pastWorkshops: [],
       teamMembers: [],
-      layout: false
+      additionalCSS: `
+        <link rel="stylesheet" href="/css/workshops.css">
+        <link rel="stylesheet" href="/css/gallery.css">
+      `,
+      additionalJS: `
+        <script src="/js/workshops.js"></script>
+      `
     });
   }
 });
@@ -660,6 +672,12 @@ app.get("/philosophy", (req, res) => {
   res.render("philosophy", {
     title: "The Robusta Philosophy Experience | Rabuste",
     currentPage: "/philosophy",
+    additionalCSS: `
+      <link rel="stylesheet" href="/css/philosophy.css">
+    `,
+    additionalJS: `
+      <script src="/js/philosophy.js"></script>
+    `
   });
 });
 
