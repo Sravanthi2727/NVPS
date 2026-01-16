@@ -41,6 +41,13 @@ router.post('/workshops/draft', ensureAdmin, adminController.saveWorkshopDraft);
 // Franchise applications management
 router.get('/franchise', ensureAdmin, adminController.getFranchise);
 
+// Menu management
+router.get('/menu-management', ensureAdmin, (req, res) => {
+  res.render('admin/menu-management', {
+    title: 'Menu Management - Admin Dashboard'
+  });
+});
+
 // User management
 router.get('/users', ensureAdmin, adminController.getUsers);
 router.post('/users/:id/update', ensureAdmin, adminController.updateUser);

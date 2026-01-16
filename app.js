@@ -195,6 +195,61 @@ app.use((req, res, next) => {
 // Add user data middleware after passport setup
 app.use(getUserData);
 
+// Menu Management - Image Upload (must be before admin routes)
+const multer = require('multer');
+
+// Configure multer for image upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads/menu/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'menu-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: function (req, file, cb) {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    cb(new Error('Only image files are allowed!'));
+  }
+});
+
+// Image upload endpoint
+app.post('/api/upload-image', (req, res) => {
+  upload.single('image')(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      console.error('Multer error:', err);
+      return res.status(400).json({ success: false, error: err.message });
+    } else if (err) {
+      console.error('Upload error:', err);
+      return res.status(500).json({ success: false, error: err.message });
+    }
+    
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, error: 'No file uploaded' });
+      }
+      
+      const imageUrl = '/uploads/menu/' + req.file.filename;
+      console.log('Image uploaded successfully:', imageUrl);
+      res.json({ success: true, imageUrl: imageUrl });
+    } catch (error) {
+      console.error('Error processing upload:', error);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+});
+
 // Mount admin routes
 app.use('/admin', adminRoutes);
 
@@ -215,7 +270,9 @@ app.get("/", (req, res) => {
     ogImage: "/assets/coffee-bg.jpeg",
     canonicalUrl: "https://rabustecoffee.com",
     user: req.user || null,
-    currentUser: req.user || null
+    currentUser: req.user || null,
+    additionalCSS: ['/css/home-animations.css'],
+    additionalJS: ['/js/home-animations.js']
   });
 });
 
@@ -2563,6 +2620,78 @@ app.get('/api/debug/orders', async (req, res) => {
 // Test endpoint to check if routes are working
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!', timestamp: new Date() });
+});
+
+// Menu Management API Routes
+// Get all menu items
+app.get('/api/menu-items', async (req, res) => {
+  try {
+    const menuItems = await MenuItem.find().sort({ category: 1, name: 1 });
+    res.json({ success: true, items: menuItems });
+  } catch (error) {
+    console.error('Error fetching menu items:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Add new menu item
+app.post('/api/menu-items', ensureAdmin, async (req, res) => {
+  try {
+    const { category, name, description, price, image, available } = req.body;
+    
+    const newItem = new MenuItem({
+      category,
+      name,
+      description,
+      price,
+      image,
+      available: available !== false
+    });
+    
+    await newItem.save();
+    res.json({ success: true, item: newItem });
+  } catch (error) {
+    console.error('Error adding menu item:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Update menu item
+app.put('/api/menu-items/:id', ensureAdmin, async (req, res) => {
+  try {
+    const { category, name, description, price, image, available } = req.body;
+    
+    const updatedItem = await MenuItem.findByIdAndUpdate(
+      req.params.id,
+      { category, name, description, price, image, available },
+      { new: true }
+    );
+    
+    if (!updatedItem) {
+      return res.status(404).json({ success: false, error: 'Item not found' });
+    }
+    
+    res.json({ success: true, item: updatedItem });
+  } catch (error) {
+    console.error('Error updating menu item:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Delete menu item
+app.delete('/api/menu-items/:id', ensureAdmin, async (req, res) => {
+  try {
+    const deletedItem = await MenuItem.findByIdAndDelete(req.params.id);
+    
+    if (!deletedItem) {
+      return res.status(404).json({ success: false, error: 'Item not found' });
+    }
+    
+    res.json({ success: true, message: 'Item deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting menu item:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // Debug: Create test franchise application

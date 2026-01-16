@@ -1,0 +1,300 @@
+/* HOME PAGE ANIMATIONS */
+
+/* Hero Section Animations */
+.hero-logo {
+    animation: fadeInDown 1s ease-out;
+}
+
+.hero-title {
+    animation: fadeInUp 1.2s ease-out 0.3s both;
+}
+
+.hero-subtitle {
+    animation: fadeInUp 1.2s ease-out 0.6s both;
+}
+
+.hero-cta {
+    animation: fadeInUp 1.2s ease-out 0.9s both;
+}
+
+/* Scroll Reveal Animations */
+.why-robusta-box {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s ease-out;
+}
+
+.why-robusta-box.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.signature-image-card {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.6s ease-out;
+}
+
+.signature-image-card.animate {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.signature-image-card:hover {
+    transform: scale(1.05) translateY(-10px);
+    box-shadow: 0 20px 40px rgba(214, 164, 90, 0.3);
+}
+
+.art-card {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: all 0.7s ease-out;
+}
+
+.art-card.animate {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.art-card:nth-child(2) {
+    transform: translateX(50px);
+}
+
+.art-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 25px 50px rgba(214, 164, 90, 0.4);
+}
+
+.workshop-card {
+    opacity: 0;
+    transform: translateY(50px) rotate(-2deg);
+    transition: all 0.6s ease-out;
+}
+
+.workshop-card.animate {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+}
+
+.workshop-card:hover {
+    transform: translateY(-10px) rotate(2deg);
+    box-shadow: 0 15px 35px rgba(214, 164, 90, 0.3);
+}
+
+.franchise-card {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.8s ease-out;
+}
+
+.franchise-card.animate {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Keyframe Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Section Titles Animation */
+.section-title {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.7s ease-out;
+}
+
+.section-title.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.intro-eyebrow {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease-out;
+}
+
+.intro-eyebrow.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Button Hover Animations */
+.btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(214, 164, 90, 0.4);
+}
+
+/* Image Overlay Animations */
+.signature-overlay,
+.art-info {
+    transition: all 0.4s ease;
+}
+
+.signature-image-card:hover .signature-overlay,
+.art-card:hover .art-info {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+/* Stagger Animation Delays */
+.signature-image-card:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.signature-image-card:nth-child(2) {
+    transition-delay: 0.3s;
+}
+
+.art-card:nth-child(1) {
+    transition-delay: 0.2s;
+}
+
+.art-card:nth-child(2) {
+    transition-delay: 0.4s;
+}
+
+.workshop-card:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.workshop-card:nth-child(2) {
+    transition-delay: 0.3s;
+}
+
+.workshop-card:nth-child(3) {
+    transition-delay: 0.5s;
+}
+
+/* Parallax Effect for Sections */
+.section-soft {
+    transition: transform 0.3s ease-out;
+}
+
+/* Gold Accent Animation */
+.with-gold-accent::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #d6a45a, transparent);
+    animation: slideInLeft 0.8s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+    to {
+        width: 60px;
+        opacity: 1;
+    }
+}
+
+/* Text Glow Effect on Hover */
+.section-title:hover {
+    text-shadow: 0 0 20px rgba(214, 164, 90, 0.5);
+    transition: text-shadow 0.3s ease;
+}
+
+/* Price Tag Animation */
+.price {
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.signature-image-card:hover .price {
+    transform: scale(1.2);
+    color: #d6a45a;
+}
+
+/* Coffee Tag Animation */
+.coffee-tag {
+    transition: all 0.3s ease;
+}
+
+.art-card:hover .coffee-tag {
+    transform: translateX(5px);
+    background: #d6a45a;
+    color: #000;
+}
+
+/* Smooth Scroll Behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Loading State */
+.loading {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .signature-image-card,
+    .art-card,
+    .workshop-card {
+        transform: none !important;
+    }
+    
+    .signature-image-card.animate,
+    .art-card.animate,
+    .workshop-card.animate {
+        opacity: 1;
+    }
+}

@@ -752,26 +752,6 @@ section {
   transition: color 0.25s ease;
 }
 
-/* Gold underline hover */
-.navbar-nav .nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  width: 0%;
-  height: 2px;
-  background: var(--gold);
-  transition: width 0.3s ease;
-}
-
-.navbar-nav .nav-link:hover {
-  color: var(--gold) !important;
-}
-
-.navbar-nav .nav-link:hover::after {
-  width: 100%;
-}
-
 /* Franchise pill button */
 .navbar-nav .btn {
   border: 1px solid rgba(214, 164, 90, 0.6);
