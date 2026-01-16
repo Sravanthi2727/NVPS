@@ -22,6 +22,15 @@ function ensureAdmin(req, res, next) {
 // Admin dashboard
 router.get('/', ensureAdmin, adminController.getDashboard);
 
+// Analytics
+router.get('/analytics', ensureAdmin, (req, res) => {
+  res.render('admin-analytics', {
+    title: 'Analytics - Rabuste Admin',
+    analyticsPropertyId: process.env.GOOGLE_ANALYTICS_PROPERTY_ID || '',
+    layout: false
+  });
+});
+
 // Cart requests management
 router.get('/cart-requests', ensureAdmin, adminController.getCartRequests);
 router.post('/cart-requests/:id/update', ensureAdmin, adminController.updateCartRequest);

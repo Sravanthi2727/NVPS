@@ -670,16 +670,14 @@ app.get("/workshops", async (req, res) => {
     }
 
     res.render("workshops", {
+      layout: 'layouts/boilerplate',
       title: "Workshops - Rabuste Coffee",
       description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
       currentPage: "/workshops",
       upcomingWorkshops: upcomingWorkshops,
       pastWorkshops: pastWorkshops,
       teamMembers: teamMembers,
-      additionalCSS: `
-        <link rel="stylesheet" href="/css/workshops.css">
-        <link rel="stylesheet" href="/css/gallery.css">
-      `,
+      additionalCSS: ['/css/workshops.css', '/css/gallery.css'],
       additionalJS: `
         <script src="/js/workshops.js"></script>
       `
@@ -688,16 +686,14 @@ app.get("/workshops", async (req, res) => {
     console.error('Workshops route error:', error);
     // On any error, return empty arrays - truly dynamic approach
     res.render("workshops", {
+      layout: 'layouts/boilerplate',
       title: "Workshops - Rabuste Coffee",
       description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
       currentPage: "/workshops",
       upcomingWorkshops: [],
       pastWorkshops: [],
       teamMembers: [],
-      additionalCSS: `
-        <link rel="stylesheet" href="/css/workshops.css">
-        <link rel="stylesheet" href="/css/gallery.css">
-      `,
+      additionalCSS: ['/css/workshops.css', '/css/gallery.css'],
       additionalJS: `
         <script src="/js/workshops.js"></script>
       `

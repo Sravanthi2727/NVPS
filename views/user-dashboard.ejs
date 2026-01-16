@@ -2124,15 +2124,19 @@ function proceedToPaymentOptions() {
     return;
   }
   
-  // Get location data
+  // Get location data including lat/lng from map
   const locationData = {
     name: document.getElementById('deliveryName').value,
     phone: document.getElementById('deliveryPhone').value,
     address: document.getElementById('deliveryAddress').value,
     city: document.getElementById('deliveryCity').value,
     pincode: document.getElementById('deliveryPincode').value,
-    state: document.getElementById('deliveryState').value
+    state: document.getElementById('deliveryState').value,
+    lat: document.getElementById('deliveryLat').value || window.deliveryMarker?.getPosition()?.lat(),
+    lng: document.getElementById('deliveryLng').value || window.deliveryMarker?.getPosition()?.lng()
   };
+  
+  console.log('Location data with coordinates:', locationData);
   
   // Close location modal
   const locationModal = bootstrap.Modal.getInstance(document.getElementById('locationModal'));
@@ -2559,6 +2563,133 @@ function waitForGoogleMaps() {
       color: #d6a45a;
     `;
     
+    // Add location button
+    const locationBtn = document.createElement('button');
+    locationBtn.innerHTML = '<i class="bi bi-geo-alt-fill"></i> Use My Location';
+    locationBtn.style.cssText = `
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #d6a45a;
+      border-radius: 4px;
+      background: #d6a45a;
+      color: #000;
+      cursor: pointer;
+      font-weight: 500;
+    `;
+    
+    // Add click handler for location button
+    locationBtn.addEventListener('click', function() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            const userLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            
+            // Center map on user's location
+            map.setCenter(userLocation);
+            map.setZoom(15);
+            
+            // Move marker to user's location
+            marker.setPosition(userLocation);
+            
+            // Fill form with location data
+            document.getElementById('deliveryLat').value = userLocation.lat;
+            document.getElementById('deliveryLng').value = userLocation.lng;
+            
+            // Reverse geocoding to get address
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ location: userLocation }, function(results, status) {
+              if (status === 'OK' && results[0]) {
+                const address = results[0].formatted_address;
+                const addressComponents = results[0].address_components;
+                
+                // Extract city, state, pincode from address components
+                let city = '', state = '', pincode = '';
+                addressComponents.forEach(component => {
+                  if (component.types.includes('locality')) {
+                    city = component.long_name;
+                  } else if (component.types.includes('administrative_area_level_1')) {
+                    state = component.long_name;
+                  } else if (component.types.includes('postal_code')) {
+                    pincode = component.long_name;
+                  }
+                });
+                
+                // Fill form fields with delay to ensure DOM is ready
+                setTimeout(() => {
+                  console.log('Filling form fields...');
+                  console.log('Available elements:', {
+                    addressField: !!document.getElementById('deliveryAddress'),
+                    cityField: !!document.getElementById('deliveryCity'),
+                    stateField: !!document.getElementById('deliveryState'),
+                    pincodeField: !!document.getElementById('deliveryPincode'),
+                    latField: !!document.getElementById('deliveryLat'),
+                    lngField: !!document.getElementById('deliveryLng')
+                  });
+                  
+                  // Check if elements exist before filling
+                  const addressField = document.getElementById('deliveryAddress');
+                  const cityField = document.getElementById('deliveryCity');
+                  const stateField = document.getElementById('deliveryState');
+                  const pincodeField = document.getElementById('deliveryPincode');
+                  
+                  if (addressField) {
+                    addressField.value = address;
+                    addressField.dispatchEvent(new Event('input', { bubbles: true }));
+                    console.log('Address filled:', address);
+                  } else {
+                    console.error('Address field not found!');
+                  }
+                  
+                  if (cityField) {
+                    cityField.value = city;
+                    cityField.dispatchEvent(new Event('input', { bubbles: true }));
+                    console.log('City filled:', city);
+                  } else {
+                    console.error('City field not found!');
+                  }
+                  
+                  if (stateField) {
+                    stateField.value = state;
+                    stateField.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('State filled:', state);
+                  } else {
+                    console.error('State field not found!');
+                  }
+                  
+                  if (pincodeField && pincode) {
+                    pincodeField.value = pincode;
+                    pincodeField.dispatchEvent(new Event('input', { bubbles: true }));
+                    console.log('Pincode filled:', pincode);
+                  } else {
+                    console.error('Pincode field not found or no pincode!');
+                  }
+                  
+                  console.log('All form fields filled successfully!');
+                }, 1000);
+                
+                console.log('Location address found:', { address, city, state, pincode });
+              } else {
+                console.log('Geocoding failed, status:', status);
+              }
+            });
+            
+            console.log('User location found:', userLocation);
+          },
+          function(error) {
+            console.error('Geolocation error:', error);
+            alert('Unable to get your location. Please enable location access.');
+          }
+        );
+      } else {
+        alert('Geolocation is not supported by your browser.');
+      }
+    });
+    
+    mapElement.parentNode.insertBefore(locationBtn, mapElement);
     mapElement.parentNode.insertBefore(input, mapElement);
     
     const searchBox = new google.maps.places.SearchBox(input);
