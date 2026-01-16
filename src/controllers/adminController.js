@@ -8,6 +8,51 @@ const adminController = {
   getDashboard: async (req, res) => {
     try {
       const Order = require('../../models/Order');
+      const WorkshopRegistration = require('../../models/WorkshopRegistration');
+      const Request = require('../../models/Request');
+      const Franchise = require('../../models/Franchise');
+      
+      // Get all orders first to debug
+      const allOrders = await Order.find();
+      console.log('=== ALL ORDERS ===');
+      console.log('Total orders:', allOrders.length);
+      allOrders.forEach(order => {
+        console.log(`Order ${order._id}: status="${order.status}", orderType="${order.orderType}"`);
+      });
+      
+      // Get counts for dashboard cards
+      const pendingCartOrders = await Order.countDocuments({ 
+        status: 'pending',
+        $or: [
+          { orderType: 'menu' },
+          { orderType: { $exists: false } },
+          { orderType: null }
+        ]
+      });
+      
+      console.log('Pending cart orders count:', pendingCartOrders);
+      
+      const pendingArtOrders = await Order.countDocuments({ 
+        status: 'pending',
+        orderType: 'art'
+      });
+      
+      console.log('Pending art orders count:', pendingArtOrders);
+      
+      const pendingWorkshopBookings = await WorkshopRegistration.countDocuments({ 
+        status: { $in: ['registered', 'pending'] }
+      });
+      
+      const pendingWorkshopProposals = await Request.countDocuments({ 
+        type: 'conduct-workshop',
+        status: 'pending'
+      });
+      
+      const totalPendingWorkshops = pendingWorkshopBookings + pendingWorkshopProposals;
+      
+      const pendingFranchise = await Franchise.countDocuments({ 
+        status: 'pending'
+      });
       
       // Get recent orders for dashboard
       const recentOrders = await Order.find()
@@ -36,6 +81,12 @@ const adminController = {
         description: 'Admin dashboard for managing orders, workshop requests, and user accounts.',
         currentPage: '/admin',
         recentActivity,
+        counts: {
+          cartOrders: pendingCartOrders,
+          artOrders: pendingArtOrders,
+          workshops: totalPendingWorkshops,
+          franchise: pendingFranchise
+        },
         layout: false
       });
     } catch (error) {
@@ -46,6 +97,12 @@ const adminController = {
         title: 'Admin Dashboard - Rabuste Coffee',
         description: 'Admin dashboard for managing orders, workshop requests, and user accounts.',
         currentPage: '/admin',
+        counts: {
+          cartOrders: 0,
+          artOrders: 0,
+          workshops: 0,
+          franchise: 0
+        },
         layout: false
       });
     }

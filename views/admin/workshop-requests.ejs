@@ -123,6 +123,7 @@
             padding: 1.5rem !important;
             margin-bottom: 1rem !important;
             transition: transform 0.3s ease !important;
+            overflow: visible !important;
         }
         
         .admin-card:hover {
@@ -143,9 +144,32 @@
             overflow: hidden !important;
         }
         
+        .admin-table-container {
+            overflow-x: auto !important;
+            overflow-y: visible !important;
+            max-width: 100% !important;
+            display: block !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        
+        .admin-table-container::-webkit-scrollbar {
+            height: 8px !important;
+        }
+        
+        .admin-table-container::-webkit-scrollbar-track {
+            background: #1a1a1a !important;
+        }
+        
+        .admin-table-container::-webkit-scrollbar-thumb {
+            background: #d6a45a !important;
+            border-radius: 4px !important;
+        }
+        
         .admin-table table {
             width: 100% !important;
             margin: 0 !important;
+            min-width: 1400px !important;
+            table-layout: auto !important;
         }
         
         .admin-table th {

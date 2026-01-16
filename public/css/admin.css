@@ -336,6 +336,10 @@ body.admin-body {
   text-align: center;
   border: 1px solid var(--admin-border);
   transition: transform 0.3s ease;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .stat-card:hover {
