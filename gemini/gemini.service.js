@@ -1,10 +1,8 @@
-const { GoogleGenAI } = require("@google/genai");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const MenuItem = require("../models/MenuItem");
 const Workshop = require("../models/Workshop");
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // 🖤 Rabuste brand persona (unchanged)
 const RABUSTE_PERSONA = `
@@ -65,29 +63,21 @@ async function askGemini(userMessage) {
       buildWorkshopContext()
     ]);
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: [
-        {
-          role: "system",
-          parts: [{ text: RABUSTE_PERSONA }]
-        },
-        {
-          role: "system",
-          parts: [{ text: `Rabuste Menu:\n${menuContext}` }]
-        },
-        {
-          role: "system",
-          parts: [{ text: `Rabuste Workshops:\n${workshopContext}` }]
-        },
-        {
-          role: "user",
-          parts: [{ text: userMessage }]
-        }
-      ]
-    });
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    return response.text;
+    const prompt = `${RABUSTE_PERSONA}
+
+Rabuste Menu:
+${menuContext}
+
+Rabuste Workshops:
+${workshopContext}
+
+User Question: ${userMessage}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text();
   } catch (error) {
     console.error("Gemini error:", error);
     throw new Error("Gemini failed");

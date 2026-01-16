@@ -16,6 +16,9 @@ require("dotenv").config();
 const connectDB = require("./config/database");
 const User = require("./models/User");
 
+// Import middleware
+const { getUserData } = require('./middleware/auth');
+
 // Connect to database
 connectDB();
 
@@ -137,19 +140,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// Add user data middleware (must be before routes)
+app.use(getUserData);
+
 // Import Routes
 const homeRoutes = require("./src/routes/homeRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const adminRoutes = require("./src/routes/adminRoutes");
 const geminiRoutes = require("./gemini/gemini.route");
-
-// Use Routes
-app.use("/", homeRoutes);
-app.use("/", authRoutes);
-app.use("/admin", adminRoutes);
-app.use("/api/gemini", geminiRoutes);
-// Add user data middleware after passport setup
-app.use(getUserData);
 
 // Menu Management - Image Upload (must be before admin routes)
 const multer = require('multer');
@@ -206,8 +204,23 @@ app.post('/api/upload-image', (req, res) => {
   });
 });
 
-// Mount admin routes
-app.use('/admin', adminRoutes);
+// Admin middleware
+function ensureAdmin(req, res, next) {
+  // For now, just allow all requests to admin routes for testing
+  return next();
+  
+  // Original code (commented out for testing):
+  // if (req.isAuthenticated()) {
+  //   return next();
+  // }
+  // res.redirect('/signin');
+}
+
+// Use Routes
+app.use("/", homeRoutes);
+app.use("/", authRoutes);
+app.use("/admin", adminRoutes);
+app.use("/api/gemini", geminiRoutes);
 
 // Home route - No cache because of user-specific content
 app.get("/", (req, res) => {
