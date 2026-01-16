@@ -20,6 +20,36 @@
   --admin-card-light: #ffffff; /* Light card background */
 }
 
+/* Global Scrollbar Styling - Golden Theme */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d6a45a #1a1a1a;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 5px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d6a45a, #e3b873);
+  border-radius: 5px;
+  border: 2px solid #1a1a1a;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #e3b873, #d6a45a);
+}
+
+*::-webkit-scrollbar-corner {
+  background: #1a1a1a;
+}
+
 /* Admin Body Override - Prevent conflicts */
 body.admin-body {
   font-family: 'Inter', sans-serif !important;
@@ -336,6 +366,10 @@ body.admin-body {
   text-align: center;
   border: 1px solid var(--admin-border);
   transition: transform 0.3s ease;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .stat-card:hover {

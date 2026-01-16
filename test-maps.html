@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps Test</title>
+    <style>
+        body { 
+            background: #000; 
+            color: #fff; 
+            font-family: Arial; 
+            padding: 20px; 
+        }
+        #map { 
+            height: 400px; 
+            width: 100%; 
+            margin: 20px 0; 
+            border: 2px solid #d6a45a; 
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            background: #1a1a1a;
+            border: 1px solid #d6a45a;
+            border-radius: 5px;
+        }
+        .debug {
+            background: #2a2a2a;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Maps Test Page</h1>
+    <div id="status" class="status">Loading Google Maps...</div>
+    <div id="map"></div>
+    <div id="debug" class="debug">Debug info will appear here...</div>
+    
+    <script>
+        console.log('=== STARTING GOOGLE MAPS TEST ===');
+        
+        // Update debug info
+        function updateDebug(message) {
+            const debugDiv = document.getElementById('debug');
+            if (debugDiv) {
+                debugDiv.innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ' + message;
+            }
+            console.log(message);
+        }
+        
+        updateDebug('Script loaded, preparing to load Google Maps...');
+        
+        // Simple map initialization
+        function initMap() {
+            updateDebug('initMap() called');
+            document.getElementById('status').innerHTML = 'Checking Google Maps availability...';
+            
+            if (typeof google === 'undefined') {
+                updateDebug('ERROR: Google object not available');
+                document.getElementById('status').innerHTML = '<span style="color: red;">❌ ERROR: Google Maps API failed to load</span>';
+                return;
+            }
+            
+            if (!google.maps) {
+                updateDebug('ERROR: google.maps not available');
+                document.getElementById('status').innerHTML = '<span style="color: red;">❌ ERROR: Google Maps API not loaded properly</span>';
+                return;
+            }
+            
+            try {
+                updateDebug('Creating map instance...');
+                const map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: 28.6139, lng: 77.2090 },
+                    zoom: 10,
+                    mapTypeId: 'roadmap',
+                    disableDefaultUI: false
+                });
+                
+                updateDebug('Creating marker...');
+                const marker = new google.maps.Marker({
+                    position: { lat: 28.6139, lng: 77.2090 },
+                    map: map,
+                    title: 'Delhi - Test Location',
+                    animation: google.maps.Animation.DROP
+                });
+                
+                document.getElementById('status').innerHTML = '<span style="color: #4CAF50;">✅ SUCCESS: Google Maps loaded and working!</span>';
+                updateDebug('SUCCESS: Map and marker created successfully');
+                
+            } catch (error) {
+                updateDebug('ERROR: ' + error.message);
+                document.getElementById('status').innerHTML = '<span style="color: red;">❌ ERROR: ' + error.message + '</span>';
+            }
+        }
+        
+        function handleMapsError() {
+            updateDebug('ERROR: Google Maps API failed to load');
+            document.getElementById('status').innerHTML = '<span style="color: red;">❌ ERROR: Google Maps API loading failed</span>';
+        }
+        
+        // Set timeout to detect if maps don't load
+        setTimeout(function() {
+            if (typeof google === 'undefined') {
+                updateDebug('TIMEOUT: Google Maps API did not load within 5 seconds');
+                document.getElementById('status').innerHTML = '<span style="color: red;">⏰ TIMEOUT: Google Maps API not responding</span>';
+            } else {
+                updateDebug('Google Maps object is available');
+            }
+        }, 5000);
+        
+        updateDebug('Loading Google Maps API script...');
+    </script>
+    
+    <!-- Use a known working demo API key -->
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLaZ2q6Q9v7LkFqJ8X7Y7Z8Q9W0R7X&callback=initMap"
+        onerror="handleMapsError()">
+    </script>
+</body>
+</html>
