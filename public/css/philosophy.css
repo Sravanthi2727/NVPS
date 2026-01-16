@@ -1,0 +1,522 @@
+/* Philosophy Page Specific Styles */
+
+body {
+    background: #000;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Hero Section with Background Image */
+.hero-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: url('/assets/philosophy-bg.jpg?v=20250111') center/cover no-repeat;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(214, 164, 90, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(214, 164, 90, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(214, 164, 90, 0.05) 0%, transparent 70%),
+        linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.9));
+    animation: pulseGlow 4s ease-in-out infinite alternate;
+    z-index: 1;
+    transform: translateZ(-1px);
+}
+
+.philosophy-section {
+    background: #0a0a0a;
+    padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.philosophy-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 30% 20%, rgba(214, 164, 90, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 70% 80%, rgba(214, 164, 90, 0.03) 0%, transparent 40%);
+    transform: translateZ(-2px);
+}
+
+.manifesto-section {
+    background: #000000;
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    padding: 3rem;
+    margin: 3rem 0;
+    position: relative;
+    overflow: hidden;
+    transform: translateZ(0px);
+}
+
+.manifesto-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(214, 164, 90, 0.05), transparent);
+    animation: manifestoSweep 8s ease-in-out infinite;
+    transform: translateZ(-1px);
+}
+
+.manifesto-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(214, 164, 90, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(214, 164, 90, 0.1) 0%, transparent 50%);
+    animation: manifestoGlow 4s ease-in-out infinite alternate;
+    transform: translateZ(-3px);
+    pointer-events: none;
+}
+
+@keyframes pulseGlow {
+    0% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+.hero-content-box {
+    background: linear-gradient(135deg, #000, #212529);
+    backdrop-filter: blur(15px);
+    border: 2px solid #4e3e27;
+    border-radius: 20px;
+    padding: 3rem 4rem;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(214, 164, 90, 0.3),
+        0 0 40px rgba(214, 164, 90, 0.2);
+    position: relative;
+    z-index: 3;
+    max-width: 800px;
+    margin: 0 auto;
+    animation: boxFloat 6s ease-in-out infinite alternate;
+}
+
+.hero-content-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(214, 164, 90, 0.1), transparent);
+    border-radius: 20px;
+    animation: boxShimmer 8s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes boxFloat {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes boxShimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.hero-content-box h1 {
+    color: #f5f2ee;
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 25px rgba(214, 164, 90, 0.6);
+    animation: titleGlow 3s ease-in-out infinite alternate, titleFloat 4s ease-in-out infinite;
+}
+
+.section-padding {
+    padding: 80px 0;
+}
+
+.philosophy-card {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, rgba(80, 50, 25, 0.9), rgba(110, 70, 35, 0.85));
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(214, 164, 90, 0.4);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transition: all 0.4s ease;
+    opacity: 0;
+    transform: translateX(-100px);
+}
+
+.philosophy-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(214, 164, 90, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+}
+
+.philosophy-card:hover::before {
+    animation: shimmer 0.6s ease;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+.philosophy-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: #f5f2ee;
+    box-shadow: 
+        0 20px 40px rgba(214, 164, 90, 0.3),
+        0 0 30px rgba(214, 164, 90, 0.1);
+    background: linear-gradient(135deg, rgba(90, 60, 35, 0.95), rgba(120, 80, 45, 0.9));
+}
+
+.philosophy-card h3 {
+    color: #f5f2ee;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 25px rgba(214, 164, 90, 0.6);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.philosophy-card:hover h3 {
+    color: #d6a45a;
+    text-shadow: 0 0 20px rgba(214, 164, 90, 0.5);
+    transform: translateY(-2px);
+}
+
+.philosophy-card p {
+    color: #e8dcc0;
+    line-height: 1.6;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.philosophy-card:hover p {
+    color: #f5f2ee;
+}
+
+.philosophy-card .text-warning {
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.philosophy-card:hover .text-warning {
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(214, 164, 90, 0.5);
+}
+
+.stats-section {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px rgba(214, 164, 90, 0.3);
+    position: relative;
+    z-index: 2;
+}
+
+.stats-subtitle {
+    font-size: 1.2rem;
+    color: #f5f2ee;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.stats-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 25% 25%, rgba(214, 164, 90, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(214, 164, 90, 0.05) 0%, transparent 50%);
+    animation: statsGlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes statsGlow {
+    0% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}
+
+.stat-card {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(214, 164, 90, 0.1);
+    border: 1px solid rgba(214, 164, 90, 0.3);
+    border-radius: 15px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    border-color: var(--gold);
+    background: rgba(214, 164, 90, 0.2);
+    box-shadow: 
+        0 20px 40px rgba(214, 164, 90, 0.3),
+        0 0 30px rgba(214, 164, 90, 0.1);
+}
+
+.stat-number {
+    display: block;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+    font-family: 'Playfair Display', serif;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: #f5f2ee;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover .stat-label {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(214, 164, 90, 0.3);
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--gold);
+    font-size: 1.5rem;
+    z-index: 10;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--gold);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.gallery-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px rgba(214, 164, 90, 0.3);
+    position: relative;
+    z-index: 2;
+}
+
+.gallery-subtitle {
+    font-size: 1.4rem;
+    color: #d6a45a;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.gallery-description {
+    font-size: 1.1rem;
+    color: #f5f2ee;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.gallery-item {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.5s ease;
+    position: relative;
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+    background: #1a1a1a;
+    border: 2px solid rgba(214, 164, 90, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(214, 164, 90, 0.1), transparent);
+    transition: all 0.6s ease;
+    opacity: 0;
+    transform: translateX(-100%);
+}
+
+.gallery-item:hover::before {
+    animation: galleryShimmer 0.8s ease;
+}
+
+@keyframes galleryShimmer {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.gallery-item:hover {
+    transform: translateY(-15px) scale(1.05) rotateZ(2deg);
+    border-color: var(--gold);
+    box-shadow: 
+        0 20px 40px rgba(214, 164, 90, 0.4),
+        0 0 30px rgba(214, 164, 90, 0.2);
+    background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: all 0.5s ease;
+    filter: grayscale(100%) brightness(0.8);
+}
+
+.gallery-item:hover img {
+    filter: grayscale(0%) brightness(1.1) saturate(1.2);
+    transform: scale(1.1);
+}
+
+.btn-rebellion {
+    background: #000;
+    color: var(--gold);
+    border: 2px solid #000;
+    padding: 15px 40px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.btn-rebellion:hover {
+    background: transparent;
+    color: #000;
+    border-color: #000;
+    transform: scale(1.05);
+}
+
+.manifesto-quote {
+    font-size: 1.3rem;
+    font-style: italic;
+    color: #f5f2ee;
+    line-height: 1.8;
+    margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+    .hero-content-box h1 {
+        font-size: 2.5rem;
+    }
+    
+    .philosophy-section h2 {
+        font-size: 2rem;
+    }
+    
+    .manifesto-section h2 {
+        font-size: 2.5rem;
+    }
+}

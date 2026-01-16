@@ -1,0 +1,338 @@
+/* Admin Mobile Responsive Styles */
+@media (max-width: 768px) {
+    /* Sidebar Hidden on Mobile */
+    .admin-sidebar {
+        width: 0 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+        z-index: 9999 !important;
+    }
+    
+    .admin-sidebar.show {
+        width: 280px !important;
+        transform: translateX(0) !important;
+    }
+    
+    .admin-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    .admin-content {
+        padding: 1rem !important;
+        margin-top: 80px !important;
+    }
+    
+    .admin-header {
+        padding: 1rem !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: #000 !important;
+        z-index: 998 !important;
+        border-bottom: 1px solid #333 !important;
+    }
+    
+    .admin-header h1, .admin-header h2 {
+        font-size: 1.5rem !important;
+        margin: 0 !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        hyphens: auto !important;
+    }
+    
+    .admin-header p {
+        font-size: 0.9rem !important;
+        margin: 0 !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+    
+    /* Mobile Toggle Button */
+    .mobile-toggle {
+        display: block !important;
+        position: fixed !important;
+        top: 20px !important;
+        left: 20px !important;
+        z-index: 9999 !important;
+        background: #d6a45a !important;
+        color: #000 !important;
+        border: none !important;
+        padding: 10px 15px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        font-size: 18px !important;
+    }
+    
+    /* Admin Cards */
+    .admin-card {
+        margin-bottom: 1.5rem !important;
+        padding: 1rem !important;
+        border-radius: 12px !important;
+        background: #111 !important;
+        border: 1px solid #333 !important;
+    }
+    
+    /* Mobile Table - Horizontal Scroll for Large Tables */
+    .table-responsive {
+        border: 1px solid #333 !important;
+        background: #111 !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 8px !important;
+    }
+    
+    table {
+        min-width: 800px !important;
+        width: 100% !important;
+    }
+    
+    table thead {
+        display: table-header-group !important;
+        background: #222 !important;
+    }
+    
+    table thead th {
+        padding: 12px 8px !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        color: #d6a45a !important;
+        border-bottom: 2px solid #333 !important;
+        white-space: nowrap !important;
+        text-align: left !important;
+    }
+    
+    table tbody {
+        display: table-row-group !important;
+        width: 100% !important;
+    }
+    
+    table tbody tr {
+        display: table-row !important;
+        border-bottom: 1px solid #333 !important;
+        background: #111 !important;
+    }
+    
+    table tbody tr:hover {
+        background: #1a1a1a !important;
+    }
+    
+    table tbody td {
+        display: table-cell !important;
+        padding: 12px 8px !important;
+        border: none !important;
+        font-size: 0.85rem !important;
+        vertical-align: middle !important;
+        white-space: nowrap !important;
+        word-wrap: normal !important;
+    }
+    
+    /* For very long text, allow wrapping in specific columns */
+    table tbody td:nth-child(2),
+    table tbody td:nth-child(3) {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        min-width: 150px !important;
+        max-width: 200px !important;
+    }
+    
+    /* Status Badges */
+    .badge {
+        display: inline-block !important;
+        padding: 0.4rem 0.8rem !important;
+        border-radius: 12px !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        margin: 0.25rem !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Action Buttons */
+    .btn-group {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 0.25rem !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    .btn-group .btn {
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 6px !important;
+        font-size: 0.8rem !important;
+        white-space: nowrap !important;
+        min-width: auto !important;
+    }
+    
+    /* Forms */
+    .form-control, .form-select {
+        font-size: 16px !important;
+        padding: 0.75rem !important;
+        border-radius: 8px !important;
+        background: #222 !important;
+        border: 1px solid #444 !important;
+        color: #fff !important;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #d6a45a !important;
+        box-shadow: 0 0 0 0.2rem rgba(214, 164, 90, 0.25) !important;
+    }
+    
+    /* Grid Layout */
+    .row {
+        margin: 0 !important;
+    }
+    
+    .col-md-3, .col-md-4, .col-md-6, .col-md-8, .col-md-9, .col-md-12 {
+        width: 100% !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Statistics Cards */
+    .stat-card {
+        background: linear-gradient(135deg, #111, #222) !important;
+        border: 1px solid #333 !important;
+        border-radius: 12px !important;
+        padding: 1.5rem !important;
+        margin-bottom: 1rem !important;
+        text-align: center !important;
+    }
+    
+    .stat-card h3 {
+        font-size: 2rem !important;
+        color: #d6a45a !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .stat-card p {
+        font-size: 0.9rem !important;
+        color: #ccc !important;
+        margin: 0 !important;
+    }
+    
+    /* Modal Mobile */
+    .modal-dialog {
+        margin: 1rem !important;
+        max-width: 100% !important;
+    }
+    
+    .modal-content {
+        border-radius: 12px !important;
+        border: 1px solid #333 !important;
+    }
+    
+    .modal-body {
+        padding: 1.5rem !important;
+    }
+    
+    /* Close Sidebar when clicking outside */
+    .admin-overlay {
+        display: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        z-index: 9998 !important;
+    }
+    
+    .admin-overlay.show {
+        display: block !important;
+    }
+    
+    /* Text wrapping for long content */
+    .text-wrap {
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        hyphens: auto !important;
+    }
+    
+    /* Navbar collapse - Hamburger menu */
+    .navbar-collapse {
+        position: fixed !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 280px !important;
+        height: 100vh !important;
+        background: #111 !important;
+        border-right: 2px solid #d6a45a !important;
+        transition: left 0.3s ease !important;
+        z-index: 9999 !important;
+        padding: 80px 20px 20px !important;
+        overflow-y: auto !important;
+    }
+    
+    .navbar-collapse.show {
+        left: 0 !important;
+    }
+    
+    .navbar-nav {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    .navbar-nav .nav-item {
+        width: 100% !important;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 1rem !important;
+        border-radius: 8px !important;
+        transition: background 0.3s ease !important;
+    }
+    
+    .navbar-nav .nav-link:hover {
+        background: #222 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-content {
+        padding: 0.75rem !important;
+    }
+    
+    .admin-card {
+        padding: 0.75rem !important;
+    }
+    
+    .mobile-toggle {
+        top: 15px !important;
+        left: 15px !important;
+        padding: 8px 12px !important;
+        font-size: 16px !important;
+    }
+    
+    .admin-header h1, .admin-header h2 {
+        font-size: 1.3rem !important;
+    }
+    
+    .btn-group .btn {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    table thead th {
+        padding: 8px 6px !important;
+        font-size: 0.75rem !important;
+    }
+    
+    table tbody td {
+        padding: 8px 6px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .badge {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.7rem !important;
+    }
+    
+    /* Even smaller table minimum width */
+    table {
+        min-width: 700px !important;
+    }
+}

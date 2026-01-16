@@ -301,192 +301,105 @@
             
             .admin-content {
                 padding: 1rem !important;
-                margin-top: 80px !important;
             }
             
-            .admin-header h1, .admin-header h2 {
+            .admin-header h1 {
                 font-size: 1.5rem !important;
-                margin: 0 !important;
-                word-wrap: break-word !important;
-                overflow-wrap: break-word !important;
-                hyphens: auto !important;
             }
             
-            .admin-header p {
-                font-size: 0.9rem !important;
-                margin: 0 !important;
-                word-wrap: break-word !important;
-                overflow-wrap: break-word !important;
-            }
-            
-            /* Mobile Toggle Button */
-            .mobile-toggle {
-                display: block !important;
-                position: fixed !important;
-                top: 20px !important;
-                left: 20px !important;
-                z-index: 9999 !important;
-                background: #d6a45a !important;
-                color: #000 !important;
+            /* Mobile Table - Card Layout */
+            .table-responsive {
                 border: none !important;
-                padding: 10px 15px !important;
-                border-radius: 8px !important;
-                cursor: pointer !important;
-                font-size: 18px !important;
-            }
-            
-            /* Admin Cards */
-            .admin-card {
-                margin-bottom: 1.5rem !important;
-                padding: 1rem !important;
-                border-radius: 12px !important;
-                background: #111 !important;
-                border: 1px solid #333 !important;
-            }
-            
-            /* Mobile Table - Horizontal Scroll for Large Tables */
-            .admin-table-container {
-                border: 1px solid #333 !important;
-                background: #111 !important;
-                overflow-x: auto !important;
-                -webkit-overflow-scrolling: touch !important;
-                border-radius: 8px !important;
+                background: transparent !important;
             }
             
             table {
-                min-width: 800px !important;
+                display: block !important;
                 width: 100% !important;
             }
             
             table thead {
-                display: table-header-group !important;
-                background: #222 !important;
-            }
-            
-            table thead th {
-                padding: 12px 8px !important;
-                font-size: 0.8rem !important;
-                font-weight: 600 !important;
-                color: #d6a45a !important;
-                border-bottom: 2px solid #333 !important;
-                white-space: nowrap !important;
-                text-align: left !important;
+                display: none !important;
             }
             
             table tbody {
-                display: table-row-group !important;
+                display: block !important;
                 width: 100% !important;
             }
             
             table tbody tr {
-                display: table-row !important;
-                border-bottom: 1px solid #333 !important;
-                background: #111 !important;
-            }
-            
-            table tbody tr:hover {
+                display: block !important;
+                margin-bottom: 1.5rem !important;
                 background: #1a1a1a !important;
+                border: 2px solid #d6a45a !important;
+                border-radius: 12px !important;
+                padding: 1rem !important;
+                box-shadow: 0 4px 12px rgba(214, 164, 90, 0.2) !important;
             }
             
             table tbody td {
-                display: table-cell !important;
-                padding: 12px 8px !important;
+                display: block !important;
+                text-align: left !important;
+                padding: 0.75rem 0 !important;
                 border: none !important;
-                font-size: 0.85rem !important;
-                vertical-align: middle !important;
-                white-space: nowrap !important;
-                word-wrap: normal !important;
+                position: relative !important;
+                padding-left: 50% !important;
+                min-height: 40px !important;
             }
             
-            /* For very long text, allow wrapping in specific columns */
-            table tbody td:nth-child(2),
-            table tbody td:nth-child(3) {
-                white-space: normal !important;
-                word-wrap: break-word !important;
-                overflow-wrap: break-word !important;
-                min-width: 150px !important;
-                max-width: 200px !important;
-            }
-            
-            /* Status Badges */
-            .badge {
-                display: inline-block !important;
-                padding: 0.4rem 0.8rem !important;
-                border-radius: 12px !important;
-                font-size: 0.75rem !important;
+            table tbody td::before {
+                content: attr(data-label) !important;
+                position: absolute !important;
+                left: 0 !important;
+                width: 45% !important;
+                padding-right: 10px !important;
                 font-weight: 600 !important;
-                margin: 0.25rem !important;
-                white-space: nowrap !important;
+                color: #d6a45a !important;
+                text-align: left !important;
             }
             
-            /* Action Buttons */
+            table tbody td:first-child {
+                padding-top: 0 !important;
+                font-weight: 700 !important;
+                color: #d6a45a !important;
+                font-size: 1.1rem !important;
+                padding-left: 0 !important;
+                border-bottom: 1px solid rgba(214, 164, 90, 0.3) !important;
+                padding-bottom: 0.75rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            table tbody td:first-child::before {
+                display: none !important;
+            }
+            
+            table tbody td:last-child {
+                padding-bottom: 0 !important;
+            }
+            
+            /* Button Groups on Mobile */
             .btn-group {
                 display: flex !important;
-                flex-direction: row !important;
-                gap: 0.25rem !important;
-                flex-wrap: nowrap !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                gap: 0.5rem !important;
             }
             
             .btn-group .btn {
-                padding: 0.5rem 0.75rem !important;
-                border-radius: 6px !important;
-                font-size: 0.8rem !important;
-                white-space: nowrap !important;
-                min-width: auto !important;
-            }
-            
-            /* Forms */
-            .form-control, .form-select {
-                font-size: 16px !important;
-                padding: 0.75rem !important;
-                border-radius: 8px !important;
-                background: #222 !important;
-                border: 1px solid #444 !important;
-                color: #fff !important;
-            }
-            
-            .form-control:focus, .form-select:focus {
-                border-color: #d6a45a !important;
-                box-shadow: 0 0 0 0.2rem rgba(214, 164, 90, 0.25) !important;
-            }
-            
-            /* Grid Layout */
-            .row {
+                width: 100% !important;
                 margin: 0 !important;
             }
             
-            .col-md-3, .col-md-4, .col-md-6, .col-md-8, .col-md-9, .col-md-12 {
+            /* Filters on Mobile */
+            .filters {
+                flex-direction: column !important;
+            }
+            
+            .filters select,
+            .filters input {
                 width: 100% !important;
-                margin-bottom: 1rem !important;
+                margin-bottom: 0.5rem !important;
             }
-            
-            /* Close Sidebar when clicking outside */
-            .admin-overlay {
-                display: none !important;
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                background: rgba(0, 0, 0, 0.5) !important;
-                z-index: 9998 !important;
-            }
-            
-            .admin-overlay.show {
-                display: block !important;
-            }
-        }
-        
-        /* Table Styles */
-        .admin-table-container {
-            overflow-x: auto !important;
-            border: 1px solid #333 !important;
-            border-radius: 8px !important;
-            background: #111 !important;
-        }
-        
-        .admin-table-container table {
-            min-width: 800px !important;
         }
     </style>
 </head>
@@ -564,80 +477,68 @@
                             <input type="date" class="form-control" id="dateFilter" placeholder="Filter by date">
                         </div>
                         <div class="col-md-4">
-                            <input type="text" class="form-control" id="searchFilter" placeholder="Search by customer name or email">
-                        </div>
                     </div>
-                </div>
 
-                <!-- Cart Requests Table -->
-                <div class="admin-card">
-                    <h3 class="mb-3">Customer Orders</h3>
-                    <div class="admin-table-container">
-                        <table class="table table-dark">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Items</th>
-                                    <th>Total</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                    <!-- Filter and Search -->
+                    <div class="admin-card mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="processing">Processing</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="date" class="form-control" id="dateFilter" placeholder="Filter by date">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="searchFilter" placeholder="Search by customer name or email">
+                            </div>
+                        </div>
+                                    <td data-label="Customer">
+                                        <strong><%= request.customerName %></strong><br>
+                                        <small style="color: #ccc;"><%= request.email %></small>
+                                    </td>
+                                    <td data-label="Items">
+                                        <% request.items.forEach(item => { %>
+                                            <span class="badge bg-info me-1"><%= item %></span>
+                                        <% }); %>
+                                    </td>
+                                    <td data-label="Total" class="fw-bold">₹<%= request.total.toFixed(2) %></td>
+                                    <td data-label="Date"><%= new Date(request.date).toLocaleDateString() %></td>
+                                    <td data-label="Status">
+                                        <span class="badge bg-<%= request.status === 'completed' ? 'success' : request.status === 'pending' ? 'warning' : request.status === 'cancelled' ? 'danger' : 'secondary' %>">
+                                            <%= request.status.charAt(0).toUpperCase() + request.status.slice(1) %>
+                                        </span>
+                                    </td>
+                                    <td data-label="Actions">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewOrder('<%= request.id %>')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <% if (request.status === 'pending') { %>
+                                                <form method="POST" action="/admin/cart-requests/<%= request.id %>/update" class="d-inline">
+                                                    <input type="hidden" name="status" value="completed">
+                                                    <button type="submit" class="btn btn-sm btn-success" title="Mark as Completed">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="POST" action="/admin/cart-requests/<%= request.id %>/update" class="d-inline">
+                                                    <input type="hidden" name="status" value="cancelled">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Cancel Order" onclick="return confirm('Are you sure you want to cancel this order?')">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </form>
+                                            <% } else { %>
+                                                <span class="text-muted small">No actions available</span>
+                                            <% } %>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <% if (cartRequests && cartRequests.length > 0) { %>
-                                    <% cartRequests.forEach(request => { %>
-                                    <tr>
-                                        <td data-label="Order ID">#CR<%= request.id.toString().padStart(3, '0') %></td>
-                                        <td data-label="Customer">
-                                            <strong><%= request.customerName %></strong><br>
-                                            <small style="color: #ccc;"><%= request.email %></small>
-                                        </td>
-                                        <td data-label="Items">
-                                            <% request.items.forEach(item => { %>
-                                                <span class="badge bg-info me-1"><%= item %></span>
-                                            <% }); %>
-                                        </td>
-                                        <td data-label="Total" class="fw-bold">₹<%= request.total.toFixed(2) %></td>
-                                        <td data-label="Date"><%= new Date(request.date).toLocaleDateString() %></td>
-                                        <td data-label="Status">
-                                            <span class="badge bg-<%= request.status === 'completed' ? 'success' : request.status === 'pending' ? 'warning' : request.status === 'cancelled' ? 'danger' : 'secondary' %>">
-                                                <%= request.status.charAt(0).toUpperCase() + request.status.slice(1) %>
-                                            </span>
-                                        </td>
-                                        <td data-label="Actions">
-                                            <div class="btn-group" role="group">
-                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewOrder('<%= request.id %>')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <% if (request.status === 'pending') { %>
-                                                    <form method="POST" action="/admin/cart-requests/<%= request.id %>/update" class="d-inline">
-                                                        <input type="hidden" name="status" value="completed">
-                                                        <button type="submit" class="btn btn-sm btn-success" title="Mark as Completed">
-                                                            <i class="fas fa-check"></i>
-                                                        </button>
-                                                    </form>
-                                                    <form method="POST" action="/admin/cart-requests/<%= request.id %>/update" class="d-inline">
-                                                        <input type="hidden" name="status" value="cancelled">
-                                                        <button type="submit" class="btn btn-sm btn-danger" title="Cancel Order" onclick="return confirm('Are you sure you want to cancel this order?')">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-                                                    </form>
-                                                <% } else { %>
-                                                    <span class="text-muted small">No actions available</span>
-                                                <% } %>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <% }); %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="7" class="text-center" style="color: #ccc; font-style: italic; padding: 2rem;">
-                                            No cart requests found.
-                                        </td>
-                                    </tr>
-                                <% } %>
+                                <% }); %>
                             </tbody>
                         </table>
                     </div>
