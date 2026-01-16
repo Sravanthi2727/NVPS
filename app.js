@@ -597,13 +597,13 @@ app.get("/workshops", async (req, res) => {
       
       try {
         // Fetch workshops from database - dynamic data only
-        upcomingWorkshops = await WorkshopModel.find({ 
+        upcomingWorkshops = await Workshop.find({ 
           type: 'upcoming', 
           isActive: true,
           date: { $gte: new Date() } // Only show future workshops
         }).sort({ date: 1, displayOrder: 1 });
         
-        pastWorkshops = await WorkshopModel.find({ 
+        pastWorkshops = await Workshop.find({ 
           type: 'past', 
           isActive: true 
         }).sort({ date: -1, displayOrder: 1 });
