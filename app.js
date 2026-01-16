@@ -14,7 +14,14 @@ require("dotenv").config();
 
 // Database connection
 const connectDB = require("./config/database");
+const mongoose = require("mongoose");
 const User = require("./models/User");
+const MenuItem = require("./models/MenuItem");
+const Workshop = require("./models/Workshop");
+const WorkshopRegistration = require("./models/WorkshopRegistration");
+const Artwork = require("./models/Artwork");
+const Order = require("./models/Order");
+const Franchise = require("./models/Franchise");
 
 // Import middleware
 const { getUserData } = require('./middleware/auth');
@@ -216,11 +223,14 @@ function ensureAdmin(req, res, next) {
   // res.redirect('/signin');
 }
 
-// Use Routes
+// Use Routes - Register API routes FIRST
+console.log("🤖 Registering Gemini routes at /api/gemini");
+app.use("/api/gemini", geminiRoutes);
+console.log("✅ Gemini routes registered");
+
 app.use("/", homeRoutes);
 app.use("/", authRoutes);
 app.use("/admin", adminRoutes);
-app.use("/api/gemini", geminiRoutes);
 
 // Home route - No cache because of user-specific content
 app.get("/", (req, res) => {

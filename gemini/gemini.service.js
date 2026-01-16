@@ -63,7 +63,10 @@ async function askGemini(userMessage) {
       buildWorkshopContext()
     ]);
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // Use gemini-2.5-flash (latest stable model)
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.5-flash"
+    });
 
     const prompt = `${RABUSTE_PERSONA}
 
@@ -79,8 +82,13 @@ User Question: ${userMessage}`;
     const response = await result.response;
     return response.text();
   } catch (error) {
-    console.error("Gemini error:", error);
-    throw new Error("Gemini failed");
+    // Silent error - just log once without full stack trace
+    if (!global.geminiErrorLogged) {
+      console.error("⚠️  Gemini API error:", error.message);
+      global.geminiErrorLogged = true;
+    }
+    // Return a friendly error message instead of throwing
+    return "I'm having trouble connecting to my AI brain right now. Please try again in a moment, or feel free to browse our menu and workshops! ☕";
   }
 }
 
