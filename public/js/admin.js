@@ -1,253 +1,109 @@
-// Admin Dashboard JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+// Admin Dashboard Common JavaScript
 
-    // Filter functionality
-    initializeFilters();
-    
-    // Auto-refresh functionality
-    initializeAutoRefresh();
-    
-    // Form validation
-    initializeFormValidation();
-});
-
-// Filter functionality for tables
-function initializeFilters() {
-    const statusFilter = document.getElementById('statusFilter');
-    const dateFilter = document.getElementById('dateFilter');
-    const searchFilter = document.getElementById('searchFilter');
-    const workshopFilter = document.getElementById('workshopFilter');
-    const roleFilter = document.getElementById('roleFilter');
-
-    // Status filter
-    if (statusFilter) {
-        statusFilter.addEventListener('change', function() {
-            filterTable('status', this.value);
-        });
-    }
-
-    // Date filter
-    if (dateFilter) {
-        dateFilter.addEventListener('change', function() {
-            filterTable('date', this.value);
-        });
-    }
-
-    // Search filter
-    if (searchFilter) {
-        searchFilter.addEventListener('input', function() {
-            filterTable('search', this.value);
-        });
-    }
-
-    // Workshop filter
-    if (workshopFilter) {
-        workshopFilter.addEventListener('change', function() {
-            filterTable('workshop', this.value);
-        });
-    }
-
-    // Role filter
-    if (roleFilter) {
-        roleFilter.addEventListener('change', function() {
-            filterTable('role', this.value);
-        });
-    }
-}
-
-// Filter table rows based on criteria
-function filterTable(filterType, filterValue) {
-    const table = document.querySelector('.admin-table tbody');
-    if (!table) return;
-
-    const rows = table.querySelectorAll('tr');
+// Generic table filter function
+function filterTable(tableSelector, filters) {
+    const rows = document.querySelectorAll(`${tableSelector} tbody tr`);
     
     rows.forEach(row => {
-        let shouldShow = true;
+        let showRow = true;
+        const cells = row.querySelectorAll('td');
         
-        switch(filterType) {
-            case 'status':
-                if (filterValue) {
-                    const statusBadge = row.querySelector('.badge');
-                    const status = statusBadge ? statusBadge.textContent.toLowerCase().trim() : '';
-                    shouldShow = status.includes(filterValue.toLowerCase());
-                }
-                break;
-                
-            case 'search':
-                if (filterValue) {
-                    const text = row.textContent.toLowerCase();
-                    shouldShow = text.includes(filterValue.toLowerCase());
-                }
-                break;
-                
-            case 'workshop':
-                if (filterValue) {
-                    const workshopCell = row.querySelector('.workshop-info');
-                    const workshop = workshopCell ? workshopCell.textContent.toLowerCase() : '';
-                    shouldShow = workshop.includes(filterValue.toLowerCase());
-                }
-                break;
-                
-            case 'role':
-                if (filterValue) {
-                    const roleBadge = row.querySelectorAll('.badge')[0];
-                    const role = roleBadge ? roleBadge.textContent.toLowerCase().trim() : '';
-                    shouldShow = role.includes(filterValue.toLowerCase());
-                }
-                break;
-        }
-        
-        row.style.display = shouldShow ? '' : 'none';
-    });
-    
-    updateTableStats();
-}
-
-// Update table statistics after filtering
-function updateTableStats() {
-    const table = document.querySelector('.admin-table tbody');
-    if (!table) return;
-    
-    const totalRows = table.querySelectorAll('tr').length;
-    const visibleRows = table.querySelectorAll('tr:not([style*="display: none"])').length;
-    
-    // Update any stats display if exists
-    const statsElement = document.querySelector('.table-stats');
-    if (statsElement) {
-        statsElement.textContent = `Showing ${visibleRows} of ${totalRows} entries`;
-    }
-}
-
-// Auto-refresh functionality
-function initializeAutoRefresh() {
-    const refreshButton = document.getElementById('refreshButton');
-    if (refreshButton) {
-        refreshButton.addEventListener('click', function() {
-            location.reload();
-        });
-    }
-    
-    // Auto-refresh every 5 minutes for dashboard
-    if (window.location.pathname === '/admin') {
-        setInterval(function() {
-            // Only refresh if user is still active (not idle)
-            if (document.hasFocus()) {
-                updateDashboardStats();
-            }
-        }, 300000); // 5 minutes
-    }
-}
-
-// Update dashboard statistics
-function updateDashboardStats() {
-    // This would typically make AJAX calls to get updated stats
-    console.log('Updating dashboard statistics...');
-    
-    // Example: Update card numbers
-    const cards = document.querySelectorAll('.admin-card-number');
-    cards.forEach(card => {
-        // Add a subtle animation to indicate update
-        card.style.opacity = '0.7';
-        setTimeout(() => {
-            card.style.opacity = '1';
-        }, 500);
-    });
-}
-
-// Form validation
-function initializeFormValidation() {
-    const forms = document.querySelectorAll('form');
-    
-    forms.forEach(form => {
-        form.addEventListener('submit', function(event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
+        // Apply each filter
+        for (const [filterType, filterValue] of Object.entries(filters)) {
+            if (!filterValue) continue; // Skip empty filters
             
-            form.classList.add('was-validated');
-        });
-    });
-}
-
-// Utility functions
-function showAlert(message, type = 'info') {
-    const alertContainer = document.getElementById('alertContainer') || document.body;
-    const alert = document.createElement('div');
-    alert.className = `alert alert-${type} alert-dismissible fade show`;
-    alert.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    alertContainer.insertBefore(alert, alertContainer.firstChild);
-    
-    // Auto-dismiss after 5 seconds
-    setTimeout(() => {
-        if (alert.parentNode) {
-            alert.remove();
+            const lowerFilterValue = filterValue.toLowerCase();
+            
+            switch(filterType) {
+                case 'status':
+                    const statusBadge = row.querySelector('.badge');
+                    if (statusBadge) {
+                        const status = statusBadge.textContent.toLowerCase();
+                        if (!status.includes(lowerFilterValue)) {
+                            showRow = false;
+                        }
+                    }
+                    break;
+                    
+                case 'search':
+                    let found = false;
+                    cells.forEach(cell => {
+                        if (cell.textContent.toLowerCase().includes(lowerFilterValue)) {
+                            found = true;
+                        }
+                    });
+                    if (!found) showRow = false;
+                    break;
+                    
+                case 'date':
+                    const dateCell = Array.from(cells).find(cell => {
+                        const text = cell.textContent;
+                        return text.match(/\d{1,2}\/\d{1,2}\/\d{4}/) || text.match(/\d{4}-\d{2}-\d{2}/);
+                    });
+                    if (dateCell) {
+                        const cellDate = dateCell.textContent;
+                        if (!cellDate.includes(filterValue)) {
+                            showRow = false;
+                        }
+                    }
+                    break;
+            }
         }
-    }, 5000);
-}
-
-function confirmAction(message, callback) {
-    if (confirm(message)) {
-        callback();
-    }
-}
-
-// Export functions for use in other scripts
-window.adminUtils = {
-    showAlert,
-    confirmAction,
-    filterTable,
-    updateDashboardStats
-};
-
-// Keyboard shortcuts
-document.addEventListener('keydown', function(event) {
-    // Ctrl/Cmd + R for refresh
-    if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
-        event.preventDefault();
-        location.reload();
-    }
-    
-    // Escape to close modals
-    if (event.key === 'Escape') {
-        const openModal = document.querySelector('.modal.show');
-        if (openModal) {
-            bootstrap.Modal.getInstance(openModal).hide();
-        }
-    }
-});
-
-// Handle form submissions with loading states
-document.addEventListener('submit', function(event) {
-    const form = event.target;
-    const submitButton = form.querySelector('button[type="submit"]');
-    
-    if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
         
-        // Re-enable after 3 seconds as fallback
-        setTimeout(() => {
-            submitButton.disabled = false;
-            submitButton.innerHTML = submitButton.dataset.originalText || 'Submit';
-        }, 3000);
-    }
-});
-
-// Store original button text for loading states
-document.addEventListener('DOMContentLoaded', function() {
-    const submitButtons = document.querySelectorAll('button[type="submit"]');
-    submitButtons.forEach(button => {
-        button.dataset.originalText = button.innerHTML;
+        row.style.display = showRow ? '' : 'none';
     });
+}
+
+// Initialize filters for a page
+function initializeFilters(tableSelector) {
+    const statusFilter = document.getElementById('statusFilter');
+    const searchFilter = document.getElementById('searchFilter') || document.getElementById('searchInput');
+    const dateFilter = document.getElementById('dateFilter');
+    const paymentFilter = document.getElementById('paymentFilter');
+    
+    const applyFilters = () => {
+        const filters = {};
+        
+        if (statusFilter) filters.status = statusFilter.value;
+        if (searchFilter) filters.search = searchFilter.value;
+        if (dateFilter) filters.date = dateFilter.value;
+        if (paymentFilter) filters.payment = paymentFilter.value;
+        
+        filterTable(tableSelector, filters);
+    };
+    
+    if (statusFilter) {
+        statusFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (searchFilter) {
+        searchFilter.addEventListener('input', applyFilters);
+    }
+    
+    if (dateFilter) {
+        dateFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (paymentFilter) {
+        paymentFilter.addEventListener('change', applyFilters);
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Check which admin page we're on and initialize appropriate filters
+    const currentPath = window.location.pathname;
+    
+    if (currentPath.includes('/admin/cart-requests')) {
+        initializeFilters('.admin-table table');
+    } else if (currentPath.includes('/admin/art-requests')) {
+        initializeFilters('.admin-table table');
+    } else if (currentPath.includes('/admin/workshop-requests')) {
+        initializeFilters('table');
+    } else if (currentPath.includes('/admin/users')) {
+        initializeFilters('.admin-table table');
+    } else if (currentPath.includes('/admin/franchise')) {
+        // Franchise page has its own filter logic
+        console.log('Franchise page - using custom filters');
+    }
 });

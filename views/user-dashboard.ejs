@@ -1439,6 +1439,9 @@ document.addEventListener('DOMContentLoaded', async function() {
       franchise: franchise.length
     });
 
+    // Store orders globally for filtering
+    window.allOrders = orders;
+
     renderWishlist(wishlist);
     renderCart(cart);
     renderOrders(orders);
@@ -1462,9 +1465,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   } catch (error) {
     console.error('Error loading dashboard data:', error);
   }
-
-  // Store orders globally for filtering
-  window.allOrders = orders;
 
   // Add event listeners for order filters
   const statusFilter = document.getElementById('orderStatusFilter');
