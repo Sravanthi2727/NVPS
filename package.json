@@ -4,6 +4,7 @@
   "main": "app.js",
   "scripts": {
     "test": "jest",
+    "start": "node app.js",
     "test:watch": "jest --watch",
     "optimize-images": "node scripts/optimize-images.js",
     "init-artworks": "node init/init-artworks.js",
@@ -16,8 +17,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google/genai": "^1.36.0",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
@@ -39,5 +42,16 @@
     "jest-environment-jsdom": "^30.2.0",
     "jsdom": "^27.4.0",
     "supertest": "^7.1.4"
-  }
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sravanthi2727/NVPS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sravanthi2727/NVPS/issues"
+  },
+  "homepage": "https://github.com/Sravanthi2727/NVPS#readme"
 }
