@@ -198,8 +198,8 @@ app.use(getUserData);
 // Mount admin routes
 app.use('/admin', adminRoutes);
 
-// Home route - Cache for 10 minutes
-app.get("/", viewCacheMiddleware(600), (req, res) => {
+// Home route - No cache because of user-specific content
+app.get("/", (req, res) => {
   res.render("home", {
     title: "Rabuste Coffee - Premium Robusta Coffee & Art",
     description:

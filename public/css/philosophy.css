@@ -520,3 +520,71 @@ body {
         font-size: 2.5rem;
     }
 }
+
+/* Animation Keyframes */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px) translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px) translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
+}
+
+@keyframes manifestoEntrance {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes galleryEntrance {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Philosophy card animation classes */
+.philosophy-card.animate-left {
+    animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.philosophy-card.animate-right {
+    animation: slideInRight 0.8s ease-out forwards;
+}
+
+.manifesto-section {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+    transition: all 1s ease-out;
+}
+
+.manifesto-section.animate-manifesto {
+    animation: manifestoEntrance 1s ease-out forwards;
+}
+
+.gallery-item.animate-gallery {
+    animation: galleryEntrance 0.8s ease-out forwards;
+}
+
+.col-lg-6:nth-child(odd) .philosophy-card {
+    transform: translateX(-100px);
+}
+
+.col-lg-6:nth-child(even) .philosophy-card {
+    transform: translateX(100px);
+}
