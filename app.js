@@ -1,6 +1,6 @@
 /**
  * Rabuste Coffee Application - MVC Structure
- * Main application file with proper MVC organization
+ * Main application file with proper MVC organization (includes Gemini chatbot).
  */
 
 const express = require("express");
@@ -8,131 +8,79 @@ const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const mongoose = require('mongoose');
-const compression = require('compression');
-const helmet = require('helmet');
-
-require("dotenv").config();
 const path = require("path");
 
+require("dotenv").config();
+
 // Database connection
-const connectDB = require('./config/database');
-const User = require('./models/User');
-const MenuItem = require('./models/MenuItem');
-const Artwork = require('./models/Artwork');
-const WorkshopModel = require('./models/Workshop');
-const WorkshopRegistration = require('./models/WorkshopRegistration');
+const connectDB = require("./config/database");
+const User = require("./models/User");
 
 // Connect to database
 connectDB();
 
 const app = express();
 
-// Performance middleware
-app.use(compression()); // Compress all responses
-app.use(helmet({
-  contentSecurityPolicy: false, // Disable CSP for development
-  crossOriginEmbedderPolicy: false
-}));
-
-// Set caching headers for static assets
-app.use(express.static("public", {
-  maxAge: '1d', // Cache static files for 1 day
-  etag: true,
-  lastModified: true
-}));
-
- 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Database Models
-const Wishlist = require('./models/Wishlist');
-const Cart = require('./models/Cart');
-const Request = require('./models/Request');
-const Order = require('./models/Order');
-const Franchise = require('./models/Franchise');
-
-// Controllers
-const adminController = require('./src/controllers/adminController');
-
-// Routes
-const adminRoutes = require('./src/routes/adminRoutes');
-
-// Admin middleware
-function ensureAdmin(req, res, next) {
-  // Simple admin check - in production, implement proper admin authentication
-  // For now, just check if user is authenticated
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).json({ success: false, message: 'Admin access required' });
-}
-
+// Passport configuration
 passport.serializeUser((user, done) => {
-  console.log('Serializing user:', user.email || user.googleId);
-  done(null, user);
+  console.log("Serializing user:", user.email, "ID:", user._id || user.id);
+  done(null, user._id || user.id);
 });
 
-passport.deserializeUser((user, done) => {
-  console.log('Deserializing user:', user.email || user.googleId);
-  done(null, user);
+passport.deserializeUser(async (id, done) => {
+  try {
+    console.log("Deserializing user with ID:", id);
+    const user = await User.findById(id);
+    if (user) {
+      console.log("User deserialized:", user.email);
+    } else {
+      console.log("User not found for ID:", id);
+    }
+    done(null, user);
+  } catch (error) {
+    console.error("Deserialization error:", error);
+    done(error, null);
+  }
 });
- 
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Wait for database connection
-        if (mongoose.connection.readyState !== 1) {
-          console.log('Database not connected, waiting...');
-          await new Promise(resolve => setTimeout(resolve, 2000));
-        }
-
-        // Check again after waiting
-        if (mongoose.connection.readyState !== 1) {
-          return done(new Error('Database not connected'), null);
-        }
-
-        console.log('Google OAuth profile received:', {
+        console.log("Google OAuth profile received:", {
           id: profile.id,
           displayName: profile.displayName,
-          emails: profile.emails ? profile.emails.map(e => e.value) : 'No emails'
+          emails: profile.emails ? profile.emails.map((e) => e.value) : "No emails"
         });
-        
+
         if (!profile.emails || !profile.emails[0]) {
-          console.error('No email found in Google profile');
-          return done(new Error('No email found in Google profile'), null);
+          console.error("No email found in Google profile");
+          return done(new Error("No email found in Google profile"), null);
         }
-        
+
         const email = profile.emails[0].value.toLowerCase();
-        console.log('Looking for user with email:', email);
-        
-        let user = await User.findOne({ googleId: profile.id });
-        
+        console.log("Looking for user with email:", email);
+
+        let user = await User.findOne({ email: email });
+
         if (user) {
-          console.log('Existing user found:', user.email);
-          console.log('Returning user to passport:', user.email);
+          console.log("Existing user found:", user.email);
+          if (!user.isOAuthUser) {
+            user.isOAuthUser = true;
+            await user.save();
+            console.log("Updated user to OAuth user");
+          }
+          console.log("Returning user to passport:", user.email);
           return done(null, user);
         } else {
-          // Check if user exists with same email but different googleId
-          const existingEmailUser = await User.findOne({ email: email });
-          if (existingEmailUser) {
-            console.log('User with same email exists but different googleId');
-            return done(new Error('An account with this email already exists'), null);
-          }
-          console.log('Creating new user from Google profile');
-          // Create new user from Google profile with consistent field names
+          console.log("Creating new user from Google profile");
           user = new User({
-            googleId: profile.id,
-            name: profile.displayName || 'User',
+            name: profile.displayName || "User",
             email: email,
             isOAuthUser: true,
             cart: [],
@@ -140,12 +88,12 @@ passport.use(
             registered: []
           });
           await user.save();
-          console.log('New user created and saved:', user.email);
+          console.log("New user created and saved:", user.email);
           return done(null, user);
         }
       } catch (error) {
-        console.error('Google OAuth error:', error);
-        console.error('Error details:', {
+        console.error("Google OAuth error:", error);
+        console.error("Error details:", {
           message: error.message,
           stack: error.stack,
           name: error.name
@@ -167,9 +115,6 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
       sameSite: "lax"
     }
   })
@@ -177,13 +122,13 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static("public"));
 app.use(expressLayouts);
 
 app.set("layout", "layouts/boilerplate");
 
-// Import auth middleware
-const { getUserData } = require('./middleware/auth');
-const { viewCacheMiddleware, cacheMiddleware } = require('./middleware/cache');
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, "public")));
 
 // Middleware to make variables available to all views
 app.use((req, res, next) => {
@@ -192,6 +137,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// Import Routes
+const homeRoutes = require("./src/routes/homeRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+const adminRoutes = require("./src/routes/adminRoutes");
+const geminiRoutes = require("./gemini/gemini.route");
+
+// Use Routes
+app.use("/", homeRoutes);
+app.use("/", authRoutes);
+app.use("/admin", adminRoutes);
+app.use("/api/gemini", geminiRoutes);
 // Add user data middleware after passport setup
 app.use(getUserData);
 
@@ -896,6 +852,20 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
   });
 });
 
+// Test Google Maps page
+app.get('/test-maps', (req, res) => {
+  res.sendFile(path.join(__dirname, 'test-maps.html'));
+});
+
+// Debug route to check Google Maps API key
+app.get('/debug/google-maps-key', (req, res) => {
+  res.json({
+    apiKeyExists: !!process.env.GOOGLE_MAPS_API,
+    apiKeyLength: process.env.GOOGLE_MAPS_API ? process.env.GOOGLE_MAPS_API.length : 0,
+    apiKeyFirstChars: process.env.GOOGLE_MAPS_API ? process.env.GOOGLE_MAPS_API.substring(0, 10) + '...' : 'Not found'
+  });
+});
+
 // User Dashboard route
 app.get('/user-dashboard', ensureAuthenticated, (req, res) => {
   res.render('user-dashboard', {
@@ -903,7 +873,8 @@ app.get('/user-dashboard', ensureAuthenticated, (req, res) => {
     description: 'Manage your wishlist, cart, workshop registrations, and requests at Rabuste Coffee.',
     currentPage: '/user-dashboard',
     user: req.user,
-    currentUser: req.user
+    currentUser: req.user,
+    GOOGLE_MAPS_API: process.env.GOOGLE_MAPS_API
   });
 });
 
@@ -2224,13 +2195,31 @@ app.post('/api/cart/add', async (req, res) => {
     // Check if item already exists in cart
     const existingItemIndex = user.cart.findIndex(item => String(item.itemId) === String(itemId));
     
+    // Determine item type based on itemId and name
+    let itemType = 'menu'; // default to menu
+    if (name) {
+      // Check if it's an art item based on name
+      if (name.includes('Golden Horizon') || name.includes('City Lights') || 
+          name.includes('Eternal Flow') || name.includes('Digital Dreams') ||
+          name.includes('Mountain Serenity') || name.includes('Wilderness') ||
+          name.includes('by ')) {
+        itemType = 'art';
+      }
+    }
+    
+    // Check if itemId corresponds to art items
+    const artItemIds = ['golden_horizon', 'city_lights', 'eternal_flow', 'digital_dreams', 'mountain_serinity', 'wilderness'];
+    if (artItemIds.some(id => itemId.includes(id))) {
+      itemType = 'art';
+    }
+    
     if (existingItemIndex !== -1) {
       // Item exists, update quantity
       user.cart[existingItemIndex].quantity += quantity;
       console.log('Updated existing item quantity:', user.cart[existingItemIndex]);
     } else {
       // New item, add to cart
-      const cartItem = { itemId, name, price, image, quantity };
+      const cartItem = { itemId, name, price, image, quantity, type: itemType };
       user.cart.push(cartItem);
       console.log('Added new item to cart:', cartItem);
     }
@@ -2491,9 +2480,28 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
 
     // Filter items based on order type if not provided
     if (!items && orderType === 'menu') {
-      cartItems = user.cart.filter(item => item.type !== 'art' && 
-                                   !(item.image && item.image.includes('/assets/gallery/')) &&
-                                   !(item.name && (item.name.includes('by ') || item.name.includes('Wilderness') || item.name.includes('Mountain') || item.name.includes('Serenity'))));
+      cartItems = user.cart.filter(item => {
+        // Check if item has explicit type property
+        if (item.type === 'art') return false;
+        
+        // Check if item is from artworks.json structure
+        if (item.artist || item.category === 'painting' || item.category === 'photography' || 
+            item.category === 'sculpture' || item.category === 'digital') return false;
+        
+        // Check image paths for art items
+        if (item.image && (item.image.includes('/assets/gallery/') || 
+            item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+            item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+            item.image.includes('mountain_serinity') || item.image.includes('wilderness'))) return false;
+        
+        // Check item names that are clearly art pieces
+        if (item.name && (item.name.includes('by ') || 
+            item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+            item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+            item.name.includes('Mountain Serenity') || item.name.includes('Wilderness'))) return false;
+        
+        return true;
+      });
     }
 
     if (cartItems.length === 0) {
@@ -2570,6 +2578,118 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
 // Simple test route
 app.get('/test-route', (req, res) => {
   res.json({ message: 'Test route working!' });
+});
+
+// Fix: Update existing cart items with correct type
+app.post('/api/debug/fix-cart-types', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: 'Please login first' });
+    }
+    
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    let updatedCount = 0;
+    
+    // Update cart items with correct type
+    user.cart = user.cart.map(item => {
+      if (!item.type || item.type === 'NOT_SET') {
+        // Detect if this is an art item
+        const isArt = item.artist || 
+                     ['painting','photography','sculpture','digital'].includes(item.category) ||
+                     (item.image && (item.image.includes('/assets/gallery/') || 
+                      item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+                      item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+                      item.image.includes('mountain_serinity') || item.image.includes('wilderness'))) ||
+                     (item.name && (item.name.includes('by ') || 
+                      item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+                      item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+                      item.name.includes('Mountain Serenity') || item.name.includes('Wilderness')));
+        
+        item.type = isArt ? 'art' : 'menu';
+        updatedCount++;
+      }
+      return item;
+    });
+    
+    user.markModified('cart');
+    await user.save();
+    
+    res.json({
+      success: true,
+      message: `Updated ${updatedCount} cart items with correct type`,
+      totalItems: user.cart.length,
+      artItems: user.cart.filter(item => item.type === 'art').length,
+      menuItems: user.cart.filter(item => item.type === 'menu').length
+    });
+  } catch (error) {
+    console.error('Fix cart types error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Debug: Check cart items with type info
+app.get('/api/debug/cart-items', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: 'Please login first' });
+    }
+    
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Analyze cart items
+    const cartAnalysis = user.cart.map(item => {
+      const isArt = item.type === 'art' || 
+                   item.artist || 
+                   ['painting','photography','sculpture','digital'].includes(item.category) ||
+                   (item.image && (item.image.includes('/assets/gallery/') || 
+                    item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+                    item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+                    item.image.includes('mountain_serinity') || item.image.includes('wilderness'))) ||
+                   (item.name && (item.name.includes('by ') || 
+                    item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+                    item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+                    item.name.includes('Mountain Serenity') || item.name.includes('Wilderness')));
+      
+      return {
+        itemId: item.itemId,
+        name: item.name,
+        type: item.type || 'NOT_SET',
+        detectedAs: isArt ? 'art' : 'menu',
+        hasArtist: !!item.artist,
+        category: item.category,
+        image: item.image,
+        hasImagePaths: item.image && (item.image.includes('/assets/gallery/') || 
+                    item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+                    item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+                    item.image.includes('mountain_serinity') || item.image.includes('wilderness')),
+        hasArtName: item.name && (item.name.includes('by ') || 
+                    item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+                    item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+                    item.name.includes('Mountain Serenity') || item.name.includes('Wilderness'))
+      };
+    });
+    
+    res.json({
+      totalItems: user.cart.length,
+      artItems: cartAnalysis.filter(item => item.detectedAs === 'art').length,
+      menuItems: cartAnalysis.filter(item => item.detectedAs === 'menu').length,
+      items: cartAnalysis
+    });
+  } catch (error) {
+    console.error('Debug cart items error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Debug: Check menu items in database
@@ -2934,34 +3054,33 @@ app.get("/logout", (req, res, next) => {
 // Use admin routes - All admin routes are now handled by MVC structure
 app.use('/admin', adminRoutes);
 
-// 404 Handler - Must be after all other routes
-// app.use((req, res) => {
-//   res.status(404).send('Page Not Found');
-// });
+// 404 Handler
 app.use((req, res) => {
   console.log("404 HIT:", req.method, req.originalUrl);
   res.status(404).send("404: " + req.originalUrl);
 });
 
 // Error handling middleware
-app.use(function(err, req, res, next) {
-  console.error('Error stack:', err.stack);
-  console.error('Error details:', {
+app.use(function (err, req, res, next) {
+  console.error("Error stack:", err.stack);
+  console.error("Error details:", {
     message: err.message,
     name: err.name,
     path: req.path
   });
-  
+
   // If it's an OAuth error, redirect to signin
-  if (req.path && req.path.includes('/auth/google')) {
-    return res.redirect("/signin?error=google_auth_failed&message=" + encodeURIComponent(err.message || 'Authentication failed'));
+  if (req.path && req.path.includes("/auth/google")) {
+    return res.redirect(
+      "/signin?error=google_auth_failed&message=" +
+        encodeURIComponent(err.message || "Authentication failed")
+    );
   }
-  
-  res.status(500).send('Something went wrong');
+
+  res.status(500).send("Something went wrong");
 });
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => console.log(`Server running on port ${port}`));
 
 module.exports = app;
-

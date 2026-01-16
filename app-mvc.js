@@ -141,11 +141,13 @@ app.use((req, res, next) => {
 const homeRoutes = require('./src/routes/homeRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
+const geminiRoutes = require('./gemini/gemini.route');
 
 // Use Routes
 app.use('/', homeRoutes);
 app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
+app.use('/api/gemini', geminiRoutes);
 
 // 404 Handler
 app.use((req, res) => {

@@ -168,7 +168,6 @@
     ]
   },
   {
-
     "name": "Mocha",
     "description": "Perfect blend of coffee and chocolate",
     "price": 260,
@@ -186,10 +185,28 @@
         "customer": "Arjun Pillai",
         "rating": 5,
         "comment": "Worth the wait! Complex flavors and so refreshing."
-    }
+      }
+    ]
+  },
+  {
+    "name": "Affogato",
+    "description": "Classic Italian dessert - vanilla ice cream topped with hot espresso shot. Perfect blend of hot and cold.",
+    "price": 240,
+    "category": "desserts",
+    "subCategory": "coffee-desserts",
+    "image": "affogato.jpg",
+    "displayOrder": 65,
+    "reviews": [
+      {
+        "customer": "Sophie Martin",
+        "rating": 5,
+        "comment": "Perfect combination of hot espresso and cold ice cream! Classic Italian delight."
+      },
+      {
+        "customer": "Lucas Brown",
+        "rating": 4,
+        "comment": "Love the contrast of temperatures. Simple but elegant dessert."
+      }
     ]
   }
-  
-
-
 ]
