@@ -214,7 +214,8 @@ app.get("/", viewCacheMiddleware(600), (req, res) => {
     ogUrl: "https://rabustecoffee.com",
     ogImage: "/assets/coffee-bg.jpeg",
     canonicalUrl: "https://rabustecoffee.com",
-    user: req.user || null
+    user: req.user || null,
+    currentUser: req.user || null
   });
 });
 
