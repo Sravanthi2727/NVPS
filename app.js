@@ -820,6 +820,20 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
   });
 });
 
+// Test Google Maps page
+app.get('/test-maps', (req, res) => {
+  res.sendFile(path.join(__dirname, 'test-maps.html'));
+});
+
+// Debug route to check Google Maps API key
+app.get('/debug/google-maps-key', (req, res) => {
+  res.json({
+    apiKeyExists: !!process.env.GOOGLE_MAPS_API,
+    apiKeyLength: process.env.GOOGLE_MAPS_API ? process.env.GOOGLE_MAPS_API.length : 0,
+    apiKeyFirstChars: process.env.GOOGLE_MAPS_API ? process.env.GOOGLE_MAPS_API.substring(0, 10) + '...' : 'Not found'
+  });
+});
+
 // User Dashboard route
 app.get('/user-dashboard', ensureAuthenticated, (req, res) => {
   res.render('user-dashboard', {
@@ -827,7 +841,8 @@ app.get('/user-dashboard', ensureAuthenticated, (req, res) => {
     description: 'Manage your wishlist, cart, workshop registrations, and requests at Rabuste Coffee.',
     currentPage: '/user-dashboard',
     user: req.user,
-    currentUser: req.user
+    currentUser: req.user,
+    GOOGLE_MAPS_API: process.env.GOOGLE_MAPS_API
   });
 });
 
@@ -2148,13 +2163,31 @@ app.post('/api/cart/add', async (req, res) => {
     // Check if item already exists in cart
     const existingItemIndex = user.cart.findIndex(item => String(item.itemId) === String(itemId));
     
+    // Determine item type based on itemId and name
+    let itemType = 'menu'; // default to menu
+    if (name) {
+      // Check if it's an art item based on name
+      if (name.includes('Golden Horizon') || name.includes('City Lights') || 
+          name.includes('Eternal Flow') || name.includes('Digital Dreams') ||
+          name.includes('Mountain Serenity') || name.includes('Wilderness') ||
+          name.includes('by ')) {
+        itemType = 'art';
+      }
+    }
+    
+    // Check if itemId corresponds to art items
+    const artItemIds = ['golden_horizon', 'city_lights', 'eternal_flow', 'digital_dreams', 'mountain_serinity', 'wilderness'];
+    if (artItemIds.some(id => itemId.includes(id))) {
+      itemType = 'art';
+    }
+    
     if (existingItemIndex !== -1) {
       // Item exists, update quantity
       user.cart[existingItemIndex].quantity += quantity;
       console.log('Updated existing item quantity:', user.cart[existingItemIndex]);
     } else {
       // New item, add to cart
-      const cartItem = { itemId, name, price, image, quantity };
+      const cartItem = { itemId, name, price, image, quantity, type: itemType };
       user.cart.push(cartItem);
       console.log('Added new item to cart:', cartItem);
     }
@@ -2415,9 +2448,28 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
 
     // Filter items based on order type if not provided
     if (!items && orderType === 'menu') {
-      cartItems = user.cart.filter(item => item.type !== 'art' && 
-                                   !(item.image && item.image.includes('/assets/gallery/')) &&
-                                   !(item.name && (item.name.includes('by ') || item.name.includes('Wilderness') || item.name.includes('Mountain') || item.name.includes('Serenity'))));
+      cartItems = user.cart.filter(item => {
+        // Check if item has explicit type property
+        if (item.type === 'art') return false;
+        
+        // Check if item is from artworks.json structure
+        if (item.artist || item.category === 'painting' || item.category === 'photography' || 
+            item.category === 'sculpture' || item.category === 'digital') return false;
+        
+        // Check image paths for art items
+        if (item.image && (item.image.includes('/assets/gallery/') || 
+            item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+            item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+            item.image.includes('mountain_serinity') || item.image.includes('wilderness'))) return false;
+        
+        // Check item names that are clearly art pieces
+        if (item.name && (item.name.includes('by ') || 
+            item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+            item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+            item.name.includes('Mountain Serenity') || item.name.includes('Wilderness'))) return false;
+        
+        return true;
+      });
     }
 
     if (cartItems.length === 0) {
@@ -2494,6 +2546,118 @@ app.post('/api/checkout', ensureAuthenticated, async (req, res) => {
 // Simple test route
 app.get('/test-route', (req, res) => {
   res.json({ message: 'Test route working!' });
+});
+
+// Fix: Update existing cart items with correct type
+app.post('/api/debug/fix-cart-types', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: 'Please login first' });
+    }
+    
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    let updatedCount = 0;
+    
+    // Update cart items with correct type
+    user.cart = user.cart.map(item => {
+      if (!item.type || item.type === 'NOT_SET') {
+        // Detect if this is an art item
+        const isArt = item.artist || 
+                     ['painting','photography','sculpture','digital'].includes(item.category) ||
+                     (item.image && (item.image.includes('/assets/gallery/') || 
+                      item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+                      item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+                      item.image.includes('mountain_serinity') || item.image.includes('wilderness'))) ||
+                     (item.name && (item.name.includes('by ') || 
+                      item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+                      item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+                      item.name.includes('Mountain Serenity') || item.name.includes('Wilderness')));
+        
+        item.type = isArt ? 'art' : 'menu';
+        updatedCount++;
+      }
+      return item;
+    });
+    
+    user.markModified('cart');
+    await user.save();
+    
+    res.json({
+      success: true,
+      message: `Updated ${updatedCount} cart items with correct type`,
+      totalItems: user.cart.length,
+      artItems: user.cart.filter(item => item.type === 'art').length,
+      menuItems: user.cart.filter(item => item.type === 'menu').length
+    });
+  } catch (error) {
+    console.error('Fix cart types error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Debug: Check cart items with type info
+app.get('/api/debug/cart-items', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: 'Please login first' });
+    }
+    
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Analyze cart items
+    const cartAnalysis = user.cart.map(item => {
+      const isArt = item.type === 'art' || 
+                   item.artist || 
+                   ['painting','photography','sculpture','digital'].includes(item.category) ||
+                   (item.image && (item.image.includes('/assets/gallery/') || 
+                    item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+                    item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+                    item.image.includes('mountain_serinity') || item.image.includes('wilderness'))) ||
+                   (item.name && (item.name.includes('by ') || 
+                    item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+                    item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+                    item.name.includes('Mountain Serenity') || item.name.includes('Wilderness')));
+      
+      return {
+        itemId: item.itemId,
+        name: item.name,
+        type: item.type || 'NOT_SET',
+        detectedAs: isArt ? 'art' : 'menu',
+        hasArtist: !!item.artist,
+        category: item.category,
+        image: item.image,
+        hasImagePaths: item.image && (item.image.includes('/assets/gallery/') || 
+                    item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+                    item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+                    item.image.includes('mountain_serinity') || item.image.includes('wilderness')),
+        hasArtName: item.name && (item.name.includes('by ') || 
+                    item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+                    item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+                    item.name.includes('Mountain Serenity') || item.name.includes('Wilderness'))
+      };
+    });
+    
+    res.json({
+      totalItems: user.cart.length,
+      artItems: cartAnalysis.filter(item => item.detectedAs === 'art').length,
+      menuItems: cartAnalysis.filter(item => item.detectedAs === 'menu').length,
+      items: cartAnalysis
+    });
+  } catch (error) {
+    console.error('Debug cart items error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Debug: Check menu items in database

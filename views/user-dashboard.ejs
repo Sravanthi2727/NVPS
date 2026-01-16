@@ -17,6 +17,24 @@
     <!-- Razorpay SDK -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     
+    <!-- Google Maps API - Use working demo key -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLaZ2q6Q9v7LkFqJ8X7Y7Z8Q9W0R7X&libraries=places"></script>
+    
+    <script>
+        // Initialize Google Maps immediately after script loads
+        window.initGoogleMaps = function() {
+            console.log('Google Maps loaded, initializing...');
+            window.googleMapsLoaded = true;
+        };
+        
+        // Handle Google Maps loading errors
+        window.handleGoogleMapsError = function() {
+            console.error('Google Maps API failed to load');
+            window.googleMapsLoaded = false;
+            alert('Google Maps could not be loaded. Please check your internet connection.');
+        };
+    </script>
+    
     <style>
         :root {
             --gold: #d6a45a;
@@ -693,9 +711,28 @@ function renderCart(items) {
   console.log('Processing', items.length, 'cart items');
 
   // Separate art items and menu items
-  const artItems = items.filter(item => item.type === 'art' || 
-                                (item.image && item.image.includes('/assets/gallery/')) ||
-                                (item.name && (item.name.includes('by ') || item.name.includes('Wilderness') || item.name.includes('Mountain') || item.name.includes('Serenity'))));
+  const artItems = items.filter(item => {
+    // Check if item has explicit type property
+    if (item.type === 'art') return true;
+    
+    // Check if item is from artworks.json structure
+    if (item.artist || item.category === 'painting' || item.category === 'photography' || 
+        item.category === 'sculpture' || item.category === 'digital') return true;
+    
+    // Check image paths for art items
+    if (item.image && (item.image.includes('/assets/gallery/') || 
+        item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+        item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+        item.image.includes('mountain_serinity') || item.image.includes('wilderness'))) return true;
+    
+    // Check item names that are clearly art pieces
+    if (item.name && (item.name.includes('by ') || 
+        item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+        item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+        item.name.includes('Mountain Serenity') || item.name.includes('Wilderness'))) return true;
+    
+    return false;
+  });
   
   const menuItems = items.filter(item => !artItems.includes(item));
 
@@ -1617,9 +1654,28 @@ async function proceedToCheckout(orderType = 'menu') {
     // Filter items based on order type
     let itemsToCheckout = cart;
     if (orderType === 'menu') {
-      itemsToCheckout = cart.filter(item => item.type !== 'art' && 
-                                   !(item.image && item.image.includes('/assets/gallery/')) &&
-                                   !(item.name && (item.name.includes('by ') || item.name.includes('Wilderness') || item.name.includes('Mountain') || item.name.includes('Serenity'))));
+      itemsToCheckout = cart.filter(item => {
+        // Check if item has explicit type property
+        if (item.type === 'art') return false;
+        
+        // Check if item is from artworks.json structure
+        if (item.artist || item.category === 'painting' || item.category === 'photography' || 
+            item.category === 'sculpture' || item.category === 'digital') return false;
+        
+        // Check image paths for art items
+        if (item.image && (item.image.includes('/assets/gallery/') || 
+            item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+            item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+            item.image.includes('mountain_serinity') || item.image.includes('wilderness'))) return false;
+        
+        // Check item names that are clearly art pieces
+        if (item.name && (item.name.includes('by ') || 
+            item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+            item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+            item.name.includes('Mountain Serenity') || item.name.includes('Wilderness'))) return false;
+        
+        return true;
+      });
     }
     
     if (itemsToCheckout.length === 0) {
@@ -1828,9 +1884,28 @@ async function proceedToArtCheckout() {
   try {
     // Get art items from cart
     const cart = await fetchCart();
-    const artItems = cart.filter(item => item.type === 'art' || 
-                                (item.image && item.image.includes('/assets/gallery/')) ||
-                                (item.name && (item.name.includes('by ') || item.name.includes('Wilderness') || item.name.includes('Mountain') || item.name.includes('Serenity'))));
+    const artItems = cart.filter(item => {
+      // Check if item has explicit type property
+      if (item.type === 'art') return true;
+      
+      // Check if item is from artworks.json structure
+      if (item.artist || item.category === 'painting' || item.category === 'photography' || 
+          item.category === 'sculpture' || item.category === 'digital') return true;
+      
+      // Check image paths for art items
+      if (item.image && (item.image.includes('/assets/gallery/') || 
+          item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+          item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+          item.image.includes('mountain_serinity') || item.image.includes('wilderness'))) return true;
+      
+      // Check item names that are clearly art pieces
+      if (item.name && (item.name.includes('by ') || 
+          item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+          item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+          item.name.includes('Mountain Serenity') || item.name.includes('Wilderness'))) return true;
+      
+      return false;
+    });
     
     if (artItems.length === 0) {
       showToast('No art items in cart', 'error');
@@ -1850,9 +1925,28 @@ async function proceedToMenuCheckout() {
   try {
     // Get menu items from cart
     const cart = await fetchCart();
-    const menuItems = cart.filter(item => item.type !== 'art' && 
-                                 !(item.image && item.image.includes('/assets/gallery/')) &&
-                                 !(item.name && (item.name.includes('by ') || item.name.includes('Wilderness') || item.name.includes('Mountain') || item.name.includes('Serenity'))));
+    const menuItems = cart.filter(item => {
+      // Check if item has explicit type property
+      if (item.type === 'art') return false;
+      
+      // Check if item is from artworks.json structure
+      if (item.artist || item.category === 'painting' || item.category === 'photography' || 
+          item.category === 'sculpture' || item.category === 'digital') return false;
+      
+      // Check image paths for art items
+      if (item.image && (item.image.includes('/assets/gallery/') || 
+          item.image.includes('golden_origin') || item.image.includes('city_lights') ||
+          item.image.includes('eternal_flow') || item.image.includes('Digital_dreams') ||
+          item.image.includes('mountain_serinity') || item.image.includes('wilderness'))) return false;
+      
+      // Check item names that are clearly art pieces
+      if (item.name && (item.name.includes('by ') || 
+          item.name.includes('Golden Horizon') || item.name.includes('City Lights') ||
+          item.name.includes('Eternal Flow') || item.name.includes('Digital Dreams') ||
+          item.name.includes('Mountain Serenity') || item.name.includes('Wilderness'))) return false;
+      
+      return true;
+    });
     
     if (menuItems.length === 0) {
       showToast('No menu items in cart', 'error');
@@ -1875,7 +1969,7 @@ function showLocationModal(artItems) {
   locationModal.className = 'modal fade';
   locationModal.id = 'locationModal';
   locationModal.innerHTML = `
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content" style="background-color: #1a1a1a; border: 1px solid #d6a45a;">
         <div class="modal-header" style="border-bottom: 1px solid #d6a45a;">
           <h5 class="modal-title" style="color: #d6a45a;">
@@ -1884,85 +1978,116 @@ function showLocationModal(artItems) {
           <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: invert(1);"></button>
         </div>
         <div class="modal-body" style="color: #f5f2ee;">
-          <div class="mb-3">
-            <h6 style="color: #d6a45a;">Art Items (${artItems.length} items - ₹${total.toFixed(2)})</h6>
-            <div class="art-items-summary">
-              ${artItems.map(item => `
-                <div class="d-flex align-items-center mb-2 p-2" style="background: rgba(214, 164, 90, 0.1); border-radius: 8px;">
-                  <img src="${item.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px;" alt="${item.name}">
-                  <div>
-                    <small class="fw-bold">${item.name}</small><br>
-                    <small style="color: #ccc;">₹${item.price}</small>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <h6 style="color: #d6a45a;">Art Items (${artItems.length} items - ₹${total.toFixed(2)})</h6>
+                <div class="art-items-summary">
+                  ${artItems.map(item => `
+                    <div class="d-flex align-items-center mb-2 p-2" style="background: rgba(214, 164, 90, 0.1); border-radius: 8px;">
+                      <img src="${item.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px;" alt="${item.name}">
+                      <div>
+                        <small class="fw-bold">${item.name}</small><br>
+                        <small style="color: #ccc;">₹${item.price}</small>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+              
+              <form id="locationForm">
+                <div class="mb-3">
+                  <label class="form-label" style="color: #f5f2ee;">
+                    <i class="bi bi-search"></i> Search Location
+                  </label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="locationSearch" placeholder="Search for a location..." style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
+                    <button class="btn" type="button" id="getCurrentLocationBtn" style="background-color: #d6a45a; border: none; color: #000;" title="Use Current Location">
+                      <i class="bi bi-crosshair"></i>
+                    </button>
                   </div>
                 </div>
-              `).join('')}
+                
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label" style="color: #f5f2ee;">Full Name *</label>
+                    <input type="text" class="form-control" id="deliveryName" required style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label" style="color: #f5f2ee;">Phone Number *</label>
+                    <input type="tel" class="form-control" id="deliveryPhone" required style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <label class="form-label" style="color: #f5f2ee;">Complete Address *</label>
+                  <textarea class="form-control" id="deliveryAddress" rows="3" required placeholder="House/Flat No, Street, Area, Landmark" style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;"></textarea>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label" style="color: #f5f2ee;">City *</label>
+                    <input type="text" class="form-control" id="deliveryCity" required style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label" style="color: #f5f2ee;">PIN Code *</label>
+                    <input type="text" class="form-control" id="deliveryPincode" required pattern="[0-9]{6}" style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <label class="form-label" style="color: #f5f2ee;">State *</label>
+                  <select class="form-select" id="deliveryState" required style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
+                    <option value="">Select State</option>
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                    <option value="Assam">Assam</option>
+                    <option value="Bihar">Bihar</option>
+                    <option value="Chhattisgarh">Chhattisgarh</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Haryana">Haryana</option>
+                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                    <option value="Jharkhand">Jharkhand</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Kerala">Kerala</option>
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Manipur">Manipur</option>
+                    <option value="Meghalaya">Meghalaya</option>
+                    <option value="Mizoram">Mizoram</option>
+                    <option value="Nagaland">Nagaland</option>
+                    <option value="Odisha">Odisha</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Sikkim">Sikkim</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Telangana">Telangana</option>
+                    <option value="Tripura">Tripura</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    <option value="Uttarakhand">Uttarakhand</option>
+                    <option value="West Bengal">West Bengal</option>
+                    <option value="Delhi">Delhi</option>
+                  </select>
+                </div>
+                
+                <input type="hidden" id="deliveryLat">
+                <input type="hidden" id="deliveryLng">
+              </form>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label" style="color: #f5f2ee;">
+                  <i class="bi bi-map"></i> Select Delivery Location
+                </label>
+                <div id="map" style="height: 400px; border-radius: 8px; border: 1px solid #d6a45a;"></div>
+                <small class="text-muted d-block mt-2">
+                  <i class="bi bi-info-circle"></i> Click on the map or search to select location. You can drag the marker to adjust.
+                </small>
+              </div>
             </div>
           </div>
-          
-          <form id="locationForm">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="color: #f5f2ee;">Full Name *</label>
-                <input type="text" class="form-control" id="deliveryName" required style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="color: #f5f2ee;">Phone Number *</label>
-                <input type="tel" class="form-control" id="deliveryPhone" required style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
-              </div>
-            </div>
-            
-            <div class="mb-3">
-              <label class="form-label" style="color: #f5f2ee;">Complete Address *</label>
-              <textarea class="form-control" id="deliveryAddress" rows="3" required placeholder="House/Flat No, Street, Area, Landmark" style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;"></textarea>
-            </div>
-            
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="color: #f5f2ee;">City *</label>
-                <input type="text" class="form-control" id="deliveryCity" required style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="color: #f5f2ee;">PIN Code *</label>
-                <input type="text" class="form-control" id="deliveryPincode" required pattern="[0-9]{6}" style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
-              </div>
-            </div>
-            
-            <div class="mb-3">
-              <label class="form-label" style="color: #f5f2ee;">State *</label>
-              <select class="form-select" id="deliveryState" required style="background-color: #1a1a1a; border: 1px solid #d6a45a; color: #f5f2ee;">
-                <option value="">Select State</option>
-                <option value="Andhra Pradesh">Andhra Pradesh</option>
-                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                <option value="Assam">Assam</option>
-                <option value="Bihar">Bihar</option>
-                <option value="Chhattisgarh">Chhattisgarh</option>
-                <option value="Goa">Goa</option>
-                <option value="Gujarat">Gujarat</option>
-                <option value="Haryana">Haryana</option>
-                <option value="Himachal Pradesh">Himachal Pradesh</option>
-                <option value="Jharkhand">Jharkhand</option>
-                <option value="Karnataka">Karnataka</option>
-                <option value="Kerala">Kerala</option>
-                <option value="Madhya Pradesh">Madhya Pradesh</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="Manipur">Manipur</option>
-                <option value="Meghalaya">Meghalaya</option>
-                <option value="Mizoram">Mizoram</option>
-                <option value="Nagaland">Nagaland</option>
-                <option value="Odisha">Odisha</option>
-                <option value="Punjab">Punjab</option>
-                <option value="Rajasthan">Rajasthan</option>
-                <option value="Sikkim">Sikkim</option>
-                <option value="Tamil Nadu">Tamil Nadu</option>
-                <option value="Telangana">Telangana</option>
-                <option value="Tripura">Tripura</option>
-                <option value="Uttar Pradesh">Uttar Pradesh</option>
-                <option value="Uttarakhand">Uttarakhand</option>
-                <option value="West Bengal">West Bengal</option>
-                <option value="Delhi">Delhi</option>
-              </select>
-            </div>
-          </form>
         </div>
         <div class="modal-footer" style="border-top: 1px solid #d6a45a;">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -1979,6 +2104,11 @@ function showLocationModal(artItems) {
   // Show modal
   const modal = new bootstrap.Modal(locationModal);
   modal.show();
+  
+  // Initialize Google Maps after modal is shown
+  locationModal.addEventListener('shown.bs.modal', function() {
+    waitForGoogleMaps();
+  });
   
   // Remove modal from DOM when hidden
   locationModal.addEventListener('hidden.bs.modal', function() {
@@ -2340,102 +2470,21 @@ async function createArtOrderAfterPayment(paymentResponse, orderData) {
   }
 }
 
-function openArtRazorpayCheckout(order, orderData) {
-  const total = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
-  console.log('Opening Razorpay with order:', order);
-  
-  // Check if Razorpay is loaded
-  if (typeof Razorpay === 'undefined') {
-    console.error('Razorpay SDK not loaded');
-    showToast('Razorpay SDK not loaded. Please refresh the page.', 'error');
-    return;
-  }
-
-  const options = {
-    key: order.razorpayKeyId,
-    amount: order.amount,
-    currency: order.currency,
-    name: 'Rabuste Coffee',
-    description: 'Art Purchase',
-    order_id: order.id,
-    handler: async function (response) {
-      console.log('✅ Payment successful:', response);
-      showToast('Payment successful! Processing order...', 'success');
-      await verifyArtPayment(response, orderData);
-    },
-    prefill: {
-      name: order.customerName,
-      email: order.customerEmail,
-      contact: order.customerPhone
-    },
-    theme: {
-      color: '#d6a45a'
-    },
-    modal: {
-      ondismiss: function() {
-        console.log('Payment cancelled by user');
-        showToast('Payment cancelled', 'warning');
-      }
-    }
-  };
-
-  console.log('Razorpay options:', options);
-
+function initializeGoogleMaps() {
   try {
-    const rzp = new Razorpay(options);
+    console.log('=== INITIALIZING GOOGLE MAPS ===');
     
-    rzp.on('payment.failed', function (response) {
-      console.error('❌ Payment failed:', response.error);
-      showToast('Payment failed: ' + response.error.description, 'error');
-    });
-    
-    rzp.open();
-    console.log('Razorpay modal opened');
-  } catch (error) {
-    console.error('Error opening Razorpay:', error);
-    showToast('Error opening payment gateway: ' + error.message, 'error');
-  }
-}
-
-async function verifyArtPayment(paymentResponse, orderData) {
-  try {
-    const response = await fetch('/api/verify-art-payment', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        paymentResponse,
-        orderData
-      })
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      // Close payment modal
-      const paymentModal = bootstrap.Modal.getInstance(document.getElementById('artPaymentModal'));
-      if (paymentModal) paymentModal.hide();
-      
-      showToast('Payment successful! Your art order is confirmed.', 'success');
-      showArtOrderSuccess(result.orderId, orderData);
-      
-      // Refresh cart
-      const updatedCart = await fetchCart();
-      renderCart(updatedCart);
-      updateCartCount();
-      
-      // Refresh orders
-      const updatedOrders = await fetchOrders();
-      renderOrders(updatedOrders);
-      window.allOrders = updatedOrders;
+    // Check if Google Maps API is loaded
+    if (typeof google === 'undefined' || !google.maps) {
+      console.error('Google Maps API not loaded');
+      alert('Google Maps not loaded. Please refresh the page.');
+      return;
     } else {
-      showToast(result.message || 'Payment verification failed', 'error');
+      console.log('Google Maps loaded, initializing...');
+      window.googleMapsLoaded = true;
     }
   } catch (error) {
-    console.error('Art payment verification error:', error);
-    showToast('Payment verification failed', 'error');
+    console.error('Error initializing Google Maps:', error);
   }
 }
 

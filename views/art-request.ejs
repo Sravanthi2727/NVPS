@@ -14,6 +14,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMpByb6KjDMFthKHFI0RItiNJGwLIhIIE&libraries=places"></script>
+    
     <style>
         :root {
             --gold: #d6a45a;
@@ -216,6 +219,59 @@
             margin-bottom: 0.5rem;
         }
 
+        .location-section {
+            background: rgba(214, 164, 90, 0.05);
+            border: 1px solid rgba(214, 164, 90, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #map {
+            height: 300px;
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(214, 164, 90, 0.3);
+        }
+
+        .location-input-group {
+            position: relative;
+        }
+
+        .location-spinner {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+        }
+
+        .location-display {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(214, 164, 90, 0.3);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .btn-location {
+            background: rgba(214, 164, 90, 0.2);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-location:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
         @media (max-width: 768px) {
             .art-request-header h1 {
                 font-size: 2rem;
@@ -281,6 +337,38 @@
                                         <label class="form-label">Instagram Handle</label>
                                         <input type="text" class="form-control" name="instagram" placeholder="@yourusername">
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Location Information -->
+                            <div class="form-section">
+                                <h3><i class="fas fa-map-marker-alt me-2"></i>Delivery Location</h3>
+                                <div class="location-section">
+                                    <div class="mb-3">
+                                        <label class="form-label">Delivery Address *</label>
+                                        <div class="location-input-group">
+                                            <input type="text" class="form-control" id="locationInput" name="location" required placeholder="Enter your delivery address">
+                                            <div class="location-spinner">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                            </div>
+                                        </div>
+                                        <div class="location-display" id="locationDisplay" style="display: none;">
+                                            <i class="fas fa-map-marker-alt me-2"></i>
+                                            <span id="locationText"></span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <button type="button" class="btn-location me-2" onclick="getCurrentLocation()">
+                                            <i class="fas fa-crosshairs me-2"></i>Use Current Location
+                                        </button>
+                                        <button type="button" class="btn-location" onclick="resetLocation()">
+                                            <i class="fas fa-redo me-2"></i>Reset
+                                        </button>
+                                    </div>
+                                    <div id="map"></div>
+                                    <input type="hidden" id="latitude" name="latitude">
+                                    <input type="hidden" id="longitude" name="longitude">
+                                    <input type="hidden" id="formattedAddress" name="formattedAddress">
                                 </div>
                             </div>
 
@@ -477,6 +565,271 @@
         forSaleCheckbox.addEventListener('change', () => {
             priceSection.style.display = forSaleCheckbox.checked ? 'block' : 'none';
         });
+
+        // Google Maps functionality
+        let map;
+        let marker;
+        let autocomplete;
+        let geocoder;
+
+        // Initialize map when page loads
+        function initMap() {
+            // Initialize map centered on a default location
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 40.7128, lng: -74.0060 }, // New York as default
+                zoom: 13,
+                styles: [
+                    { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+                    { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+                    { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+                    {
+                        featureType: "administrative.locality",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#d59563" }],
+                    },
+                    {
+                        featureType: "poi",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#d59563" }],
+                    },
+                    {
+                        featureType: "poi.park",
+                        elementType: "geometry",
+                        stylers: [{ color: "#263c3f" }],
+                    },
+                    {
+                        featureType: "poi.park",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#6b9a76" }],
+                    },
+                    {
+                        featureType: "road",
+                        elementType: "geometry",
+                        stylers: [{ color: "#38414e" }],
+                    },
+                    {
+                        featureType: "road",
+                        elementType: "geometry.stroke",
+                        stylers: [{ color: "#212a37" }],
+                    },
+                    {
+                        featureType: "road",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#9ca5b3" }],
+                    },
+                    {
+                        featureType: "water",
+                        elementType: "geometry",
+                        stylers: [{ color: "#17263c" }],
+                    },
+                    {
+                        featureType: "water",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#515c6d" }],
+                    },
+                    {
+                        featureType: "water",
+                        elementType: "labels.text.stroke",
+                        stylers: [{ color: "#17263c" }],
+                    },
+                ]
+            });
+
+            geocoder = new google.maps.Geocoder();
+
+            // Initialize autocomplete for location input
+            autocomplete = new google.maps.places.Autocomplete(
+                document.getElementById('locationInput'),
+                {
+                    types: ['geocode', 'establishment'],
+                    fields: ['place_id', 'geometry', 'formatted_address', 'name']
+                }
+            );
+
+            // Add listener for place selection
+            autocomplete.addListener('place_changed', onPlaceChanged);
+
+            // Add click listener to map
+            map.addListener('click', (event) => {
+                placeMarker(event.latLng);
+                geocodeLatLng(event.latLng);
+            });
+
+            // Try to get user's current location on page load
+            getCurrentLocation();
+        }
+
+        // Handle place selection from autocomplete
+        function onPlaceChanged() {
+            const place = autocomplete.getPlace();
+            
+            if (!place.geometry) {
+                // User entered the name of a Place that was not suggested and
+                // pressed the Enter key, or the Place Details request failed.
+                showMessage('Please select a location from the dropdown suggestions.');
+                return;
+            }
+
+            // Update map center and zoom
+            map.setCenter(place.geometry.location);
+            map.setZoom(15);
+
+            // Place marker
+            placeMarker(place.geometry.location);
+
+            // Update form fields
+            updateLocationFields(place.geometry.location.lat(), place.geometry.location.lng(), place.formatted_address);
+        }
+
+        // Place marker on map
+        function placeMarker(location) {
+            if (marker) {
+                marker.setPosition(location);
+            } else {
+                marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    draggable: true,
+                    animation: google.maps.Animation.DROP
+                });
+
+                // Add drag end listener
+                marker.addListener('dragend', (event) => {
+                    geocodeLatLng(event.latLng);
+                });
+            }
+        }
+
+        // Get current location
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                document.querySelector('.location-spinner').style.display = 'block';
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        document.querySelector('.location-spinner').style.display = 'none';
+                        
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const latLng = { lat, lng };
+
+                        // Center map on user's location
+                        map.setCenter(latLng);
+                        map.setZoom(15);
+
+                        // Place marker
+                        placeMarker(latLng);
+
+                        // Get formatted address
+                        geocodeLatLng(latLng);
+                    },
+                    (error) => {
+                        document.querySelector('.location-spinner').style.display = 'none';
+                        let errorMessage = 'Unable to get your location. ';
+                        
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage += 'Please allow location access.';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage += 'Location information is unavailable.';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage += 'Location request timed out.';
+                                break;
+                            default:
+                                errorMessage += 'An unknown error occurred.';
+                                break;
+                        }
+                        
+                        showMessage(errorMessage);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 300000 // 5 minutes
+                    }
+                );
+            } else {
+                showMessage('Geolocation is not supported by your browser.');
+            }
+        }
+
+        // Convert lat/lng to formatted address
+        function geocodeLatLng(latLng) {
+            geocoder.geocode({ location: latLng }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    const formattedAddress = results[0].formatted_address;
+                    updateLocationFields(latLng.lat(), latLng.lng(), formattedAddress);
+                } else {
+                    showMessage('Unable to get address for this location.');
+                }
+            });
+        }
+
+        // Update location form fields
+        function updateLocationFields(lat, lng, address) {
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+            document.getElementById('formattedAddress').value = address;
+            document.getElementById('locationInput').value = address;
+            
+            // Show location display
+            const locationDisplay = document.getElementById('locationDisplay');
+            const locationText = document.getElementById('locationText');
+            locationText.textContent = address;
+            locationDisplay.style.display = 'block';
+        }
+
+        // Reset location
+        function resetLocation() {
+            if (marker) {
+                marker.setMap(null);
+                marker = null;
+            }
+            
+            document.getElementById('locationInput').value = '';
+            document.getElementById('latitude').value = '';
+            document.getElementById('longitude').value = '';
+            document.getElementById('formattedAddress').value = '';
+            document.getElementById('locationDisplay').style.display = 'none';
+            
+            // Reset map to default position
+            map.setCenter({ lat: 40.7128, lng: -74.0060 });
+            map.setZoom(13);
+        }
+
+        // Show message (instead of alert)
+        function showMessage(message) {
+            // Create a toast notification
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                <div class="toast show" role="alert">
+                    <div class="toast-header">
+                        <strong class="me-auto">Location</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        // Initialize map when Google Maps API is loaded
+        if (typeof google !== 'undefined') {
+            initMap();
+        } else {
+            // Fallback in case Google Maps loads after this script
+            window.initMap = initMap;
+        }
 
         // Form submission
         document.getElementById('artRequestForm').addEventListener('submit', (e) => {

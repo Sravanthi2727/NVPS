@@ -18,6 +18,11 @@ const cartItemSchema = new mongoose.Schema({
     type: Number,
     default: 1
   },
+  type: {
+    type: String,
+    default: 'menu',
+    enum: ['art', 'menu']
+  },
   addedAt: {
     type: Date,
     default: Date.now
