@@ -198,8 +198,8 @@ app.use(getUserData);
 // Mount admin routes
 app.use('/admin', adminRoutes);
 
-// Home route - Cache for 10 minutes
-app.get("/", viewCacheMiddleware(600), (req, res) => {
+// Home route - No cache because of user-specific content
+app.get("/", (req, res) => {
   res.render("home", {
     title: "Rabuste Coffee - Premium Robusta Coffee & Art",
     description:
@@ -214,7 +214,8 @@ app.get("/", viewCacheMiddleware(600), (req, res) => {
     ogUrl: "https://rabustecoffee.com",
     ogImage: "/assets/coffee-bg.jpeg",
     canonicalUrl: "https://rabustecoffee.com",
-    user: req.user || null
+    user: req.user || null,
+    currentUser: req.user || null
   });
 });
 
@@ -639,7 +640,13 @@ app.get("/workshops", async (req, res) => {
       upcomingWorkshops: upcomingWorkshops,
       pastWorkshops: pastWorkshops,
       teamMembers: teamMembers,
-      layout: false // Disable layout for this route
+      additionalCSS: `
+        <link rel="stylesheet" href="/css/workshops.css">
+        <link rel="stylesheet" href="/css/gallery.css">
+      `,
+      additionalJS: `
+        <script src="/js/workshops.js"></script>
+      `
     });
   } catch (error) {
     console.error('Workshops route error:', error);
@@ -651,7 +658,13 @@ app.get("/workshops", async (req, res) => {
       upcomingWorkshops: [],
       pastWorkshops: [],
       teamMembers: [],
-      layout: false
+      additionalCSS: `
+        <link rel="stylesheet" href="/css/workshops.css">
+        <link rel="stylesheet" href="/css/gallery.css">
+      `,
+      additionalJS: `
+        <script src="/js/workshops.js"></script>
+      `
     });
   }
 });
@@ -660,6 +673,12 @@ app.get("/philosophy", (req, res) => {
   res.render("philosophy", {
     title: "The Robusta Philosophy Experience | Rabuste",
     currentPage: "/philosophy",
+    additionalCSS: `
+      <link rel="stylesheet" href="/css/philosophy.css">
+    `,
+    additionalJS: `
+      <script src="/js/philosophy.js"></script>
+    `
   });
 });
 

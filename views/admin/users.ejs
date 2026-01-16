@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
+    <link rel="stylesheet" href="/css/admin-mobile.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <%- additionalCSS %>
@@ -330,8 +331,8 @@
         <tbody>
           <% users.forEach(user => { %>
           <tr>
-            <td>#<%= user.id.toString().padStart(4, '0') %></td>
-            <td>
+            <td data-label="ID">#<%= user.id.toString().padStart(4, '0') %></td>
+            <td data-label="Name">
               <div class="user-info">
                 <div class="user-avatar">
                   <%= user.name.charAt(0).toUpperCase() %>
@@ -339,19 +340,19 @@
                 <strong><%= user.name %></strong>
               </div>
             </td>
-            <td><%= user.email %></td>
-            <td>
+            <td data-label="Email"><%= user.email %></td>
+            <td data-label="Role">
               <span class="badge bg-<%= user.role === 'admin' ? 'danger' : user.role === 'staff' ? 'warning' : 'primary' %>">
                 <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %>
               </span>
             </td>
-            <td><%= new Date(user.joinDate).toLocaleDateString() %></td>
-            <td>
+            <td data-label="Join Date"><%= new Date(user.joinDate).toLocaleDateString() %></td>
+            <td data-label="Status">
               <span class="badge bg-<%= user.status === 'active' ? 'success' : user.status === 'inactive' ? 'secondary' : 'danger' %>">
                 <%= user.status.charAt(0).toUpperCase() + user.status.slice(1) %>
               </span>
             </td>
-            <td>
+            <td data-label="Actions">
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewUser(<%= user.id %>)">
                   <i class="fas fa-eye"></i>

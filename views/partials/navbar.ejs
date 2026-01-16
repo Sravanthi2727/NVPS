@@ -1,18 +1,21 @@
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark px-3 py-3">
   <div class="container">
-    <a class="navbar-brand fw-bold" style="font-size: 2rem; font-weight: 700; color: var(--gold) !important; font-family: 'Playfair Display', serif; text-shadow: 0 0 15px rgba(214, 164, 90, 0.5); letter-spacing: 3px; text-transform: uppercase;"  href="/">RABUSTE</a>
+    <a class="navbar-brand fw-bold" style="font-size: 1.5rem; font-weight: 700; color: var(--gold) !important; font-family: 'Playfair Display', serif; text-shadow: 0 0 15px rgba(214, 164, 90, 0.5); letter-spacing: 2px; text-transform: uppercase;"  href="/">RABUSTE</a>
 
     <button
       class="navbar-toggler"
       type="button"
       data-bs-toggle="collapse"
       data-bs-target="#rabusteNav"
+      aria-controls="rabusteNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
     >
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse justify-content-end" id="rabusteNav">
-      <ul class="navbar-nav gap-3">
+      <ul class="navbar-nav gap-3 align-items-center">
         <li class="nav-item">
           <a class="nav-link" href="/">Home</a>
         </li>
@@ -48,9 +51,6 @@
         <% } else { %>
           <li class="nav-item">
             <a class="nav-link" href="/signin">Sign In</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/signup">Sign Up</a>
           </li>
         <% } %>
         <li class="nav-item">

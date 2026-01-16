@@ -6,6 +6,8 @@
         --muted: rgba(245, 242, 238, 0.7);
         --dark: #0a0a0a;
         --darker: #000;
+        --primary: #f5f2ee;
+        --secondary: #0a0a0a;
     }
     .menu-section {
         padding: 2rem 0;
@@ -434,8 +436,7 @@
         <section class="py-5 menu-section" style="background: var(--secondary);" data-category="recommended">
             <div class="container py-5">
                 <h2 class="font-playfair fs-2 fw-bold mb-3 text-center" style="color: var(--primary);">
-                    <i class="fas fa-star me-3"></i>
-                    Recommended for You
+                    ★ Recommended for You
                 </h2>
                 <p class="text-center mb-5" style="color: var(--gold-soft); font-size: 1.1rem;">
                     Our AI-powered picks just for you
@@ -468,7 +469,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                                 <button class="menu-card-wishlist" 
                                                         data-item-id="<%= item._id %>"
                                                         onclick="toggleWishlistItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
-                                                    <i class="far fa-heart"></i>
+                                                    <span style="color: #dc3545;">♥</span>
                                                 </button>
                                                 <button class="menu-card-add" 
                                                         data-item-id="<%= item._id %>"
@@ -499,7 +500,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
             <section class="py-5 menu-section" style="background: var(--secondary);" data-category="<%= category %>">
                 <div class="container py-5">
                     <h2 class="font-playfair fs-2 fw-bold mb-5 text-center" style="color: var(--primary);">
-                        <i class="fas fa-<%= category === 'cold' ? 'snowflake' : category === 'hot' ? 'fire' : category === 'manual-brew' ? 'coffee' : category === 'shakes-tea' ? 'blender' : 'utensils' %> me-3"></i>
+                        <i class="fas fa-<%= category === 'cold' ? '❄️' : category === 'hot' ? '🔥' : category === 'manual-brew' ? '☕' : category === 'shakes-tea' ? '🥤' : '🍽️' %> me-3"></i>
                         <%= categoryNames[category] || category %>
                     </h2>
                     <% Object.keys(menuItems[category]).forEach(subCategory => { %>
@@ -532,7 +533,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                                         <button class="menu-card-wishlist" 
                                                                 data-item-id="<%= item._id %>"
                                                                 onclick="toggleWishlistItem('<%= item._id %>', '<%= item.name.replace(/'/g, "\\'") %>', <%= item.price %>, '<%= itemImage %>', this)">
-                                                            <i class="far fa-heart"></i>
+                                                            <span style="color: #dc3545;">♥</span>
                                                         </button>
                                                         <button class="menu-card-add" 
                                                                 data-item-id="<%= item._id %>"
@@ -835,7 +836,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
             button.innerHTML = '<i class="fas fa-heart"></i>';
         } else {
             button.classList.remove('in-wishlist');
-            button.innerHTML = '<i class="far fa-heart"></i>';
+            button.innerHTML = '<span style="color: #dc3545;">♥</span>';
         }
     }
 
@@ -923,7 +924,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                 " onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                                     ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 180px; object-fit: cover;">` : 
                                     `<div style="width: 100%; height: 180px; background: linear-gradient(135deg, #d6a45a 0%, #b8884a 100%); display: flex; align-items: center; justify-content: center;">
-                                        <i class="bi bi-cup-hot" style="font-size: 3rem; color: #000;"></i>
+                                        <i class="bi bi-cup-hot" style="font-size: 3rem; color: #000;">☕</i>
                                     </div>`}
                                     <div style="padding: 15px;">
                                         <h6 style="color: #d6a45a; font-weight: 600; margin-bottom: 8px;">${item.name}</h6>
@@ -940,7 +941,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                                 cursor: pointer;
                                                 transition: all 0.3s ease;
                                             " onmouseover="this.style.background='#e3b873'" onmouseout="this.style.background='#d6a45a'">
-                                                <i class="bi bi-cart-plus"></i> Add
+                                                <span>🛒</span> Add
                                             </button>
                                         </div>
                                     </div>
@@ -1236,7 +1237,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
             animation: slideInRight 0.3s ease;
         `;
         notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span class="${type === 'success' ? '✓' : '⚠️'}"></span>
             ${message}
         `;
         

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
+    <link rel="stylesheet" href="/css/admin-mobile.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -48,6 +49,7 @@
             height: 100vh !important;
             overflow-y: auto !important;
             z-index: 9999 !important;
+            transition: transform 0.3s ease !important;
         }
         
         .admin-logo {
@@ -122,6 +124,11 @@
             padding: 1.5rem !important;
             margin-bottom: 1rem !important;
             transition: transform 0.3s ease !important;
+            min-height: 220px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            overflow: visible !important;
         }
         
         .admin-card:hover {
@@ -151,12 +158,29 @@
             background: #1a1a1a !important;
             border: 1px solid #333 !important;
             border-radius: 8px !important;
-            overflow: hidden !important;
+            overflow-x: auto !important;
+            overflow-y: visible !important;
+            display: block !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        
+        .admin-table::-webkit-scrollbar {
+            height: 8px !important;
+        }
+        
+        .admin-table::-webkit-scrollbar-track {
+            background: #1a1a1a !important;
+        }
+        
+        .admin-table::-webkit-scrollbar-thumb {
+            background: #d6a45a !important;
+            border-radius: 4px !important;
         }
         
         .admin-table table {
             width: 100% !important;
             margin: 0 !important;
+            min-width: 1000px !important;
         }
         
         .admin-table th {
@@ -312,7 +336,7 @@
                     <div class="col-md-6 col-lg-3">
                         <div class="admin-card">
                             <h3><i class="fas fa-shopping-cart me-2"></i>Cart Requests</h3>
-                            <div class="admin-card-number">12</div>
+                            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.cartOrders !== undefined ? counts.cartOrders : 0 %></div>
                             <div class="admin-card-subtitle">Pending orders</div>
                             <a href="/admin/cart-requests" class="btn btn-primary">Manage Orders</a>
                         </div>
@@ -322,7 +346,7 @@
                     <div class="col-md-6 col-lg-3">
                         <div class="admin-card">
                             <h3><i class="fas fa-palette me-2"></i>Art Requests</h3>
-                            <div class="admin-card-number">5</div>
+                            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.artOrders !== undefined ? counts.artOrders : 0 %></div>
                             <div class="admin-card-subtitle">Pending submissions</div>
                             <a href="/admin/art-requests" class="btn btn-primary">Review Art</a>
                         </div>
@@ -331,8 +355,8 @@
                     <!-- Workshop Requests Card -->
                     <div class="col-md-6 col-lg-3">
                         <div class="admin-card">
-                            <h3><i class="fas fa-calendar-alt me-2"></i>Workshop Requests</h3>
-                            <div class="admin-card-number">8</div>
+                            <h3><i class="fas fa-calendar-alt me-2"></i>Workshop R...</h3>
+                            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.workshops !== undefined ? counts.workshops : 0 %></div>
                             <div class="admin-card-subtitle">Pending bookings</div>
                             <a href="/admin/workshop-requests" class="btn btn-primary">Manage Workshops</a>
                         </div>
@@ -341,8 +365,8 @@
                     <!-- Franchise Applications Card -->
                     <div class="col-md-6 col-lg-3">
                         <div class="admin-card">
-                            <h3><i class="fas fa-store me-2"></i>Franchise Applications</h3>
-                            <div class="admin-card-number" id="franchiseCount">-</div>
+                            <h3><i class="fas fa-store me-2"></i>Franchise App..</h3>
+                            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.franchise !== undefined ? counts.franchise : 0 %></div>
                             <div class="admin-card-subtitle">Pending applications</div>
                             <a href="/admin/franchise" class="btn btn-primary">Review Applications</a>
                         </div>
@@ -372,19 +396,19 @@
                                 <% if (typeof recentActivity !== 'undefined' && recentActivity.length > 0) { %>
                                     <% recentActivity.forEach(activity => { %>
                                         <tr>
-                                            <td><span class="badge bg-info"><%= activity.type %></span></td>
-                                            <td>
+                                            <td data-label="Type"><span class="badge bg-info"><%= activity.type %></span></td>
+                                            <td data-label="Customer">
                                                 <strong><%= activity.customer %></strong><br>
                                                 <small style="color: #ccc;"><%= activity.email %></small>
                                             </td>
-                                            <td><%= activity.details %></td>
-                                            <td><%= activity.date %></td>
-                                            <td>
+                                            <td data-label="Details"><%= activity.details %></td>
+                                            <td data-label="Date"><%= activity.date %></td>
+                                            <td data-label="Status">
                                                 <span class="badge <%= activity.status === 'pending' ? 'bg-warning' : activity.status === 'completed' ? 'bg-success' : 'bg-danger' %>">
                                                     <%= activity.status.charAt(0).toUpperCase() + activity.status.slice(1) %>
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td data-label="Actions">
                                                 <button class="btn btn-outline-primary btn-sm">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
@@ -422,23 +446,6 @@
                 !toggle.contains(e.target) && 
                 sidebar.classList.contains('show')) {
                 sidebar.classList.remove('show');
-            }
-        });
-
-        // Load franchise count on page load
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                const response = await fetch('/api/admin/franchise');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        const pendingCount = data.applications.filter(app => app.status === 'pending').length;
-                        document.getElementById('franchiseCount').textContent = pendingCount;
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading franchise count:', error);
-                document.getElementById('franchiseCount').textContent = '0';
             }
         });
     </script>
