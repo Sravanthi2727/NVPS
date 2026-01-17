@@ -235,88 +235,128 @@ console.log("🤖 Registering Gemini routes at /api/gemini");
 app.use("/api/gemini", geminiRoutes);
 console.log("✅ Gemini routes registered");
 
-// Test menu route - TEMPORARY
-app.get('/menu-test', async (req, res) => {
+// Debug analytics data
+app.get('/admin/analytics-debug', async (req, res) => {
   try {
-    console.log('🧪 TEST MENU ROUTE CALLED');
-    const MenuItem = require('./models/MenuItem');
-    const menuItems = await MenuItem.find({ isAvailable: true });
-    console.log('🧪 TEST: Found', menuItems.length, 'menu items');
+    console.log('🔍 Analytics debug route called');
+    const User = require('./models/User');
+    const Order = require('./models/Order');
     
-    const groupedMenu = {};
-    menuItems.forEach(item => {
-      if (!groupedMenu[item.category]) {
-        groupedMenu[item.category] = {};
-      }
-      if (!groupedMenu[item.category][item.subCategory]) {
-        groupedMenu[item.category][item.subCategory] = [];
-      }
-      groupedMenu[item.category][item.subCategory].push(item);
-    });
+    const debugData = {
+      totalUsers: await User.countDocuments(),
+      totalOrders: await Order.countDocuments(),
+      sampleUser: await User.findOne().select('name email'),
+      sampleOrder: await Order.findOne().select('customerName totalAmount status'),
+      timestamp: new Date()
+    };
     
-    console.log('🧪 TEST: Grouped categories:', Object.keys(groupedMenu));
-    
-    res.render('menu', {
-      title: 'Test Menu - Rabuste Coffee',
-      description: 'Test menu page',
-      currentPage: '/menu-test',
-      menuItems: groupedMenu,
-      recommendedItems: [],
-      isLoggedIn: false,
-      currentUser: null
-    });
+    console.log('📊 Debug data:', debugData);
+    res.json(debugData);
   } catch (error) {
-    console.error('🧪 TEST MENU ERROR:', error);
-    res.json({ error: error.message, stack: error.stack });
+    console.error('❌ Debug error:', error);
+    res.json({ error: error.message });
   }
 });
 
-// WORKING MENU ROUTE - Replace homeController
-app.get('/menu', async (req, res) => {
+// Register admin routes FIRST to avoid conflicts
+console.log("🔧 Registering admin routes at /admin");
+app.use("/admin", adminRoutes);
+console.log("✅ Admin routes registered");
+
+// Test admin route directly in app.js
+app.get('/admin/direct-test', (req, res) => {
+  console.log('🧪 Direct admin test route called');
+  res.json({ message: 'Direct admin route working!', timestamp: new Date() });
+});
+
+// Debug analytics data
+app.get('/admin/analytics-debug', async (req, res) => {
   try {
-    console.log('🍽️ DIRECT MENU ROUTE CALLED');
-    const MenuItem = require('./models/MenuItem');
-    const menuItems = await MenuItem.find({ isAvailable: true })
-      .sort({ category: 1, subCategory: 1, displayOrder: 1 });
-    console.log('🍽️ DIRECT: Found', menuItems.length, 'menu items');
+    console.log('🔍 Analytics debug route called');
+    const User = require('./models/User');
+    const Order = require('./models/Order');
     
-    const groupedMenu = {};
-    menuItems.forEach(item => {
-      if (!groupedMenu[item.category]) {
-        groupedMenu[item.category] = {};
+    const debugData = {
+      totalUsers: await User.countDocuments(),
+      totalOrders: await Order.countDocuments(),
+      sampleUser: await User.findOne().select('name email'),
+      sampleOrder: await Order.findOne().select('customerName totalAmount status'),
+      timestamp: new Date()
+    };
+    
+    console.log('📊 Debug data:', debugData);
+    res.json(debugData);
+  } catch (error) {
+    console.error('❌ Debug error:', error);
+    res.json({ error: error.message });
+  }
+});
+
+// WORKING GALLERY ROUTE - Replace homeController
+app.get('/gallery', async (req, res) => {
+  try {
+    console.log('🎨 DIRECT GALLERY ROUTE CALLED');
+    const Artwork = require('./models/Artwork');
+    const artworks = await Artwork.find({ isAvailable: true })
+      .sort({ category: 1, displayOrder: 1 });
+    console.log('🎨 DIRECT: Found', artworks.length, 'artworks');
+    
+    // Get purchased art IDs for current user (if logged in)
+    let purchasedArtIds = [];
+    if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+      try {
+        const Order = require('./models/Order');
+        const completedArtOrders = await Order.find({
+          userId: req.user._id || req.user.id,
+          orderType: 'art',
+          status: 'completed'
+        });
+        
+        completedArtOrders.forEach(order => {
+          order.items.forEach(item => {
+            if (item.type === 'art' && item.itemId) {
+              purchasedArtIds.push(String(item.itemId));
+            }
+          });
+        });
+        
+        // Remove duplicates
+        purchasedArtIds = [...new Set(purchasedArtIds)];
+        console.log('🛒 DIRECT: Found', purchasedArtIds.length, 'purchased art items for user');
+      } catch (orderError) {
+        console.log('⚠️ DIRECT: Could not fetch purchased art items:', orderError.message);
       }
-      if (!groupedMenu[item.category][item.subCategory]) {
-        groupedMenu[item.category][item.subCategory] = [];
-      }
-      groupedMenu[item.category][item.subCategory].push(item);
-    });
+    }
     
-    console.log('🍽️ DIRECT: Grouped categories:', Object.keys(groupedMenu));
+    console.log('🎨 DIRECT: Artworks by category:', artworks.reduce((acc, art) => {
+      acc[art.category] = (acc[art.category] || 0) + 1;
+      return acc;
+    }, {}));
     
-    res.render('menu', {
-      title: 'Our Menu - Rabuste Coffee',
-      description: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
-      currentPage: '/menu',
-      keywords: 'coffee menu, robusta coffee, café menu, coffee drinks, food menu',
-      ogTitle: 'Our Menu - Rabuste Coffee',
-      ogDescription: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
+    res.render('gallery', {
+      title: 'Gallery - Rabuste Coffee',
+      description: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+      currentPage: '/gallery',
+      keywords: 'art gallery, coffee shop art, artwork for sale, Rabuste Coffee gallery',
+      ogTitle: 'Gallery - Rabuste Coffee',
+      ogDescription: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
       ogType: 'website',
-      ogUrl: 'https://rabustecoffee.com/menu',
+      ogUrl: 'https://rabustecoffee.com/gallery',
       ogImage: '/assets/coffee-bg.jpeg',
-      canonicalUrl: 'https://rabustecoffee.com/menu',
-      menuItems: groupedMenu,
-      recommendedItems: [],
+      canonicalUrl: 'https://rabustecoffee.com/gallery',
+      artworks: artworks,
+      purchasedArtIds: purchasedArtIds,
       isLoggedIn: req.isAuthenticated ? req.isAuthenticated() : false,
       currentUser: req.user || null
     });
   } catch (error) {
-    console.error('🍽️ DIRECT MENU ERROR:', error);
-    res.render('menu', {
-      title: 'Our Menu - Rabuste Coffee',
-      description: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
-      currentPage: '/menu',
-      menuItems: {},
-      recommendedItems: [],
+    console.error('🎨 DIRECT GALLERY ERROR:', error);
+    res.render('gallery', {
+      title: 'Gallery - Rabuste Coffee',
+      description: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+      currentPage: '/gallery',
+      artworks: [],
+      purchasedArtIds: [],
       isLoggedIn: false,
       currentUser: null
     });
@@ -328,7 +368,6 @@ app.use("/", philosophyRoutes);
 app.use("/", workshopRoutes);
 app.use("/", franchiseRoutes);
 app.use("/", authRoutes);
-app.use("/admin", adminRoutes);
 
 
 
@@ -2297,6 +2336,30 @@ app.get('/api/debug/menu-items', async (req, res) => {
   }
 });
 
+// Debug: Check artworks in database
+app.get('/api/debug/artworks', async (req, res) => {
+  try {
+    const Artwork = require('./models/Artwork');
+    const artworks = await Artwork.find();
+    console.log('Total artworks in database:', artworks.length);
+    res.json({
+      total: artworks.length,
+      items: artworks.map(item => ({
+        id: item._id,
+        title: item.title,
+        artist: item.artist,
+        category: item.category,
+        price: item.price,
+        isAvailable: item.isAvailable,
+        image: item.image
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching artworks:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Debug: Get all orders (temporary for testing)
 app.get('/api/debug/orders', async (req, res) => {
   try {
@@ -2679,7 +2742,7 @@ app.get("/logout", (req, res, next) => {
 });
 
 // Use admin routes - All admin routes are now handled by MVC structure
-app.use('/admin', adminRoutes);
+// app.use('/admin', adminRoutes); // Already registered above
 
 // 404 Handler
 app.use((req, res) => {

@@ -154,19 +154,82 @@ const homeController = {
   },
 
   // Gallery page
-  getGallery: (req, res) => {
-    res.render('gallery', {
-      title: 'Gallery - Rabuste Coffee',
-      description: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
-      currentPage: '/gallery',
-      keywords: 'art gallery, coffee shop art, artwork for sale, Rabuste Coffee gallery',
-      ogTitle: 'Gallery - Rabuste Coffee',
-      ogDescription: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
-      ogType: 'website',
-      ogUrl: 'https://rabustecoffee.com/gallery',
-      ogImage: '/assets/coffee-bg.jpeg',
-      canonicalUrl: 'https://rabustecoffee.com/gallery'
-    });
+  getGallery: async (req, res) => {
+    try {
+      console.log('🎨 Gallery route called via homeController');
+      
+      const Artwork = require('../../models/Artwork');
+      const artworks = await Artwork.find({ isAvailable: true })
+        .sort({ category: 1, displayOrder: 1 });
+      
+      console.log('🎨 Found artworks:', artworks.length);
+      
+      if (artworks.length === 0) {
+        console.log('⚠️ No artworks found in database');
+        // Check if any artworks exist at all
+        const allArtworks = await Artwork.find({});
+        console.log('📋 Total artworks in database:', allArtworks.length);
+      }
+
+      // Get purchased art IDs for current user (if logged in)
+      let purchasedArtIds = [];
+      if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+        try {
+          const Order = require('../../models/Order');
+          const completedArtOrders = await Order.find({
+            userId: req.user._id || req.user.id,
+            orderType: 'art',
+            status: 'completed'
+          });
+          
+          completedArtOrders.forEach(order => {
+            order.items.forEach(item => {
+              if (item.type === 'art' && item.itemId) {
+                purchasedArtIds.push(String(item.itemId));
+              }
+            });
+          });
+          
+          // Remove duplicates
+          purchasedArtIds = [...new Set(purchasedArtIds)];
+          console.log('🛒 Found', purchasedArtIds.length, 'purchased art items for user');
+        } catch (orderError) {
+          console.log('⚠️ Could not fetch purchased art items:', orderError.message);
+        }
+      }
+
+      console.log('🎯 About to render gallery template with artworks:', artworks.length);
+
+      res.render('gallery', {
+        title: 'Gallery - Rabuste Coffee',
+        description: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+        currentPage: '/gallery',
+        keywords: 'art gallery, coffee shop art, artwork for sale, Rabuste Coffee gallery',
+        ogTitle: 'Gallery - Rabuste Coffee',
+        ogDescription: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+        ogType: 'website',
+        ogUrl: 'https://rabustecoffee.com/gallery',
+        ogImage: '/assets/coffee-bg.jpeg',
+        canonicalUrl: 'https://rabustecoffee.com/gallery',
+        artworks: artworks,
+        purchasedArtIds: purchasedArtIds,
+        isLoggedIn: req.isAuthenticated ? req.isAuthenticated() : false,
+        currentUser: req.user || null
+      });
+    } catch (error) {
+      console.error('❌ Gallery route error:', error);
+      console.error('📍 Error stack:', error.stack);
+      console.log('🚨 RENDERING ERROR TEMPLATE - artworks will be empty');
+      res.render('gallery', {
+        title: 'Gallery - Rabuste Coffee',
+        description: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+        currentPage: '/gallery',
+        artworks: [],
+        purchasedArtIds: [],
+        isLoggedIn: false,
+        currentUser: null
+      });
+    }
   },
 
   // Franchise page

@@ -22,13 +22,22 @@ function ensureAdmin(req, res, next) {
 // Admin dashboard
 router.get('/', ensureAdmin, adminController.getDashboard);
 
+// Test route
+router.get('/test', (req, res) => {
+  console.log('🧪 Admin test route called');
+  res.json({ message: 'Admin routes working!', timestamp: new Date() });
+});
+
 // Analytics
 router.get('/analytics', ensureAdmin, async (req, res) => {
+  console.log('🔍 Analytics route called');
   try {
     const User = require('../../models/User');
     const Order = require('../../models/Order');
     const WorkshopRegistration = require('../../models/WorkshopRegistration');
     const Franchise = require('../../models/Franchise');
+
+    console.log('📊 Starting analytics data collection...');
 
     // Get date ranges
     const now = new Date();
@@ -136,7 +145,9 @@ router.get('/analytics', ensureAdmin, async (req, res) => {
       totalOrders: analytics.totalOrders,
       totalRevenue: analytics.totalRevenue,
       userGrowth: userGrowth + '%',
-      orderGrowth: orderGrowth + '%'
+      orderGrowth: orderGrowth + '%',
+      popularItemsCount: analytics.popularItems.length,
+      dailyOrdersCount: analytics.dailyOrders.length
     });
 
     res.render('admin-analytics', {
@@ -150,7 +161,7 @@ router.get('/analytics', ensureAdmin, async (req, res) => {
       layout: false
     });
   } catch (error) {
-    console.error('Analytics error:', error);
+    console.error('❌ Analytics error:', error);
     res.render('admin-analytics', {
       title: 'Analytics - Rabuste Admin',
       analyticsPropertyId: process.env.GOOGLE_ANALYTICS_PROPERTY_ID || '',
@@ -158,7 +169,7 @@ router.get('/analytics', ensureAdmin, async (req, res) => {
       userGrowth: 0,
       orderGrowth: 0,
       revenueGrowth: 0,
-      error: 'Failed to load analytics data',
+      error: 'Failed to load analytics data: ' + error.message,
       layout: false
     });
   }
