@@ -1,0 +1,85 @@
+<!-- VIRTUAL TOUR PAGE -->
+<section class="virtual-tour-section vh-100">
+  <div class="container-fluid h-100">
+    <div class="row h-100">
+      <!-- Tour Header -->
+      <div class="col-12 p-0">
+        <div class="tour-header text-center py-3" style="background: rgba(0,0,0,0.8); color: white; position: relative; z-index: 10;">
+          <h1 class="mb-2">Virtual Tour - Rabuste Coffee</h1>
+          <p class="mb-0">Explore our café space in 360°</p>
+        </div>
+      </div>
+      
+      <!-- Virtual Tour Iframe -->
+      <div class="col-12 p-0" style="height: calc(100vh - 120px);">
+        <iframe 
+          src="https://app.lapentor.com/sphere/rabuste-coffee-2" 
+          width="100%" 
+          height="100%" 
+          frameborder="0" 
+          allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          title="Rabuste Coffee Virtual Tour">
+        </iframe>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Back to Home Button -->
+  <div class="position-fixed" style="bottom: 20px; left: 20px; z-index: 1000;">
+    <a href="/" class="btn btn-gold">
+      <i class="fas fa-arrow-left me-2"></i>Back to Home
+    </a>
+  </div>
+</section>
+
+<!-- Custom CSS for Virtual Tour -->
+<style>
+.virtual-tour-section {
+  background: #000;
+  overflow: hidden;
+}
+
+.tour-header {
+  border-bottom: 2px solid #D4AF37;
+}
+
+.btn-gold {
+  background: #D4AF37;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+  background: #B8941F;
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tour-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .tour-header p {
+    font-size: 0.9rem;
+  }
+  
+  .position-fixed {
+    bottom: 10px !important;
+    left: 10px !important;
+  }
+  
+  .btn-gold {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}
+</style>
