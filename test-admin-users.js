@@ -2,37 +2,53 @@
  * Test script for admin user management
  */
 
-const fetch = require('node-fetch');
+const http = require('http');
 
 async function testAdminUsers() {
   try {
     console.log('🧪 Testing admin user management...');
     
-    // Test if the API endpoint is accessible
-    const response = await fetch('http://localhost:3000/api/admin/users', {
+    const options = {
+      hostname: 'localhost',
+      port: 3000,
+      path: '/api/admin/users',
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       }
+    };
+    
+    const req = http.request(options, (res) => {
+      console.log('Response status:', res.statusCode);
+      console.log('Response headers:', res.headers);
+      
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      res.on('end', () => {
+        console.log('Response body:', data);
+        
+        if (res.statusCode === 200) {
+          try {
+            const result = JSON.parse(data);
+            console.log('✅ Admin users API is working');
+            console.log('Users found:', result.users ? result.users.length : 0);
+          } catch (parseError) {
+            console.log('⚠️ Response is not JSON:', data);
+          }
+        } else {
+          console.log('❌ Admin users API failed:', res.statusCode);
+        }
+      });
     });
     
-    console.log('Response status:', response.status);
-    console.log('Response headers:', Object.fromEntries(response.headers));
+    req.on('error', (error) => {
+      console.error('❌ Request failed:', error.message);
+    });
     
-    const responseText = await response.text();
-    console.log('Response body:', responseText);
-    
-    if (response.ok) {
-      try {
-        const result = JSON.parse(responseText);
-        console.log('✅ Admin users API is working');
-        console.log('Users found:', result.users ? result.users.length : 0);
-      } catch (parseError) {
-        console.log('⚠️ Response is not JSON:', responseText);
-      }
-    } else {
-      console.log('❌ Admin users API failed:', response.status);
-    }
+    req.end();
     
   } catch (error) {
     console.error('❌ Test failed:', error.message);

@@ -448,6 +448,7 @@
                                 <img src="<%= item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image %>" 
                                      class="menu-card-image" 
                                      alt="<%= item.name %>"
+                                     onerror="this.src='/assets/placeholder.jpg'; console.log('Image failed to load:', this.src);"
                                      onerror="this.src='/assets/placeholder-food.jpg'">
                             <% } %>
                             <div class="menu-card-content">
@@ -521,6 +522,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                         <img src="<%= item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image %>" 
                                              class="menu-card-image" 
                                              alt="<%= item.name %>"
+                                             onerror="this.src='/assets/placeholder.jpg'; console.log('Image failed to load:', this.src);"
                                              onerror="this.src='/assets/placeholder-food.jpg'">
                                     <% } %>
                                     <div class="menu-card-content">

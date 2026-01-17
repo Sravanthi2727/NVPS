@@ -174,6 +174,11 @@ app.use(passport.session());
 app.use(checkAdminRole);
 
 app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
+
+// Additional static file serving for assets
+app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 app.use(expressLayouts);
 
 app.set("layout", "layouts/boilerplate");
@@ -183,8 +188,12 @@ app.get('/test-calendar', (req, res) => {
   res.sendFile(path.join(__dirname, 'test-calendar.html'));
 });
 
-// Serve static files from public directory
-app.use(express.static(path.join(__dirname, "public")));
+// Serve static files from public directory with proper headers
+app.use(express.static(path.join(__dirname, "public"), {
+  maxAge: 0, // Disable caching for development
+  etag: false,
+  lastModified: false
+}));
 
 // Middleware to make variables available to all views
 app.use((req, res, next) => {
