@@ -142,6 +142,11 @@ app.use(expressLayouts);
 
 app.set("layout", "layouts/boilerplate");
 
+// Test calendar route (for debugging)
+app.get('/test-calendar', (req, res) => {
+  res.sendFile(path.join(__dirname, 'test-calendar.html'));
+});
+
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, "public")));
 

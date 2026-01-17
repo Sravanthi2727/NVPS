@@ -163,6 +163,85 @@ router.get('/workshops', ensureAuthenticated, async (req, res) => {
   }
 });
 
+// Get user's workshop events for calendar (formatted for FullCalendar)
+router.get('/workshops/calendar-events', ensureAuthenticated, async (req, res) => {
+  try {
+    console.log('📅 Calendar events API called for user:', req.user.id);
+    const WorkshopRegistration = require('../../models/WorkshopRegistration');
+    const registrations = await WorkshopRegistration.find({ 
+      userId: req.user.id 
+    })
+    .populate('workshopId')
+    .sort({ workshopDate: 1 });
+
+    console.log('📅 Found', registrations.length, 'workshop registrations');
+    console.log('📅 Registration data:', registrations.map(r => ({
+      id: r._id,
+      workshopName: r.workshopName,
+      workshopDate: r.workshopDate,
+      status: r.status
+    })));
+
+    const calendarEvents = registrations.map(reg => {
+      const startDate = new Date(reg.workshopDate);
+      const endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000)); // 2 hours duration
+
+      console.log('📅 Processing registration:', {
+        workshopName: reg.workshopName,
+        originalDate: reg.workshopDate,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
+      });
+
+      return {
+        id: reg._id.toString(),
+        title: reg.workshopName,
+        start: startDate.toISOString(),
+        end: endDate.toISOString(),
+        backgroundColor: getStatusColor(reg.status),
+        borderColor: getStatusColor(reg.status),
+        textColor: '#000',
+        extendedProps: {
+          participantName: reg.participantName,
+          participantEmail: reg.participantEmail,
+          participantPhone: reg.participantPhone,
+          status: reg.status,
+          registrationDate: reg.registrationDate,
+          calendarEventLink: reg.googleCalendarEventLink,
+          calendarEventCreated: reg.calendarEventCreated,
+          calendarEventError: reg.calendarEventError
+        }
+      };
+    });
+
+    console.log('📅 Sending', calendarEvents.length, 'calendar events');
+    console.log('📅 Calendar events:', calendarEvents);
+
+    res.json({ 
+      success: true, 
+      events: calendarEvents 
+    });
+  } catch (error) {
+    console.error('Error fetching workshop calendar events:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Error fetching workshop calendar events',
+      events: []
+    });
+  }
+});
+
+// Helper function to get color based on status
+function getStatusColor(status) {
+  switch (status) {
+    case 'confirmed': return '#28a745';
+    case 'completed': return '#6c757d';
+    case 'cancelled': return '#dc3545';
+    case 'registered':
+    default: return '#d6a45a';
+  }
+}
+
 // Get user's requests
 router.get('/requests', ensureAuthenticated, async (req, res) => {
   try {
