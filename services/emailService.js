@@ -6,6 +6,9 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
+console.log('📧 Nodemailer imported:', typeof nodemailer);
+console.log('📧 createTransporter function:', typeof nodemailer.createTransporter);
+
 class EmailService {
   constructor() {
     this.transporter = null;
@@ -16,14 +19,21 @@ class EmailService {
   initializeTransporter() {
     try {
       console.log('🔧 Initializing email service...');
+      console.log('📧 Email config:', {
+        service: process.env.EMAIL_SERVICE,
+        user: process.env.EMAIL_USER,
+        hasPassword: !!process.env.EMAIL_PASSWORD
+      });
       
-      this.transporter = nodemailer.createTransporter({
+      this.transporter = nodemailer.createTransport({
         service: process.env.EMAIL_SERVICE || 'gmail',
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASSWORD
         }
       });
+
+      console.log('📧 Transporter created, verifying connection...');
 
       // Verify connection
       this.transporter.verify((error, success) => {

@@ -2742,6 +2742,9 @@ function showArtPaymentModal(locationData) {
           <button type="button" class="btn" id="confirmArtPaymentBtn" style="background-color: #d6a45a; border: none; color: #000;" disabled onclick="confirmArtPayment()">
             Confirm Order
           </button>
+          <button type="button" class="btn btn-info btn-sm" onclick="goToCart()" style="margin-left: 10px;">
+            <i class="bi bi-cart"></i> Go to Cart
+          </button>
         </div>
       </div>
     </div>
@@ -2786,12 +2789,84 @@ function selectArtPaymentMethod(method) {
   document.getElementById('confirmArtPaymentBtn').disabled = false;
 }
 
-async function confirmArtPayment() {
-  if (!window.selectedArtPaymentMethod || !window.currentLocationData) {
-    showToast('Please select a payment method', 'error');
-    return;
+// Debug function to test API directly
+async function testPaymentAPI() {
+  try {
+    console.log('🧪 Testing payment API...');
+    
+    const testData = {
+      paymentResponse: {
+        razorpay_payment_id: 'test_payment_' + Date.now(),
+        razorpay_order_id: 'test_order_' + Date.now(),
+        razorpay_signature: 'test_signature'
+      },
+      orderData: {
+        items: [{
+          itemId: 'test_item',
+          name: 'Test Art',
+          price: 100,
+          quantity: 1,
+          image: '/test.jpg'
+        }],
+        deliveryAddress: {
+          name: 'Test User',
+          address: 'Test Address',
+          city: 'Test City',
+          phone: '1234567890'
+        },
+        paymentMethod: 'online'
+      }
+    };
+    
+    const response = await fetch('/api/orders/verify-art-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(testData)
+    });
+    
+    const responseText = await response.text();
+    console.log('Test API Response:', response.status, responseText);
+    
+    if (response.ok) {
+      const result = JSON.parse(responseText);
+      showToast('API Test Success: ' + result.message, 'success');
+    } else {
+      showToast('API Test Failed: ' + response.status + ' - ' + responseText, 'error');
+    }
+    
+  } catch (error) {
+    console.error('API Test Error:', error);
+    showToast('API Test Error: ' + error.message, 'error');
   }
+}
+
+// Go to Cart function
+function goToCart() {
+  console.log('🛒 Redirecting to cart section...');
   
+  // Close all modals
+  const allModals = document.querySelectorAll('.modal');
+  allModals.forEach(modal => {
+    const modalInstance = bootstrap.Modal.getInstance(modal);
+    if (modalInstance) {
+      modalInstance.hide();
+    }
+  });
+  
+  // Switch to cart tab
+  setTimeout(() => {
+    const cartTab = document.getElementById('cart-tab');
+    if (cartTab) {
+      cartTab.click();
+      showToast('Switched to cart section', 'success');
+    }
+  }, 300);
+}
+
+async function confirmArtPayment() {
   try {
     // Get art items from cart
     const cart = await fetchCart();
@@ -2810,8 +2885,8 @@ async function confirmArtPayment() {
       // Process COD order
       await processArtOrder(orderData);
     } else if (window.selectedArtPaymentMethod === 'online') {
-      // Process online payment
-      await initiateArtOnlinePayment(orderData);
+      // Process online payment with simple approach
+      await initiateArtOnlinePaymentSimple(orderData);
     }
   } catch (error) {
     console.error('Art payment confirmation error:', error);
@@ -2857,6 +2932,132 @@ async function processArtOrder(orderData) {
   }
 }
 
+async function initiateArtOnlinePaymentSimple(orderData) {
+  try {
+    console.log('=== SIMPLE ART PAYMENT STARTING ===');
+    console.log('Order data:', orderData);
+    
+    // Check if Razorpay is loaded
+    if (typeof Razorpay === 'undefined') {
+      console.error('❌ Razorpay SDK not loaded');
+      showToast('Razorpay not loaded. Please refresh the page.', 'error');
+      return;
+    }
+    
+    console.log('✅ Razorpay SDK loaded');
+    
+    // Calculate total amount directly
+    const totalAmount = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    console.log('💰 Total amount:', totalAmount);
+    
+    // Simple Razorpay options
+    const options = {
+      key: 'rzp_test_S2a2ZZ2ERWzWeB',
+      amount: Math.round(totalAmount * 100),
+      currency: 'INR',
+      name: 'Rabuste Coffee',
+      description: 'Art Purchase',
+      handler: async function (response) {
+        console.log('✅ Payment successful:', response);
+        showToast('Payment successful! Creating order...', 'success');
+        
+        try {
+          // Add a small delay to ensure payment is processed
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          await verifyArtPayment(response, orderData);
+        } catch (verifyError) {
+          console.error('❌ Error in payment verification:', verifyError);
+          
+          // Fallback: If verification fails but payment succeeded, 
+          // close modal and show message with payment ID
+          showToast('Payment completed! Payment ID: ' + response.razorpay_payment_id + '. If order doesn\'t appear, contact support.', 'warning');
+          
+          // Force close modals
+          setTimeout(() => {
+            const allModals = document.querySelectorAll('.modal');
+            allModals.forEach(modal => {
+              const modalInstance = bootstrap.Modal.getInstance(modal);
+              if (modalInstance) {
+                modalInstance.hide();
+              }
+              // Also remove the modal element
+              modal.remove();
+            });
+            
+            // Clean up modal artifacts
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            
+            // Refresh cart
+            fetchCart().then(cart => {
+              renderCart(cart);
+              updateCartCount();
+            });
+          }, 500);
+        }
+      },
+      prefill: {
+        name: orderData.deliveryAddress.name || 'Customer',
+        email: 'customer@example.com',
+        contact: orderData.deliveryAddress.phone || '9999999999'
+      },
+      theme: { color: '#d6a45a' },
+      modal: {
+        ondismiss: function() {
+          console.log('Payment cancelled by user');
+          showToast('Payment cancelled', 'warning');
+          
+          // Ensure modals are properly closed
+          setTimeout(() => {
+            const modalIds = ['locationModal', 'artPaymentModal', 'paymentModal'];
+            for (const modalId of modalIds) {
+              const modal = document.getElementById(modalId);
+              if (modal) {
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                if (modalInstance) {
+                  modalInstance.hide();
+                }
+              }
+            }
+          }, 500);
+        }
+      }
+    };
+    
+    console.log('Opening Razorpay...');
+    const rzp = new Razorpay(options);
+    
+    rzp.on('payment.failed', function (response) {
+      console.error('❌ Payment failed:', response.error);
+      showToast('Payment failed: ' + response.error.description, 'error');
+      
+      // Close any open modals on payment failure
+      setTimeout(() => {
+        const modalIds = ['locationModal', 'artPaymentModal', 'paymentModal'];
+        for (const modalId of modalIds) {
+          const modal = document.getElementById(modalId);
+          if (modal) {
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            if (modalInstance) {
+              modalInstance.hide();
+            }
+          }
+        }
+      }, 1000);
+    });
+    
+    rzp.open();
+    console.log('✅ Razorpay opened');
+    
+  } catch (error) {
+    console.error('Payment error:', error);
+    showToast('Payment error: ' + error.message, 'error');
+  }
+}
+
 async function initiateArtOnlinePayment(orderData) {
   try {
     console.log('=== ART PAYMENT STARTING ===');
@@ -2871,16 +3072,46 @@ async function initiateArtOnlinePayment(orderData) {
     
     console.log('✅ Razorpay SDK loaded');
     
-    // Calculate total amount
-    const totalAmount = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    // Step 1: Create payment order via API
+    console.log('📝 Creating payment order...');
+    console.log('📝 Order data being sent:', orderData);
     
-    // Skip API call and directly open Razorpay
+    const response = await fetch('/api/orders/create-art-payment-order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include', // Include session cookies
+      body: JSON.stringify(orderData)
+    });
+    
+    console.log('📝 Response status:', response.status);
+    console.log('📝 Response ok:', response.ok);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ API response not ok:', errorText);
+      throw new Error(`API call failed: ${response.status} - ${errorText}`);
+    }
+    
+    const result = await response.json();
+    console.log('Payment order result:', result);
+    
+    if (!result.success) {
+      console.error('❌ Failed to create payment order:', result.message);
+      showToast('Failed to create payment order: ' + result.message, 'error');
+      return;
+    }
+    
+    // Step 2: Open Razorpay with order details
+    const totalAmountInRupees = result.order.amount / 100; // Convert paise back to rupees for display
     const options = {
-      key: 'rzp_test_S2a2ZZ2ERWzWeB', // Your working key
-      amount: Math.round(totalAmount * 100), // Convert to paise
-      currency: 'INR',
+      key: result.order.razorpayKeyId,
+      amount: result.order.amount,
+      currency: result.order.currency,
       name: 'Rabuste Coffee',
       description: 'Art Purchase',
+      order_id: result.order.id,
       handler: async function (response) {
         console.log('✅ Payment successful:', response);
         showToast('Payment successful! Creating order...', 'success');
@@ -2905,7 +3136,7 @@ async function initiateArtOnlinePayment(orderData) {
     };
     
     console.log('Opening art Razorpay with options:', options);
-    console.log('Total Amount: ₹' + totalAmount + ' = ' + (totalAmount * 100) + ' paise');
+    console.log('Total Amount: ₹' + totalAmountInRupees + ' = ' + result.order.amount + ' paise');
     
     try {
       const rzp = new Razorpay(options);
@@ -2924,7 +3155,156 @@ async function initiateArtOnlinePayment(orderData) {
     }
   } catch (error) {
     console.error('Art payment initiation error:', error);
-    showToast('Failed to initiate art payment', 'error');
+    showToast('Failed to initiate art payment: ' + error.message, 'error');
+  }
+}
+
+// Verify art payment and create order
+async function verifyArtPayment(paymentResponse, orderData) {
+  try {
+    console.log('🔍 Verifying art payment...');
+    console.log('Payment Response:', paymentResponse);
+    console.log('Order Data:', orderData);
+    
+    // Show loading state
+    showToast('Verifying payment and creating order...', 'info');
+    
+    const response = await fetch('/api/orders/verify-art-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include', // Include session cookies for authentication
+      body: JSON.stringify({
+        paymentResponse: paymentResponse,
+        orderData: orderData
+      })
+    });
+    
+    console.log('API Response status:', response.status);
+    console.log('API Response ok:', response.ok);
+    
+    // Get response text first for debugging
+    const responseText = await response.text();
+    console.log('Raw API response:', responseText);
+    
+    // Check for authentication errors
+    if (response.status === 401) {
+      console.error('❌ Authentication failed - user not logged in');
+      showToast('Authentication failed. Please refresh the page and try again.', 'error');
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+      return;
+    }
+    
+    if (!response.ok) {
+      console.error('❌ API response not ok:', response.status, responseText);
+      showToast(`API Error: ${response.status} - ${responseText}`, 'error');
+      return;
+    }
+    
+    // Parse JSON response
+    let result;
+    try {
+      result = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('❌ JSON parse error:', parseError);
+      showToast('Invalid server response. Please try again.', 'error');
+      return;
+    }
+    
+    console.log('Payment verification result:', result);
+    
+    if (result.success) {
+      console.log('✅ Payment verified and order created successfully');
+      showToast('🎉 Order placed successfully! Order ID: #' + result.orderId.slice(-6).toUpperCase(), 'success');
+      
+      // Force close all modals immediately
+      console.log('🔄 Closing all modals...');
+      
+      // Method 1: Hide all Bootstrap modals
+      const allModals = document.querySelectorAll('.modal');
+      allModals.forEach(modal => {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+      });
+      
+      // Method 2: Remove modal elements directly
+      setTimeout(() => {
+        const modalIds = ['locationModal', 'artPaymentModal', 'paymentModal'];
+        modalIds.forEach(modalId => {
+          const modal = document.getElementById(modalId);
+          if (modal) {
+            modal.remove();
+            console.log('Removed modal:', modalId);
+          }
+        });
+        
+        // Remove all modal backdrops
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+        
+        // Clean up body classes
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        
+        console.log('✅ All modals cleaned up');
+      }, 100);
+      
+      // Refresh cart immediately
+      console.log('🔄 Refreshing cart...');
+      setTimeout(async () => {
+        try {
+          const updatedCart = await fetchCart();
+          renderCart(updatedCart);
+          updateCartCount();
+          console.log('✅ Cart refreshed successfully');
+          
+          // Show final success message
+          showToast('✅ Order completed! Check "My Orders" tab.', 'success');
+          
+        } catch (refreshError) {
+          console.error('❌ Error refreshing cart:', refreshError);
+          showToast('Order created but cart refresh failed. Please reload page.', 'warning');
+        }
+      }, 500);
+      
+    } else {
+      console.error('❌ Payment verification failed:', result.message);
+      showToast('Payment verification failed: ' + result.message, 'error');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error verifying payment:', error);
+    
+    // If payment was successful but verification failed, show a helpful message
+    if (paymentResponse && paymentResponse.razorpay_payment_id) {
+      showToast('Payment successful! If order doesn\'t appear, contact support with Payment ID: ' + paymentResponse.razorpay_payment_id, 'warning');
+      
+      // Still try to close modals and refresh cart
+      setTimeout(() => {
+        // Force close modals
+        const allModals = document.querySelectorAll('.modal');
+        allModals.forEach(modal => {
+          const modalInstance = bootstrap.Modal.getInstance(modal);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        });
+        
+        // Refresh cart anyway
+        fetchCart().then(cart => {
+          renderCart(cart);
+          updateCartCount();
+        });
+      }, 1000);
+    } else {
+      showToast('Error verifying payment: ' + error.message, 'error');
+    }
   }
 }
 
@@ -3120,113 +3500,165 @@ function waitForGoogleMaps() {
     
     // Add click handler for location button
     locationBtn.addEventListener('click', function() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          function(position) {
-            const userLocation = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-            
-            // Center map on user's location
-            map.setCenter(userLocation);
-            map.setZoom(15);
-            
-            // Move marker to user's location
-            marker.setPosition(userLocation);
-            
-            // Fill form with location data
-            document.getElementById('deliveryLat').value = userLocation.lat;
-            document.getElementById('deliveryLng').value = userLocation.lng;
-            
-            // Reverse geocoding to get address
-            const geocoder = new google.maps.Geocoder();
-            geocoder.geocode({ location: userLocation }, function(results, status) {
-              if (status === 'OK' && results[0]) {
-                const address = results[0].formatted_address;
-                const addressComponents = results[0].address_components;
-                
-                // Extract city, state, pincode from address components
-                let city = '', state = '', pincode = '';
-                addressComponents.forEach(component => {
-                  if (component.types.includes('locality')) {
-                    city = component.long_name;
-                  } else if (component.types.includes('administrative_area_level_1')) {
-                    state = component.long_name;
-                  } else if (component.types.includes('postal_code')) {
-                    pincode = component.long_name;
-                  }
-                });
-                
-                // Fill form fields with delay to ensure DOM is ready
-                setTimeout(() => {
-                  console.log('Filling form fields...');
-                  console.log('Available elements:', {
-                    addressField: !!document.getElementById('deliveryAddress'),
-                    cityField: !!document.getElementById('deliveryCity'),
-                    stateField: !!document.getElementById('deliveryState'),
-                    pincodeField: !!document.getElementById('deliveryPincode'),
-                    latField: !!document.getElementById('deliveryLat'),
-                    lngField: !!document.getElementById('deliveryLng')
-                  });
-                  
-                  // Check if elements exist before filling
-                  const addressField = document.getElementById('deliveryAddress');
-                  const cityField = document.getElementById('deliveryCity');
-                  const stateField = document.getElementById('deliveryState');
-                  const pincodeField = document.getElementById('deliveryPincode');
-                  
-                  if (addressField) {
-                    addressField.value = address;
-                    addressField.dispatchEvent(new Event('input', { bubbles: true }));
-                    console.log('Address filled:', address);
-                  } else {
-                    console.error('Address field not found!');
-                  }
-                  
-                  if (cityField) {
-                    cityField.value = city;
-                    cityField.dispatchEvent(new Event('input', { bubbles: true }));
-                    console.log('City filled:', city);
-                  } else {
-                    console.error('City field not found!');
-                  }
-                  
-                  if (stateField) {
-                    stateField.value = state;
-                    stateField.dispatchEvent(new Event('change', { bubbles: true }));
-                    console.log('State filled:', state);
-                  } else {
-                    console.error('State field not found!');
-                  }
-                  
-                  if (pincodeField && pincode) {
-                    pincodeField.value = pincode;
-                    pincodeField.dispatchEvent(new Event('input', { bubbles: true }));
-                    console.log('Pincode filled:', pincode);
-                  } else {
-                    console.error('Pincode field not found or no pincode!');
-                  }
-                  
-                  console.log('All form fields filled successfully!');
-                }, 1000);
-                
-                console.log('Location address found:', { address, city, state, pincode });
-              } else {
-                console.log('Geocoding failed, status:', status);
-              }
-            });
-            
-            console.log('User location found:', userLocation);
-          },
-          function(error) {
-            console.error('Geolocation error:', error);
-            alert('Unable to get your location. Please enable location access.');
-          }
-        );
-      } else {
-        alert('Geolocation is not supported by your browser.');
+      console.log('Use My Location button clicked');
+      
+      // Check if geolocation is supported
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser. Please use a modern browser.');
+        return;
       }
+      
+      // Show loading state
+      locationBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Getting Location...';
+      locationBtn.disabled = true;
+      
+      // Request location with better options
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          console.log('Location access granted:', position.coords);
+          
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          
+          // Center map on user's location
+          map.setCenter(userLocation);
+          map.setZoom(15);
+          
+          // Move marker to user's location
+          marker.setPosition(userLocation);
+          
+          // Fill hidden coordinates
+          document.getElementById('deliveryLat').value = userLocation.lat;
+          document.getElementById('deliveryLng').value = userLocation.lng;
+          
+          // Reverse geocoding to get address
+          const geocoder = new google.maps.Geocoder();
+          geocoder.geocode({ location: userLocation }, function(results, status) {
+            if (status === 'OK' && results[0]) {
+              console.log('Geocoding successful:', results[0]);
+              const address = results[0].formatted_address;
+              const addressComponents = results[0].address_components;
+              
+              // Extract city, state, pincode from address components
+              let city = '', state = '', pincode = '';
+              addressComponents.forEach(component => {
+                console.log('🔍 Processing address component:', component.types, component.long_name);
+                
+                // Check for city/locality
+                if (component.types.includes('locality')) {
+                  city = component.long_name;
+                  console.log('🏙 Found city (locality):', city);
+                } else if (component.types.includes('administrative_area_level_2')) {
+                  city = component.long_name;
+                  console.log('🏙 Found city (admin_level_2):', city);
+                } else if (component.types.includes('sublocality')) {
+                  if (!city) city = component.long_name; // fallback
+                  console.log('🏙 Found city (sublocality):', city);
+                }
+                
+                // Check for state
+                if (component.types.includes('administrative_area_level_1')) {
+                  state = component.long_name;
+                  console.log('🌍 Found state:', state);
+                }
+                
+                // Check for pincode - try multiple types
+                if (component.types.includes('postal_code')) {
+                  pincode = component.long_name;
+                  console.log('📮 Found pincode (postal_code):', pincode);
+                } else if (component.types.includes('postal_code_prefix')) {
+                  pincode = component.long_name;
+                  console.log('📮 Found pincode (postal_code_prefix):', pincode);
+                }
+              });
+              
+              console.log('📍 Address components found:', { address, city, state, pincode });
+              
+              // Fill form fields immediately
+              const addressField = document.getElementById('deliveryAddress');
+              const cityField = document.getElementById('deliveryCity');
+              const stateField = document.getElementById('deliveryState');
+              const pincodeField = document.getElementById('deliveryPincode');
+              
+              if (addressField) {
+                addressField.value = address;
+                addressField.dispatchEvent(new Event('input', { bubbles: true }));
+                console.log('✅ Address filled:', address);
+              } else {
+                console.error('❌ Address field not found!');
+              }
+              
+              if (cityField) {
+                cityField.value = city;
+                cityField.dispatchEvent(new Event('input', { bubbles: true }));
+                console.log('✅ City filled:', city);
+              } else {
+                console.error('❌ City field not found!');
+              }
+              
+              if (stateField) {
+                stateField.value = state;
+                stateField.dispatchEvent(new Event('change', { bubbles: true }));
+                console.log('✅ State filled:', state);
+              } else {
+                console.error('❌ State field not found!');
+              }
+              
+              if (pincodeField && pincode) {
+                pincodeField.value = pincode;
+                pincodeField.dispatchEvent(new Event('input', { bubbles: true }));
+                console.log('✅ Pincode filled:', pincode);
+              } else {
+                console.error('❌ Pincode field not found or no pincode!');
+              }
+              
+              // Reset button
+              locationBtn.innerHTML = '<i class="bi bi-geo-alt-fill"></i> Use My Location';
+              locationBtn.disabled = false;
+              
+              // Show success message
+              alert('✅ Location found and form filled successfully!');
+              
+            } else {
+              console.error('Geocoding failed, status:', status);
+              alert('❌ Could not get address from your location. Please try searching manually.');
+              locationBtn.innerHTML = '<i class="bi bi-geo-alt-fill"></i> Use My Location';
+              locationBtn.disabled = false;
+            }
+          });
+          
+        },
+        function(error) {
+          console.error('Geolocation error:', error);
+          let errorMessage = 'Unable to get your location. ';
+          
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage += 'Location access denied. Please allow location access in your browser settings and try again.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage += 'Location information is unavailable. Please check your device\'s GPS/location services.';
+              break;
+            case error.TIMEOUT:
+              errorMessage += 'Location request timed out. Please try again.';
+              break;
+            default:
+              errorMessage += 'An unknown error occurred. Error: ' + error.message;
+              break;
+          }
+          
+          alert('❌ ' + errorMessage);
+          locationBtn.innerHTML = '<i class="bi bi-geo-alt-fill"></i> Use My Location';
+          locationBtn.disabled = false;
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
+        }
+      );
     });
     
     mapElement.parentNode.insertBefore(locationBtn, mapElement);
@@ -3339,6 +3771,8 @@ window.proceedToMenuCheckout = proceedToMenuCheckout;
 window.proceedToPaymentOptions = proceedToPaymentOptions;
 window.selectArtPaymentMethod = selectArtPaymentMethod;
 window.confirmArtPayment = confirmArtPayment;
+window.goToCart = goToCart;
+window.testPaymentAPI = testPaymentAPI;
 
 // Debug functions
 window.addTestData = async function() {

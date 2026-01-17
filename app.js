@@ -31,6 +31,11 @@ const { getUserData } = require('./middleware/auth');
 // Connect to database
 connectDB();
 
+// Initialize email service
+console.log('🔧 Initializing email service...');
+const emailService = require('./services/emailService');
+console.log('✅ Email service loaded');
+
 const app = express();
 
 // Passport configuration
@@ -434,6 +439,26 @@ app.get('/user-dashboard', ensureAuthenticated, (req, res) => {
 // Simple test route
 app.get('/test-route', (req, res) => {
   res.json({ message: 'Test route working!' });
+});
+
+// Test email endpoint
+app.get('/test-email', async (req, res) => {
+  try {
+    console.log('🧪 Testing email service...');
+    const emailService = require('./services/emailService');
+    
+    const result = await emailService.sendEmail(
+      'nehasharma.221006@gmail.com',
+      'Test Email from Rabuste Coffee',
+      '<h1>Test Email</h1><p>This is a test email to verify email service is working.</p>'
+    );
+    
+    console.log('📧 Test email result:', result);
+    res.json({ success: true, result: result });
+  } catch (error) {
+    console.error('❌ Test email error:', error);
+    res.json({ success: false, error: error.message });
+  }
 });
 
 // Example route to show user data

@@ -515,6 +515,44 @@ router.post('/art-checkout', ensureAuthenticated, async (req, res) => {
     await order.save();
     console.log('✅ Art order created successfully:', order._id, 'for user:', userId);
     
+    // Send order confirmation email to user
+    try {
+      const emailService = require('../../services/emailService');
+      console.log('📧 Sending art order confirmation email to user:', user.email);
+      
+      const userEmailResult = await emailService.sendOrderStatusEmail(
+        user.email,
+        order,
+        'confirmed',
+        'Thank you for your art order! We have received your order and will process it shortly.'
+      );
+      
+      if (userEmailResult.success) {
+        console.log('✅ Art order confirmation email sent successfully to user');
+      } else {
+        console.error('❌ Failed to send art order confirmation email to user:', userEmailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending art order confirmation email to user:', emailError);
+      // Don't fail order creation if email fails
+    }
+
+    // Send admin notification email for new art order
+    try {
+      const emailService = require('../../services/emailService');
+      console.log('📧 Sending admin notification for new art order');
+      
+      const emailResult = await emailService.notifyAdminNewOrder(order);
+      if (emailResult.success) {
+        console.log('✅ Admin art order notification email sent successfully');
+      } else {
+        console.error('❌ Failed to send admin art order notification email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending admin art order notification email:', emailError);
+      // Don't fail order creation if email fails
+    }
+
     // Reload user to get latest cart data
     const updatedUser = await User.findById(userId);
     if (!updatedUser) {
@@ -559,6 +597,9 @@ router.post('/art-checkout', ensureAuthenticated, async (req, res) => {
 
 // Create art payment order
 router.post('/create-art-payment-order', ensureAuthenticated, async (req, res) => {
+  console.log('💳 CREATE ART PAYMENT ORDER API CALLED');
+  console.log('💳 Request body:', req.body);
+  
   try {
     const { items, deliveryAddress, paymentMethod, orderType } = req.body;
     
@@ -597,6 +638,10 @@ router.post('/create-art-payment-order', ensureAuthenticated, async (req, res) =
 
 // Verify art payment
 router.post('/verify-art-payment', ensureAuthenticated, async (req, res) => {
+  console.log('💳 ART PAYMENT VERIFICATION API CALLED');
+  console.log('💳 Payment response:', req.body.paymentResponse);
+  console.log('💳 Order data:', req.body.orderData);
+  
   try {
     const { paymentResponse, orderData } = req.body;
     
@@ -654,6 +699,44 @@ router.post('/verify-art-payment', ensureAuthenticated, async (req, res) => {
     await order.save();
     console.log('✅ Art order created successfully:', order._id, 'for user:', userId);
     
+    // Send order confirmation email to user
+    try {
+      const emailService = require('../../services/emailService');
+      console.log('📧 Sending art payment order confirmation email to user:', user.email);
+      
+      const userEmailResult = await emailService.sendOrderStatusEmail(
+        user.email,
+        order,
+        'confirmed',
+        'Thank you for your art order! Payment has been confirmed and we will process your order shortly.'
+      );
+      
+      if (userEmailResult.success) {
+        console.log('✅ Art payment order confirmation email sent successfully to user');
+      } else {
+        console.error('❌ Failed to send art payment order confirmation email to user:', userEmailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending art payment order confirmation email to user:', emailError);
+      // Don't fail order creation if email fails
+    }
+
+    // Send admin notification email for new art payment order
+    try {
+      const emailService = require('../../services/emailService');
+      console.log('📧 Sending admin notification for new art payment order');
+      
+      const emailResult = await emailService.notifyAdminNewOrder(order);
+      if (emailResult.success) {
+        console.log('✅ Admin art payment order notification email sent successfully');
+      } else {
+        console.error('❌ Failed to send admin art payment order notification email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending admin art payment order notification email:', emailError);
+      // Don't fail order creation if email fails
+    }
+
     // Reload user to get latest cart data
     const updatedUser = await User.findById(userId);
     if (!updatedUser) {
@@ -698,6 +781,7 @@ router.post('/verify-art-payment', ensureAuthenticated, async (req, res) => {
 
 // Checkout API - Convert cart to order
 router.post('/checkout', ensureAuthenticated, async (req, res) => {
+  console.log('🛒 CHECKOUT API CALLED - Starting order processing...');
   try {
     const { orderType = 'menu', items } = req.body;
     const User = require('../../models/User');
@@ -775,6 +859,33 @@ router.post('/checkout', ensureAuthenticated, async (req, res) => {
     await newOrder.save();
 
     console.log('Order saved successfully:', newOrder._id);
+
+    console.log('🔄 Starting email notifications...');
+    
+    // Send order confirmation email to user
+    try {
+      console.log('📧 Attempting to send order confirmation email...');
+      const emailService = require('../../services/emailService');
+      console.log('📧 Email service loaded, sending to user:', user.email);
+      
+      const userEmailResult = await emailService.sendOrderStatusEmail(
+        user.email,
+        newOrder,
+        'confirmed',
+        'Thank you for your order! We have received your order and will process it shortly.'
+      );
+      
+      console.log('📧 User email result:', userEmailResult);
+      
+      if (userEmailResult.success) {
+        console.log('✅ Order confirmation email sent successfully to user');
+      } else {
+        console.error('❌ Failed to send order confirmation email to user:', userEmailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending order confirmation email to user:', emailError);
+      // Don't fail order creation if email fails
+    }
 
     // Send admin notification email for new order
     try {
