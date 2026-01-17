@@ -97,19 +97,19 @@
                 <% if (typeof workshopBookings !== 'undefined' && workshopBookings.length > 0) { %>
                     <% workshopBookings.forEach(booking => { %>
                         <tr>
-                            <td>
+                            <td data-label="Participant">
                                 <strong><%= booking.name %></strong><br>
                                 <small class="text-muted"><%= booking.email %></small>
                             </td>
-                            <td><%= booking.title %></td>
-                            <td><%= new Date(booking.date).toLocaleDateString() %></td>
-                            <td><%= booking.phone %></td>
-                            <td>
+                            <td data-label="Workshop"><%= booking.title %></td>
+                            <td data-label="Date"><%= new Date(booking.date).toLocaleDateString() %></td>
+                            <td data-label="Contact"><%= booking.phone %></td>
+                            <td data-label="Status">
                                 <span class="badge <%= booking.status === 'pending' ? 'bg-warning' : booking.status === 'approved' ? 'bg-success' : 'bg-danger' %>">
                                     <%= booking.status.charAt(0).toUpperCase() + booking.status.slice(1) %>
                                 </span>
                             </td>
-                            <td>
+                            <td data-label="Actions">
                                 <form method="POST" action="/admin/workshop-requests/<%= booking.id %>/update" style="display: inline;">
                                     <select name="status" class="form-select form-select-sm" style="width: auto; display: inline-block;" onchange="this.form.submit()">
                                         <option value="pending" <%= booking.status === 'pending' ? 'selected' : '' %>>Pending</option>
@@ -151,20 +151,20 @@
                 <% if (typeof workshopProposals !== 'undefined' && workshopProposals.length > 0) { %>
                     <% workshopProposals.forEach(proposal => { %>
                         <tr>
-                            <td>
+                            <td data-label="Organizer">
                                 <strong><%= proposal.organizerName || proposal.name %></strong><br>
                                 <small class="text-muted"><%= proposal.email %></small>
                             </td>
-                            <td><%= proposal.title %></td>
-                            <td><%= proposal.category %></td>
-                            <td><%= proposal.duration %></td>
-                            <td><%= proposal.capacity %></td>
-                            <td>
+                            <td data-label="Workshop Title"><%= proposal.title %></td>
+                            <td data-label="Category"><%= proposal.category %></td>
+                            <td data-label="Duration"><%= proposal.duration %></td>
+                            <td data-label="Capacity"><%= proposal.capacity %></td>
+                            <td data-label="Status">
                                 <span class="badge <%= proposal.status === 'pending' ? 'bg-warning' : proposal.status === 'approved' ? 'bg-success' : 'bg-danger' %>">
                                     <%= proposal.status.charAt(0).toUpperCase() + proposal.status.slice(1) %>
                                 </span>
                             </td>
-                            <td>
+                            <td data-label="Actions">
                                 <form method="POST" action="/admin/workshop-requests/<%= proposal.id %>/update" style="display: inline;">
                                     <select name="status" class="form-select form-select-sm" style="width: auto; display: inline-block;" onchange="this.form.submit()">
                                         <option value="pending" <%= proposal.status === 'pending' ? 'selected' : '' %>>Pending</option>

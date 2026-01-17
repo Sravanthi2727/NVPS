@@ -451,22 +451,29 @@ const adminController = {
     }
   },
 
-  // Cart Requests Management (now Orders Management)
+  // Cart Requests Management (Menu Orders only)
   getCartRequests: async (req, res) => {
     try {
       const Order = require('../../models/Order');
       
-      // Fetch orders from database
-      const orders = await Order.find()
+      // Fetch only menu/cart orders (exclude art orders)
+      const orders = await Order.find({ 
+        $or: [
+          { orderType: { $ne: 'art' } },
+          { orderType: { $exists: false } },
+          { orderType: null }
+        ]
+      })
         .populate('userId', 'name email')
         .sort({ createdAt: -1 });
 
-      // Transform orders to match the expected format
+      console.log(`Found ${orders.length} cart orders (excluding art orders)`);
+
+      // Transform orders to match expected format
       const cartRequests = orders.map(order => ({
         _id: order._id,
         customerName: order.customerName,
         customerEmail: order.customerEmail,
-        items: order.items,
         deliveryAddress: order.deliveryAddress,
         paymentMethod: order.paymentMethod,
         totalAmount: order.totalAmount,
@@ -483,7 +490,7 @@ const adminController = {
         layout: 'layouts/admin'
       });
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      console.error('Error fetching cart orders:', error);
       
       // Fallback to empty data if database fails
       res.render("admin/cart-requests", {
@@ -492,113 +499,6 @@ const adminController = {
         currentPage: '/admin/cart-requests',
         cartRequests: [],
         layout: 'layouts/admin'
-      });
-    }
-  },
-
-  // Workshop Requests Management
-  getWorkshopRequests: async (req, res) => {
-    try {
-      const WorkshopRegistration = require('../../models/WorkshopRegistration');
-      const Request = require('../../models/Request');
-      
-      // Fetch workshop registrations (bookings)
-      const registrations = await WorkshopRegistration.find()
-        .populate('workshopId', 'title date meta')
-        .populate('userId', 'name email')
-        .sort({ registrationDate: -1 });
-      
-      // Fetch workshop proposals (conduct-workshop requests)
-      const proposals = await Request.find({ type: 'conduct-workshop' })
-        .populate('userId', 'name email')
-        .sort({ createdAt: -1 });
-      
-      // Map registrations to workshopRequests format
-      const registrationRequests = registrations.map((reg, index) => ({
-        id: reg._id.toString(),
-        type: 'booking',
-        customerName: reg.participantName || (reg.userId && reg.userId.name) || '',
-        name: reg.participantName || (reg.userId && reg.userId.name) || '',
-        email: reg.participantEmail || (reg.userId && reg.userId.email) || '',
-        phone: reg.participantPhone || '',
-        workshop: reg.workshopName || (reg.workshopId && reg.workshopId.title) || '',
-        title: reg.workshopName || (reg.workshopId && reg.workshopId.title) || '',
-        date: reg.workshopDate,
-        duration: reg.workshopId && reg.workshopId.meta && reg.workshopId.meta.duration ? reg.workshopId.meta.duration : '',
-        participants: 1, // Each registration is for 1 participant
-        capacity: reg.workshopId && reg.workshopId.meta && reg.workshopId.meta.capacity ? reg.workshopId.meta.capacity : '',
-        price: reg.workshopId && reg.workshopId.meta && reg.workshopId.meta.price ? reg.workshopId.meta.price : '',
-        status: reg.status === 'registered' ? 'pending' : reg.status === 'confirmed' ? 'approved' : reg.status,
-        requestDate: reg.registrationDate || reg.createdAt,
-        submittedDate: reg.registrationDate || reg.createdAt,
-        createdAt: reg.createdAt,
-        // Additional details for modal
-        workshopId: reg.workshopId ? reg.workshopId._id.toString() : '',
-        notes: reg.notes || ''
-      }));
-      
-      // Map proposals to workshopRequests format
-      const proposalRequests = proposals.map((proposal, index) => ({
-        id: proposal._id.toString(),
-        type: 'proposal',
-        customerName: proposal.details && proposal.details.organizerName ? proposal.details.organizerName : (proposal.userId && proposal.userId.name) || '',
-        name: proposal.details && proposal.details.organizerName ? proposal.details.organizerName : (proposal.userId && proposal.userId.name) || '',
-        organizerName: proposal.details && proposal.details.organizerName ? proposal.details.organizerName : '',
-        email: proposal.details && proposal.details.organizerEmail ? proposal.details.organizerEmail : (proposal.userId && proposal.userId.email) || '',
-        phone: proposal.details && proposal.details.organizerPhone ? proposal.details.organizerPhone : '',
-        workshop: proposal.title || '',
-        title: proposal.title || '',
-        category: proposal.details && proposal.details.category ? proposal.details.category : '',
-        description: proposal.description || '',
-        date: proposal.details && proposal.details.preferredDate ? proposal.details.preferredDate : '',
-        duration: proposal.details && proposal.details.duration ? proposal.details.duration + ' hrs' : '',
-        participants: proposal.details && proposal.details.capacity ? proposal.details.capacity : '',
-        capacity: proposal.details && proposal.details.capacity ? proposal.details.capacity : '',
-        price: proposal.details && proposal.details.price ? proposal.details.price : '',
-        skillLevel: proposal.details && proposal.details.skillLevel ? proposal.details.skillLevel : '',
-        materialsNeeded: proposal.details && proposal.details.materialsNeeded ? proposal.details.materialsNeeded : '',
-        collaborationType: proposal.details && proposal.details.collaborationType ? proposal.details.collaborationType : '',
-        additionalNotes: proposal.details && proposal.details.additionalNotes ? proposal.details.additionalNotes : '',
-        organizerExperience: proposal.details && proposal.details.organizerExperience ? proposal.details.organizerExperience : '',
-        status: proposal.status || 'pending',
-        requestDate: proposal.submittedDate || proposal.createdAt,
-        submittedDate: proposal.submittedDate || proposal.createdAt,
-        createdAt: proposal.createdAt
-      }));
-      
-      // Combine both types of requests
-      const workshopRequests = [...registrationRequests, ...proposalRequests].sort((a, b) => {
-        const dateA = new Date(a.requestDate || a.submittedDate || a.createdAt);
-        const dateB = new Date(b.requestDate || b.submittedDate || b.createdAt);
-        return dateB - dateA; // Most recent first
-      });
-      
-      console.log(`Loaded ${registrationRequests.length} workshop registrations and ${proposalRequests.length} workshop proposals`);
-      
-      res.render("admin/workshop-requests", {
-        title: 'Workshop Requests - Rabuste Admin',
-        description: 'Manage workshop booking requests and proposals.',
-        currentPage: '/admin/workshop-requests',
-        workshopBookings: registrationRequests,
-        workshopProposals: proposalRequests,
-        counts: {
-          workshops: registrationRequests.filter(r => r.status === 'pending').length + proposalRequests.filter(p => p.status === 'pending').length
-        },
-        layout: 'layouts/admin'
-      });
-    } catch (error) {
-      console.error('Error in getWorkshopRequests:', error);
-      res.status(500).render("admin/workshop-requests", {
-        title: 'Workshop Requests - Rabuste Admin',
-        description: 'Manage workshop booking requests and proposals.',
-        currentPage: '/admin/workshop-requests',
-        workshopBookings: [],
-        workshopProposals: [],
-        counts: {
-          workshops: 0
-        },
-        layout: 'layouts/admin',
-        error: 'Error loading workshop requests: ' + error.message
       });
     }
   },
@@ -631,6 +531,81 @@ const adminController = {
         description: 'Manage artwork purchase orders.',
         currentPage: '/admin/art-requests',
         artRequests: [],
+        layout: 'layouts/admin'
+      });
+    }
+  },
+
+  // API: Get individual art request for editing
+  getArtRequestById: async (req, res) => {
+    try {
+      const Order = require('../../models/Order');
+      const { id } = req.params;
+      
+      if (!id) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Order ID is required' 
+        });
+      }
+
+      const order = await Order.findById(id);
+      
+      if (!order) {
+        return res.status(404).json({ 
+          success: false, 
+          message: 'Order not found' 
+        });
+      }
+
+      res.json({ 
+        success: true, 
+        order: order 
+      });
+
+    } catch (error) {
+      console.error('Error fetching order:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Error fetching order: ' + error.message 
+      });
+    }
+  },
+
+  // Workshop Requests Management
+  getWorkshopRequests: async (req, res) => {
+    try {
+      const WorkshopRegistration = require('../../models/WorkshopRegistration');
+      const Request = require('../../models/Request');
+      
+      // Fetch all workshop registrations (bookings) and proposals
+      const registrations = await WorkshopRegistration.find()
+        .populate('userId', 'name email')
+        .sort({ createdAt: -1 });
+      const proposals = await Request.find()
+        .populate('userId', 'name email')
+        .sort({ createdAt: -1 });
+
+      console.log(`Found ${registrations.length} workshop registrations and ${proposals.length} proposals`);
+
+      res.render("admin/workshop-requests", {
+        title: 'Workshop Requests - Admin Dashboard',
+        description: 'Manage workshop registrations and proposals.',
+        currentPage: '/admin/workshop-requests',
+        registrations,
+        proposals,
+        layout: 'layouts/admin'
+      });
+    } catch (error) {
+      console.error('Error fetching workshop requests:', error);
+      
+      // Fallback to empty data if database fails
+      res.render("admin/workshop-requests", {
+        title: 'Workshop Requests - Admin Dashboard',
+        description: 'Manage workshop registrations and proposals.',
+        currentPage: '/admin/workshop-requests',
+        registrations: [],
+        proposals: [],
         layout: 'layouts/admin'
       });
     }
