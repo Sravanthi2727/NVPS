@@ -1,10 +1,11 @@
 /**
  * Workshop API Routes
- * All workshop-related API endpoints
+ * All workshop-related API endpoints with Google Calendar integration
  */
 
 const express = require('express');
 const router = express.Router();
+const googleCalendarService = require('../../services/googleCalendarService');
 
 // Authentication middleware
 function ensureAuthenticated(req, res, next) {
@@ -54,6 +55,7 @@ router.post('/register', async (req, res) => {
     // Get userId if user is authenticated, otherwise null for public registration
     const userId = req.isAuthenticated && req.isAuthenticated() && req.user ? req.user.id : null;
     
+    // Create registration record first
     const registration = new WorkshopRegistration({
       userId: userId,
       workshopId,
@@ -66,11 +68,59 @@ router.post('/register', async (req, res) => {
     });
     
     await registration.save();
+    console.log('✅ Workshop registration created:', registration._id);
+
+    // Create Google Calendar event
+    try {
+      const workshopData = {
+        workshopName: workshopName,
+        workshopDate: workshopDate,
+        description: workshop.description || `Workshop: ${workshopName}`
+      };
+
+      const participantData = {
+        registrationId: registration._id,
+        participantName: participantName,
+        participantEmail: participantEmail,
+        participantPhone: participantPhone
+      };
+
+      console.log('📅 Creating Google Calendar event for registration:', registration._id);
+      const calendarResult = await googleCalendarService.createWorkshopEvent(workshopData, participantData);
+
+      if (calendarResult.success) {
+        // Update registration with calendar event details
+        registration.googleCalendarEventId = calendarResult.eventId;
+        registration.googleCalendarEventLink = calendarResult.eventLink;
+        registration.calendarEventCreated = true;
+        await registration.save();
+
+        console.log('✅ Google Calendar event created and linked to registration');
+      } else {
+        // Log error but don't fail the registration
+        registration.calendarEventError = calendarResult.error;
+        await registration.save();
+        
+        console.log('⚠️ Registration successful but calendar event failed:', calendarResult.error);
+      }
+    } catch (calendarError) {
+      console.error('❌ Calendar integration error (non-critical):', calendarError);
+      registration.calendarEventError = calendarError.message;
+      await registration.save();
+    }
     
     res.json({ 
       success: true, 
       message: 'Registration successful! You will receive a confirmation email shortly.',
-      registration: registration 
+      registration: {
+        id: registration._id,
+        workshopName: registration.workshopName,
+        workshopDate: registration.workshopDate,
+        participantName: registration.participantName,
+        status: registration.status,
+        calendarEventCreated: registration.calendarEventCreated,
+        calendarEventLink: registration.googleCalendarEventLink
+      }
     });
   } catch (error) {
     console.error('Workshop registration error:', error);
@@ -99,7 +149,18 @@ router.post('/', ensureAuthenticated, async (req, res) => {
         error: 'You are already registered for this workshop' 
       });
     }
+
+    // Validate workshop exists
+    const Workshop = require('../../models/Workshop');
+    const workshop = await Workshop.findById(workshopId);
+    if (!workshop) {
+      return res.status(404).json({ 
+        success: false,
+        error: 'Workshop not found' 
+      });
+    }
     
+    // Create registration record
     const registration = new WorkshopRegistration({
       userId: req.user.id,
       workshopId,
@@ -112,9 +173,61 @@ router.post('/', ensureAuthenticated, async (req, res) => {
     });
     
     await registration.save();
-    res.json({ success: true, registration: registration });
+    console.log('✅ Authenticated workshop registration created:', registration._id);
+
+    // Create Google Calendar event
+    try {
+      const workshopData = {
+        workshopName: workshopName,
+        workshopDate: workshopDate,
+        description: workshop.description || `Workshop: ${workshopName}`
+      };
+
+      const participantData = {
+        registrationId: registration._id,
+        participantName: participantName,
+        participantEmail: participantEmail,
+        participantPhone: participantPhone
+      };
+
+      console.log('📅 Creating Google Calendar event for authenticated registration:', registration._id);
+      const calendarResult = await googleCalendarService.createWorkshopEvent(workshopData, participantData);
+
+      if (calendarResult.success) {
+        // Update registration with calendar event details
+        registration.googleCalendarEventId = calendarResult.eventId;
+        registration.googleCalendarEventLink = calendarResult.eventLink;
+        registration.calendarEventCreated = true;
+        await registration.save();
+
+        console.log('✅ Google Calendar event created and linked to authenticated registration');
+      } else {
+        // Log error but don't fail the registration
+        registration.calendarEventError = calendarResult.error;
+        await registration.save();
+        
+        console.log('⚠️ Authenticated registration successful but calendar event failed:', calendarResult.error);
+      }
+    } catch (calendarError) {
+      console.error('❌ Calendar integration error for authenticated user (non-critical):', calendarError);
+      registration.calendarEventError = calendarError.message;
+      await registration.save();
+    }
+    
+    res.json({ 
+      success: true, 
+      registration: {
+        id: registration._id,
+        workshopName: registration.workshopName,
+        workshopDate: registration.workshopDate,
+        participantName: registration.participantName,
+        status: registration.status,
+        calendarEventCreated: registration.calendarEventCreated,
+        calendarEventLink: registration.googleCalendarEventLink
+      }
+    });
   } catch (error) {
-    console.error('Workshop registration error:', error);
+    console.error('Authenticated workshop registration error:', error);
     res.status(500).json({ 
       success: false,
       error: 'Error registering for workshop' 
@@ -126,10 +239,85 @@ router.post('/', ensureAuthenticated, async (req, res) => {
 router.delete('/:id', ensureAuthenticated, async (req, res) => {
   try {
     const WorkshopRegistration = require('../../models/WorkshopRegistration');
-    await WorkshopRegistration.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
-    res.json({ success: true });
+    const registration = await WorkshopRegistration.findOne({ 
+      _id: req.params.id, 
+      userId: req.user.id 
+    });
+
+    if (!registration) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Registration not found' 
+      });
+    }
+
+    // Delete Google Calendar event if it exists
+    if (registration.googleCalendarEventId) {
+      try {
+        console.log('📅 Deleting Google Calendar event:', registration.googleCalendarEventId);
+        const deleteResult = await googleCalendarService.deleteWorkshopEvent(registration.googleCalendarEventId);
+        
+        if (deleteResult.success) {
+          console.log('✅ Google Calendar event deleted successfully');
+        } else {
+          console.log('⚠️ Failed to delete Google Calendar event:', deleteResult.error);
+        }
+      } catch (calendarError) {
+        console.error('❌ Error deleting calendar event (non-critical):', calendarError);
+      }
+    }
+
+    // Delete the registration
+    await WorkshopRegistration.findByIdAndDelete(req.params.id);
+    
+    res.json({ 
+      success: true,
+      message: 'Workshop registration cancelled successfully'
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Error canceling workshop registration' });
+    console.error('Error canceling workshop registration:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Error canceling workshop registration' 
+    });
+  }
+});
+
+// Get user's workshop registrations with calendar info
+router.get('/my-registrations', ensureAuthenticated, async (req, res) => {
+  try {
+    const WorkshopRegistration = require('../../models/WorkshopRegistration');
+    const registrations = await WorkshopRegistration.find({ 
+      userId: req.user.id 
+    })
+    .populate('workshopId')
+    .sort({ workshopDate: 1 });
+
+    const registrationsWithCalendar = registrations.map(reg => ({
+      id: reg._id,
+      workshopId: reg.workshopId,
+      workshopName: reg.workshopName,
+      workshopDate: reg.workshopDate,
+      participantName: reg.participantName,
+      participantEmail: reg.participantEmail,
+      participantPhone: reg.participantPhone,
+      status: reg.status,
+      registrationDate: reg.registrationDate,
+      calendarEventCreated: reg.calendarEventCreated,
+      calendarEventLink: reg.googleCalendarEventLink,
+      calendarEventError: reg.calendarEventError
+    }));
+
+    res.json({ 
+      success: true, 
+      registrations: registrationsWithCalendar 
+    });
+  } catch (error) {
+    console.error('Error fetching user workshop registrations:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Error fetching workshop registrations' 
+    });
   }
 });
 
@@ -175,6 +363,85 @@ router.post('/submit-proposal', async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Failed to submit workshop proposal. Please try again.' 
+    });
+  }
+});
+
+// Admin: Update workshop registration status and sync with calendar
+router.post('/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const registrationId = req.params.id;
+
+    if (!['registered', 'confirmed', 'cancelled', 'completed'].includes(status)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid status' 
+      });
+    }
+
+    const WorkshopRegistration = require('../../models/WorkshopRegistration');
+    const registration = await WorkshopRegistration.findById(registrationId);
+
+    if (!registration) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Registration not found' 
+      });
+    }
+
+    // Update registration status
+    registration.status = status;
+    await registration.save();
+
+    // Update Google Calendar event if it exists
+    if (registration.googleCalendarEventId) {
+      try {
+        let eventUpdate = {};
+        
+        if (status === 'cancelled') {
+          // Delete the calendar event for cancelled registrations
+          const deleteResult = await googleCalendarService.deleteWorkshopEvent(registration.googleCalendarEventId);
+          if (deleteResult.success) {
+            registration.googleCalendarEventId = null;
+            registration.googleCalendarEventLink = null;
+            registration.calendarEventCreated = false;
+            await registration.save();
+          }
+        } else if (status === 'confirmed') {
+          // Update event to confirmed status
+          eventUpdate = {
+            summary: `✅ Confirmed Workshop: ${registration.workshopName}`,
+            colorId: '10' // Green color for confirmed
+          };
+          await googleCalendarService.updateWorkshopEvent(registration.googleCalendarEventId, eventUpdate);
+        } else if (status === 'completed') {
+          // Update event to completed status
+          eventUpdate = {
+            summary: `✅ Completed Workshop: ${registration.workshopName}`,
+            colorId: '8' // Gray color for completed
+          };
+          await googleCalendarService.updateWorkshopEvent(registration.googleCalendarEventId, eventUpdate);
+        }
+      } catch (calendarError) {
+        console.error('❌ Error updating calendar event (non-critical):', calendarError);
+      }
+    }
+
+    res.json({ 
+      success: true, 
+      registration: {
+        id: registration._id,
+        status: registration.status,
+        calendarEventCreated: registration.calendarEventCreated,
+        calendarEventLink: registration.googleCalendarEventLink
+      }
+    });
+  } catch (error) {
+    console.error('Error updating workshop registration status:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to update registration status' 
     });
   }
 });

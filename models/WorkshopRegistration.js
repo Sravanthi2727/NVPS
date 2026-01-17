@@ -43,6 +43,23 @@ const workshopRegistrationSchema = new mongoose.Schema({
   notes: {
     type: String,
     default: ''
+  },
+  // Google Calendar integration fields
+  googleCalendarEventId: {
+    type: String,
+    default: null
+  },
+  googleCalendarEventLink: {
+    type: String,
+    default: null
+  },
+  calendarEventCreated: {
+    type: Boolean,
+    default: false
+  },
+  calendarEventError: {
+    type: String,
+    default: null
   }
 }, {
   timestamps: true
@@ -51,5 +68,6 @@ const workshopRegistrationSchema = new mongoose.Schema({
 // Index for efficient queries
 workshopRegistrationSchema.index({ userId: 1, workshopId: 1 });
 workshopRegistrationSchema.index({ status: 1, workshopDate: 1 });
+workshopRegistrationSchema.index({ googleCalendarEventId: 1 });
 
 module.exports = mongoose.model('WorkshopRegistration', workshopRegistrationSchema);
