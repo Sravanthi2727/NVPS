@@ -2579,6 +2579,51 @@ app.post('/api/admin/franchise/:id/status', ensureAdmin, async (req, res) => {
   }
 });
 
+// Real-time analytics update endpoint
+app.get('/api/admin/analytics-update', async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const Order = require('./models/Order');
+    const WorkshopRegistration = require('./models/WorkshopRegistration');
+
+    const quickStats = {
+      totalUsers: await User.countDocuments(),
+      totalOrders: await Order.countDocuments(),
+      totalRevenue: await Order.aggregate([
+        { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+      ]).then(result => result[0]?.total || 0),
+      totalWorkshopRegistrations: await WorkshopRegistration.countDocuments()
+    };
+
+    res.json(quickStats);
+  } catch (error) {
+    console.error('Analytics update error:', error);
+    res.status(500).json({ error: 'Failed to fetch analytics update' });
+  }
+});
+
+// Test analytics data endpoint
+app.get('/api/admin/analytics-test', async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const Order = require('./models/Order');
+    
+    const testData = {
+      usersCount: await User.countDocuments(),
+      ordersCount: await Order.countDocuments(),
+      sampleUsers: await User.find().limit(3).select('name email createdAt'),
+      sampleOrders: await Order.find().limit(3).select('customerName totalAmount orderDate status'),
+      timestamp: new Date().toISOString()
+    };
+
+    console.log('📊 Analytics test data:', testData);
+    res.json(testData);
+  } catch (error) {
+    console.error('Analytics test error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.delete('/api/wishlist/remove/:itemId', async (req, res) => {
   try {
     if (!req.isAuthenticated()) {
