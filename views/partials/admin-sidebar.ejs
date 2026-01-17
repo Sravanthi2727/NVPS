@@ -8,6 +8,14 @@
             <i class="fas fa-tachometer-alt"></i>Dashboard
         </a>
         
+        <a href="/admin/analytics" class="<%= typeof currentPage !== 'undefined' && currentPage.includes('analytics') ? 'active' : '' %>">
+            <i class="fas fa-chart-bar"></i>Analytics
+        </a>
+        
+        <a href="/admin/menu-management" class="<%= typeof currentPage !== 'undefined' && currentPage.includes('menu-management') ? 'active' : '' %>">
+            <i class="fas fa-utensils"></i>Menu Management
+        </a>
+        
         <a href="/admin/cart-requests" class="<%= typeof currentPage !== 'undefined' && currentPage.includes('cart-requests') ? 'active' : '' %>">
             <i class="fas fa-shopping-cart"></i>Cart Requests
         </a>

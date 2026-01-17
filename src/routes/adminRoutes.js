@@ -16,6 +16,17 @@ function ensureAdmin(req, res, next) {
 // Admin dashboard
 router.get('/', ensureAdmin, adminController.getDashboard);
 
+// Analytics
+router.get('/analytics', ensureAdmin, adminController.getAnalytics);
+router.get('/api/analytics', ensureAdmin, adminController.getAnalyticsAPI);
+
+// Menu Management
+router.get('/menu-management', ensureAdmin, adminController.getMenuManagement);
+router.get('/api/menu-items', ensureAdmin, adminController.getMenuItems);
+router.post('/api/menu-items', ensureAdmin, adminController.addMenuItem);
+router.put('/api/menu-items/:id', ensureAdmin, adminController.updateMenuItem);
+router.delete('/api/menu-items/:id', ensureAdmin, adminController.deleteMenuItem);
+
 router.get('/manage-artworks', ensureAdmin, adminController.getManageArtworks);
 router.post('/api/add-artwork', ensureAdmin, adminController.getUpload().single('image'), adminController.addArtwork);
 router.get('/api/artwork/:id', ensureAdmin, adminController.getArtworkById);

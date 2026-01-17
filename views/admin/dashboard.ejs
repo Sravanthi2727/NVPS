@@ -1,42 +1,128 @@
 <!-- Dashboard Content -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="text-gold mb-2">
+            <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+        </h1>
+        <p style="color: var(--muted);">Welcome back! Here's what's happening with your business today.</p>
+    </div>
+    <div>
+        <button class="btn btn-outline-primary">
+            <i class="fas fa-sync-alt me-2"></i>Refresh Data
+        </button>
+    </div>
+</div>
+
+<!-- Stats Cards -->
 <div class="row g-4 mb-4">
     <!-- Cart Requests Card -->
     <div class="col-md-6 col-lg-3">
-        <div class="admin-card">
-            <h3><i class="fas fa-shopping-cart me-2"></i>Cart Requests</h3>
-            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.cartOrders !== undefined ? counts.cartOrders : 0 %></div>
-            <div class="admin-card-subtitle">Pending orders</div>
-            <a href="/admin/cart-requests" class="btn btn-primary">Manage Orders</a>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-number"><%= typeof counts !== 'undefined' && counts.cartOrders !== undefined ? counts.cartOrders : 0 %></div>
+            <div class="stat-label">Cart Requests</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>Pending orders</span>
+            </div>
         </div>
     </div>
 
     <!-- Art Requests Card -->
     <div class="col-md-6 col-lg-3">
-        <div class="admin-card">
-            <h3><i class="fas fa-palette me-2"></i>Art Requests</h3>
-            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.artOrders !== undefined ? counts.artOrders : 0 %></div>
-            <div class="admin-card-subtitle">Pending submissions</div>
-            <a href="/admin/art-requests" class="btn btn-primary">Review Art</a>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-palette"></i>
+            </div>
+            <div class="stat-number"><%= typeof counts !== 'undefined' && counts.artOrders !== undefined ? counts.artOrders : 0 %></div>
+            <div class="stat-label">Art Requests</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>Pending submissions</span>
+            </div>
         </div>
     </div>
 
     <!-- Workshop Requests Card -->
     <div class="col-md-6 col-lg-3">
-        <div class="admin-card">
-            <h3><i class="fas fa-calendar-alt me-2"></i>Workshop R...</h3>
-            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.workshops !== undefined ? counts.workshops : 0 %></div>
-            <div class="admin-card-subtitle">Pending bookings</div>
-            <a href="/admin/workshop-requests" class="btn btn-primary">Manage Workshops</a>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-number"><%= typeof counts !== 'undefined' && counts.workshops !== undefined ? counts.workshops : 0 %></div>
+            <div class="stat-label">Workshop Requests</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>Pending bookings</span>
+            </div>
         </div>
     </div>
 
     <!-- Franchise Applications Card -->
     <div class="col-md-6 col-lg-3">
-        <div class="admin-card">
-            <h3><i class="fas fa-store me-2"></i>Franchise App..</h3>
-            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.franchise !== undefined ? counts.franchise : 0 %></div>
-            <div class="admin-card-subtitle">Pending applications</div>
-            <a href="/admin/franchise" class="btn btn-primary">Review Applications</a>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-store"></i>
+            </div>
+            <div class="stat-number"><%= typeof counts !== 'undefined' && counts.franchise !== undefined ? counts.franchise : 0 %></div>
+            <div class="stat-label">Franchise Applications</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>Pending applications</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="admin-card text-center">
+            <div class="stat-icon mx-auto mb-3">
+                <i class="fas fa-plus"></i>
+            </div>
+            <h5 class="text-gold mb-3">Add Menu Item</h5>
+            <a href="/admin/menu-management" class="btn btn-primary">
+                <i class="fas fa-utensils me-2"></i>Manage Menu
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="admin-card text-center">
+            <div class="stat-icon mx-auto mb-3">
+                <i class="fas fa-images"></i>
+            </div>
+            <h5 class="text-gold mb-3">Add Artwork</h5>
+            <a href="/admin/manage-artworks" class="btn btn-primary">
+                <i class="fas fa-palette me-2"></i>Manage Art
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="admin-card text-center">
+            <div class="stat-icon mx-auto mb-3">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h5 class="text-gold mb-3">View Analytics</h5>
+            <a href="/admin/analytics" class="btn btn-primary">
+                <i class="fas fa-chart-line me-2"></i>View Reports
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="admin-card text-center">
+            <div class="stat-icon mx-auto mb-3">
+                <i class="fas fa-users"></i>
+            </div>
+            <h5 class="text-gold mb-3">Manage Users</h5>
+            <a href="/admin/users" class="btn btn-primary">
+                <i class="fas fa-user-cog me-2"></i>User Management
+            </a>
         </div>
     </div>
 </div>
@@ -44,11 +130,12 @@
 <!-- Recent Activity -->
 <div class="admin-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>Recent Activity</h3>
+        <h3><i class="fas fa-clock me-2"></i>Recent Activity</h3>
+        <small class="text-muted">Last 24 hours</small>
     </div>
     
     <div class="admin-table">
-        <table class="table table-dark">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Type</th>
@@ -63,19 +150,26 @@
                 <% if (typeof recentActivity !== 'undefined' && recentActivity.length > 0) { %>
                     <% recentActivity.forEach(activity => { %>
                         <tr>
-                            <td data-label="Type"><span class="badge bg-info"><%= activity.type %></span></td>
-                            <td data-label="Customer">
-                                <strong><%= activity.customer %></strong><br>
-                                <small style="color: #ccc;"><%= activity.email %></small>
+                            <td>
+                                <span class="badge bg-info">
+                                    <i class="fas fa-<%= activity.type === 'Cart' ? 'shopping-cart' : activity.type === 'Art' ? 'palette' : 'calendar-alt' %> me-1"></i>
+                                    <%= activity.type %>
+                                </span>
                             </td>
-                            <td data-label="Details"><%= activity.details %></td>
-                            <td data-label="Date"><%= activity.date %></td>
-                            <td data-label="Status">
+                            <td>
+                                <div>
+                                    <strong><%= activity.customer %></strong>
+                                    <br><small class="text-muted"><%= activity.email %></small>
+                                </div>
+                            </td>
+                            <td><%= activity.details %></td>
+                            <td><%= activity.date %></td>
+                            <td>
                                 <span class="badge <%= activity.status === 'pending' ? 'bg-warning' : activity.status === 'completed' ? 'bg-success' : 'bg-danger' %>">
                                     <%= activity.status.charAt(0).toUpperCase() + activity.status.slice(1) %>
                                 </span>
                             </td>
-                            <td data-label="Actions">
+                            <td>
                                 <button class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -84,7 +178,12 @@
                     <% }); %>
                 <% } else { %>
                     <tr>
-                        <td colspan="6" class="text-center" style="color: #ccc;">No recent activity</td>
+                        <td colspan="6" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p>No recent activity</p>
+                            </div>
+                        </td>
                     </tr>
                 <% } %>
             </tbody>
