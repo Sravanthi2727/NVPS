@@ -528,4 +528,289 @@ router.post('/debug/test-email', async (req, res) => {
   }
 });
 
+// ========== USER MANAGEMENT API ENDPOINTS ==========
+
+// Get all users
+router.get('/users', async (req, res) => {
+  try {
+    console.log('=== ADMIN USERS API CALLED ===');
+    
+    const User = require('../../models/User');
+    const users = await User.find()
+      .select('-password') // Exclude password field
+      .sort({ createdAt: -1 });
+    
+    console.log(`Found ${users.length} users for admin`);
+    
+    // Transform data for frontend
+    const transformedUsers = users.map(user => ({
+      id: user._id,
+      name: user.name || user.displayName || 'Unknown',
+      email: user.email,
+      role: user.role || 'customer',
+      status: user.status || 'active',
+      joinDate: user.createdAt || new Date(),
+      isOAuthUser: user.isOAuthUser || false,
+      phone: user.phone || '',
+      lastLogin: user.lastLogin || null
+    }));
+    
+    res.json({ success: true, users: transformedUsers });
+  } catch (error) {
+    console.error('Error fetching admin users:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch users', error: error.message });
+  }
+});
+
+// Get single user details
+router.get('/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    console.log('Getting user details for:', userId);
+    
+    const User = require('../../models/User');
+    const Order = require('../../models/Order');
+    const WorkshopRegistration = require('../../models/WorkshopRegistration');
+    const Request = require('../../models/Request');
+    
+    const user = await User.findById(userId).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    // Get user's orders
+    const orders = await Order.find({ userId: userId })
+      .sort({ orderDate: -1 })
+      .limit(10);
+    
+    // Get user's workshop registrations
+    const workshops = await WorkshopRegistration.find({ userId: userId })
+      .sort({ registrationDate: -1 })
+      .limit(10);
+    
+    // Get user's requests
+    const requests = await Request.find({ userId: userId })
+      .sort({ createdAt: -1 })
+      .limit(10);
+    
+    const userDetails = {
+      id: user._id,
+      name: user.name || user.displayName || 'Unknown',
+      email: user.email,
+      role: user.role || 'customer',
+      status: user.status || 'active',
+      joinDate: user.createdAt || new Date(),
+      isOAuthUser: user.isOAuthUser || false,
+      phone: user.phone || '',
+      lastLogin: user.lastLogin || null,
+      totalOrders: orders.length,
+      totalSpent: orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0),
+      totalWorkshops: workshops.length,
+      totalRequests: requests.length,
+      recentOrders: orders.slice(0, 5),
+      recentWorkshops: workshops.slice(0, 5),
+      recentRequests: requests.slice(0, 5)
+    };
+    
+    res.json({ success: true, user: userDetails });
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch user details', error: error.message });
+  }
+});
+
+// Update user details
+router.put('/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { name, email, role, status, phone } = req.body;
+    
+    console.log('Updating user:', { userId, name, email, role, status, phone });
+    
+    // Validate role
+    if (role && !['customer', 'staff', 'admin'].includes(role)) {
+      return res.status(400).json({ success: false, message: 'Invalid role' });
+    }
+    
+    // Validate status
+    if (status && !['active', 'inactive', 'suspended'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status' });
+    }
+    
+    const User = require('../../models/User');
+    const updateData = {};
+    
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (role) updateData.role = role;
+    if (status) updateData.status = status;
+    if (phone) updateData.phone = phone;
+    
+    updateData.updatedAt = new Date();
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updateData,
+      { new: true, runValidators: true }
+    ).select('-password');
+    
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    console.log('✅ User updated successfully:', {
+      userId: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role
+    });
+    
+    // Transform for frontend
+    const transformedUser = {
+      id: updatedUser._id,
+      name: updatedUser.name || updatedUser.displayName || 'Unknown',
+      email: updatedUser.email,
+      role: updatedUser.role || 'customer',
+      status: updatedUser.status || 'active',
+      joinDate: updatedUser.createdAt || new Date(),
+      isOAuthUser: updatedUser.isOAuthUser || false,
+      phone: updatedUser.phone || '',
+      lastLogin: updatedUser.lastLogin || null
+    };
+    
+    res.json({ success: true, user: transformedUser });
+  } catch (error) {
+    console.error('❌ Error updating user:', error);
+    res.status(500).json({ success: false, message: 'Failed to update user', error: error.message });
+  }
+});
+
+// Create new user
+router.post('/users', async (req, res) => {
+  try {
+    const { name, email, role, password, phone } = req.body;
+    
+    console.log('Creating new user:', { name, email, role });
+    
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Name, email, and password are required' });
+    }
+    
+    // Validate role
+    if (role && !['customer', 'staff', 'admin'].includes(role)) {
+      return res.status(400).json({ success: false, message: 'Invalid role' });
+    }
+    
+    const User = require('../../models/User');
+    const bcrypt = require('bcrypt');
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'User with this email already exists' });
+    }
+    
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const newUser = new User({
+      name: name,
+      email: email,
+      password: hashedPassword,
+      role: role || 'customer',
+      status: 'active',
+      phone: phone || '',
+      isOAuthUser: false,
+      createdAt: new Date()
+    });
+    
+    await newUser.save();
+    
+    console.log('✅ New user created successfully:', {
+      userId: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role
+    });
+    
+    // Send welcome email
+    try {
+      const emailService = require('../../services/emailService');
+      const emailResult = await emailService.sendWelcomeEmail(newUser.email, newUser.name);
+      
+      if (emailResult.success) {
+        console.log('✅ Welcome email sent to new user');
+      } else {
+        console.error('❌ Failed to send welcome email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending welcome email:', emailError);
+      // Don't fail user creation if email fails
+    }
+    
+    // Transform for frontend
+    const transformedUser = {
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+      status: newUser.status,
+      joinDate: newUser.createdAt,
+      isOAuthUser: newUser.isOAuthUser,
+      phone: newUser.phone || '',
+      lastLogin: null
+    };
+    
+    res.json({ success: true, user: transformedUser });
+  } catch (error) {
+    console.error('❌ Error creating user:', error);
+    res.status(500).json({ success: false, message: 'Failed to create user', error: error.message });
+  }
+});
+
+// Delete user (soft delete - set status to inactive)
+router.delete('/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    
+    console.log('Deleting user:', userId);
+    
+    const User = require('../../models/User');
+    
+    // Don't allow deleting admin users
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    if (user.role === 'admin') {
+      return res.status(400).json({ success: false, message: 'Cannot delete admin users' });
+    }
+    
+    // Soft delete - set status to inactive
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { 
+        status: 'inactive',
+        deletedAt: new Date(),
+        updatedAt: new Date()
+      },
+      { new: true }
+    ).select('-password');
+    
+    console.log('✅ User soft deleted successfully:', {
+      userId: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email
+    });
+    
+    res.json({ success: true, message: 'User deactivated successfully' });
+  } catch (error) {
+    console.error('❌ Error deleting user:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete user', error: error.message });
+  }
+});
+
 module.exports = router;

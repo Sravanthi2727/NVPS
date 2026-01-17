@@ -94,4 +94,37 @@ router.get('/menu-test', async (req, res) => {
   }
 });
 
+// Recommendations endpoint
+router.get('/recommendations', async (req, res) => {
+  try {
+    console.log('📊 Fetching recommendations...');
+    const MenuItem = require('../../models/MenuItem');
+    
+    // Get 4 random menu items from database
+    const randomItems = await MenuItem.aggregate([
+      { $sample: { size: 4 } }
+    ]);
+    
+    console.log('📊 Random items for recommendations:', randomItems);
+    
+    if (randomItems && randomItems.length > 0) {
+      res.json({
+        success: true,
+        recommendations: randomItems
+      });
+    } else {
+      res.json({
+        success: false,
+        recommendations: []
+      });
+    }
+  } catch (error) {
+    console.error('❌ Error fetching recommendations:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

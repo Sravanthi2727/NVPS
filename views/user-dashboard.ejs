@@ -1158,7 +1158,7 @@ function renderWishlist(items) {
       <div class="col-md-6 col-lg-4 mb-4">
         <div class="card ${isArtItem ? 'art-item-card' : 'menu-item-card'}">
           <div class="card-body">
-            ${item.image ? `<img src="${item.image}" class="img-fluid rounded mb-2" alt="${item.name}" style="max-height: 150px; width: 100%; object-fit: cover;">` : ''}
+            ${item.image ? `<img src="${item.image.startsWith('/') ? item.image : '/' + item.image}" class="img-fluid rounded mb-2" alt="${item.name}" style="max-height: 150px; width: 100%; object-fit: cover;" onerror="this.src='/assets/placeholder.jpg'">` : ''}
             <h5 class="card-title">${item.name}</h5>
             <p class="card-text">Price: ₹${item.price}</p>
             ${isArtItem ? '<small style="color: #d6a45a;"><i class="bi bi-palette"></i> Art Piece</small>' : '<small style="color: #28a745;"><i class="bi bi-cup-hot"></i> Menu Item</small>'}
@@ -1248,7 +1248,7 @@ function renderCart(items) {
             <div class="card-body">
               <div class="row align-items-center">
                 <div class="col-md-2">
-                  ${item.image ? `<img src="${item.image}" class="img-fluid rounded" alt="${item.name}">` : `<div class="bg-secondary rounded" style="width: 100%; height: 80px;"></div>`}
+                  ${item.image ? `<img src="${item.image.startsWith('/') ? item.image : '/' + item.image}" class="img-fluid rounded" alt="${item.name}" onerror="this.src='/assets/placeholder.jpg'">` : `<div class="bg-secondary rounded" style="width: 100%; height: 80px;"></div>`}
                 </div>
                 <div class="col-md-6">
                   <h5>${item.name}</h5>
@@ -1322,7 +1322,7 @@ function renderCart(items) {
             <div class="card-body">
               <div class="row align-items-center">
                 <div class="col-md-2">
-                  ${item.image ? `<img src="${item.image}" class="img-fluid rounded" alt="${item.name}">` : `<div class="bg-secondary rounded" style="width: 100%; height: 80px;"></div>`}
+                  ${item.image ? `<img src="${item.image.startsWith('/') ? item.image : '/' + item.image}" class="img-fluid rounded" alt="${item.name}" onerror="this.src='/assets/placeholder.jpg'">` : `<div class="bg-secondary rounded" style="width: 100%; height: 80px;"></div>`}
                 </div>
                 <div class="col-md-4">
                   <h5>${item.name}</h5>
@@ -1460,7 +1460,7 @@ function renderOrders(orders) {
                   ${menuItems.map(item => `
                     <div class="col-md-6 mb-2">
                       <div class="d-flex align-items-center">
-                        ${item.image ? `<img src="${item.image}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="${item.name}" onerror="this.src='/assets/placeholder.jpg'">` : `<div class="bg-secondary rounded me-2" style="width: 40px; height: 40px;"></div>`}
+                        ${item.image ? `<img src="${item.image.startsWith('/') ? item.image : '/' + item.image}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="${item.name}" onerror="this.src='/assets/placeholder.jpg'">` : `<div class="bg-secondary rounded me-2" style="width: 40px; height: 40px;"></div>`}
                         <div>
                           <small class="fw-bold">${item.name}</small><br>
                           <small style="color: #ccc;">Qty: ${item.quantity} × ₹${item.price}</small>
@@ -1479,7 +1479,7 @@ function renderOrders(orders) {
                   ${artItems.map(item => `
                     <div class="col-md-6 mb-2">
                       <div class="d-flex align-items-center">
-                        ${item.image ? `<img src="${item.image}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="${item.name}" onerror="this.src='/assets/placeholder.jpg'">` : `<div class="bg-secondary rounded me-2" style="width: 40px; height: 40px;"></div>`}
+                        ${item.image ? `<img src="${item.image.startsWith('/') ? item.image : '/' + item.image}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="${item.name}" onerror="this.src='/assets/placeholder.jpg'">` : `<div class="bg-secondary rounded me-2" style="width: 40px; height: 40px;"></div>`}
                         <div>
                           <small class="fw-bold">${item.name}</small><br>
                           <small style="color: #ccc;">Unique Art Piece - ₹${item.price}</small>
@@ -2330,36 +2330,6 @@ function showCheckoutSuccess(orderId, totalAmount) {
   successModal.addEventListener('hidden.bs.modal', function() {
     document.body.removeChild(successModal);
   });
-  
-  // Also show a toast notification
-  showToast('Order placed successfully!', 'success');
-}
-
-// Debug functions
-async function addTestData() {
-  try {
-    console.log('Adding test data...');
-    const response = await fetch('/api/debug/add-test-data', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    const result = await response.json();
-    console.log('Test data result:', result);
-    
-    if (result.success) {
-      showToast('Test data added successfully!', 'success');
-      // Refresh the dashboard data
-      location.reload();
-    } else {
-      showToast('Failed to add test data: ' + (result.error || 'Unknown error'), 'error');
-    }
-  } catch (error) {
-    console.error('Error adding test data:', error);
-    showToast('Error adding test data: ' + error.message, 'error');
-  }
 }
 
 async function checkUserData() {
@@ -2525,7 +2495,7 @@ function showLocationModal(artItems) {
                 <div class="art-items-summary">
                   ${artItems.map(item => `
                     <div class="d-flex align-items-center mb-2 p-2" style="background: rgba(214, 164, 90, 0.1); border-radius: 8px;">
-                      <img src="${item.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px;" alt="${item.name}">
+                      <img src="${item.image.startsWith('/') ? item.image : '/' + item.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px;" alt="${item.name}" onerror="this.src='/assets/placeholder.jpg'">
                       <div>
                         <small class="fw-bold">${item.name}</small><br>
                         <small style="color: #ccc;">₹${item.price}</small>
