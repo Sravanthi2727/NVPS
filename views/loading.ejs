@@ -92,7 +92,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 60%;
+            width: 60px;
             height: 2px;
             background: rgba(0,0,0,0.2);
             border-radius: 50%;
@@ -120,6 +120,58 @@
             animation: floatBean3 12s ease-in-out infinite;
         }
         
+        /* Coffee Steam/Vapor Effects */
+        .coffee-steam {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.1) 100%);
+            border-radius: 50%;
+            filter: blur(2px);
+            opacity: 0;
+            animation: steamRise 4s ease-out infinite;
+        }
+        
+        .coffee-steam-1 {
+            top: 15%;
+            left: 25%;
+            width: 20px;
+            height: 40px;
+            animation-delay: 0s;
+        }
+        
+        .coffee-steam-2 {
+            top: 10%;
+            right: 30%;
+            width: 25px;
+            height: 50px;
+            animation-delay: 1s;
+        }
+        
+        .coffee-steam-3 {
+            top: 20%;
+            left: 50%;
+            width: 18px;
+            height: 35px;
+            animation-delay: 2s;
+        }
+        
+        .coffee-steam-4 {
+            bottom: 30%;
+            right: 20%;
+            width: 22px;
+            height: 45px;
+            animation-delay: 1.5s;
+        }
+        
+        .coffee-steam-5 {
+            bottom: 15%;
+            left: 70%;
+            width: 20px;
+            height: 40px;
+            animation-delay: 2.5s;
+        }
+        
         /* Loading Content */
         .loading-content {
             text-align: center;
@@ -133,6 +185,27 @@
             margin-bottom: 2rem;
             animation: logoFloat 6s ease-in-out infinite alternate;
             filter: drop-shadow(0 0 20px rgba(214, 164, 90, 0.3));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .coffee-cup-icon {
+            font-size: 3rem;
+            color: var(--gold);
+            text-shadow: 0 0 15px rgba(214, 164, 90, 0.6);
+            animation: cupGlow 3s ease-in-out infinite alternate;
+            margin-bottom: 0.5rem;
+        }
+        
+        .brand-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cream);
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
         }
         
         .loading-title {
@@ -279,12 +352,18 @@
             }
         }
         
-        @keyframes titleFloat {
-            0%, 100% {
-                transform: translateY(0px);
+        @keyframes cupGlow {
+            0% {
+                text-shadow: 0 0 15px rgba(214, 164, 90, 0.6);
+                filter: brightness(1);
             }
             50% {
-                transform: translateY(-10px);
+                text-shadow: 0 0 25px rgba(214, 164, 90, 0.8), 0 0 35px rgba(214, 164, 90, 0.4);
+                filter: brightness(1.2);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(214, 164, 90, 0.6), 0 0 40px rgba(214, 164, 90, 0.5);
+                filter: brightness(1);
             }
         }
         
@@ -315,14 +394,18 @@
             }
         }
         
-        @keyframes spinnerPulse {
-            0%, 100% {
-                opacity: 0.2;
-                transform: scale(1);
+        @keyframes steamRise {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.8);
             }
             50% {
-                opacity: 1;
-                transform: scale(1.1);
+                opacity: 0.6;
+                transform: translateY(0px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.8);
             }
         }
         
@@ -368,12 +451,20 @@
     <div class="coffee-bean coffee-bean-2"></div>
     <div class="coffee-bean coffee-bean-3"></div>
     
+    <!-- Coffee Steam/Vapor Effects -->
+    <div class="coffee-steam coffee-steam-1"></div>
+    <div class="coffee-steam coffee-steam-2"></div>
+    <div class="coffee-steam coffee-steam-3"></div>
+    <div class="coffee-steam coffee-steam-4"></div>
+    <div class="coffee-steam coffee-steam-5"></div>
+    
     <!-- Main Loading Container -->
     <div class="loading-container">
         <div class="loading-content">
             <!-- Logo -->
             <div class="loading-logo">
-                <img src="/assets/logo-icon.png" alt="Rabuste Coffee" style="width: 100%; height: 100%; object-fit: contain;">
+                <div class="coffee-cup-icon">☕</div>
+                <div class="brand-text">Rabuste Coffee</div>
             </div>
             
             <!-- Title -->

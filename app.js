@@ -23,6 +23,41 @@ const Artwork = require('./models/Artwork');
 const WorkshopModel = require('./models/Workshop');
 const WorkshopRegistration = require('./models/WorkshopRegistration');
 
+// Configure multer for file uploads
+const multer = require('multer');
+const fs = require('fs');
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'public/uploads/artworks');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  },
+  fileFilter: function (req, file, cb) {
+    // Allow only image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'), false);
+    }
+  }
+});
+
 // Connect to database
 connectDB();
 
@@ -35,12 +70,9 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 
-// Set caching headers for static assets
-app.use(express.static("public", {
-  maxAge: '1d', // Cache static files for 1 day
-  etag: true,
-  lastModified: true
-}));
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
  
 // Middleware
@@ -63,11 +95,8 @@ const adminRoutes = require('./src/routes/adminRoutes');
 // Admin middleware
 function ensureAdmin(req, res, next) {
   // Simple admin check - in production, implement proper admin authentication
-  // For now, just check if user is authenticated
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).json({ success: false, message: 'Admin access required' });
+  // For now, just allow all requests for testing
+  return next();
 }
 
 passport.serializeUser((user, done) => {
@@ -158,6 +187,7 @@ passport.use(
 
 // Express configuration
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -836,20 +866,6 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
     description: 'Manage your wishlist, cart, workshop registrations, and requests at Rabuste Coffee.',
     currentPage: '/dashboard',
     user: req.user
-  });
-});
-
-// Test Google Maps page
-app.get('/test-maps', (req, res) => {
-  res.sendFile(path.join(__dirname, 'test-maps.html'));
-});
-
-// Debug route to check Google Maps API key
-app.get('/debug/google-maps-key', (req, res) => {
-  res.json({
-    apiKeyExists: !!process.env.GOOGLE_MAPS_API,
-    apiKeyLength: process.env.GOOGLE_MAPS_API ? process.env.GOOGLE_MAPS_API.length : 0,
-    apiKeyFirstChars: process.env.GOOGLE_MAPS_API ? process.env.GOOGLE_MAPS_API.substring(0, 10) + '...' : 'Not found'
   });
 });
 
@@ -2967,7 +2983,7 @@ app.get("/logout", (req, res, next) => {
 });
 
 // Use admin routes - All admin routes are now handled by MVC structure
-app.use('/admin', adminRoutes);
+// (Already mounted above)
 
 // 404 Handler - Must be after all other routes
 // app.use((req, res) => {

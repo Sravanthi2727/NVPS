@@ -1,0 +1,249 @@
+<!-- Add New Artwork Form -->
+<div class="admin-card">
+    <h3>
+        <i class="fas fa-plus-circle me-2"></i>Add New Artwork
+    </h3>
+    
+    <form id="artworkForm" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Title *</label>
+                    <input type="text" class="form-control" name="title" required>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Artist *</label>
+                    <input type="text" class="form-control" name="artist" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Category *</label>
+                    <select class="form-select" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="painting">Painting</option>
+                        <option value="photography">Photography</option>
+                        <option value="sculpture">Sculpture</option>
+                        <option value="digital">Digital Art</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Price *</label>
+                    <input type="number" class="form-control" name="price" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Year</label>
+                    <input type="number" class="form-control" name="year">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Medium</label>
+                    <input type="text" class="form-control" name="medium" placeholder="e.g., Oil on Canvas, Digital Print">
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Dimensions</label>
+                    <input type="text" class="form-control" name="dimensions" placeholder="e.g., 24x36 inches">
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="4" placeholder="Describe artwork..."></textarea>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Availability</label>
+                    <select class="form-select" name="availability">
+                        <option value="In Stock">In Stock</option>
+                        <option value="Limited Edition">Limited Edition</option>
+                        <option value="One of a kind">One of a kind</option>
+                        <option value="Open Edition">Open Edition</option>
+                        <option value="Sold Out">Sold Out</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Display Order</label>
+                    <input type="number" class="form-control" name="displayOrder" value="0" placeholder="0 = first">
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Available</label>
+                    <select class="form-select" name="isAvailable">
+                        <option value="true">Available</option>
+                        <option value="false">Hidden</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Artwork Image *</label>
+            <input type="file" class="form-control" name="image" accept="image/*" required>
+            <small style="color: #ccc;">Upload a high-quality image of artwork</small>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Add Artwork
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="resetForm()">
+                <i class="fas fa-redo me-2"></i>Reset
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Existing Artworks Table -->
+<div class="admin-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Existing Artworks</h3>
+        <span style="color: #ccc;">Total: <%= typeof artworks !== 'undefined' ? artworks.length : 0 %> artworks</span>
+    </div>
+    
+    <div class="admin-table">
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Title</th>
+                    <th>Artist</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Availability</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (typeof artworks !== 'undefined' && artworks.length > 0) { %>
+                    <% artworks.forEach(artwork => { %>
+                        <tr>
+                            <td>
+                                <% if (artwork.image) { %>
+                                    <img src="<%= artwork.image %>" alt="<%= artwork.title %>" class="artwork-image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(214, 164, 90, 0.3);">
+                                <% } else { %>
+                                    <div style="width: 60px; height: 60px; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-image" style="color: #666;"></i>
+                                    </div>
+                                <% } %>
+                            </td>
+                            <td><strong><%= artwork.title %></strong></td>
+                            <td><%= artwork.artist %></td>
+                            <td><span class="badge bg-info"><%= artwork.category %></span></td>
+                            <td>₹<%= artwork.price.toLocaleString() %></td>
+                            <td>
+                                <span class="badge <%= artwork.availability === 'In Stock' ? 'bg-success' : artwork.availability === 'Sold Out' ? 'bg-danger' : 'bg-warning' %>">
+                                    <%= artwork.availability %>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="editArtwork('<%= artwork._id %>')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteArtwork('<%= artwork._id %>')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="7" class="text-center" style="color: #ccc; padding: 2rem;">
+                            <i class="fas fa-images" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i><br>
+                            No artworks found.<br>
+                            <small>Add artworks using the form above.</small>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+// Form submission
+document.getElementById('artworkForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch('/admin/api/add-artwork', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Artwork added successfully!');
+            this.reset();
+            location.reload();
+        } else {
+            alert('Error adding artwork: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error adding artwork');
+    }
+});
+
+function resetForm() {
+    document.getElementById('artworkForm').reset();
+}
+
+async function editArtwork(id) {
+    // Implement edit functionality
+    alert('Edit functionality would be implemented here for artwork: ' + id);
+}
+
+async function deleteArtwork(id) {
+    if (confirm('Are you sure you want to delete this artwork?')) {
+        try {
+            const response = await fetch(`/admin/api/delete-artwork/${id}`, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Artwork deleted successfully!');
+                location.reload();
+            } else {
+                alert('Error deleting artwork: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error deleting artwork');
+        }
+    }
+}
+</script>

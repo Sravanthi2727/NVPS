@@ -4,6 +4,49 @@
  */
 
 const adminController = {
+  // Upload middleware instance
+  _upload: null,
+
+  // Initialize upload middleware
+  getUpload: function() {
+    if (!this._upload) {
+      const multer = require('multer');
+      const path = require('path');
+      const fs = require('fs');
+
+      // Create uploads directory if it doesn't exist
+      const uploadsDir = path.join(__dirname, '../../public/uploads/artworks');
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+          cb(null, uploadsDir);
+        },
+        filename: function (req, file, cb) {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+          cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+        }
+      });
+
+      this._upload = multer({ 
+        storage: storage,
+        limits: {
+          fileSize: 10 * 1024 * 1024 // 10MB limit
+        },
+        fileFilter: function (req, file, cb) {
+          // Allow only image files
+          if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+          } else {
+            cb(new Error('Only image files are allowed'), false);
+          }
+        }
+      });
+    }
+    return this._upload;
+  },
   // Admin Dashboard
   getDashboard: async (req, res) => {
     try {
@@ -12,13 +55,21 @@ const adminController = {
       const Request = require('../../models/Request');
       const Franchise = require('../../models/Franchise');
       
-      // Get all orders first to debug
-      const allOrders = await Order.find();
-      console.log('=== ALL ORDERS ===');
-      console.log('Total orders:', allOrders.length);
-      allOrders.forEach(order => {
-        console.log(`Order ${order._id}: status="${order.status}", orderType="${order.orderType}"`);
-      });
+      // Get dashboard statistics
+      const [
+        totalOrders,
+        totalRevenue,
+        totalCustomers,
+        totalWorkshops,
+        recentOrders
+      ] = await Promise.all([
+        Order.countDocuments(),
+        Order.aggregate([{ $group: { _id: null, total: { $sum: "$totalAmount" } } }]),
+        // Add other stats as needed
+        0, // placeholder for customers
+        0, // placeholder for workshops
+        Order.find().sort({ createdAt: -1 }).limit(5)
+      ]);
       
       // Get counts for dashboard cards
       const pendingCartOrders = await Order.countDocuments({ 
@@ -51,15 +102,10 @@ const adminController = {
       const totalPendingWorkshops = pendingWorkshopBookings + pendingWorkshopProposals;
       
       const pendingFranchise = await Franchise.countDocuments({ 
-        status: 'pending'
+        status: 'pending',
+        type: 'franchise'
       });
       
-      // Get recent orders for dashboard
-      const recentOrders = await Order.find()
-        .populate('userId', 'name email')
-        .sort({ createdAt: -1 })
-        .limit(5);
-
       // Transform orders for dashboard display
       const recentActivity = recentOrders.map(order => ({
         type: 'Cart',
@@ -68,11 +114,11 @@ const adminController = {
         details: order.items.length > 1 
           ? `${order.items[0].name} +${order.items.length - 1} more`
           : order.items[0]?.name || 'Order',
-        date: order.orderDate.toLocaleDateString('en-US', { 
+        date: order.createdAt ? order.createdAt.toLocaleDateString('en-US', { 
           month: 'short', 
           day: 'numeric', 
           year: 'numeric' 
-        }),
+        }) : 'N/A',
         status: order.status
       }));
 
@@ -80,6 +126,11 @@ const adminController = {
         title: 'Admin Dashboard - Rabuste Coffee',
         description: 'Admin dashboard for managing orders, workshop requests, and user accounts.',
         currentPage: '/admin',
+        totalOrders,
+        totalRevenue: totalRevenue[0]?.total || 0,
+        totalCustomers,
+        totalWorkshops,
+        recentOrders,
         recentActivity,
         counts: {
           cartOrders: pendingCartOrders,
@@ -87,7 +138,7 @@ const adminController = {
           workshops: totalPendingWorkshops,
           franchise: pendingFranchise
         },
-        layout: false
+        layout: 'layouts/admin'
       });
     } catch (error) {
       console.error('Error loading dashboard:', error);
@@ -97,13 +148,305 @@ const adminController = {
         title: 'Admin Dashboard - Rabuste Coffee',
         description: 'Admin dashboard for managing orders, workshop requests, and user accounts.',
         currentPage: '/admin',
+        totalOrders: 0,
+        totalRevenue: 0,
+        totalCustomers: 0,
+        totalWorkshops: 0,
+        recentOrders: [],
         counts: {
           cartOrders: 0,
           artOrders: 0,
           workshops: 0,
           franchise: 0
         },
-        layout: false
+        layout: 'layouts/admin'
+      });
+    }
+  },
+
+  // Artworks Management
+  getManageArtworks: async (req, res) => {
+    try {
+      const Artwork = require('../../models/Artwork');
+      
+      // Fetch all artworks from database
+      const artworks = await Artwork.find()
+        .sort({ displayOrder: 1, createdAt: -1 });
+
+      console.log(`Loaded ${artworks.length} artworks for admin management`);
+
+      res.render("admin/manage-artworks", {
+        title: 'Manage Artworks - Rabuste Admin',
+        description: 'Manage artworks in the gallery.',
+        currentPage: '/admin/manage-artworks',
+        artworks: artworks,
+        layout: 'layouts/admin',
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>'
+      });
+    } catch (error) {
+      console.error('Error in getManageArtworks:', error);
+      
+      // Fallback to empty array if database fails
+      res.render("admin/manage-artworks", {
+        title: 'Manage Artworks - Rabuste Admin',
+        description: 'Manage artworks in the gallery.',
+        currentPage: '/admin/manage-artworks',
+        artworks: [],
+        layout: 'layouts/admin',
+        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
+        additionalJS: '<script src="/js/admin.js"></script>',
+        error: 'Error loading artworks: ' + error.message
+      });
+    }
+  },
+
+  // API: Add new artwork
+  addArtwork: async (req, res) => {
+    try {
+      const Artwork = require('../../models/Artwork');
+      
+      console.log('Adding artwork:', req.body);
+      console.log('Uploaded file:', req.file);
+      
+      const {
+        title,
+        artist,
+        category,
+        price,
+        description,
+        year,
+        medium,
+        dimensions,
+        availability,
+        shipping,
+        editionInfo,
+        isAvailable,
+        displayOrder
+      } = req.body;
+
+      // Validate required fields
+      if (!title || !artist || !category || !price) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Title, artist, category, and price are required' 
+        });
+      }
+
+      // Create artwork object
+      const artworkData = {
+        title: title.trim(),
+        artist: artist.trim(),
+        category: category,
+        price: parseFloat(price),
+        description: description ? description.trim() : '',
+        year: year ? parseInt(year) : undefined,
+        medium: medium ? medium.trim() : '',
+        dimensions: dimensions ? dimensions.trim() : '',
+        availability: availability || 'In Stock',
+        shipping: shipping ? shipping.trim() : '',
+        editionInfo: editionInfo ? editionInfo.trim() : '',
+        isAvailable: isAvailable === 'true',
+        displayOrder: displayOrder ? parseInt(displayOrder) : 0
+      };
+
+      // Add image path if file was uploaded
+      if (req.file) {
+        artworkData.image = `/uploads/artworks/${req.file.filename}`;
+        console.log('Image saved to:', artworkData.image);
+      } else {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Artwork image is required' 
+        });
+      }
+
+      // Save to database
+      const newArtwork = new Artwork(artworkData);
+      await newArtwork.save();
+
+      console.log('Artwork saved successfully:', newArtwork._id);
+      
+      res.json({ 
+        success: true, 
+        message: 'Artwork added successfully',
+        artwork: newArtwork
+      });
+
+    } catch (error) {
+      console.error('Error adding artwork:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Error adding artwork: ' + error.message 
+      });
+    }
+  },
+
+  // API: Get individual artwork for editing
+  getArtworkById: async (req, res) => {
+    try {
+      const Artwork = require('../../models/Artwork');
+      const { id } = req.params;
+      
+      if (!id) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Artwork ID is required' 
+        });
+      }
+
+      const artwork = await Artwork.findById(id);
+      
+      if (!artwork) {
+        return res.status(404).json({ 
+          success: false, 
+          message: 'Artwork not found' 
+        });
+      }
+
+      res.json({ 
+        success: true, 
+        artwork: artwork 
+      });
+
+    } catch (error) {
+      console.error('Error fetching artwork:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Error fetching artwork: ' + error.message 
+      });
+    }
+  },
+
+  // API: Update artwork
+  updateArtwork: async (req, res) => {
+    try {
+      const Artwork = require('../../models/Artwork');
+      const { id } = req.params;
+      
+      if (!id) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Artwork ID is required' 
+        });
+      }
+
+      const {
+        title,
+        artist,
+        category,
+        price,
+        description,
+        year,
+        medium,
+        dimensions,
+        availability,
+        shipping,
+        editionInfo,
+        isAvailable,
+        displayOrder
+      } = req.body;
+
+      // Validate required fields
+      if (!title || !artist || !category || !price) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Title, artist, category, and price are required' 
+        });
+      }
+
+      // Find existing artwork
+      const existingArtwork = await Artwork.findById(id);
+      
+      if (!existingArtwork) {
+        return res.status(404).json({ 
+          success: false, 
+          message: 'Artwork not found' 
+        });
+      }
+
+      // Update artwork object
+      const updateData = {
+        title: title.trim(),
+        artist: artist.trim(),
+        category: category,
+        price: parseFloat(price),
+        description: description ? description.trim() : '',
+        year: year ? parseInt(year) : undefined,
+        medium: medium ? medium.trim() : '',
+        dimensions: dimensions ? dimensions.trim() : '',
+        availability: availability || 'In Stock',
+        shipping: shipping ? shipping.trim() : '',
+        editionInfo: editionInfo ? editionInfo.trim() : '',
+        isAvailable: isAvailable === 'true',
+        displayOrder: displayOrder ? parseInt(displayOrder) : 0
+      };
+
+      // Update image if new file was uploaded
+      if (req.file) {
+        updateData.image = `/uploads/artworks/${req.file.filename}`;
+        console.log('New image saved to:', updateData.image);
+      }
+
+      // Save to database
+      const updatedArtwork = await Artwork.findByIdAndUpdate(
+        id, 
+        updateData, 
+        { new: true, runValidators: true }
+      );
+
+      console.log('Artwork updated successfully:', updatedArtwork._id);
+      
+      res.json({ 
+        success: true, 
+        message: 'Artwork updated successfully',
+        artwork: updatedArtwork
+      });
+
+    } catch (error) {
+      console.error('Error updating artwork:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Error updating artwork: ' + error.message 
+      });
+    }
+  },
+
+  // API: Delete artwork
+  deleteArtwork: async (req, res) => {
+    try {
+      const Artwork = require('../../models/Artwork');
+      const { id } = req.params;
+      
+      if (!id) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Artwork ID is required' 
+        });
+      }
+
+      // Find and delete artwork
+      const deletedArtwork = await Artwork.findByIdAndDelete(id);
+      
+      if (!deletedArtwork) {
+        return res.status(404).json({ 
+          success: false, 
+          message: 'Artwork not found' 
+        });
+      }
+
+      console.log('Artwork deleted successfully:', id);
+      
+      res.json({ 
+        success: true, 
+        message: 'Artwork deleted successfully' 
+      });
+
+    } catch (error) {
+      console.error('Error deleting artwork:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Error deleting artwork: ' + error.message 
       });
     }
   },
@@ -120,50 +463,35 @@ const adminController = {
 
       // Transform orders to match the expected format
       const cartRequests = orders.map(order => ({
-        id: order._id,
+        _id: order._id,
         customerName: order.customerName,
-        email: order.customerEmail,
-        items: order.items.map(item => `${item.name} (x${item.quantity})`),
-        itemsDetailed: order.items,
-        total: order.totalAmount,
+        customerEmail: order.customerEmail,
+        items: order.items,
+        deliveryAddress: order.deliveryAddress,
+        paymentMethod: order.paymentMethod,
+        totalAmount: order.totalAmount,
         status: order.status,
-        date: order.orderDate.toISOString().split('T')[0],
+        orderDate: order.orderDate,
         createdAt: order.createdAt
       }));
 
       res.render("admin/cart-requests", {
-        title: 'Orders Management - Admin Dashboard',
-        description: 'Manage customer orders and their status.',
+        title: 'Cart Requests - Admin Dashboard',
+        description: 'Manage customer cart orders and requests.',
         currentPage: '/admin/cart-requests',
         cartRequests,
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>'
+        layout: 'layouts/admin'
       });
     } catch (error) {
       console.error('Error fetching orders:', error);
       
-      // Fallback to mock data if database fails
-      const cartRequests = [
-        {
-          id: 1,
-          customerName: 'John Doe',
-          email: 'john@example.com',
-          items: ['Robusta Blend', 'Espresso Shot'],
-          total: 25.50,
-          status: 'pending',
-          date: '2024-01-08'
-        }
-      ];
-      
+      // Fallback to empty data if database fails
       res.render("admin/cart-requests", {
         title: 'Orders Management - Admin Dashboard',
         description: 'Manage customer orders and their status.',
         currentPage: '/admin/cart-requests',
-        cartRequests,
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>'
+        cartRequests: [],
+        layout: 'layouts/admin'
       });
     }
   },
@@ -251,10 +579,12 @@ const adminController = {
         title: 'Workshop Requests - Rabuste Admin',
         description: 'Manage workshop booking requests and proposals.',
         currentPage: '/admin/workshop-requests',
-        workshopRequests,
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>'
+        workshopBookings: registrationRequests,
+        workshopProposals: proposalRequests,
+        counts: {
+          workshops: registrationRequests.filter(r => r.status === 'pending').length + proposalRequests.filter(p => p.status === 'pending').length
+        },
+        layout: 'layouts/admin'
       });
     } catch (error) {
       console.error('Error in getWorkshopRequests:', error);
@@ -262,10 +592,12 @@ const adminController = {
         title: 'Workshop Requests - Rabuste Admin',
         description: 'Manage workshop booking requests and proposals.',
         currentPage: '/admin/workshop-requests',
-        workshopRequests: [],
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>',
+        workshopBookings: [],
+        workshopProposals: [],
+        counts: {
+          workshops: 0
+        },
+        layout: 'layouts/admin',
         error: 'Error loading workshop requests: ' + error.message
       });
     }
@@ -288,9 +620,7 @@ const adminController = {
         description: 'Manage artwork purchase orders.',
         currentPage: '/admin/art-requests',
         artRequests,
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>'
+        layout: 'layouts/admin'
       });
     } catch (error) {
       console.error('Error fetching art requests:', error);
@@ -301,9 +631,7 @@ const adminController = {
         description: 'Manage artwork purchase orders.',
         currentPage: '/admin/art-requests',
         artRequests: [],
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>'
+        layout: 'layouts/admin'
       });
     }
   },
@@ -631,9 +959,7 @@ const adminController = {
         description: 'Manage user accounts and permissions.',
         currentPage: '/admin/users',
         users: transformedUsers,
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>'
+        layout: 'layouts/admin'
       });
     } catch (error) {
       console.error('Error in getUsers:', error);
@@ -642,9 +968,7 @@ const adminController = {
         description: 'Manage user accounts and permissions.',
         currentPage: '/admin/users',
         users: [],
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>',
+        layout: 'layouts/admin',
         error: 'Error loading users: ' + error.message
       });
     }
@@ -665,21 +989,23 @@ const adminController = {
         title: 'Franchise Applications - Rabuste Admin',
         description: 'Manage franchise applications and approvals.',
         currentPage: '/admin/franchise',
-        applications: applications,
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>'
+        franchiseRequests: applications,
+        counts: {
+          franchise: applications.filter(a => a.status === 'pending').length
+        },
+        layout: 'layouts/admin'
       });
     } catch (error) {
       console.error('Error in getFranchise:', error);
-      res.status(500).render("admin/franchise", {
+      res.render("admin/franchise", {
         title: 'Franchise Applications - Rabuste Admin',
         description: 'Manage franchise applications and approvals.',
         currentPage: '/admin/franchise',
-        applications: [],
-        layout: false,
-        additionalCSS: '<link rel="stylesheet" href="/css/admin.css">',
-        additionalJS: '<script src="/js/admin.js"></script>',
+        franchiseRequests: [],
+        counts: {
+          franchise: 0
+        },
+        layout: 'layouts/admin',
         error: 'Error loading franchise applications: ' + error.message
       });
     }

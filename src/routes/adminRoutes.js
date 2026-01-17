@@ -11,16 +11,16 @@ const adminController = require('../controllers/adminController');
 function ensureAdmin(req, res, next) {
   // For now, just allow all requests to admin routes for testing
   return next();
-  
-  // Original code (commented out for testing):
-  // if (req.isAuthenticated()) {
-  //   return next();
-  // }
-  // res.redirect('/signin');
 }
 
 // Admin dashboard
 router.get('/', ensureAdmin, adminController.getDashboard);
+
+router.get('/manage-artworks', ensureAdmin, adminController.getManageArtworks);
+router.post('/api/add-artwork', ensureAdmin, adminController.getUpload().single('image'), adminController.addArtwork);
+router.get('/api/artwork/:id', ensureAdmin, adminController.getArtworkById);
+router.put('/api/update-artwork/:id', ensureAdmin, adminController.getUpload().single('image'), adminController.updateArtwork);
+router.delete('/api/delete-artwork/:id', ensureAdmin, adminController.deleteArtwork);
 
 // Cart requests management
 router.get('/cart-requests', ensureAdmin, adminController.getCartRequests);
@@ -40,6 +40,7 @@ router.post('/workshops/draft', ensureAdmin, adminController.saveWorkshopDraft);
 
 // Franchise applications management
 router.get('/franchise', ensureAdmin, adminController.getFranchise);
+router.get('/franchise-requests', ensureAdmin, adminController.getFranchise);
 
 // User management
 router.get('/users', ensureAdmin, adminController.getUsers);

@@ -1,453 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Rabuste Coffee</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link rel="stylesheet" href="/css/admin-mobile.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Complete CSS Reset for Admin */
-        * {
-            margin: 0 !important;
-            padding: 0 !important;
-            box-sizing: border-box !important;
-        }
-        
-        html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-            font-family: 'Inter', sans-serif !important;
-            background: #000 !important;
-            color: #fff !important;
-            overflow-x: hidden !important;
-            height: 100% !important;
-        }
-        
-        /* Admin Layout */
-        .admin-wrapper {
-            display: flex !important;
-            min-height: 100vh !important;
-            background: #000 !important;
-        }
-        
-        /* Sidebar */
-        .admin-sidebar {
-            width: 250px !important;
-            background: #111 !important;
-            border-right: 2px solid #d6a45a !important;
-            position: fixed !important;
-            height: 100vh !important;
-            overflow-y: auto !important;
-            z-index: 9999 !important;
-            transition: transform 0.3s ease !important;
-        }
-        
-        .admin-logo {
-            padding: 2rem 1.5rem !important;
-            text-align: center !important;
-            border-bottom: 1px solid #333 !important;
-        }
-        
-        .admin-logo h4 {
-            color: #d6a45a !important;
-            margin: 0 !important;
-            font-weight: 700 !important;
-        }
-        
-        .admin-nav {
-            padding: 1rem 0 !important;
-        }
-        
-        .admin-nav a {
-            display: block !important;
-            padding: 1rem 1.5rem !important;
-            color: #fff !important;
-            text-decoration: none !important;
-            transition: all 0.3s ease !important;
-        }
-        
-        .admin-nav a:hover {
-            background: rgba(214, 164, 90, 0.1) !important;
-            color: #d6a45a !important;
-        }
-        
-        .admin-nav a.active {
-            background: #d6a45a !important;
-            color: #000 !important;
-        }
-        
-        .admin-nav i {
-            width: 20px !important;
-            margin-right: 10px !important;
-        }
-        
-        /* Main Content */
-        .admin-main {
-            flex: 1 !important;
-            margin-left: 250px !important;
-            background: #000 !important;
-        }
-        
-        .admin-header {
-            background: #1a1a1a !important;
-            padding: 1rem 2rem !important;
-            border-bottom: 1px solid #333 !important;
-            position: sticky !important;
-            top: 0 !important;
-            z-index: 100 !important;
-        }
-        
-        .admin-header h2 {
-            color: #d6a45a !important;
-            margin: 0 !important;
-        }
-        
-        .admin-content {
-            padding: 2rem !important;
-        }
-        
-        /* Cards */
-        .admin-card {
-            background: #1a1a1a !important;
-            border: 1px solid #333 !important;
-            border-radius: 8px !important;
-            padding: 1.5rem !important;
-            margin-bottom: 1rem !important;
-            transition: transform 0.3s ease !important;
-            min-height: 220px !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            overflow: visible !important;
-        }
-        
-        .admin-card:hover {
-            transform: translateY(-2px) !important;
-            border-color: #d6a45a !important;
-        }
-        
-        .admin-card h3 {
-            color: #d6a45a !important;
-            margin-bottom: 1rem !important;
-        }
-        
-        .admin-card-number {
-            font-size: 2rem !important;
-            font-weight: bold !important;
-            color: #fff !important;
-            margin-bottom: 0.5rem !important;
-        }
-        
-        .admin-card-subtitle {
-            color: #ccc !important;
-            margin-bottom: 1rem !important;
-        }
-        
-        /* Tables */
-        .admin-table {
-            background: #1a1a1a !important;
-            border: 1px solid #333 !important;
-            border-radius: 8px !important;
-            overflow-x: auto !important;
-            overflow-y: visible !important;
-            display: block !important;
-            -webkit-overflow-scrolling: touch !important;
-        }
-        
-        .admin-table::-webkit-scrollbar {
-            height: 8px !important;
-        }
-        
-        .admin-table::-webkit-scrollbar-track {
-            background: #1a1a1a !important;
-        }
-        
-        .admin-table::-webkit-scrollbar-thumb {
-            background: #d6a45a !important;
-            border-radius: 4px !important;
-        }
-        
-        .admin-table table {
-            width: 100% !important;
-            margin: 0 !important;
-            min-width: 1000px !important;
-        }
-        
-        .admin-table th {
-            background: #333 !important;
-            color: #d6a45a !important;
-            padding: 1rem !important;
-            border: none !important;
-        }
-        
-        .admin-table td {
-            padding: 1rem !important;
-            border-bottom: 1px solid #333 !important;
-            color: #fff !important;
-        }
-        
-        .admin-table tr:hover {
-            background: rgba(214, 164, 90, 0.1) !important;
-        }
-        
-        /* Buttons */
-        .btn-primary {
-            background: #d6a45a !important;
-            border-color: #d6a45a !important;
-            color: #000 !important;
-        }
-        
-        .btn-primary:hover {
-            background: #e3b873 !important;
-            border-color: #e3b873 !important;
-            color: #000 !important;
-        }
-        
-        .btn-outline-primary {
-            color: #d6a45a !important;
-            border-color: #d6a45a !important;
-        }
-        
-        .btn-outline-primary:hover {
-            background: #d6a45a !important;
-            color: #000 !important;
-        }
-        
-        /* Badges */
-        .badge {
-            padding: 0.5rem 0.75rem !important;
-        }
-        
-        .badge.bg-warning {
-            background: #f39c12 !important;
-            color: #000 !important;
-        }
-        
-        .badge.bg-success {
-            background: #27ae60 !important;
-        }
-        
-        .badge.bg-info {
-            background: #d6a45a !important;
-            color: #000 !important;
-        }
-        
-        .badge.bg-primary {
-            background: #d6a45a !important;
-            color: #000 !important;
-        }
-        
-        /* Mobile */
-        @media (max-width: 768px) {
-            .admin-sidebar {
-                transform: translateX(-100%) !important;
-                z-index: 10000 !important;
-            }
-            
-            .admin-sidebar.show {
-                transform: translateX(0) !important;
-            }
-            
-            .admin-main {
-                margin-left: 0 !important;
-            }
-        }
-        
-        .mobile-toggle {
-            display: none !important;
-            background: #d6a45a !important;
-            border: none !important;
-            color: #000 !important;
-            padding: 0.5rem !important;
-            border-radius: 4px !important;
-        }
-        
-        @media (max-width: 768px) {
-            .mobile-toggle {
-                display: inline-block !important;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="admin-wrapper">
-        <!-- Sidebar -->
-        <nav class="admin-sidebar" id="adminSidebar">
-            <div class="admin-logo">
-                <h4><i class="fas fa-coffee me-2"></i>Rabuste Admin</h4>
-            </div>
-            
-            <div class="admin-nav">
-                <a href="/admin" class="active">
-                    <i class="fas fa-tachometer-alt"></i>Dashboard
-                </a>
-                <a href="/admin/cart-requests">
-                    <i class="fas fa-shopping-cart"></i>Cart Requests
-                </a>
-                <a href="/admin/art-requests">
-                    <i class="fas fa-palette"></i>Art Requests
-                </a>
-                <a href="/admin/workshop-requests">
-                    <i class="fas fa-calendar-alt"></i>Workshop Requests
-                </a>
-                <a href="/admin/franchise">
-                    <i class="fas fa-store"></i>Franchise Applications
-                </a>
-                
-                <hr style="border-color: #333; margin: 1rem 1.5rem;">
-                
-                <a href="/" target="_blank">
-                    <i class="fas fa-external-link-alt"></i>View Website
-                </a>
-                <a href="/logout">
-                    <i class="fas fa-sign-out-alt"></i>Logout
-                </a>
-            </div>
-        </nav>
-        
-        <!-- Main Content -->
-        <main class="admin-main">
-            <div class="admin-header d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <button class="mobile-toggle me-3" onclick="toggleSidebar()">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h2>Admin Dashboard</h2>
-                </div>
-                <div>
-                    <span style="color: #ccc;">Welcome, Admin</span>
-                </div>
-            </div>
-            
-            <div class="admin-content">
-                <!-- Dashboard Content -->
-                <div class="row g-4 mb-4">
-                    <!-- Cart Requests Card -->
-                    <div class="col-md-6 col-lg-3">
-                        <div class="admin-card">
-                            <h3><i class="fas fa-shopping-cart me-2"></i>Cart Requests</h3>
-                            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.cartOrders !== undefined ? counts.cartOrders : 0 %></div>
-                            <div class="admin-card-subtitle">Pending orders</div>
-                            <a href="/admin/cart-requests" class="btn btn-primary">Manage Orders</a>
-                        </div>
-                    </div>
+<!-- Dashboard Content -->
+<div class="row g-4 mb-4">
+    <!-- Cart Requests Card -->
+    <div class="col-md-6 col-lg-3">
+        <div class="admin-card">
+            <h3><i class="fas fa-shopping-cart me-2"></i>Cart Requests</h3>
+            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.cartOrders !== undefined ? counts.cartOrders : 0 %></div>
+            <div class="admin-card-subtitle">Pending orders</div>
+            <a href="/admin/cart-requests" class="btn btn-primary">Manage Orders</a>
+        </div>
+    </div>
 
-                    <!-- Art Requests Card -->
-                    <div class="col-md-6 col-lg-3">
-                        <div class="admin-card">
-                            <h3><i class="fas fa-palette me-2"></i>Art Requests</h3>
-                            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.artOrders !== undefined ? counts.artOrders : 0 %></div>
-                            <div class="admin-card-subtitle">Pending submissions</div>
-                            <a href="/admin/art-requests" class="btn btn-primary">Review Art</a>
-                        </div>
-                    </div>
+    <!-- Art Requests Card -->
+    <div class="col-md-6 col-lg-3">
+        <div class="admin-card">
+            <h3><i class="fas fa-palette me-2"></i>Art Requests</h3>
+            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.artOrders !== undefined ? counts.artOrders : 0 %></div>
+            <div class="admin-card-subtitle">Pending submissions</div>
+            <a href="/admin/art-requests" class="btn btn-primary">Review Art</a>
+        </div>
+    </div>
 
-                    <!-- Workshop Requests Card -->
-                    <div class="col-md-6 col-lg-3">
-                        <div class="admin-card">
-                            <h3><i class="fas fa-calendar-alt me-2"></i>Workshop R...</h3>
-                            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.workshops !== undefined ? counts.workshops : 0 %></div>
-                            <div class="admin-card-subtitle">Pending bookings</div>
-                            <a href="/admin/workshop-requests" class="btn btn-primary">Manage Workshops</a>
-                        </div>
-                    </div>
+    <!-- Workshop Requests Card -->
+    <div class="col-md-6 col-lg-3">
+        <div class="admin-card">
+            <h3><i class="fas fa-calendar-alt me-2"></i>Workshop R...</h3>
+            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.workshops !== undefined ? counts.workshops : 0 %></div>
+            <div class="admin-card-subtitle">Pending bookings</div>
+            <a href="/admin/workshop-requests" class="btn btn-primary">Manage Workshops</a>
+        </div>
+    </div>
 
-                    <!-- Franchise Applications Card -->
-                    <div class="col-md-6 col-lg-3">
-                        <div class="admin-card">
-                            <h3><i class="fas fa-store me-2"></i>Franchise App..</h3>
-                            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.franchise !== undefined ? counts.franchise : 0 %></div>
-                            <div class="admin-card-subtitle">Pending applications</div>
-                            <a href="/admin/franchise" class="btn btn-primary">Review Applications</a>
-                        </div>
-                    </div>
-                </div>
+    <!-- Franchise Applications Card -->
+    <div class="col-md-6 col-lg-3">
+        <div class="admin-card">
+            <h3><i class="fas fa-store me-2"></i>Franchise App..</h3>
+            <div class="admin-card-number"><%= typeof counts !== 'undefined' && counts.franchise !== undefined ? counts.franchise : 0 %></div>
+            <div class="admin-card-subtitle">Pending applications</div>
+            <a href="/admin/franchise" class="btn btn-primary">Review Applications</a>
+        </div>
+    </div>
+</div>
 
-                <!-- Recent Activity -->
-                <div class="admin-card">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3>Recent Activity</h3>
-                        
-                    </div>
-                    
-                    <div class="admin-table">
-                        <table class="table table-dark">
-                            <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Customer</th>
-                                    <th>Details</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (typeof recentActivity !== 'undefined' && recentActivity.length > 0) { %>
-                                    <% recentActivity.forEach(activity => { %>
-                                        <tr>
-                                            <td data-label="Type"><span class="badge bg-info"><%= activity.type %></span></td>
-                                            <td data-label="Customer">
-                                                <strong><%= activity.customer %></strong><br>
-                                                <small style="color: #ccc;"><%= activity.email %></small>
-                                            </td>
-                                            <td data-label="Details"><%= activity.details %></td>
-                                            <td data-label="Date"><%= activity.date %></td>
-                                            <td data-label="Status">
-                                                <span class="badge <%= activity.status === 'pending' ? 'bg-warning' : activity.status === 'completed' ? 'bg-success' : 'bg-danger' %>">
-                                                    <%= activity.status.charAt(0).toUpperCase() + activity.status.slice(1) %>
-                                                </span>
-                                            </td>
-                                            <td data-label="Actions">
-                                                <button class="btn btn-outline-primary btn-sm">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    <% }); %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="6" class="text-center" style="color: #ccc;">No recent activity</td>
-                                    </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </main>
+<!-- Recent Activity -->
+<div class="admin-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Recent Activity</h3>
     </div>
     
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        function toggleSidebar() {
-            document.getElementById('adminSidebar').classList.toggle('show');
-        }
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(e) {
-            const sidebar = document.getElementById('adminSidebar');
-            const toggle = document.querySelector('.mobile-toggle');
-            
-            if (window.innerWidth <= 768 && 
-                !sidebar.contains(e.target) && 
-                !toggle.contains(e.target) && 
-                sidebar.classList.contains('show')) {
-                sidebar.classList.remove('show');
-            }
-        });
-    </script>
-</body>
-</html>
+    <div class="admin-table">
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Customer</th>
+                    <th>Details</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (typeof recentActivity !== 'undefined' && recentActivity.length > 0) { %>
+                    <% recentActivity.forEach(activity => { %>
+                        <tr>
+                            <td data-label="Type"><span class="badge bg-info"><%= activity.type %></span></td>
+                            <td data-label="Customer">
+                                <strong><%= activity.customer %></strong><br>
+                                <small style="color: #ccc;"><%= activity.email %></small>
+                            </td>
+                            <td data-label="Details"><%= activity.details %></td>
+                            <td data-label="Date"><%= activity.date %></td>
+                            <td data-label="Status">
+                                <span class="badge <%= activity.status === 'pending' ? 'bg-warning' : activity.status === 'completed' ? 'bg-success' : 'bg-danger' %>">
+                                    <%= activity.status.charAt(0).toUpperCase() + activity.status.slice(1) %>
+                                </span>
+                            </td>
+                            <td data-label="Actions">
+                                <button class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="text-center" style="color: #ccc;">No recent activity</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
