@@ -946,7 +946,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
                                         <p style="color: #ccc; font-size: 0.85rem; margin-bottom: 12px; min-height: 40px;">${item.description || item.category || ''}</p>
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
                                             <span style="color: #d6a45a; font-weight: bold; font-size: 1.2rem;">₹${item.price}</span>
-                                            <button onclick="addRecommendedItem('${item._id}', '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.image || ''}')" style="
+                                            <button onclick="addRecommendedItem('${item._id}', '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.image ? (item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image) : ''}')" style="
                                                 background: #d6a45a;
                                                 color: #000;
                                                 border: none;
