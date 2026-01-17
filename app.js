@@ -117,6 +117,7 @@ passport.use(
 
 // Express configuration
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -391,20 +392,6 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
     description: 'Manage your wishlist, cart, workshop registrations, and requests at Rabuste Coffee.',
     currentPage: '/dashboard',
     user: req.user
-  });
-});
-
-// Test Google Maps page
-app.get('/test-maps', (req, res) => {
-  res.sendFile(path.join(__dirname, 'test-maps.html'));
-});
-
-// Debug route to check Google Maps API key
-app.get('/debug/google-maps-key', (req, res) => {
-  res.json({
-    apiKeyExists: !!process.env.GOOGLE_MAPS_API,
-    apiKeyLength: process.env.GOOGLE_MAPS_API ? process.env.GOOGLE_MAPS_API.length : 0,
-    apiKeyFirstChars: process.env.GOOGLE_MAPS_API ? process.env.GOOGLE_MAPS_API.substring(0, 10) + '...' : 'Not found'
   });
 });
 
