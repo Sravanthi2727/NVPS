@@ -2233,7 +2233,7 @@ async function proceedToCheckout(orderType = 'menu') {
       checkoutBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
     }
     
-    const response = await fetch('/api/checkout', {
+    const response = await fetch('/api/orders/checkout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -2821,7 +2821,7 @@ async function confirmArtPayment() {
 
 async function processArtOrder(orderData) {
   try {
-    const response = await fetch('/api/art-checkout', {
+    const response = await fetch('/api/orders/art-checkout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

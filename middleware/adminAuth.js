@@ -3,17 +3,11 @@
  * Ensures only users with admin role can access admin routes
  */
 
-console.log('🔧 Admin middleware file loaded');
-
 // Middleware to ensure user is authenticated
 function ensureAuthenticated(req, res, next) {
-  console.log('🔐 ensureAuthenticated called for:', req.path);
   if (req.isAuthenticated()) {
-    console.log('✅ User is authenticated:', req.user?.email);
     return next();
   }
-  
-  console.log('❌ User not authenticated for:', req.path);
   
   // For API routes, return JSON error
   if (req.path.startsWith('/api/') || req.path.startsWith('/admin/api/')) {
@@ -29,9 +23,9 @@ function ensureAuthenticated(req, res, next) {
 
 // Middleware to ensure user has admin role
 function ensureAdmin(req, res, next) {
-  console.log('🔧 ensureAdmin called for:', req.path);
+  console.log('🔧 Admin middleware called for:', req.path);
   console.log('🔧 User authenticated:', req.isAuthenticated());
-  console.log('🔧 User object:', req.user ? { email: req.user.email, role: req.user.role } : 'No user');
+  console.log('🔧 User:', req.user ? { email: req.user.email, role: req.user.role } : 'No user');
   
   // First check if user is authenticated
   if (!req.isAuthenticated()) {
