@@ -594,6 +594,8 @@ const adminController = {
         currentPage: '/admin/workshop-requests',
         registrations,
         proposals,
+        workshopBookings: registrations,
+        workshopProposals: proposals,
         layout: 'layouts/admin'
       });
     } catch (error) {
@@ -606,6 +608,8 @@ const adminController = {
         currentPage: '/admin/workshop-requests',
         registrations: [],
         proposals: [],
+        workshopBookings: [],
+        workshopProposals: [],
         layout: 'layouts/admin'
       });
     }
@@ -1138,10 +1142,14 @@ const adminController = {
   // Menu Management
   getMenuManagement: async (req, res) => {
     try {
+      const MenuItem = require('../../models/MenuItem');
+      const menuItems = await MenuItem.find().sort({ displayOrder: 1, name: 1 });
+      
       res.render("admin/menu-management", {
         title: 'Menu Management - Rabuste Admin',
         description: 'Manage menu items across all categories.',
         currentPage: '/admin/menu-management',
+        menuItems,
         layout: 'layouts/admin'
       });
     } catch (error) {
@@ -1150,6 +1158,7 @@ const adminController = {
         title: 'Menu Management - Rabuste Admin',
         description: 'Manage menu items across all categories.',
         currentPage: '/admin/menu-management',
+        menuItems: [],
         layout: 'layouts/admin'
       });
     }
@@ -1170,6 +1179,35 @@ const adminController = {
       res.status(500).json({
         success: false,
         message: 'Error fetching menu items: ' + error.message
+      });
+    }
+  },
+
+  // Get Individual Menu Item API
+  getMenuItemById: async (req, res) => {
+    try {
+      const MenuItem = require('../../models/MenuItem');
+      const { id } = req.params;
+
+      const item = await MenuItem.findById(id);
+
+      if (!item) {
+        return res.status(404).json({
+          success: false,
+          message: 'Menu item not found'
+        });
+      }
+
+      res.json({
+        success: true,
+        item: item
+      });
+
+    } catch (error) {
+      console.error('Error fetching menu item:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error fetching menu item: ' + error.message
       });
     }
   },
@@ -1199,7 +1237,7 @@ const adminController = {
       // Create new menu item
       const newItem = new MenuItem({
         category,
-        subCategory: category, // Use category as subCategory for now
+        subCategory: getSubCategoryForCategory(category),
         name: name.trim(),
         description: description.trim(),
         price: parseFloat(price),
@@ -1236,7 +1274,8 @@ const adminController = {
         description,
         price,
         image,
-        isAvailable
+        isAvailable,
+        displayOrder
       } = req.body;
 
       // Validate required fields
@@ -1252,12 +1291,13 @@ const adminController = {
         id,
         {
           category,
-          subCategory: category,
+          subCategory: getSubCategoryForCategory(category),
           name: name.trim(),
           description: description.trim(),
           price: parseFloat(price),
           image: image.trim(),
-          isAvailable: isAvailable !== false
+          isAvailable: isAvailable !== false,
+          displayOrder: parseInt(displayOrder) || 0
         },
         { new: true, runValidators: true }
       );
@@ -1434,6 +1474,18 @@ const adminController = {
     }
   }
 };
+
+// Helper function to map category to subCategory
+function getSubCategoryForCategory(category) {
+  const categoryMap = {
+    'cold': 'robusta-cold-non-milk',
+    'hot': 'robusta-hot-non-milk', 
+    'manual-brew': 'cold-brew',
+    'shakes-tea': 'shakes',
+    'food': 'snacks-sides'
+  };
+  return categoryMap[category] || 'snacks-sides';
+}
 
 // Helper function for time formatting
 function getTimeAgo(date) {

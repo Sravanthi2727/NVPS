@@ -29,11 +29,12 @@ router.get('/analytics', adminController.getAnalytics);
 router.get('/api/analytics', adminController.getAnalyticsAPI);
 
 // Menu Management
-router.get('/menu-management', adminController.getMenuManagement);
-router.get('/api/menu-items', adminController.getMenuItems);
-router.post('/api/menu-items', adminController.addMenuItem);
-router.put('/api/menu-items/:id', adminController.updateMenuItem);
-router.delete('/api/menu-items/:id', adminController.deleteMenuItem);
+router.get('/menu-management', ensureAdmin, adminController.getMenuManagement);
+router.get('/api/menu-items', ensureAdmin, adminController.getMenuItems);
+router.get('/api/menu-items/:id', ensureAdmin, adminController.getMenuItemById);
+router.post('/api/menu-items', ensureAdmin, adminController.addMenuItem);
+router.put('/api/menu-items/:id', ensureAdmin, adminController.updateMenuItem);
+router.delete('/api/menu-items/:id', ensureAdmin, adminController.deleteMenuItem);
 
 // Artwork Management
 router.get('/manage-artworks', adminController.getManageArtworks);

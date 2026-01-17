@@ -27,7 +27,7 @@
     <div class="row g-3">
         <div class="col-md-3">
             <label class="form-label">Request Type</label>
-            <select class="form-select" id="typeFilter">
+            <select class="form-select" id="typeFilter" onchange="applyWorkshopFilters()">
                 <option value="">All Types</option>
                 <option value="booking">Bookings</option>
                 <option value="proposal">Proposals</option>
@@ -35,29 +35,32 @@
         </div>
         <div class="col-md-3">
             <label class="form-label">Status</label>
-            <select class="form-select" id="statusFilter">
+            <select class="form-select" id="statusFilter" onchange="applyWorkshopFilters()">
                 <option value="">All Status</option>
+                <option value="registered">Registered</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="completed">Completed</option>
                 <option value="pending">Pending</option>
                 <option value="approved">Approved</option>
                 <option value="rejected">Rejected</option>
-                <option value="completed">Completed</option>
             </select>
         </div>
         <div class="col-md-3">
             <label class="form-label">Date Range</label>
-            <input type="date" class="form-control" id="dateFilter">
+            <input type="date" class="form-control" id="dateFilter" onchange="applyWorkshopFilters()">
         </div>
         <div class="col-md-3">
             <label class="form-label">Search</label>
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search by name or workshop..." id="searchInput">
+                <input type="text" class="form-control" placeholder="Search by name or workshop..." id="searchInput" onkeyup="applyWorkshopFilters()">
                 <button class="btn btn-outline-primary" type="button" onclick="applyWorkshopFilters()">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
         </div>
     </div>
-    <div class="filter-stats mt-2"></div>
+    <div class="filter-stats mt-2" id="filterStats"></div>
 </div>
 
 <!-- Statistics Cards -->
@@ -65,21 +68,21 @@
     <div class="col-md-6">
         <div class="admin-card">
             <h4><i class="fas fa-calendar-check me-2"></i>Workshop Bookings</h4>
-            <div class="admin-card-number"><%= typeof workshopBookings !== 'undefined' ? workshopBookings.length : 0 %></div>
+            <div class="admin-card-number" id="bookingsCount"><%= typeof workshopBookings !== 'undefined' ? workshopBookings.length : 0 %></div>
             <div class="admin-card-subtitle">Customer registrations</div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="admin-card">
             <h4><i class="fas fa-lightbulb me-2"></i>Workshop Proposals</h4>
-            <div class="admin-card-number"><%= typeof workshopProposals !== 'undefined' ? workshopProposals.length : 0 %></div>
+            <div class="admin-card-number" id="proposalsCount"><%= typeof workshopProposals !== 'undefined' ? workshopProposals.length : 0 %></div>
             <div class="admin-card-subtitle">Instructor proposals</div>
         </div>
     </div>
 </div>
 
 <!-- Workshop Bookings -->
-<div class="admin-card mb-4">
+<div class="admin-card mb-4" id="bookingsSection">
     <h3 class="mb-3">Workshop Bookings</h3>
     <div class="admin-table">
         <table class="table">
@@ -93,28 +96,33 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="bookingsTableBody">
                 <% if (typeof workshopBookings !== 'undefined' && workshopBookings.length > 0) { %>
                     <% workshopBookings.forEach(booking => { %>
-                        <tr>
+                        <tr class="booking-row" 
+                            data-participant="<%= booking.participantName ? booking.participantName.toLowerCase() : '' %>"
+                            data-workshop="<%= booking.workshopName ? booking.workshopName.toLowerCase() : '' %>"
+                            data-status="<%= booking.status %>"
+                            data-date="<%= booking.workshopDate %>"
+                            data-type="booking">
                             <td data-label="Participant">
-                                <strong><%= booking.name %></strong><br>
-                                <small class="text-muted"><%= booking.email %></small>
+                                <strong><%= booking.participantName || 'N/A' %></strong><br>
+                                <small class="text-muted"><%= booking.participantEmail || 'N/A' %></small>
                             </td>
-                            <td data-label="Workshop"><%= booking.title %></td>
-                            <td data-label="Date"><%= new Date(booking.date).toLocaleDateString() %></td>
-                            <td data-label="Contact"><%= booking.phone %></td>
+                            <td data-label="Workshop"><%= booking.workshopName || 'N/A' %></td>
+                            <td data-label="Date"><%= booking.workshopDate ? new Date(booking.workshopDate).toLocaleDateString() : 'N/A' %></td>
+                            <td data-label="Contact"><%= booking.participantPhone || 'N/A' %></td>
                             <td data-label="Status">
-                                <span class="badge <%= booking.status === 'pending' ? 'bg-warning' : booking.status === 'approved' ? 'bg-success' : 'bg-danger' %>">
-                                    <%= booking.status.charAt(0).toUpperCase() + booking.status.slice(1) %>
+                                <span class="badge <%= booking.status === 'registered' ? 'bg-warning' : booking.status === 'confirmed' ? 'bg-success' : booking.status === 'cancelled' ? 'bg-danger' : 'bg-info' %>">
+                                    <%= booking.status ? booking.status.charAt(0).toUpperCase() + booking.status.slice(1) : 'Unknown' %>
                                 </span>
                             </td>
                             <td data-label="Actions">
-                                <form method="POST" action="/admin/workshop-requests/<%= booking.id %>/update" style="display: inline;">
+                                <form method="POST" action="/admin/workshop-requests/<%= booking._id %>/update" style="display: inline;">
                                     <select name="status" class="form-select form-select-sm" style="width: auto; display: inline-block;" onchange="this.form.submit()">
-                                        <option value="pending" <%= booking.status === 'pending' ? 'selected' : '' %>>Pending</option>
-                                        <option value="approved" <%= booking.status === 'approved' ? 'selected' : '' %>>Approved</option>
-                                        <option value="rejected" <%= booking.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+                                        <option value="registered" <%= booking.status === 'registered' ? 'selected' : '' %>>Registered</option>
+                                        <option value="confirmed" <%= booking.status === 'confirmed' ? 'selected' : '' %>>Confirmed</option>
+                                        <option value="cancelled" <%= booking.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
                                         <option value="completed" <%= booking.status === 'completed' ? 'selected' : '' %>>Completed</option>
                                     </select>
                                 </form>
@@ -122,7 +130,7 @@
                         </tr>
                     <% }); %>
                 <% } else { %>
-                    <tr>
+                    <tr id="noBookingsRow">
                         <td colspan="6" class="text-center text-muted">No workshop bookings found</td>
                     </tr>
                 <% } %>
@@ -132,7 +140,7 @@
 </div>
 
 <!-- Workshop Proposals -->
-<div class="admin-card">
+<div class="admin-card" id="proposalsSection">
     <h3 class="mb-3">Workshop Proposals</h3>
     <div class="admin-table">
         <table class="table">
@@ -147,39 +155,44 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="proposalsTableBody">
                 <% if (typeof workshopProposals !== 'undefined' && workshopProposals.length > 0) { %>
                     <% workshopProposals.forEach(proposal => { %>
-                        <tr>
+                        <tr class="proposal-row"
+                            data-organizer="<%= proposal.organizerName ? proposal.organizerName.toLowerCase() : (proposal.name ? proposal.name.toLowerCase() : '') %>"
+                            data-title="<%= proposal.title ? proposal.title.toLowerCase() : '' %>"
+                            data-category="<%= proposal.category || '' %>"
+                            data-status="<%= proposal.status %>"
+                            data-type="proposal">
                             <td data-label="Organizer">
-                                <strong><%= proposal.organizerName || proposal.name %></strong><br>
-                                <small class="text-muted"><%= proposal.email %></small>
+                                <strong><%= proposal.organizerName || proposal.name || 'N/A' %></strong><br>
+                                <small class="text-muted"><%= proposal.email || 'N/A' %></small>
                             </td>
-                            <td data-label="Workshop Title"><%= proposal.title %></td>
-                            <td data-label="Category"><%= proposal.category %></td>
-                            <td data-label="Duration"><%= proposal.duration %></td>
-                            <td data-label="Capacity"><%= proposal.capacity %></td>
+                            <td data-label="Workshop Title"><%= proposal.title || 'N/A' %></td>
+                            <td data-label="Category"><%= proposal.category || 'N/A' %></td>
+                            <td data-label="Duration"><%= proposal.duration || 'N/A' %></td>
+                            <td data-label="Capacity"><%= proposal.capacity || 'N/A' %></td>
                             <td data-label="Status">
                                 <span class="badge <%= proposal.status === 'pending' ? 'bg-warning' : proposal.status === 'approved' ? 'bg-success' : 'bg-danger' %>">
-                                    <%= proposal.status.charAt(0).toUpperCase() + proposal.status.slice(1) %>
+                                    <%= proposal.status ? proposal.status.charAt(0).toUpperCase() + proposal.status.slice(1) : 'Unknown' %>
                                 </span>
                             </td>
                             <td data-label="Actions">
-                                <form method="POST" action="/admin/workshop-requests/<%= proposal.id %>/update" style="display: inline;">
+                                <form method="POST" action="/admin/workshop-requests/<%= proposal._id %>/update" style="display: inline;">
                                     <select name="status" class="form-select form-select-sm" style="width: auto; display: inline-block;" onchange="this.form.submit()">
                                         <option value="pending" <%= proposal.status === 'pending' ? 'selected' : '' %>>Pending</option>
                                         <option value="approved" <%= proposal.status === 'approved' ? 'selected' : '' %>>Approved</option>
                                         <option value="rejected" <%= proposal.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
                                     </select>
                                 </form>
-                                <button class="btn btn-outline-primary btn-sm ms-2" onclick="viewProposal('<%= proposal.id %>')">
+                                <button class="btn btn-outline-primary btn-sm ms-2" onclick="viewProposal('<%= proposal._id %>')">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </td>
                         </tr>
                     <% }); %>
                 <% } else { %>
-                    <tr>
+                    <tr id="noProposalsRow">
                         <td colspan="7" class="text-center text-muted">No workshop proposals found</td>
                     </tr>
                 <% } %>
@@ -192,5 +205,153 @@
 function viewProposal(id) {
     // Add modal or detailed view functionality here
     alert('View proposal details for ID: ' + id);
+}
+
+function applyWorkshopFilters() {
+    const typeFilter = document.getElementById('typeFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const dateFilter = document.getElementById('dateFilter').value;
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    let visibleBookings = 0;
+    let visibleProposals = 0;
+    
+    // Filter bookings
+    const bookingRows = document.querySelectorAll('.booking-row');
+    bookingRows.forEach(row => {
+        let showRow = true;
+        
+        // Type filter
+        if (typeFilter && typeFilter !== 'booking') {
+            showRow = false;
+        }
+        
+        // Status filter
+        if (statusFilter && row.dataset.status !== statusFilter) {
+            showRow = false;
+        }
+        
+        // Date filter
+        if (dateFilter && row.dataset.date) {
+            const rowDate = new Date(row.dataset.date).toISOString().split('T')[0];
+            if (rowDate !== dateFilter) {
+                showRow = false;
+            }
+        }
+        
+        // Search filter
+        if (searchTerm && !row.dataset.participant.includes(searchTerm) && !row.dataset.workshop.includes(searchTerm)) {
+            showRow = false;
+        }
+        
+        row.style.display = showRow ? '' : 'none';
+        if (showRow) visibleBookings++;
+    });
+    
+    // Filter proposals
+    const proposalRows = document.querySelectorAll('.proposal-row');
+    proposalRows.forEach(row => {
+        let showRow = true;
+        
+        // Type filter
+        if (typeFilter && typeFilter !== 'proposal') {
+            showRow = false;
+        }
+        
+        // Status filter
+        if (statusFilter && row.dataset.status !== statusFilter) {
+            showRow = false;
+        }
+        
+        // Search filter
+        if (searchTerm && !row.dataset.organizer.includes(searchTerm) && !row.dataset.title.includes(searchTerm)) {
+            showRow = false;
+        }
+        
+        row.style.display = showRow ? '' : 'none';
+        if (showRow) visibleProposals++;
+    });
+    
+    // Update counts
+    document.getElementById('bookingsCount').textContent = visibleBookings;
+    document.getElementById('proposalsCount').textContent = visibleProposals;
+    
+    // Show/hide sections based on type filter
+    const bookingsSection = document.getElementById('bookingsSection');
+    const proposalsSection = document.getElementById('proposalsSection');
+    
+    if (typeFilter === 'booking') {
+        bookingsSection.style.display = 'block';
+        proposalsSection.style.display = 'none';
+    } else if (typeFilter === 'proposal') {
+        bookingsSection.style.display = 'none';
+        proposalsSection.style.display = 'block';
+    } else {
+        bookingsSection.style.display = 'block';
+        proposalsSection.style.display = 'block';
+    }
+    
+    // Update filter stats
+    const filterStats = document.getElementById('filterStats');
+    filterStats.innerHTML = `<small class="text-muted">Showing ${visibleBookings} bookings and ${visibleProposals} proposals</small>`;
+    
+    // Show/hide no results messages
+    const noBookingsRow = document.getElementById('noBookingsRow');
+    const noProposalsRow = document.getElementById('noProposalsRow');
+    
+    if (noBookingsRow) {
+        noBookingsRow.style.display = visibleBookings === 0 ? '' : 'none';
+    }
+    
+    if (noProposalsRow) {
+        noProposalsRow.style.display = visibleProposals === 0 ? '' : 'none';
+    }
+}
+
+function clearAllFilters() {
+    document.getElementById('typeFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('dateFilter').value = '';
+    document.getElementById('searchInput').value = '';
+    applyWorkshopFilters();
+}
+
+function refreshCurrentPageData() {
+    location.reload();
+}
+
+function exportCurrentPageData() {
+    // Basic CSV export functionality
+    const bookings = Array.from(document.querySelectorAll('.booking-row:not([style*="display: none"])'));
+    const proposals = Array.from(document.querySelectorAll('.proposal-row:not([style*="display: none"])'));
+    
+    let csvContent = "Type,Name,Email,Workshop/Title,Date,Status\n";
+    
+    bookings.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const participant = cells[0].querySelector('strong').textContent;
+        const email = cells[0].querySelector('small').textContent;
+        const workshop = cells[1].textContent;
+        const date = cells[2].textContent;
+        const status = cells[4].querySelector('span').textContent;
+        csvContent += `Booking,"${participant}","${email}","${workshop}","${date}","${status}"\n`;
+    });
+    
+    proposals.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const organizer = cells[0].querySelector('strong').textContent;
+        const email = cells[0].querySelector('small').textContent;
+        const title = cells[1].textContent;
+        const status = cells[5].querySelector('span').textContent;
+        csvContent += `Proposal,"${organizer}","${email}","${title}","","${status}"\n`;
+    });
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'workshop-requests-' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
 }
 </script>
