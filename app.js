@@ -65,7 +65,9 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL
+      callbackURL: process.env.NODE_ENV === 'production' 
+        ? 'https://nvps-1.onrender.com/auth/google/callback'
+        : process.env.GOOGLE_CALLBACK_URL
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -156,19 +158,35 @@ app.use(express.json());
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "change_me",
-    resave: false,
-    saveUninitialized: false,
+    resave: true, // Changed to true for production
+    saveUninitialized: true, // Changed to true for production
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false, // Set to false for Render deployment
       sameSite: "lax"
-    }
+    },
+    name: 'rabuste.sid', // Custom session name
+    rolling: true // Refresh session on each request
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Session debugging middleware for production
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Session Debug:', {
+      sessionID: req.sessionID,
+      hasSession: !!req.session,
+      hasUser: !!req.user,
+      isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+      cookies: req.headers.cookie ? 'Present' : 'Missing'
+    });
+  }
+  next();
+});
 
 // Admin role check middleware (must be after passport)
 app.use(checkAdminRole);
@@ -312,8 +330,20 @@ app.get(
   }),
   function(req, res) {
     // Successful authentication - user is already logged in by passport
-    console.log('Google OAuth successful, user logged in:', req.user ? req.user.email : 'No user');
-    res.redirect("/");
+    console.log('🔐 Google OAuth callback successful');
+    console.log('🔐 User authenticated:', req.user ? req.user.email : 'No user');
+    console.log('🔐 Session ID:', req.sessionID);
+    console.log('🔐 Session data:', req.session);
+    
+    // Force session save before redirect
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ Session save error:', err);
+      } else {
+        console.log('✅ Session saved successfully');
+      }
+      res.redirect("/");
+    });
   }
 );
 
