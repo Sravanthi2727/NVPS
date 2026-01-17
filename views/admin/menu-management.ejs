@@ -1,142 +1,192 @@
-<!-- Menu Management Content -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="text-gold mb-2">
-            <i class="fas fa-utensils me-2"></i>Menu Management
-        </h1>
-        <p style="color: var(--muted);">Manage menu items across all categories</p>
+<!-- Add New Menu Item Form -->
+<div class="admin-card">
+    <h3>
+        <i class="fas fa-plus-circle me-2"></i>Add New Menu Item
+    </h3>
+    
+    <form id="menuForm" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Item Name *</label>
+                    <input type="text" class="form-control" name="name" required>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Category *</label>
+                    <select class="form-select" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="cold">Cold Coffee</option>
+                        <option value="hot">Hot Coffee</option>
+                        <option value="manual-brew">Manual Brew</option>
+                        <option value="shakes-tea">Shakes & Tea</option>
+                        <option value="food">Food</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Price (₹) *</label>
+                    <input type="number" class="form-control" name="price" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Display Order</label>
+                    <input type="number" class="form-control" name="displayOrder" value="0" placeholder="0 = first">
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Available</label>
+                    <select class="form-select" name="isAvailable">
+                        <option value="true">Available</option>
+                        <option value="false">Hidden</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description *</label>
+            <textarea class="form-control" name="description" rows="3" placeholder="Describe the menu item..." required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Item Image URL *</label>
+            <input type="text" class="form-control" name="image" placeholder="Enter image URL" required>
+            <small class="text-muted">Provide a URL to the menu item image</small>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Add Menu Item
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="resetMenuForm()">
+                <i class="fas fa-redo me-2"></i>Reset
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Existing Menu Items Table -->
+<div class="admin-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Existing Menu Items</h3>
+        <span class="text-muted">Total: <span id="menuItemCount"><%= typeof menuItems !== 'undefined' ? menuItems.length : 0 %></span> items</span>
     </div>
-    <div>
-        <button class="btn btn-primary" onclick="openAddModal('General')">
-            <i class="fas fa-plus me-2"></i>Add New Item
-        </button>
+    
+    <!-- Filters -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <input type="text" class="form-control" id="searchMenuFilter" placeholder="Search menu items..." onkeyup="applyMenuFilters()">
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" id="categoryMenuFilter" onchange="applyMenuFilters()">
+                <option value="">All Categories</option>
+                <option value="cold">Cold Coffee</option>
+                <option value="hot">Hot Coffee</option>
+                <option value="manual-brew">Manual Brew</option>
+                <option value="shakes-tea">Shakes & Tea</option>
+                <option value="food">Food</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" id="availabilityMenuFilter" onchange="applyMenuFilters()">
+                <option value="">All Status</option>
+                <option value="true">Available</option>
+                <option value="false">Hidden</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" id="priceMenuFilter" onchange="applyMenuFilters()">
+                <option value="">All Prices</option>
+                <option value="0-100">₹0 - ₹100</option>
+                <option value="100-300">₹100 - ₹300</option>
+                <option value="300-500">₹300 - ₹500</option>
+                <option value="500+">₹500+</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-outline-secondary" onclick="clearMenuFilters()">
+                <i class="fas fa-times me-1"></i>Clear Filters
+            </button>
+        </div>
+    </div>
+    
+    <div class="admin-table">
+        <table class="table" id="menuItemsTable">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Availability</th>
+                    <th>Display Order</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="menuItemsTableBody">
+                <% if (typeof menuItems !== 'undefined' && menuItems.length > 0) { %>
+                    <% menuItems.forEach(item => { %>
+                        <tr class="menu-item-row" 
+                            data-name="<%= item.name.toLowerCase() %>"
+                            data-category="<%= item.category %>"
+                            data-availability="<%= item.isAvailable %>"
+                            data-price="<%= item.price %>">
+                            <td>
+                                <% if (item.image) { %>
+                                    <img src="<%= item.image %>" alt="<%= item.name %>" class="menu-item-image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(214, 164, 90, 0.3);">
+                                <% } else { %>
+                                    <div style="width: 60px; height: 60px; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-utensils text-muted"></i>
+                                    </div>
+                                <% } %>
+                            </td>
+                            <td><strong><%= item.name %></strong></td>
+                            <td><span class="badge bg-info"><%= item.category %></span></td>
+                            <td>₹<%= item.price.toLocaleString() %></td>
+                            <td>
+                                <span class="badge <%= item.isAvailable ? 'bg-success' : 'bg-secondary' %>">
+                                    <%= item.isAvailable ? 'Available' : 'Hidden' %>
+                                </span>
+                            </td>
+                            <td><%= item.displayOrder || 0 %></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="editMenuItem('<%= item._id %>')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteMenuItem('<%= item._id %>')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr id="noMenuItemsRow">
+                        <td colspan="7" class="text-center text-muted" style="padding: 2rem;">
+                            <i class="fas fa-utensils text-muted" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i><br>
+                            No menu items found.<br>
+                            <small>Add menu items using the form above.</small>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
     </div>
 </div>
 
-<!-- Menu Categories -->
-<div class="row g-4">
-    <!-- Salads Section -->
-    <div class="col-12">
-        <div class="admin-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3><i class="fas fa-leaf me-2"></i>Salads</h3>
-                <button class="btn btn-outline-primary btn-sm" onclick="openAddModal('Salads')">
-                    <i class="fas fa-plus me-2"></i>Add Salad
-                </button>
-            </div>
-            <div class="row g-3" id="salads-grid">
-                <!-- Items will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Burgers Section -->
-    <div class="col-12">
-        <div class="admin-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3><i class="fas fa-hamburger me-2"></i>Burgers</h3>
-                <button class="btn btn-outline-primary btn-sm" onclick="openAddModal('Burgers')">
-                    <i class="fas fa-plus me-2"></i>Add Burger
-                </button>
-            </div>
-            <div class="row g-3" id="burgers-grid">
-                <!-- Items will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Sandwiches Section -->
-    <div class="col-12">
-        <div class="admin-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3><i class="fas fa-bread-slice me-2"></i>Sandwiches</h3>
-                <button class="btn btn-outline-primary btn-sm" onclick="openAddModal('Sandwiches')">
-                    <i class="fas fa-plus me-2"></i>Add Sandwich
-                </button>
-            </div>
-            <div class="row g-3" id="sandwiches-grid">
-                <!-- Items will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Pizza Section -->
-    <div class="col-12">
-        <div class="admin-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3><i class="fas fa-pizza-slice me-2"></i>Pizza</h3>
-                <button class="btn btn-outline-primary btn-sm" onclick="openAddModal('Pizza')">
-                    <i class="fas fa-plus me-2"></i>Add Pizza
-                </button>
-            </div>
-            <div class="row g-3" id="pizza-grid">
-                <!-- Items will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Mocktails Section -->
-    <div class="col-12">
-        <div class="admin-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3><i class="fas fa-cocktail me-2"></i>Mocktails</h3>
-                <button class="btn btn-outline-primary btn-sm" onclick="openAddModal('Mocktails')">
-                    <i class="fas fa-plus me-2"></i>Add Mocktail
-                </button>
-            </div>
-            <div class="row g-3" id="mocktails-grid">
-                <!-- Items will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Hot Beverages Section -->
-    <div class="col-12">
-        <div class="admin-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3><i class="fas fa-mug-hot me-2"></i>Hot Beverages</h3>
-                <button class="btn btn-outline-primary btn-sm" onclick="openAddModal('Hot Beverages')">
-                    <i class="fas fa-plus me-2"></i>Add Hot Beverage
-                </button>
-            </div>
-            <div class="row g-3" id="hot-beverages-grid">
-                <!-- Items will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Cold Beverages Section -->
-    <div class="col-12">
-        <div class="admin-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3><i class="fas fa-glass-whiskey me-2"></i>Cold Beverages</h3>
-                <button class="btn btn-outline-primary btn-sm" onclick="openAddModal('Cold Beverages')">
-                    <i class="fas fa-plus me-2"></i>Add Cold Beverage
-                </button>
-            </div>
-            <div class="row g-3" id="cold-beverages-grid">
-                <!-- Items will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Desserts Section -->
-    <div class="col-12">
-        <div class="admin-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3><i class="fas fa-ice-cream me-2"></i>Desserts</h3>
-                <button class="btn btn-outline-primary btn-sm" onclick="openAddModal('Desserts')">
-                    <i class="fas fa-plus me-2"></i>Add Dessert
-                </button>
-            </div>
-            <div class="row g-3" id="desserts-grid">
-                <!-- Items will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Add/Edit Modal -->
+<!-- Add/Edit Menu Item Modal -->
 <div class="modal fade" id="menuModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -145,37 +195,67 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="menuForm" enctype="multipart/form-data">
-                    <input type="hidden" id="itemId">
-                    <input type="hidden" id="itemCategory">
+                <form id="menuEditForm" enctype="multipart/form-data">
+                    <input type="hidden" id="menuItemId">
                     
-                    <div class="mb-3">
-                        <label for="itemName" class="form-label">Item Name *</label>
-                        <input type="text" class="form-control" id="itemName" placeholder="Enter item name" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="itemDescription" class="form-label">Description *</label>
-                        <textarea class="form-control" id="itemDescription" rows="3" placeholder="Enter item description" required></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="itemPrice" class="form-label">Price (₹) *</label>
-                        <input type="number" class="form-control" id="itemPrice" placeholder="Enter price" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="itemImage" class="form-label">Image URL *</label>
-                        <input type="text" class="form-control" id="itemImage" placeholder="Enter image URL" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="itemAvailable" checked>
-                            <label class="form-check-label" for="itemAvailable">
-                                Item is available
-                            </label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Item Name *</label>
+                                <input type="text" class="form-control" id="editName" required>
+                            </div>
                         </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Category *</label>
+                                <select class="form-select" id="editCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="cold">Cold Coffee</option>
+                                    <option value="hot">Hot Coffee</option>
+                                    <option value="manual-brew">Manual Brew</option>
+                                    <option value="shakes-tea">Shakes & Tea</option>
+                                    <option value="food">Food</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Price (₹) *</label>
+                                <input type="number" class="form-control" id="editPrice" step="0.01" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Display Order</label>
+                                <input type="number" class="form-control" id="editDisplayOrder" value="0" placeholder="0 = first">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Available</label>
+                                <select class="form-select" id="editIsAvailable">
+                                    <option value="true">Available</option>
+                                    <option value="false">Hidden</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description *</label>
+                        <textarea class="form-control" id="editDescription" rows="3" placeholder="Describe the menu item..." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Item Image URL *</label>
+                        <input type="text" class="form-control" id="editImage" placeholder="Enter image URL" required>
+                        <div id="currentImagePreview" class="mt-2"></div>
                     </div>
                 </form>
             </div>
@@ -189,103 +269,6 @@
     </div>
 </div>
 
-<style>
-.menu-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.menu-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--gold);
-    box-shadow: 0 8px 25px rgba(214, 164, 90, 0.2);
-}
-
-.menu-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-bottom: 1px solid var(--border);
-}
-
-.menu-details {
-    padding: 1.5rem;
-}
-
-.menu-name {
-    color: var(--gold);
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.menu-description {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-}
-
-.menu-price {
-    color: var(--text);
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-}
-
-.menu-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn-edit, .btn-delete {
-    flex: 1;
-    padding: 0.5rem;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.875rem;
-}
-
-.btn-edit {
-    background: var(--gold);
-    color: #000;
-}
-
-.btn-edit:hover {
-    background: var(--soft-gold);
-    transform: translateY(-1px);
-}
-
-.btn-delete {
-    background: var(--danger);
-    color: white;
-}
-
-.btn-delete:hover {
-    background: #c82333;
-    transform: translateY(-1px);
-}
-
-.empty-category {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--muted);
-}
-
-.empty-category i {
-    font-size: 3rem;
-    color: var(--gold);
-    margin-bottom: 1rem;
-}
-</style>
-
 <script>
 // Load menu items on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -294,22 +277,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadMenuItems() {
     try {
-        const response = await fetch('/api/menu-items');
-        const data = await response.json();
-        
-        if (data.success) {
-            renderMenuItems(data.items);
-        }
-    } catch (error) {
-        console.error('Error loading menu items:', error);
-        // Load from database instead
-        loadFromDatabase();
-    }
-}
-
-async function loadFromDatabase() {
-    try {
-        // This will load actual menu items from your MenuItem model
         const response = await fetch('/admin/api/menu-items');
         const data = await response.json();
         
@@ -317,116 +284,161 @@ async function loadFromDatabase() {
             renderMenuItems(data.items);
         }
     } catch (error) {
-        console.error('Error loading from database:', error);
+        console.error('Error loading menu items:', error);
     }
 }
 
 function renderMenuItems(items) {
-    const categories = {
-        'Salads': 'salads-grid',
-        'Burgers': 'burgers-grid', 
-        'Sandwiches': 'sandwiches-grid',
-        'Pizza': 'pizza-grid',
-        'Mocktails': 'mocktails-grid',
-        'Hot Beverages': 'hot-beverages-grid',
-        'Cold Beverages': 'cold-beverages-grid',
-        'Desserts': 'desserts-grid'
-    };
-
-    // Clear all grids
-    Object.values(categories).forEach(gridId => {
-        const grid = document.getElementById(gridId);
-        if (grid) grid.innerHTML = '';
-    });
-
-    // Render items
-    items.forEach(item => {
-        const gridId = categories[item.category];
-        if (gridId) {
-            const grid = document.getElementById(gridId);
-            if (grid) {
-                const col = document.createElement('div');
-                col.className = 'col-md-6 col-lg-4';
-                col.innerHTML = createMenuCard(item);
-                grid.appendChild(col);
-            }
-        }
-    });
-
-    // Show empty states for categories with no items
-    Object.entries(categories).forEach(([categoryName, gridId]) => {
-        const grid = document.getElementById(gridId);
-        if (grid && grid.children.length === 0) {
-            grid.innerHTML = `
-                <div class="col-12">
-                    <div class="empty-category">
-                        <i class="fas fa-utensils"></i>
-                        <h5>No ${categoryName} Items</h5>
-                        <p>Click "Add ${categoryName.slice(0, -1)}" to add your first item</p>
-                    </div>
-                </div>
-            `;
-        }
-    });
-}
-
-function createMenuCard(item) {
-    return `
-        <div class="menu-card">
-            <img src="${item.image}" alt="${item.name}" class="menu-image" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
-            <div class="menu-details">
-                <h4 class="menu-name">${item.name}</h4>
-                <p class="menu-description">${item.description}</p>
-                <div class="menu-price">₹${item.price}</div>
-                <div class="menu-actions">
-                    <button class="btn-edit" onclick='editMenuItem(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </button>
-                    <button class="btn-delete" onclick="deleteMenuItem('${item._id}')">
-                        <i class="fas fa-trash me-1"></i>Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function openAddModal(category) {
-    document.getElementById('modalTitle').textContent = `Add ${category} Item`;
-    document.getElementById('itemCategory').value = category;
-    document.getElementById('menuForm').reset();
-    document.getElementById('itemId').value = '';
-    new bootstrap.Modal(document.getElementById('menuModal')).show();
-}
-
-function editMenuItem(item) {
-    document.getElementById('modalTitle').textContent = 'Edit Menu Item';
-    document.getElementById('itemId').value = item._id;
-    document.getElementById('itemCategory').value = item.category;
-    document.getElementById('itemName').value = item.name;
-    document.getElementById('itemDescription').value = item.description;
-    document.getElementById('itemPrice').value = item.price;
-    document.getElementById('itemImage').value = item.image;
-    document.getElementById('itemAvailable').checked = item.isAvailable !== false;
+    const tbody = document.querySelector('.admin-table tbody');
     
-    new bootstrap.Modal(document.getElementById('menuModal')).show();
+    if (!items || items.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center text-muted" style="padding: 2rem;">
+                    <i class="fas fa-utensils text-muted" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i><br>
+                    No menu items found.<br>
+                    <small>Add menu items using form above.</small>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = items.map(item => `
+        <tr>
+            <td>
+                ${item.image ? 
+                    `<img src="${item.image}" alt="${item.name}" class="menu-item-image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(214, 164, 90, 0.3);">` :
+                    `<div style="width: 60px; height: 60px; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-utensils text-muted"></i>
+                    </div>`
+                }
+            </td>
+            <td><strong>${item.name}</strong></td>
+            <td><span class="badge bg-info">${item.category}</span></td>
+            <td>₹${item.price.toLocaleString()}</td>
+            <td>
+                <span class="badge ${item.isAvailable ? 'bg-success' : 'bg-secondary'}">
+                    ${item.isAvailable ? 'Available' : 'Hidden'}
+                </span>
+            </td>
+            <td>${item.displayOrder || 0}</td>
+            <td>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary btn-sm" onclick="editMenuItem('${item._id}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="deleteMenuItem('${item._id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+    
+    // Update total count
+    const totalSpan = document.querySelector('.text-muted');
+    if (totalSpan) {
+        totalSpan.textContent = `Total: ${items.length} items`;
+    }
+}
+
+// Form submission
+document.getElementById('menuForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const itemData = Object.fromEntries(formData.entries());
+    
+    try {
+        const response = await fetch('/admin/api/menu-items', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(itemData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Menu item added successfully!');
+            this.reset();
+            loadMenuItems(); // Reload items instead of page reload
+        } else {
+            alert('Error adding menu item: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error adding menu item');
+    }
+});
+
+function resetMenuForm() {
+    document.getElementById('menuForm').reset();
+}
+
+async function editMenuItem(id) {
+    try {
+        // Fetch menu item data
+        const response = await fetch(`/admin/api/menu-items/${id}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            const item = result.item;
+            
+            // Populate modal with item data
+            document.getElementById('modalTitle').textContent = 'Edit Menu Item';
+            document.getElementById('menuItemId').value = item._id;
+            document.getElementById('editName').value = item.name;
+            document.getElementById('editCategory').value = item.category;
+            document.getElementById('editPrice').value = item.price;
+            document.getElementById('editDisplayOrder').value = item.displayOrder || 0;
+            document.getElementById('editIsAvailable').value = item.isAvailable ? 'true' : 'false';
+            document.getElementById('editDescription').value = item.description;
+            document.getElementById('editImage').value = item.image;
+            
+            // Show current image preview
+            const imagePreview = document.getElementById('currentImagePreview');
+            if (item.image) {
+                imagePreview.innerHTML = `
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="${item.image}" alt="Current image" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #d6a45a;">
+                        <small class="text-muted">Current image</small>
+                    </div>
+                `;
+            } else {
+                imagePreview.innerHTML = '<small class="text-muted">No current image</small>';
+            }
+            
+            // Show modal
+            new bootstrap.Modal(document.getElementById('menuModal')).show();
+        } else {
+            alert('Error fetching menu item: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error fetching menu item');
+    }
 }
 
 async function saveMenuItem() {
-    const itemId = document.getElementById('itemId').value;
+    const itemId = document.getElementById('menuItemId').value;
+    const isEdit = itemId !== '';
     
     const itemData = {
-        category: document.getElementById('itemCategory').value,
-        name: document.getElementById('itemName').value,
-        description: document.getElementById('itemDescription').value,
-        price: parseFloat(document.getElementById('itemPrice').value),
-        image: document.getElementById('itemImage').value,
-        isAvailable: document.getElementById('itemAvailable').checked
+        name: document.getElementById('editName').value,
+        category: document.getElementById('editCategory').value,
+        price: parseFloat(document.getElementById('editPrice').value),
+        displayOrder: parseInt(document.getElementById('editDisplayOrder').value),
+        isAvailable: document.getElementById('editIsAvailable').value === 'true',
+        description: document.getElementById('editDescription').value,
+        image: document.getElementById('editImage').value
     };
-
+    
     try {
-        const url = itemId ? `/admin/api/menu-items/${itemId}` : '/admin/api/menu-items';
-        const method = itemId ? 'PUT' : 'POST';
+        const url = isEdit ? `/admin/api/menu-items/${itemId}` : '/admin/api/menu-items';
+        const method = isEdit ? 'PUT' : 'POST';
         
         const response = await fetch(url, {
             method: method,
@@ -435,57 +447,110 @@ async function saveMenuItem() {
             },
             body: JSON.stringify(itemData)
         });
-
-        const data = await response.json();
         
-        if (data.success) {
+        const result = await response.json();
+        
+        if (result.success) {
             bootstrap.Modal.getInstance(document.getElementById('menuModal')).hide();
-            loadMenuItems();
-            showNotification('Menu item saved successfully!', 'success');
+            alert(`Menu item ${isEdit ? 'updated' : 'added'} successfully!`);
+            loadMenuItems(); // Reload items instead of page reload
+            document.getElementById('menuForm').reset(); // Reset add form
         } else {
-            showNotification('Failed to save menu item: ' + data.message, 'error');
+            alert(`Error ${isEdit ? 'updating' : 'adding'} menu item: ` + result.message);
         }
     } catch (error) {
-        console.error('Error saving menu item:', error);
-        showNotification('Error saving menu item', 'error');
+        console.error('Error:', error);
+        alert(`Error ${isEdit ? 'updating' : 'adding'} menu item`);
     }
 }
 
-async function deleteMenuItem(itemId) {
-    if (!confirm('Are you sure you want to delete this item?')) return;
+async function deleteMenuItem(id) {
+    if (confirm('Are you sure you want to delete this menu item?')) {
+        try {
+            const response = await fetch(`/admin/api/menu-items/${id}`, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Menu item deleted successfully!');
+                loadMenuItems(); // Reload items instead of page reload
+            } else {
+                alert('Error deleting menu item: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error deleting menu item');
+        }
+    }
+}
 
-    try {
-        const response = await fetch(`/admin/api/menu-items/${itemId}`, {
-            method: 'DELETE'
-        });
-
-        const data = await response.json();
+// Menu filter functionality
+function applyMenuFilters() {
+    const searchTerm = document.getElementById('searchMenuFilter').value.toLowerCase();
+    const categoryFilter = document.getElementById('categoryMenuFilter').value;
+    const availabilityFilter = document.getElementById('availabilityMenuFilter').value;
+    const priceFilter = document.getElementById('priceMenuFilter').value;
+    
+    const rows = document.querySelectorAll('.menu-item-row');
+    let visibleCount = 0;
+    
+    rows.forEach(row => {
+        const name = row.dataset.name;
+        const category = row.dataset.category;
+        const availability = row.dataset.availability;
+        const price = parseFloat(row.dataset.price);
         
-        if (data.success) {
-            loadMenuItems();
-            showNotification('Menu item deleted successfully!', 'success');
-        } else {
-            showNotification('Failed to delete menu item: ' + data.message, 'error');
+        let showRow = true;
+        
+        // Search filter
+        if (searchTerm && !name.includes(searchTerm)) {
+            showRow = false;
         }
-    } catch (error) {
-        console.error('Error deleting menu item:', error);
-        showNotification('Error deleting menu item', 'error');
+        
+        // Category filter
+        if (categoryFilter && category !== categoryFilter) {
+            showRow = false;
+        }
+        
+        // Availability filter
+        if (availabilityFilter && availability.toString() !== availabilityFilter) {
+            showRow = false;
+        }
+        
+        // Price filter
+        if (priceFilter) {
+            if (priceFilter === '0-100' && (price < 0 || price > 100)) {
+                showRow = false;
+            } else if (priceFilter === '100-300' && (price < 100 || price > 300)) {
+                showRow = false;
+            } else if (priceFilter === '300-500' && (price < 300 || price > 500)) {
+                showRow = false;
+            } else if (priceFilter === '500+' && price < 500) {
+                showRow = false;
+            }
+        }
+        
+        row.style.display = showRow ? '' : 'none';
+        if (showRow) visibleCount++;
+    });
+    
+    // Update count
+    document.getElementById('menuItemCount').textContent = visibleCount;
+    
+    // Show/hide no results message
+    const noResultsRow = document.getElementById('noMenuItemsRow');
+    if (noResultsRow) {
+        noResultsRow.style.display = visibleCount === 0 ? '' : 'none';
     }
 }
 
-function showNotification(message, type) {
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
-    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 300px; padding: 1rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
-    notification.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-        ${message}
-    `;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
+function clearMenuFilters() {
+    document.getElementById('searchMenuFilter').value = '';
+    document.getElementById('categoryMenuFilter').value = '';
+    document.getElementById('availabilityMenuFilter').value = '';
+    document.getElementById('priceMenuFilter').value = '';
+    applyMenuFilters();
 }
 </script>

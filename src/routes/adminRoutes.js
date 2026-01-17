@@ -23,6 +23,7 @@ router.get('/api/analytics', ensureAdmin, adminController.getAnalyticsAPI);
 // Menu Management
 router.get('/menu-management', ensureAdmin, adminController.getMenuManagement);
 router.get('/api/menu-items', ensureAdmin, adminController.getMenuItems);
+router.get('/api/menu-items/:id', ensureAdmin, adminController.getMenuItemById);
 router.post('/api/menu-items', ensureAdmin, adminController.addMenuItem);
 router.put('/api/menu-items/:id', ensureAdmin, adminController.updateMenuItem);
 router.delete('/api/menu-items/:id', ensureAdmin, adminController.deleteMenuItem);
