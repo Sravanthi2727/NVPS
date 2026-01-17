@@ -124,19 +124,148 @@ function handleRegisterClick(button) {
             return;
         }
         
-        // Store current workshop data
-        currentWorkshopData = {
-            id: workshopId,
-            title: workshopTitle,
-            date: workshopDate
-        };
-        
-        // Open registration modal
-        openRegisterModal(workshopId, workshopTitle, workshopDate);
+        // Check if user is logged in first
+        checkAuthenticationAndRegister(workshopId, workshopTitle, workshopDate);
         
     } catch (error) {
         console.error('Error handling registration click:', error);
         showNotification('An error occurred. Please try again.', 'error');
+    }
+}
+
+// Check if user is authenticated before allowing registration
+async function checkAuthenticationAndRegister(workshopId, workshopTitle, workshopDate) {
+    try {
+        // Check authentication status
+        const response = await fetch('/api/auth/status', {
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const authData = await response.json();
+            if (authData.isAuthenticated) {
+                // User is logged in, proceed with registration
+                currentWorkshopData = {
+                    id: workshopId,
+                    title: workshopTitle,
+                    date: workshopDate
+                };
+                openRegisterModal(workshopId, workshopTitle, workshopDate);
+            } else {
+                // User is not logged in
+                showLoginRequiredModal();
+            }
+        } else {
+            // Authentication check failed, assume not logged in
+            showLoginRequiredModal();
+        }
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        // On error, assume not logged in
+        showLoginRequiredModal();
+    }
+}
+
+// Show modal requiring login for workshop registration
+function showLoginRequiredModal() {
+    // Remove existing login modal if any
+    const existingModal = document.getElementById('loginRequiredModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Create login required modal
+    const modal = document.createElement('div');
+    modal.id = 'loginRequiredModal';
+    modal.className = 'modal';
+    modal.style.cssText = `
+        display: flex;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        align-items: center;
+        justify-content: center;
+    `;
+    
+    modal.innerHTML = `
+        <div class="modal-content" style="
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #f5f2ee;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid #d6a45a;
+            box-shadow: 0 10px 30px rgba(214, 164, 90, 0.3);
+        ">
+            <div style="margin-bottom: 1.5rem;">
+                <i class="fas fa-user-lock" style="font-size: 3rem; color: #d6a45a; margin-bottom: 1rem;"></i>
+                <h3 style="color: #d6a45a; margin-bottom: 0.5rem;">Login Required</h3>
+                <p style="color: #ccc; margin-bottom: 0;">
+                    You need to be logged in to register for workshops. This helps us manage your registrations and send you important updates.
+                </p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/auth/google" style="
+                    background: #d6a45a;
+                    color: #000;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-weight: 600;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.background='#c19441'" onmouseout="this.style.background='#d6a45a'">
+                    <i class="fab fa-google"></i>
+                    Login with Google
+                </a>
+                
+                <button onclick="closeLoginRequiredModal()" style="
+                    background: transparent;
+                    color: #d6a45a;
+                    border: 2px solid #d6a45a;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.background='#d6a45a'; this.style.color='#000'" onmouseout="this.style.background='transparent'; this.style.color='#d6a45a'">
+                    Cancel
+                </button>
+            </div>
+            
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(214, 164, 90, 0.3);">
+                <small style="color: #999;">
+                    <i class="fas fa-info-circle"></i>
+                    After logging in, you'll be able to view your registered workshops in your dashboard and receive calendar invites.
+                </small>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeLoginRequiredModal();
+        }
+    });
+}
+
+// Close login required modal
+function closeLoginRequiredModal() {
+    const modal = document.getElementById('loginRequiredModal');
+    if (modal) {
+        modal.remove();
     }
 }
 
@@ -295,6 +424,7 @@ async function handleRegistrationSubmit(e) {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include', // Include authentication cookies
             body: JSON.stringify(registrationData)
         });
         
@@ -472,5 +602,6 @@ window.openOrganizeModal = openOrganizeModal;
 window.closeOrganizeModal = closeOrganizeModal;
 window.openGallery = openGallery;
 window.closeGallery = closeGallery;
+window.closeLoginRequiredModal = closeLoginRequiredModal;
 
 console.log('✅ Workshops JavaScript loaded successfully');

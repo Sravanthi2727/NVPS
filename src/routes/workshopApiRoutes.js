@@ -175,6 +175,22 @@ router.post('/', ensureAuthenticated, async (req, res) => {
     await registration.save();
     console.log('✅ Authenticated workshop registration created:', registration._id);
 
+    // Send admin notification email
+    try {
+      const emailService = require('../../services/emailService');
+      console.log('📧 Sending admin notification for new workshop registration');
+      
+      const emailResult = await emailService.notifyAdminNewWorkshopRegistration(registration);
+      if (emailResult.success) {
+        console.log('✅ Admin workshop notification email sent successfully');
+      } else {
+        console.error('❌ Failed to send admin workshop notification email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending admin workshop notification email:', emailError);
+      // Don't fail registration if email fails
+    }
+
     // Create Google Calendar event
     try {
       const workshopData = {
@@ -370,7 +386,7 @@ router.post('/submit-proposal', async (req, res) => {
 // Admin: Update workshop registration status and sync with calendar
 router.post('/:id/status', async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, adminNotes } = req.body;
     const registrationId = req.params.id;
 
     if (!['registered', 'confirmed', 'cancelled', 'completed'].includes(status)) {
@@ -392,7 +408,17 @@ router.post('/:id/status', async (req, res) => {
 
     // Update registration status
     registration.status = status;
+    if (adminNotes) {
+      registration.adminNotes = adminNotes;
+    }
     await registration.save();
+
+    console.log('✅ Workshop registration status updated:', {
+      registrationId: registration._id,
+      newStatus: status,
+      participant: registration.participantName,
+      workshop: registration.workshopName
+    });
 
     // Update Google Calendar event if it exists
     if (registration.googleCalendarEventId) {
@@ -426,6 +452,32 @@ router.post('/:id/status', async (req, res) => {
       } catch (calendarError) {
         console.error('❌ Error updating calendar event (non-critical):', calendarError);
       }
+    }
+
+    // Send email notification to participant
+    try {
+      const emailService = require('../../services/emailService');
+      
+      if (registration.participantEmail) {
+        console.log('📧 Sending workshop status email to:', registration.participantEmail);
+        const emailResult = await emailService.sendWorkshopStatusEmail(
+          registration.participantEmail,
+          registration,
+          status,
+          adminNotes
+        );
+        
+        if (emailResult.success) {
+          console.log('✅ Workshop status email sent successfully');
+        } else {
+          console.error('❌ Failed to send workshop status email:', emailResult.error);
+        }
+      } else {
+        console.log('⚠️ No participant email found for registration:', registrationId);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending workshop status email:', emailError);
+      // Don't fail the status update if email fails
     }
 
     res.json({ 

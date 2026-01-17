@@ -46,4 +46,22 @@ router.get('/logout', authController.logout);
 // Dashboard (protected)
 router.get('/dashboard', ensureAuthenticated, authController.getDashboard);
 
+// API: Check authentication status
+router.get('/api/auth/status', (req, res) => {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    res.json({
+      isAuthenticated: true,
+      user: {
+        id: req.user.id,
+        name: req.user.name || req.user.displayName,
+        email: req.user.email
+      }
+    });
+  } else {
+    res.json({
+      isAuthenticated: false
+    });
+  }
+});
+
 module.exports = router;

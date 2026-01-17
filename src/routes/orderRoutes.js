@@ -203,6 +203,22 @@ router.post('/create-order-after-payment', async (req, res) => {
     await order.save();
     console.log('✅ Gallery order created successfully:', order._id);
     
+    // Send admin notification email
+    try {
+      const emailService = require('../../services/emailService');
+      console.log('📧 Sending admin notification for new gallery order');
+      
+      const emailResult = await emailService.notifyAdminNewOrder(order);
+      if (emailResult.success) {
+        console.log('✅ Admin order notification email sent successfully');
+      } else {
+        console.error('❌ Failed to send admin order notification email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending admin order notification email:', emailError);
+      // Don't fail order creation if email fails
+    }
+    
     res.json({
       success: true,
       message: 'Order created successfully',
@@ -759,6 +775,22 @@ router.post('/checkout', ensureAuthenticated, async (req, res) => {
     await newOrder.save();
 
     console.log('Order saved successfully:', newOrder._id);
+
+    // Send admin notification email for new order
+    try {
+      const emailService = require('../../services/emailService');
+      console.log('📧 Sending admin notification for new order');
+      
+      const emailResult = await emailService.notifyAdminNewOrder(newOrder);
+      if (emailResult.success) {
+        console.log('✅ Admin order notification email sent successfully');
+      } else {
+        console.error('❌ Failed to send admin order notification email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending admin order notification email:', emailError);
+      // Don't fail order creation if email fails
+    }
 
     // Remove processed items from user's cart
     if (!items) {

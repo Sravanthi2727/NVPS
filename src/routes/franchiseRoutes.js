@@ -102,6 +102,22 @@ router.post('/franchise', ensureAuthenticated, async (req, res) => {
       userId: franchiseApplication.userId
     });
 
+    // Send admin notification email for new franchise application
+    try {
+      const emailService = require('../../services/emailService');
+      console.log('📧 Sending admin notification for new franchise application');
+      
+      const emailResult = await emailService.notifyAdminNewFranchiseApplication(franchiseApplication);
+      if (emailResult.success) {
+        console.log('✅ Admin franchise notification email sent successfully');
+      } else {
+        console.error('❌ Failed to send admin franchise notification email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending admin franchise notification email:', emailError);
+      // Don't fail application creation if email fails
+    }
+
     res.json({
       success: true,
       message: 'Your franchise application has been submitted successfully! You can track its status in your dashboard.',

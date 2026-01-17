@@ -132,8 +132,17 @@ router.get('/workshops', async (req, res) => {
   }
 });
 
-// Public workshop registration endpoint (no authentication required)
+// Workshop registration endpoint (requires authentication)
 router.post('/api/workshops/register', async (req, res) => {
+  // Check if user is authenticated
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return res.status(401).json({ 
+      success: false,
+      error: 'You must be logged in to register for workshops. Please login and try again.',
+      requiresAuth: true
+    });
+  }
+
   try {
     const { workshopId, workshopName, workshopDate, participantName, participantEmail, participantPhone } = req.body;
     
@@ -154,24 +163,22 @@ router.post('/api/workshops/register', async (req, res) => {
       });
     }
 
-    // Check if email is already registered for this workshop
+    // Check if user is already registered for this workshop
     const existingRegistration = await WorkshopRegistration.findOne({
-      participantEmail: participantEmail,
+      userId: req.user.id,
       workshopId: workshopId
     });
     
     if (existingRegistration) {
       return res.status(400).json({ 
         success: false,
-        error: 'This email is already registered for this workshop' 
+        error: 'You are already registered for this workshop' 
       });
     }
     
-    // Get userId if user is authenticated, otherwise null for public registration
-    const userId = req.isAuthenticated && req.isAuthenticated() && req.user ? req.user.id : null;
-    
+    // Create registration with authenticated user ID
     const registration = new WorkshopRegistration({
-      userId: userId,
+      userId: req.user.id,
       workshopId,
       workshopName,
       workshopDate: new Date(workshopDate),
@@ -182,10 +189,69 @@ router.post('/api/workshops/register', async (req, res) => {
     });
     
     await registration.save();
+    
+    console.log('✅ Workshop registration created:', registration._id);
+
+    // Send admin notification email
+    try {
+      const emailService = require('../../services/emailService');
+      console.log('📧 Sending admin notification for new workshop registration');
+      
+      const emailResult = await emailService.notifyAdminNewWorkshopRegistration(registration);
+      if (emailResult.success) {
+        console.log('✅ Admin workshop notification email sent successfully');
+      } else {
+        console.error('❌ Failed to send admin workshop notification email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending admin workshop notification email:', emailError);
+      // Don't fail registration if email fails
+    }
+    
+    // Try to create Google Calendar event
+    try {
+      const googleCalendarService = require('../../services/googleCalendarService');
+      const calendarResult = await googleCalendarService.createWorkshopEvent(
+        {
+          workshopName,
+          workshopDate: new Date(workshopDate)
+        },
+        {
+          participantName,
+          participantEmail,
+          participantPhone
+        }
+      );
+      
+      if (calendarResult.success) {
+        registration.calendarEventCreated = true;
+        registration.googleCalendarEventId = calendarResult.eventId;
+        registration.googleCalendarEventLink = calendarResult.eventLink;
+        await registration.save();
+        console.log('✅ Google Calendar event created for workshop registration');
+      } else {
+        registration.calendarEventError = calendarResult.error;
+        await registration.save();
+        console.log('⚠️ Google Calendar event creation failed:', calendarResult.error);
+      }
+    } catch (calendarError) {
+      console.error('❌ Google Calendar service error:', calendarError);
+      registration.calendarEventError = 'Calendar service unavailable';
+      await registration.save();
+    }
+    
     res.json({ 
       success: true, 
       message: 'Registration successful! You will receive a confirmation email shortly.',
-      registration: registration 
+      registration: {
+        id: registration._id,
+        workshopName: registration.workshopName,
+        workshopDate: registration.workshopDate,
+        participantName: registration.participantName,
+        status: registration.status,
+        calendarEventCreated: registration.calendarEventCreated,
+        calendarEventLink: registration.googleCalendarEventLink
+      }
     });
   } catch (error) {
     console.error('Workshop registration error:', error);

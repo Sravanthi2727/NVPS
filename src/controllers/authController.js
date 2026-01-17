@@ -105,6 +105,31 @@ const authController = {
       
       await user.save();
       
+      // Send welcome email to new user
+      try {
+        const emailService = require('../../services/emailService');
+        console.log('📧 Sending welcome email to new user:', user.email);
+        
+        const emailResult = await emailService.sendWelcomeEmail(user.email, user.name);
+        if (emailResult.success) {
+          console.log('✅ Welcome email sent successfully');
+        } else {
+          console.error('❌ Failed to send welcome email:', emailResult.error);
+        }
+
+        // Send admin notification for new user registration
+        console.log('📧 Sending admin notification for new user registration');
+        const adminEmailResult = await emailService.notifyAdminNewUserRegistration(user);
+        if (adminEmailResult.success) {
+          console.log('✅ Admin notification email sent successfully');
+        } else {
+          console.error('❌ Failed to send admin notification email:', adminEmailResult.error);
+        }
+      } catch (emailError) {
+        console.error('❌ Error sending emails:', emailError);
+        // Don't fail signup if email fails
+      }
+      
       // Log user in after signup
       req.login(user, (err) => {
         if (err) {
