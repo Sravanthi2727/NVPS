@@ -106,7 +106,7 @@
         <div class="mb-3">
             <label class="form-label">Artwork Image *</label>
             <input type="file" class="form-control" name="image" accept="image/*" required>
-            <small style="color: #ccc;">Upload a high-quality image of artwork</small>
+            <small class="text-muted">Upload a high-quality image of artwork</small>
         </div>
 
         <div class="d-flex gap-2">
@@ -124,11 +124,11 @@
 <div class="admin-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>Existing Artworks</h3>
-        <span style="color: #ccc;">Total: <%= typeof artworks !== 'undefined' ? artworks.length : 0 %> artworks</span>
+        <span class="text-muted">Total: <%= typeof artworks !== 'undefined' ? artworks.length : 0 %> artworks</span>
     </div>
     
     <div class="admin-table">
-        <table class="table table-dark">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Image</th>
@@ -149,7 +149,7 @@
                                     <img src="<%= artwork.image %>" alt="<%= artwork.title %>" class="artwork-image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(214, 164, 90, 0.3);">
                                 <% } else { %>
                                     <div style="width: 60px; height: 60px; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-image" style="color: #666;"></i>
+                                        <i class="fas fa-image text-muted"></i>
                                     </div>
                                 <% } %>
                             </td>
@@ -176,8 +176,8 @@
                     <% }); %>
                 <% } else { %>
                     <tr>
-                        <td colspan="7" class="text-center" style="color: #ccc; padding: 2rem;">
-                            <i class="fas fa-images" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i><br>
+                        <td colspan="7" class="text-center text-muted" style="padding: 2rem;">
+                            <i class="fas fa-images text-muted" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i><br>
                             No artworks found.<br>
                             <small>Add artworks using the form above.</small>
                         </td>

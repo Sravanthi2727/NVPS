@@ -237,11 +237,24 @@
 .btn-group .btn {
     border-color: var(--gold);
     color: var(--gold);
+    transition: all 0.3s ease;
 }
 
 .btn-group .btn.active {
     background: var(--gold);
     color: #000;
+    border-color: var(--gold);
+}
+
+.btn-group .btn:hover:not(.active) {
+    background: rgba(214, 164, 90, 0.1);
+    border-color: var(--soft-gold);
+    color: var(--soft-gold);
+}
+
+#pieChartTitle {
+    transition: all 0.3s ease;
+    color: var(--gold);
 }
 </style>
 
