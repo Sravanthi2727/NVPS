@@ -12,6 +12,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const compression = require('compression');
 const helmet = require('helmet');
+const { checkAdminRole } = require('./middleware/adminAuth');
 require("dotenv").config();
 
 // Database connection
@@ -100,6 +101,32 @@ passport.use(
           });
           await user.save();
           console.log("New user created and saved:", user.email);
+          
+          // Send welcome email to new Google OAuth user
+          try {
+            const emailService = require('./services/emailService');
+            console.log('📧 Sending welcome email to new Google user:', user.email);
+            
+            const emailResult = await emailService.sendWelcomeEmail(user.email, user.name);
+            if (emailResult.success) {
+              console.log('✅ Welcome email sent successfully to Google user');
+            } else {
+              console.error('❌ Failed to send welcome email to Google user:', emailResult.error);
+            }
+
+            // Send admin notification for new Google user registration
+            console.log('📧 Sending admin notification for new Google user registration');
+            const adminEmailResult = await emailService.notifyAdminNewUserRegistration(user);
+            if (adminEmailResult.success) {
+              console.log('✅ Admin notification email sent successfully for Google user');
+            } else {
+              console.error('❌ Failed to send admin notification email for Google user:', adminEmailResult.error);
+            }
+          } catch (emailError) {
+            console.error('❌ Error sending emails for Google user:', emailError);
+            // Don't fail OAuth if email fails
+          }
+          
           return done(null, user);
         }
       } catch (error) {
@@ -137,6 +164,10 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Admin role check middleware (must be after passport)
+app.use(checkAdminRole);
+
 app.use(express.static("public"));
 app.use(expressLayouts);
 
@@ -174,18 +205,6 @@ const geminiRoutes = require("./gemini/gemini.route");
 const philosophyRoutes = require("./src/routes/philosophyRoutes");
 const workshopRoutes = require("./src/routes/workshopRoutes");
 const franchiseRoutes = require("./src/routes/franchiseRoutes");
-
-// Admin middleware
-function ensureAdmin(req, res, next) {
-  // For now, just allow all requests to admin routes for testing
-  return next();
-  
-  // Original code (commented out for testing):
-  // if (req.isAuthenticated()) {
-  //   return next();
-  // }
-  // res.redirect('/signin');
-}
 
 // Authentication middleware
 function ensureAuthenticated(req, res, next) {

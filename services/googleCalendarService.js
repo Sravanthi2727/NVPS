@@ -13,7 +13,7 @@ class GoogleCalendarService {
 
   initializeCalendar() {
     try {
-      console.log('🔧 Initializing Google Calendar service...');
+      console.log('Initializing Google Calendar service...');
       console.log('Service account key file path:', process.env.GOOGLE_SERVICE_ACCOUNT_KEY_FILE);
       
       // Check if service account key file exists

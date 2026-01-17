@@ -256,18 +256,46 @@ router.get('/requests', ensureAuthenticated, async (req, res) => {
 // Create new request
 router.post('/requests', ensureAuthenticated, async (req, res) => {
   try {
-    const { type, title, description } = req.body;
+    const { type, title, description, price, preferredDate } = req.body;
     const Request = require('../../models/Request');
     const newRequest = new Request({
       userId: req.user.id,
       type,
       title,
       description,
+      price: price || null,
+      preferredDate: preferredDate || null,
       status: 'pending'
     });
     await newRequest.save();
+
+    console.log('✅ New user request created:', {
+      requestId: newRequest._id,
+      type: type,
+      title: title,
+      userId: req.user.id,
+      userEmail: req.user.email
+    });
+
+    // Send admin notification email
+    try {
+      const emailService = require('../../services/emailService');
+      console.log('📧 Sending admin notification for new request');
+      
+      const emailResult = await emailService.notifyAdminNewUserRequest(newRequest, req.user);
+      if (emailResult.success) {
+        console.log('✅ Admin notification email sent successfully');
+      } else {
+        console.error('❌ Failed to send admin notification email:', emailResult.error);
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending admin notification email:', emailError);
+      // Don't fail request creation if email fails
+    }
+
     res.json({ success: true, item: newRequest });
   } catch (error) {
+    console.error('❌ Error creating user request:', error);
     res.status(500).json({ error: 'Error submitting request' });
   }
 });
