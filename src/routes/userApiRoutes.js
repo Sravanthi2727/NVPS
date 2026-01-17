@@ -124,14 +124,42 @@ router.get('/franchise', async (req, res) => {
   }
 });
 
-// Get user's workshop registrations
+// Get user's workshop registrations with calendar info
 router.get('/workshops', ensureAuthenticated, async (req, res) => {
   try {
     const WorkshopRegistration = require('../../models/WorkshopRegistration');
-    const registrations = await WorkshopRegistration.find({ userId: req.user.id }).populate('workshopId');
-    res.json(registrations);
+    const registrations = await WorkshopRegistration.find({ 
+      userId: req.user.id 
+    })
+    .populate('workshopId')
+    .sort({ workshopDate: 1 });
+
+    const registrationsWithCalendar = registrations.map(reg => ({
+      id: reg._id,
+      workshopId: reg.workshopId,
+      workshopName: reg.workshopName,
+      workshopDate: reg.workshopDate,
+      participantName: reg.participantName,
+      participantEmail: reg.participantEmail,
+      participantPhone: reg.participantPhone,
+      status: reg.status,
+      registrationDate: reg.registrationDate,
+      calendarEventCreated: reg.calendarEventCreated,
+      calendarEventLink: reg.googleCalendarEventLink,
+      calendarEventError: reg.calendarEventError,
+      notes: reg.notes
+    }));
+
+    res.json({ 
+      success: true, 
+      registrations: registrationsWithCalendar 
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching workshop registrations' });
+    console.error('Error fetching workshop registrations:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Error fetching workshop registrations' 
+    });
   }
 });
 

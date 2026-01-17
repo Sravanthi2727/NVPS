@@ -609,8 +609,16 @@ async function fetchOrders() {
 
 async function fetchWorkshops() {
   try {
-    const response = await fetch('/api/workshops');
-    return await response.json();
+    console.log('Fetching user workshop registrations...');
+    const response = await fetch('/api/user/workshops', {
+      credentials: 'include' // Include session cookies
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch workshop registrations');
+    }
+    const data = await response.json();
+    console.log('Fetched workshop registrations:', data);
+    return data.success ? data.registrations : [];
   } catch (error) {
     console.error('Error fetching workshop registrations:', error);
     return [];
@@ -1060,6 +1068,13 @@ function renderWorkshops(registrations) {
       minute: '2-digit'
     });
 
+    // Calendar integration status
+    const calendarStatus = registration.calendarEventCreated ? 
+      '<i class="bi bi-calendar-check text-success"></i> Added to Calendar' : 
+      registration.calendarEventError ? 
+      '<i class="bi bi-calendar-x text-warning"></i> Calendar sync failed' :
+      '<i class="bi bi-calendar text-muted"></i> Calendar not synced';
+
     return `
       <div class="col-md-6 mb-4">
         <div class="card">
@@ -1070,16 +1085,57 @@ function renderWorkshops(registrations) {
               <i class="bi bi-person"></i> <strong>Participant:</strong> ${registration.participantName}<br>
               <i class="bi bi-envelope"></i> <strong>Email:</strong> ${registration.participantEmail}<br>
               <i class="bi bi-telephone"></i> <strong>Phone:</strong> ${registration.participantPhone}<br>
-              <i class="bi bi-clock"></i> <strong>Registered:</strong> ${registrationDate}
+              <i class="bi bi-clock"></i> <strong>Registered:</strong> ${registrationDate}<br>
+              <small class="text-muted">${calendarStatus}</small>
             </p>
+            
+            <!-- Calendar Integration Section -->
+            ${registration.calendarEventCreated && registration.calendarEventLink ? `
+              <div class="alert alert-success py-2 mb-2" style="background-color: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3);">
+                <small>
+                  <i class="bi bi-calendar-check"></i> 
+                  <strong>Calendar Event Created!</strong><br>
+                  <a href="${registration.calendarEventLink}" target="_blank" class="text-success">
+                    <i class="bi bi-box-arrow-up-right"></i> View in Google Calendar
+                  </a>
+                </small>
+              </div>
+            ` : ''}
+            
+            ${registration.calendarEventError ? `
+              <div class="alert alert-warning py-2 mb-2" style="background-color: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3);">
+                <small>
+                  <i class="bi bi-exclamation-triangle"></i> 
+                  <strong>Calendar Sync Issue:</strong><br>
+                  ${registration.calendarEventError}
+                </small>
+              </div>
+            ` : ''}
+            
             <div class="d-flex justify-content-between align-items-center">
               <span class="badge bg-${statusColor}">${registration.status.charAt(0).toUpperCase() + registration.status.slice(1)}</span>
-              ${registration.status === 'registered' ? `
-                <button class="btn btn-sm btn-outline-danger" onclick="cancelWorkshopRegistration('${registration._id}')">
-                  Cancel Registration
-                </button>
-              ` : ''}
+              <div class="btn-group" role="group">
+                ${registration.calendarEventCreated && registration.calendarEventLink ? `
+                  <a href="${registration.calendarEventLink}" target="_blank" class="btn btn-sm btn-outline-success" title="View in Google Calendar">
+                    <i class="bi bi-calendar-check"></i>
+                  </a>
+                ` : ''}
+                ${registration.status === 'registered' ? `
+                  <button class="btn btn-sm btn-outline-danger" onclick="cancelWorkshopRegistration('${registration.id || registration._id}')" title="Cancel Registration">
+                    <i class="bi bi-x-circle"></i> Cancel
+                  </button>
+                ` : ''}
+              </div>
             </div>
+            
+            <!-- Workshop Details -->
+            ${registration.notes ? `
+              <div class="mt-2">
+                <small class="text-muted">
+                  <i class="bi bi-sticky"></i> <strong>Notes:</strong> ${registration.notes}
+                </small>
+              </div>
+            ` : ''}
           </div>
         </div>
       </div>
