@@ -83,13 +83,13 @@
                 <% if (typeof cartRequests !== 'undefined' && cartRequests.length > 0) { %>
                     <% cartRequests.forEach(request => { %>
                         <tr>
-                            <td>
+                            <td data-label="Customer">
                                 <div>
                                     <strong><%= request.customerName %></strong>
                                     <br><small class="text-muted"><%= request.customerEmail %></small>
                                 </div>
                             </td>
-                            <td>
+                            <td data-label="Items">
                                 <% if (request.items && request.items.length > 0) { %>
                                     <div>
                                         <strong><%= request.items[0].name %></strong>
@@ -101,30 +101,30 @@
                                     <span class="text-muted">No items</span>
                                 <% } %>
                             </td>
-                            <td>
+                            <td data-label="Address">
                                 <% if (request.deliveryAddress) { %>
                                     <small><%= request.deliveryAddress.address || 'Address not provided' %></small>
                                 <% } else { %>
                                     <span class="text-muted">No address</span>
                                 <% } %>
                             </td>
-                            <td>
+                            <td data-label="Payment">
                                 <span class="badge bg-info">
                                     <%= request.paymentMethod || 'Online' %>
                                 </span>
                             </td>
-                            <td>
+                            <td data-label="Total">
                                 <strong>₹<%= request.totalAmount || 0 %></strong>
                             </td>
-                            <td>
+                            <td data-label="Order Date">
                                 <%= request.orderDate ? new Date(request.orderDate).toLocaleDateString() : 'N/A' %>
                             </td>
-                            <td>
+                            <td data-label="Status">
                                 <span class="badge <%= request.status === 'pending' ? 'bg-warning' : request.status === 'completed' ? 'bg-success' : 'bg-danger' %>">
                                     <%= request.status ? request.status.charAt(0).toUpperCase() + request.status.slice(1) : 'Pending' %>
                                 </span>
                             </td>
-                            <td>
+                            <td data-label="Actions">
                                 <form method="POST" action="/admin/cart-requests/<%= request._id %>/update" style="display: inline;">
                                     <select name="status" class="form-select form-select-sm" style="width: auto; display: inline-block;" onchange="this.form.submit()">
                                         <option value="pending" <%= request.status === 'pending' ? 'selected' : '' %>>Pending</option>
