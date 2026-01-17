@@ -1,7 +1,15 @@
 <!-- Cart Requests Content -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <p style="color: #ccc;">Manage customer cart orders and requests</p>
+        <h1 class="text-gold mb-2">
+            <i class="fas fa-shopping-cart me-2"></i>Cart Requests
+        </h1>
+        <p style="color: var(--muted);">Manage customer cart orders and requests</p>
+    </div>
+    <div>
+        <button class="btn btn-outline-primary">
+            <i class="fas fa-filter me-2"></i>Filter Orders
+        </button>
     </div>
 </div>
 
@@ -9,8 +17,8 @@
 <div class="admin-card mb-4">
     <div class="row g-3">
         <div class="col-md-4">
-            <label class="form-label" style="color: #d6a45a;">Status</label>
-            <select class="form-select bg-dark text-light border-secondary" id="statusFilter">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="statusFilter">
                 <option value="">All Status</option>
                 <option value="pending">Pending</option>
                 <option value="completed">Completed</option>
@@ -18,8 +26,8 @@
             </select>
         </div>
         <div class="col-md-4">
-            <label class="form-label" style="color: #d6a45a;">Payment Method</label>
-            <select class="form-select bg-dark text-light border-secondary" id="paymentFilter">
+            <label class="form-label">Payment Method</label>
+            <select class="form-select" id="paymentFilter">
                 <option value="">All Payment Methods</option>
                 <option value="online">Online</option>
                 <option value="cod">Cash on Delivery</option>
@@ -27,17 +35,17 @@
             </select>
         </div>
         <div class="col-md-4">
-            <label class="form-label" style="color: #d6a45a;">Search</label>
-            <input type="text" class="form-control bg-dark text-light border-secondary" placeholder="Search by customer name or email..." id="searchInput">
+            <label class="form-label">Search</label>
+            <input type="text" class="form-control" placeholder="Search by customer name or email..." id="searchInput">
         </div>
     </div>
 </div>
 
 <!-- Cart Requests Table -->
 <div class="admin-card">
-    <h3 class="mb-3">Cart Orders</h3>
+    <h3 class="mb-3"><i class="fas fa-list me-2"></i>Order Management</h3>
     <div class="admin-table">
-        <table class="table table-dark">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Customer</th>
@@ -52,94 +60,67 @@
             </thead>
             <tbody>
                 <% if (typeof cartRequests !== 'undefined' && cartRequests.length > 0) { %>
-                    <% cartRequests.forEach(order => { %>
-                    <tr>
-                        <td data-label="Customer">
-                            <strong><%= order.customerName %></strong><br>
-                            <small style="color: #ccc;"><%= order.customerEmail %></small>
-                        </td>
-                        <td data-label="Items">
-                            <% if (order.items && order.items.length > 0) { %>
-                                <% order.items.forEach((item, index) => { %>
-                                    <div class="mb-1">
-                                        <strong style="font-size: 0.9rem;"><%= item.name %></strong><br>
-                                        <small style="color: #ccc;">Qty: <%= item.quantity %> × ₹<%= item.price %></small>
+                    <% cartRequests.forEach(request => { %>
+                        <tr>
+                            <td>
+                                <div>
+                                    <strong><%= request.customerName %></strong>
+                                    <br><small class="text-muted"><%= request.customerEmail %></small>
+                                </div>
+                            </td>
+                            <td>
+                                <% if (request.items && request.items.length > 0) { %>
+                                    <div>
+                                        <strong><%= request.items[0].name %></strong>
+                                        <% if (request.items.length > 1) { %>
+                                            <br><small class="text-muted">+<%= request.items.length - 1 %> more items</small>
+                                        <% } %>
                                     </div>
-                                <% }); %>
-                            <% } else { %>
-                                <span style="color: #ccc;">No items</span>
-                            <% } %>
-                        </td>
-                        <td data-label="Delivery Address">
-                            <% if (order.deliveryAddress) { %>
-                                <small style="color: #ccc; line-height: 1.6;">
-                                    <%= order.deliveryAddress.name %><br>
-                                    <%= order.deliveryAddress.phone %><br>
-                                    <%= order.deliveryAddress.address %><br>
-                                    <%= order.deliveryAddress.city %><% if (order.deliveryAddress.state) { %>, <%= order.deliveryAddress.state %><% } %><br>
-                                    <%= order.deliveryAddress.pincode %>
-                                </small>
-                            <% } else { %>
-                                <span style="color: #999;">No address</span>
-                            <% } %>
-                        </td>
-                        <td data-label="Payment">
-                            <% if (order.paymentMethod === 'online') { %>
-                                <span class="badge bg-success">Online</span>
-                            <% } else if (order.paymentMethod === 'cod') { %>
-                                <span class="badge bg-warning">COD</span>
-                            <% } else if (order.paymentMethod === 'cash') { %>
-                                <span class="badge bg-info">Cash</span>
-                            <% } else { %>
-                                <span class="badge bg-secondary"><%= order.paymentMethod || 'N/A' %></span>
-                            <% } %>
-                        </td>
-                        <td data-label="Total">
-                            <strong style="color: #d6a45a;">₹<%= order.totalAmount %></strong>
-                        </td>
-                        <td data-label="Date">
-                            <%= new Date(order.orderDate || order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
-                        </td>
-                        <td data-label="Status">
-                            <% if (order.status === 'pending') { %>
-                                <span class="badge bg-warning">Pending</span>
-                            <% } else if (order.status === 'completed') { %>
-                                <span class="badge bg-success">Completed</span>
-                            <% } else if (order.status === 'cancelled') { %>
-                                <span class="badge bg-danger">Cancelled</span>
-                            <% } else { %>
-                                <span class="badge bg-secondary"><%= order.status %></span>
-                            <% } %>
-                        </td>
-                        <td data-label="Actions">
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-outline-primary" onclick="viewOrder('<%= order._id %>')">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <% if (order.status === 'pending') { %>
-                                <form method="POST" action="/admin/cart-requests/<%= order._id %>/update" class="d-inline">
-                                    <input type="hidden" name="status" value="completed">
-                                    <button type="submit" class="btn btn-sm btn-success" title="Mark as Completed">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                </form>
-                                <form method="POST" action="/admin/cart-requests/<%= order._id %>/update" class="d-inline">
-                                    <input type="hidden" name="status" value="cancelled">
-                                    <button type="submit" class="btn btn-sm btn-danger" title="Cancel Order">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </form>
+                                <% } else { %>
+                                    <span class="text-muted">No items</span>
                                 <% } %>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td>
+                                <% if (request.deliveryAddress) { %>
+                                    <small><%= request.deliveryAddress.address || 'Address not provided' %></small>
+                                <% } else { %>
+                                    <span class="text-muted">No address</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">
+                                    <%= request.paymentMethod || 'Online' %>
+                                </span>
+                            </td>
+                            <td>
+                                <strong>₹<%= request.totalAmount || 0 %></strong>
+                            </td>
+                            <td>
+                                <%= request.orderDate ? new Date(request.orderDate).toLocaleDateString() : 'N/A' %>
+                            </td>
+                            <td>
+                                <span class="badge <%= request.status === 'pending' ? 'bg-warning' : request.status === 'completed' ? 'bg-success' : 'bg-danger' %>">
+                                    <%= request.status ? request.status.charAt(0).toUpperCase() + request.status.slice(1) : 'Pending' %>
+                                </span>
+                            </td>
+                            <td>
+                                <form method="POST" action="/admin/cart-requests/<%= request._id %>/update" style="display: inline;">
+                                    <select name="status" class="form-select form-select-sm" style="width: auto; display: inline-block;" onchange="this.form.submit()">
+                                        <option value="pending" <%= request.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                        <option value="completed" <%= request.status === 'completed' ? 'selected' : '' %>>Completed</option>
+                                        <option value="cancelled" <%= request.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
                     <% }); %>
                 <% } else { %>
                     <tr>
-                        <td colspan="8" class="text-center" style="color: #ccc; padding: 2rem;">
-                            <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i><br>
-                            No cart orders found.<br>
-                            <small>Cart orders will appear here when customers place orders.</small>
+                        <td colspan="8" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                                <p>No cart requests found</p>
+                            </div>
                         </td>
                     </tr>
                 <% } %>
@@ -147,10 +128,3 @@
         </table>
     </div>
 </div>
-
-<script>
-function viewOrder(orderId) {
-    // Implement view order functionality
-    alert('View order functionality would be implemented here for order: ' + orderId);
-}
-</script>

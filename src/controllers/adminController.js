@@ -1009,7 +1009,469 @@ const adminController = {
         error: 'Error loading franchise applications: ' + error.message
       });
     }
+  },
+
+  // Analytics
+  getAnalytics: async (req, res) => {
+    try {
+      const Order = require('../../models/Order');
+      const User = require('../../models/User');
+      const MenuItem = require('../../models/MenuItem');
+      const WorkshopRegistration = require('../../models/WorkshopRegistration');
+      
+      // Get real analytics data
+      const [
+        totalRevenue,
+        totalOrders,
+        totalCustomers,
+        workshopRegistrations,
+        popularItems,
+        recentOrders,
+        orderStatusStats
+      ] = await Promise.all([
+        Order.aggregate([{ $group: { _id: null, total: { $sum: "$totalAmount" } } }]),
+        Order.countDocuments(),
+        User.countDocuments(),
+        WorkshopRegistration.countDocuments(),
+        Order.aggregate([
+          { $unwind: "$items" },
+          { $group: { 
+            _id: "$items.name", 
+            orders: { $sum: 1 }, 
+            revenue: { $sum: { $multiply: ["$items.price", "$items.quantity"] } }
+          }},
+          { $sort: { orders: -1 } },
+          { $limit: 5 }
+        ]),
+        Order.find().sort({ createdAt: -1 }).limit(10),
+        Order.aggregate([
+          { $group: { _id: "$status", count: { $sum: 1 } } }
+        ])
+      ]);
+
+      // Get daily data for charts (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const [dailyOrders, dailyRevenue, dailyUsers] = await Promise.all([
+        // Daily Orders
+        Order.aggregate([
+          { $match: { createdAt: { $gte: thirtyDaysAgo } } },
+          { $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            count: { $sum: 1 }
+          }},
+          { $sort: { _id: 1 } }
+        ]),
+        // Daily Revenue
+        Order.aggregate([
+          { $match: { createdAt: { $gte: thirtyDaysAgo } } },
+          { $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            revenue: { $sum: "$totalAmount" }
+          }},
+          { $sort: { _id: 1 } }
+        ]),
+        // Daily New Users
+        User.aggregate([
+          { $match: { createdAt: { $gte: thirtyDaysAgo } } },
+          { $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            count: { $sum: 1 }
+          }},
+          { $sort: { _id: 1 } }
+        ])
+      ]);
+
+      // Create complete 30-day arrays with zeros for missing days
+      const last30Days = [];
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        last30Days.push(date.toISOString().split('T')[0]);
+      }
+
+      // Fill in missing days with 0 values
+      const completeOrdersData = last30Days.map(date => {
+        const found = dailyOrders.find(d => d._id === date);
+        return { date, count: found ? found.count : 0 };
+      });
+
+      const completeRevenueData = last30Days.map(date => {
+        const found = dailyRevenue.find(d => d._id === date);
+        return { date, revenue: found ? found.revenue : 0 };
+      });
+
+      const completeUsersData = last30Days.map(date => {
+        const found = dailyUsers.find(d => d._id === date);
+        return { date, count: found ? found.count : 0 };
+      });
+
+      // Format recent activity
+      const recentActivity = recentOrders.map(order => ({
+        type: order.orderType === 'art' ? 'art' : 'order',
+        message: `New ${order.orderType === 'art' ? 'art' : 'menu'} order from ${order.customerName}`,
+        time: getTimeAgo(order.createdAt),
+        icon: order.orderType === 'art' ? 'palette' : 'shopping-cart'
+      }));
+
+      res.render("admin/analytics", {
+        title: 'Analytics - Rabuste Admin',
+        description: 'Analytics and insights for your business.',
+        currentPage: '/admin/analytics',
+        stats: {
+          totalRevenue: totalRevenue[0]?.total || 0,
+          totalOrders: totalOrders,
+          totalCustomers: totalCustomers,
+          workshopRegistrations: workshopRegistrations
+        },
+        popularItems: popularItems.map(item => ({
+          name: item._id,
+          orders: item.orders,
+          revenue: item.revenue
+        })),
+        recentActivity: recentActivity,
+        dailyOrders: completeOrdersData,
+        dailyRevenue: completeRevenueData,
+        dailyUsers: completeUsersData,
+        orderStatusStats: orderStatusStats,
+        layout: 'layouts/admin'
+      });
+    } catch (error) {
+      console.error('Error loading analytics:', error);
+      res.render("admin/analytics", {
+        title: 'Analytics - Rabuste Admin',
+        description: 'Analytics and insights for your business.',
+        currentPage: '/admin/analytics',
+        stats: {
+          totalRevenue: 0,
+          totalOrders: 0,
+          totalCustomers: 0,
+          workshopRegistrations: 0
+        },
+        popularItems: [],
+        recentActivity: [],
+        dailyOrders: [],
+        dailyRevenue: [],
+        dailyUsers: [],
+        orderStatusStats: [],
+        layout: 'layouts/admin'
+      });
+    }
+  },
+
+  // Menu Management
+  getMenuManagement: async (req, res) => {
+    try {
+      res.render("admin/menu-management", {
+        title: 'Menu Management - Rabuste Admin',
+        description: 'Manage menu items across all categories.',
+        currentPage: '/admin/menu-management',
+        layout: 'layouts/admin'
+      });
+    } catch (error) {
+      console.error('Error loading menu management:', error);
+      res.render("admin/menu-management", {
+        title: 'Menu Management - Rabuste Admin',
+        description: 'Manage menu items across all categories.',
+        currentPage: '/admin/menu-management',
+        layout: 'layouts/admin'
+      });
+    }
+  },
+
+  // Get Menu Items API
+  getMenuItems: async (req, res) => {
+    try {
+      const MenuItem = require('../../models/MenuItem');
+      const items = await MenuItem.find().sort({ category: 1, displayOrder: 1 });
+      
+      res.json({
+        success: true,
+        items: items
+      });
+    } catch (error) {
+      console.error('Error fetching menu items:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error fetching menu items: ' + error.message
+      });
+    }
+  },
+
+  // Add Menu Item API
+  addMenuItem: async (req, res) => {
+    try {
+      const MenuItem = require('../../models/MenuItem');
+      
+      const {
+        category,
+        name,
+        description,
+        price,
+        image,
+        isAvailable
+      } = req.body;
+
+      // Validate required fields
+      if (!category || !name || !description || !price || !image) {
+        return res.status(400).json({
+          success: false,
+          message: 'All fields are required'
+        });
+      }
+
+      // Create new menu item
+      const newItem = new MenuItem({
+        category,
+        subCategory: category, // Use category as subCategory for now
+        name: name.trim(),
+        description: description.trim(),
+        price: parseFloat(price),
+        image: image.trim(),
+        isAvailable: isAvailable !== false,
+        displayOrder: 0
+      });
+
+      await newItem.save();
+
+      res.json({
+        success: true,
+        message: 'Menu item added successfully',
+        item: newItem
+      });
+    } catch (error) {
+      console.error('Error adding menu item:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error adding menu item: ' + error.message
+      });
+    }
+  },
+
+  // Update Menu Item API
+  updateMenuItem: async (req, res) => {
+    try {
+      const MenuItem = require('../../models/MenuItem');
+      const { id } = req.params;
+      
+      const {
+        category,
+        name,
+        description,
+        price,
+        image,
+        isAvailable
+      } = req.body;
+
+      // Validate required fields
+      if (!category || !name || !description || !price || !image) {
+        return res.status(400).json({
+          success: false,
+          message: 'All fields are required'
+        });
+      }
+
+      // Update menu item
+      const updatedItem = await MenuItem.findByIdAndUpdate(
+        id,
+        {
+          category,
+          subCategory: category,
+          name: name.trim(),
+          description: description.trim(),
+          price: parseFloat(price),
+          image: image.trim(),
+          isAvailable: isAvailable !== false
+        },
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedItem) {
+        return res.status(404).json({
+          success: false,
+          message: 'Menu item not found'
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Menu item updated successfully',
+        item: updatedItem
+      });
+    } catch (error) {
+      console.error('Error updating menu item:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error updating menu item: ' + error.message
+      });
+    }
+  },
+
+  // Delete Menu Item API
+  deleteMenuItem: async (req, res) => {
+    try {
+      const MenuItem = require('../../models/MenuItem');
+      const { id } = req.params;
+
+      const deletedItem = await MenuItem.findByIdAndDelete(id);
+
+      if (!deletedItem) {
+        return res.status(404).json({
+          success: false,
+          message: 'Menu item not found'
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Menu item deleted successfully'
+      });
+    } catch (error) {
+      console.error('Error deleting menu item:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error deleting menu item: ' + error.message
+      });
+    }
+  },
+
+  // Analytics API
+  getAnalyticsAPI: async (req, res) => {
+    try {
+      const Order = require('../../models/Order');
+      const User = require('../../models/User');
+      const WorkshopRegistration = require('../../models/WorkshopRegistration');
+      
+      // Get real analytics data
+      const [
+        totalRevenue,
+        totalOrders,
+        totalCustomers,
+        workshopRegistrations,
+        popularItems,
+        recentOrders
+      ] = await Promise.all([
+        Order.aggregate([{ $group: { _id: null, total: { $sum: "$totalAmount" } } }]),
+        Order.countDocuments(),
+        User.countDocuments(),
+        WorkshopRegistration.countDocuments(),
+        Order.aggregate([
+          { $unwind: "$items" },
+          { $group: { 
+            _id: "$items.name", 
+            orders: { $sum: 1 }, 
+            revenue: { $sum: { $multiply: ["$items.price", "$items.quantity"] } }
+          }},
+          { $sort: { orders: -1 } },
+          { $limit: 5 }
+        ]),
+        Order.find().sort({ createdAt: -1 }).limit(10)
+      ]);
+
+      // Get daily data for charts (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const [dailyOrders, dailyRevenue, dailyUsers] = await Promise.all([
+        // Daily Orders
+        Order.aggregate([
+          { $match: { createdAt: { $gte: thirtyDaysAgo } } },
+          { $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            count: { $sum: 1 }
+          }},
+          { $sort: { _id: 1 } }
+        ]),
+        // Daily Revenue
+        Order.aggregate([
+          { $match: { createdAt: { $gte: thirtyDaysAgo } } },
+          { $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            revenue: { $sum: "$totalAmount" }
+          }},
+          { $sort: { _id: 1 } }
+        ]),
+        // Daily New Users
+        User.aggregate([
+          { $match: { createdAt: { $gte: thirtyDaysAgo } } },
+          { $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            count: { $sum: 1 }
+          }},
+          { $sort: { _id: 1 } }
+        ])
+      ]);
+
+      // Create complete 30-day arrays
+      const last30Days = [];
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        last30Days.push(date.toISOString().split('T')[0]);
+      }
+
+      // Fill in missing days with 0 values
+      const completeOrdersData = last30Days.map(date => {
+        const found = dailyOrders.find(d => d._id === date);
+        return { date, count: found ? found.count : 0 };
+      });
+
+      const completeRevenueData = last30Days.map(date => {
+        const found = dailyRevenue.find(d => d._id === date);
+        return { date, revenue: found ? found.revenue : 0 };
+      });
+
+      const completeUsersData = last30Days.map(date => {
+        const found = dailyUsers.find(d => d._id === date);
+        return { date, count: found ? found.count : 0 };
+      });
+
+      // Format recent activity
+      const recentActivity = recentOrders.map(order => ({
+        type: order.orderType === 'art' ? 'art' : 'order',
+        message: `New ${order.orderType === 'art' ? 'art' : 'menu'} order from ${order.customerName}`,
+        time: getTimeAgo(order.createdAt),
+        icon: order.orderType === 'art' ? 'palette' : 'shopping-cart'
+      }));
+
+      res.json({
+        success: true,
+        stats: {
+          totalRevenue: totalRevenue[0]?.total || 0,
+          totalOrders: totalOrders,
+          totalCustomers: totalCustomers,
+          workshopRegistrations: workshopRegistrations
+        },
+        popularItems: popularItems.map(item => ({
+          name: item._id,
+          orders: item.orders,
+          revenue: item.revenue
+        })),
+        recentActivity: recentActivity
+      });
+    } catch (error) {
+      console.error('Error loading analytics API:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error loading analytics data'
+      });
+    }
   }
 };
+
+// Helper function for time formatting
+function getTimeAgo(date) {
+  const now = new Date();
+  const diffInMs = now - new Date(date);
+  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  if (diffInMinutes < 1) return 'Just now';
+  if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+  if (diffInHours < 24) return `${diffInHours} hours ago`;
+  return `${diffInDays} days ago`;
+}
 
 module.exports = adminController;
