@@ -14,9 +14,20 @@
 </div>
 
 <!-- Filters -->
-<div class="admin-card mb-4">
+<div class="admin-card mb-4" id="filtersCard">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5><i class="fas fa-filter me-2"></i>Filters & Search</h5>
+        <div class="btn-group">
+            <button class="btn btn-outline-primary btn-sm" onclick="clearAllFilters()">
+                <i class="fas fa-times me-1"></i>Clear All
+            </button>
+            <button class="btn btn-outline-primary btn-sm" onclick="exportCurrentPageData()">
+                <i class="fas fa-download me-1"></i>Export
+            </button>
+        </div>
+    </div>
     <div class="row g-3">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="form-label">Status</label>
             <select class="form-select" id="statusFilter">
                 <option value="">All Status</option>
@@ -25,7 +36,7 @@
                 <option value="cancelled">Cancelled</option>
             </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="form-label">Payment Method</label>
             <select class="form-select" id="paymentFilter">
                 <option value="">All Payment Methods</option>
@@ -34,11 +45,21 @@
                 <option value="cash">Cash</option>
             </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <label class="form-label">Date Range</label>
+            <input type="date" class="form-control" id="dateFilter" placeholder="Filter by date">
+        </div>
+        <div class="col-md-3">
             <label class="form-label">Search</label>
-            <input type="text" class="form-control" placeholder="Search by customer name or email..." id="searchInput">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search by customer name or email..." id="searchInput">
+                <button class="btn btn-outline-primary" type="button" onclick="applyFilters()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
         </div>
     </div>
+    <div class="filter-stats mt-2"></div>
 </div>
 
 <!-- Cart Requests Table -->
