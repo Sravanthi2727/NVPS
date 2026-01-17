@@ -1,634 +1,476 @@
-// HERO PARTICLES
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.querySelector('.particles');
+/**
+ * Workshops Page JavaScript
+ * Handles workshop registration and interactions
+ */
 
-  if (!container) {
-    console.warn('Particles container not found');
-    return;
-  }
+// Global variables
+let currentWorkshopData = {};
 
-  for (let i = 0; i < 30; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDuration = 8 + Math.random() * 8 + 's';
-    p.style.opacity = Math.random();
-
-    container.appendChild(p);
-  }
-
-  // Initialize workshop organization form
-  initializeWorkshopForm();
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Workshops page loaded');
+    
+    // Initialize countdown timers
+    initializeCountdowns();
+    
+    // Initialize particles animation
+    initializeParticles();
+    
+    // Initialize modals
+    initializeModals();
 });
 
-
-// COUNTDOWN
-document.querySelectorAll('.countdown').forEach(el => {
-  const target = new Date(el.dataset.date);
-  setInterval(() => {
-    const now = new Date();
-    const diff = target - now;
-    const d = Math.max(0, Math.floor(diff / (1000*60*60*24)));
-    const h = Math.max(0, Math.floor(diff / (1000*60*60)%24));
-    el.textContent = `${d} days ${h} hours remaining`;
-  }, 1000);
-});
-
-// REGISTER
-let currentWorkshopId = null;
-
-// Handle register button click using data attributes (more reliable)
-function handleRegisterClick(button) {
-  const workshopId = button.getAttribute('data-workshop-id');
-  const workshopTitle = button.getAttribute('data-workshop-title');
-  const workshopDate = button.getAttribute('data-workshop-date');
-  
-  console.log('handleRegisterClick called with:', { 
-    workshopId, 
-    workshopTitle, 
-    workshopDate,
-    buttonAttributes: {
-      'data-workshop-id': button.getAttribute('data-workshop-id'),
-      'data-workshop-title': button.getAttribute('data-workshop-title'),
-      'data-workshop-date': button.getAttribute('data-workshop-date')
-    }
-  });
-  
-  // Check if workshopId is valid
-  if (!workshopId || 
-      workshopId.trim() === '' || 
-      workshopId === 'undefined' || 
-      workshopId === 'null' ||
-      workshopId === 'NaN') {
-    console.error('Invalid workshop ID from button:', {
-      workshopId: workshopId,
-      type: typeof workshopId,
-      length: workshopId ? workshopId.length : 0,
-      buttonHTML: button.outerHTML.substring(0, 200)
+// Initialize countdown timers
+function initializeCountdowns() {
+    const countdownElements = document.querySelectorAll('.countdown');
+    
+    countdownElements.forEach(element => {
+        const workshopDate = element.getAttribute('data-date');
+        if (workshopDate) {
+            updateCountdown(element, new Date(workshopDate));
+            
+            // Update every minute
+            setInterval(() => {
+                updateCountdown(element, new Date(workshopDate));
+            }, 60000);
+        }
     });
-    showNotification('Workshop ID is missing. Please refresh the page and try again.', 'error');
-    return;
-  }
-  
-  openRegister(workshopTitle, workshopDate, workshopId);
 }
 
-function openRegister(name, date, workshopId) {
-  console.log('openRegister called with:', { name, date, workshopId });
-  
-  // Ensure workshopId is a valid string
-  const validWorkshopId = workshopId && workshopId.trim() !== '' && workshopId !== 'undefined' && workshopId !== 'null' 
-    ? String(workshopId).trim() 
-    : null;
-  
-  if (!validWorkshopId) {
-    console.error('Invalid workshop ID:', workshopId);
-    showNotification('Workshop ID is missing. Please refresh the page and try again.', 'error');
-    return;
-  }
-  
-  currentWorkshopId = validWorkshopId;
-  
-  // Set form values
-  const workshopIdInput = document.getElementById('workshopId');
-  const workshopNameInput = document.getElementById('workshopName');
-  const workshopDateInput = document.getElementById('workshopDate');
-  
-  if (!workshopIdInput) {
-    console.error('workshopId input field not found');
-    showNotification('Registration form error. Please refresh the page.', 'error');
-    return;
-  }
-  
-  workshopIdInput.value = validWorkshopId;
-  
-  if (workshopNameInput) {
-    workshopNameInput.value = name || '';
-  }
-  
-  if (workshopDateInput) {
-    workshopDateInput.value = date || '';
-  }
-  
-  const modal = document.getElementById('registerModal');
-  if (modal) {
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden'; // Prevent body scroll
-  } else {
-    console.error('Registration modal not found');
-    showNotification('Registration modal not found. Please refresh the page.', 'error');
-  }
-  
-  console.log('Registration modal opened with workshopId:', validWorkshopId);
-}
-
-// Make function globally available
-window.handleRegisterClick = handleRegisterClick;
-window.openRegister = openRegister;
-
-function closeRegister() {
-  document.getElementById('registerModal').style.display = 'none';
-  document.body.style.overflow = 'auto'; // Restore body scroll
-  // Reset form
-  const form = document.getElementById('registerForm');
-  if (form) {
-    form.reset();
-  }
-  currentWorkshopId = null;
-}
-
-// ORGANIZE WORKSHOP MODAL
-function openOrganizeModal() {
-  const modal = document.getElementById('organizeModal');
-  if (modal) {
-    modal.style.display = 'flex';
-    modal.classList.add('show');
+// Update countdown display
+function updateCountdown(element, targetDate) {
+    const now = new Date().getTime();
+    const distance = targetDate.getTime() - now;
     
-    // Initialize form when modal opens (in case it wasn't initialized before)
+    if (distance < 0) {
+        element.innerHTML = "Workshop has started";
+        return;
+    }
+    
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (days > 0) {
+        element.innerHTML = `${days} days, ${hours} hours`;
+    } else if (hours > 0) {
+        element.innerHTML = `${hours} hours, ${minutes} minutes`;
+    } else {
+        element.innerHTML = `${minutes} minutes`;
+    }
+}
+
+// Initialize particles animation
+function initializeParticles() {
+    const particlesContainer = document.querySelector('.particles');
+    if (!particlesContainer) return;
+    
+    // Create floating particles
+    for (let i = 0; i < 20; i++) {
+        createParticle(particlesContainer);
+    }
+}
+
+// Create a single particle
+function createParticle(container) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    // Random position and animation
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDuration = (Math.random() * 10 + 5) + 's';
+    particle.style.animationDelay = Math.random() * 5 + 's';
+    
+    container.appendChild(particle);
+    
+    // Remove and recreate after animation
     setTimeout(() => {
-      initializeWorkshopForm();
-      
-      // Add direct click handler to submit button as fallback
-      const submitBtn = document.querySelector('#organizeWorkshopForm .submit-btn');
-      if (submitBtn) {
-        submitBtn.addEventListener('click', function(e) {
-          console.log('Submit button clicked directly');
-          if (e.target.closest('form')) {
-            // Let the form handle it
+        if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+            createParticle(container);
+        }
+    }, 15000);
+}
+
+// Initialize modal functionality
+function initializeModals() {
+    // Close modals when clicking outside
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal')) {
+            closeAllModals();
+        }
+    });
+    
+    // Close modals with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAllModals();
+        }
+    });
+}
+
+// Handle workshop registration button click
+function handleRegisterClick(button) {
+    try {
+        const workshopId = button.getAttribute('data-workshop-id');
+        const workshopTitle = button.getAttribute('data-workshop-title');
+        const workshopDate = button.getAttribute('data-workshop-date');
+        
+        console.log('Registration clicked:', { workshopId, workshopTitle, workshopDate });
+        
+        if (!workshopId || workshopId === '' || workshopId === 'undefined') {
+            console.error('Workshop ID is missing or invalid');
+            showNotification('Workshop registration is not available at the moment.', 'error');
             return;
-          }
-          // Handle manually if needed
-          e.preventDefault();
-          const form = document.getElementById('organizeWorkshopForm');
-          if (form) {
-            const event = new Event('submit', { bubbles: true, cancelable: true });
-            form.dispatchEvent(event);
-          }
-        });
-      }
-    }, 100);
-    
-    // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    const preferredDateInput = document.getElementById('preferredDate');
-    if (preferredDateInput) {
-      preferredDateInput.min = today;
+        }
+        
+        // Store current workshop data
+        currentWorkshopData = {
+            id: workshopId,
+            title: workshopTitle,
+            date: workshopDate
+        };
+        
+        // Open registration modal
+        openRegisterModal(workshopId, workshopTitle, workshopDate);
+        
+    } catch (error) {
+        console.error('Error handling registration click:', error);
+        showNotification('An error occurred. Please try again.', 'error');
     }
-    
-    // Prevent body scroll when modal is open
-    document.body.style.overflow = 'hidden';
-    
-    // Add escape key listener
-    document.addEventListener('keydown', handleEscapeKey);
-  }
 }
 
+// Open registration modal
+function openRegisterModal(workshopId, workshopTitle, workshopDate) {
+    const modal = document.getElementById('registerModal');
+    if (!modal) {
+        console.error('Registration modal not found');
+        return;
+    }
+    
+    // Populate form fields
+    const workshopIdField = document.getElementById('workshopId');
+    const workshopNameField = document.getElementById('workshopName');
+    const workshopDateField = document.getElementById('workshopDate');
+    
+    if (workshopIdField) workshopIdField.value = workshopId;
+    if (workshopNameField) workshopNameField.value = workshopTitle;
+    if (workshopDateField) workshopDateField.value = workshopDate;
+    
+    // Clear participant fields
+    const participantName = document.getElementById('participantName');
+    const participantEmail = document.getElementById('participantEmail');
+    const participantPhone = document.getElementById('participantPhone');
+    
+    if (participantName) participantName.value = '';
+    if (participantEmail) participantEmail.value = '';
+    if (participantPhone) participantPhone.value = '';
+    
+    // Show modal
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+    
+    // Focus on first input
+    if (participantName) {
+        setTimeout(() => participantName.focus(), 100);
+    }
+}
+
+// Close registration modal
+function closeRegister() {
+    const modal = document.getElementById('registerModal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+    }
+}
+
+// Open organize workshop modal
+function openOrganizeModal() {
+    const modal = document.getElementById('organizeModal');
+    if (modal) {
+        modal.classList.add('show');
+        modal.style.display = 'flex';
+        
+        // Focus on first input
+        const firstInput = modal.querySelector('input');
+        if (firstInput) {
+            setTimeout(() => firstInput.focus(), 100);
+        }
+    }
+}
+
+// Close organize workshop modal
 function closeOrganizeModal() {
-  const modal = document.getElementById('organizeModal');
-  if (modal) {
-    modal.style.display = 'none';
-    modal.classList.remove('show');
+    const modal = document.getElementById('organizeModal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+    }
+}
+
+// Close all modals
+function closeAllModals() {
+    closeRegister();
+    closeOrganizeModal();
+    closeGallery();
+}
+
+// Open gallery modal
+function openGallery(images) {
+    const modal = document.getElementById('galleryModal');
+    const content = document.getElementById('galleryContent');
     
-    // Reset form
-    const form = document.getElementById('organizeWorkshopForm');
-    if (form) {
-      form.reset();
+    if (!modal || !content) return;
+    
+    if (!images || images.length === 0) {
+        content.innerHTML = '<p style="color: var(--text); text-align: center; padding: 2rem;">No gallery images available</p>';
+    } else {
+        content.innerHTML = images.map(img => 
+            `<img src="${img}" alt="Workshop Gallery" style="width: 100%; border-radius: 8px; margin-bottom: 1rem;">`
+        ).join('');
     }
     
-    // Restore body scroll
-    document.body.style.overflow = 'auto';
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+}
+
+// Close gallery modal
+function closeGallery() {
+    const modal = document.getElementById('galleryModal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+    }
+}
+
+// Handle workshop registration form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegistrationSubmit);
+    }
     
-    // Remove escape key listener
-    document.removeEventListener('keydown', handleEscapeKey);
-  }
-}
+    const organizeForm = document.getElementById('organizeWorkshopForm');
+    if (organizeForm) {
+        organizeForm.addEventListener('submit', handleOrganizeSubmit);
+    }
+});
 
-function handleEscapeKey(e) {
-  if (e.key === 'Escape') {
-    closeOrganizeModal();
-  }
-}
-
-// Make functions globally available
-window.openOrganizeModal = openOrganizeModal;
-window.closeOrganizeModal = closeOrganizeModal;
-
-// Wait for DOM to be ready before adding event listener
-document.addEventListener('DOMContentLoaded', () => {
-  const registerForm = document.getElementById('registerForm');
-  if (registerForm) {
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-      
-      // Show loading state
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
-      
-      const workshopIdInput = document.getElementById('workshopId');
-      const workshopId = (workshopIdInput && workshopIdInput.value) ? workshopIdInput.value.trim() : (currentWorkshopId ? String(currentWorkshopId).trim() : null);
-      const workshopName = document.getElementById('workshopName').value;
-      const workshopDate = document.getElementById('workshopDate').value;
-      const participantName = document.getElementById('participantName').value;
-      const participantEmail = document.getElementById('participantEmail').value;
-      const participantPhone = document.getElementById('participantPhone').value;
-      
-      console.log('Form submission - workshopId:', workshopId, 'currentWorkshopId:', currentWorkshopId);
-      
-      // Validate form
-      if (!participantName || !participantEmail || !participantPhone) {
-        showNotification('Please fill in all required fields', 'error');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
+// Handle registration form submission
+async function handleRegistrationSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // Get form data
+    const formData = new FormData(form);
+    const registrationData = {
+        workshopId: document.getElementById('workshopId')?.value,
+        workshopName: document.getElementById('workshopName')?.value,
+        workshopDate: document.getElementById('workshopDate')?.value,
+        participantName: document.getElementById('participantName')?.value,
+        participantEmail: document.getElementById('participantEmail')?.value,
+        participantPhone: document.getElementById('participantPhone')?.value
+    };
+    
+    console.log('Submitting registration:', registrationData);
+    
+    // Validate required fields
+    if (!registrationData.participantName || !registrationData.participantEmail || !registrationData.participantPhone) {
+        showNotification('Please fill in all required fields.', 'error');
         return;
-      }
-      
-      if (!workshopId || workshopId === '' || workshopId === 'undefined' || workshopId === 'null') {
-        console.error('Workshop ID validation failed:', {
-          workshopId: workshopId,
-          workshopIdInputValue: workshopIdInput ? workshopIdInput.value : 'input not found',
-          currentWorkshopId: currentWorkshopId
-        });
-        showNotification('Workshop ID not found. Please close and reopen the registration form.', 'error');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        return;
-      }
-      
-      // Email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(participantEmail)) {
-        showNotification('Please enter a valid email address', 'error');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        return;
-      }
-      
-      console.log('Submitting registration with workshopId:', workshopId);
-      
-      try {
-        // Use public registration endpoint that works for both authenticated and non-authenticated users
+    }
+    
+    // Disable submit button
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+    }
+    
+    try {
         const response = await fetch('/api/workshops/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            workshopId: workshopId,
-            workshopName: workshopName,
-            workshopDate: workshopDate,
-            participantName: participantName,
-            participantEmail: participantEmail,
-            participantPhone: participantPhone
-          })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(registrationData)
         });
         
         const result = await response.json();
         
         if (result.success) {
-          showNotification(result.message || 'Registration successful! You will receive a confirmation email shortly.', 'success');
-          setTimeout(() => {
+            showNotification('Registration successful! You will receive a confirmation email shortly.', 'success');
             closeRegister();
-          }, 1500);
+            form.reset();
         } else {
-          showNotification(result.error || 'Registration failed. Please try again.', 'error');
+            showNotification(result.error || 'Registration failed. Please try again.', 'error');
         }
-      } catch (error) {
+    } catch (error) {
         console.error('Registration error:', error);
-        showNotification('Registration failed. Please check your connection and try again.', 'error');
-      } finally {
-        // Restore button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-      }
-    });
-  }
-});
-
-// GALLERY
-function openGallery(images) {
-  const gallery = document.getElementById('galleryContent');
-  gallery.innerHTML = '';
-  images.forEach(src => {
-    const img = document.createElement('img');
-    img.src = src;
-    gallery.appendChild(img);
-  });
-  document.getElementById('galleryModal').style.display = 'flex';
-}
-
-function closeGallery() {
-  document.getElementById('galleryModal').style.display = 'none';
-}
-
-// WORKSHOP ORGANIZATION FORM
-function initializeWorkshopForm() {
-  console.log('Initializing workshop form...');
-  const form = document.getElementById('organizeWorkshopForm');
-  if (!form) {
-    console.error('Workshop form not found!');
-    return;
-  }
-  
-  // Check if already initialized
-  if (form.dataset.initialized === 'true') {
-    console.log('Form already initialized, skipping...');
-    return;
-  }
-  
-  console.log('Workshop form found, adding event listeners...');
-
-  // Form submission handler
-  form.addEventListener('submit', handleWorkshopFormSubmission);
-
-  // Real-time validation
-  const inputs = form.querySelectorAll('input, select, textarea');
-  inputs.forEach(input => {
-    input.addEventListener('blur', validateField);
-    input.addEventListener('input', clearValidationError);
-  });
-
-  // Auto-resize textareas
-  const textareas = form.querySelectorAll('textarea');
-  textareas.forEach(textarea => {
-    textarea.addEventListener('input', autoResizeTextarea);
-  });
-  
-  // Mark as initialized
-  form.dataset.initialized = 'true';
-  
-  console.log('Workshop form initialized successfully');
-}
-
-function handleWorkshopFormSubmission(e) {
-  console.log('Form submission triggered');
-  e.preventDefault();
-  
-  const submitBtn = e.target.querySelector('.submit-btn');
-  const formData = collectWorkshopFormData();
-  
-  console.log('Collected form data:', formData);
-  
-  // Validate form
-  if (!validateWorkshopForm(formData)) {
-    console.log('Form validation failed');
-    showNotification('Please fill in all required fields correctly.', 'error');
-    return;
-  }
-
-  console.log('Form validation passed, submitting...');
-  
-  // Show loading state
-  submitBtn.classList.add('loading');
-  submitBtn.disabled = true;
-
-  // Make API call to backend
-  fetch('/submit-workshop-proposal', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(formData)
-  })
-  .then(response => {
-    console.log('Response received:', response);
-    return response.json();
-  })
-  .then(data => {
-    console.log('Response data:', data);
-    if (data.success) {
-      // Show success message
-      showNotification(data.message, 'success');
-      
-      // Reset form and close modal
-      e.target.reset();
-      closeOrganizeModal();
-    } else {
-      // Show error message
-      showNotification(data.message || 'Failed to submit workshop proposal.', 'error');
+        showNotification('Network error. Please check your connection and try again.', 'error');
+    } finally {
+        // Re-enable submit button
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Confirm Registration';
+        }
     }
-  })
-  .catch(error => {
-    console.error('Error submitting workshop proposal:', error);
-    showNotification('Failed to submit workshop proposal. Please check your connection and try again.', 'error');
-  })
-  .finally(() => {
-    // Remove loading state
-    submitBtn.classList.remove('loading');
-    submitBtn.disabled = false;
-  });
 }
 
-function collectWorkshopFormData() {
-  return {
-    // Workshop Details
-    title: document.getElementById('proposedTitle')?.value || '',
-    category: document.getElementById('proposedCategory')?.value || '',
-    description: document.getElementById('proposedDescription')?.value || '',
+// Handle organize workshop form submission
+async function handleOrganizeSubmit(e) {
+    e.preventDefault();
     
-    // Organizer Information
-    organizerName: document.getElementById('organizerName')?.value || '',
-    organizerEmail: document.getElementById('organizerEmail')?.value || '',
-    organizerPhone: document.getElementById('organizerPhone')?.value || '',
-    organizerExperience: document.getElementById('organizerExperience')?.value || '',
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
     
-    // Workshop Logistics
-    duration: document.getElementById('proposedDuration')?.value || '',
-    capacity: document.getElementById('proposedCapacity')?.value || '',
-    skillLevel: document.getElementById('proposedSkillLevel')?.value || '',
-    price: document.getElementById('proposedPrice')?.value || '',
-    preferredDate: document.getElementById('preferredDate')?.value || '',
+    // Get form data
+    const proposalData = {
+        title: document.getElementById('proposedTitle')?.value,
+        category: document.getElementById('proposedCategory')?.value,
+        description: document.getElementById('proposedDescription')?.value,
+        organizerName: document.getElementById('organizerName')?.value,
+        organizerEmail: document.getElementById('organizerEmail')?.value,
+        organizerPhone: document.getElementById('organizerPhone')?.value,
+        organizerExperience: document.getElementById('organizerExperience')?.value,
+        duration: document.getElementById('proposedDuration')?.value,
+        capacity: document.getElementById('proposedCapacity')?.value,
+        skillLevel: document.getElementById('proposedSkillLevel')?.value,
+        price: document.getElementById('proposedPrice')?.value,
+        preferredDate: document.getElementById('preferredDate')?.value,
+        materialsNeeded: document.getElementById('materialsNeeded')?.value,
+        collaborationType: document.getElementById('collaborationType')?.value,
+        additionalNotes: document.getElementById('additionalNotes')?.value
+    };
     
-    // Materials & Requirements
-    materialsNeeded: document.getElementById('materialsNeeded')?.value || '',
-    spaceRequirements: document.getElementById('spaceRequirements')?.value || '',
-    materialsProvided: document.getElementById('materialsProvided')?.checked || false,
-    flexibleSchedule: document.getElementById('flexibleSchedule')?.checked || false,
+    console.log('Submitting workshop proposal:', proposalData);
     
-    // Additional Information
-    additionalNotes: document.getElementById('additionalNotes')?.value || '',
-    collaborationType: document.getElementById('collaborationType')?.value || '',
+    // Validate required fields
+    const requiredFields = ['title', 'category', 'description', 'organizerName', 'organizerEmail', 'duration', 'capacity'];
+    const missingFields = requiredFields.filter(field => !proposalData[field]);
     
-    // Metadata
-    submittedAt: new Date().toISOString(),
-    source: 'workshop_page'
-  };
-}
-
-function validateWorkshopForm(data) {
-  const requiredFields = [
-    'title', 'category', 'description', 
-    'organizerName', 'organizerEmail', 
-    'duration', 'capacity'
-  ];
-  
-  for (const field of requiredFields) {
-    if (!data[field] || data[field].trim() === '') {
-      highlightRequiredField(field);
-      return false;
+    if (missingFields.length > 0) {
+        showNotification(`Please fill in all required fields: ${missingFields.join(', ')}`, 'error');
+        return;
     }
-  }
-  
-  // Email validation
-  if (data.organizerEmail && !isValidEmail(data.organizerEmail)) {
-    highlightRequiredField('organizerEmail');
-    return false;
-  }
-  
-  return true;
-}
-
-function highlightRequiredField(fieldName) {
-  const fieldMap = {
-    'title': 'proposedTitle',
-    'category': 'proposedCategory',
-    'description': 'proposedDescription',
-    'organizerName': 'organizerName',
-    'organizerEmail': 'organizerEmail',
-    'duration': 'proposedDuration',
-    'capacity': 'proposedCapacity'
-  };
-  
-  const element = document.getElementById(fieldMap[fieldName] || fieldName);
-  if (element) {
-    element.focus();
-    element.style.borderColor = '#e74c3c';
-    element.style.background = 'rgba(231, 76, 60, 0.1)';
     
-    // Remove highlight after 3 seconds
-    setTimeout(() => {
-      element.style.borderColor = '';
-      element.style.background = '';
-    }, 3000);
-  }
+    // Disable submit button
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    }
+    
+    try {
+        const response = await fetch('/submit-workshop-proposal', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(proposalData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Workshop proposal submitted successfully! We will review it and get back to you soon.', 'success');
+            closeOrganizeModal();
+            form.reset();
+        } else {
+            showNotification(result.message || 'Proposal submission failed. Please try again.', 'error');
+        }
+    } catch (error) {
+        console.error('Proposal submission error:', error);
+        showNotification('Network error. Please check your connection and try again.', 'error');
+    } finally {
+        // Re-enable submit button
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Proposal';
+        }
+    }
 }
 
-function validateField(e) {
-  const field = e.target;
-  const value = field.value.trim();
-  
-  // Check if required field is empty
-  if (field.hasAttribute('required') && !value) {
-    field.style.borderColor = '#e74c3c';
-    field.style.background = 'rgba(231, 76, 60, 0.1)';
-    return false;
-  }
-  
-  // Email validation
-  if (field.type === 'email' && value && !isValidEmail(value)) {
-    field.style.borderColor = '#e74c3c';
-    field.style.background = 'rgba(231, 76, 60, 0.1)';
-    return false;
-  }
-  
-  // Valid field styling
-  if (value) {
-    field.style.borderColor = '#27ae60';
-    field.style.background = 'rgba(39, 174, 96, 0.1)';
-  }
-  
-  return true;
-}
-
-function clearValidationError(e) {
-  const field = e.target;
-  if (field.value.trim()) {
-    field.style.borderColor = '';
-    field.style.background = '';
-  }
-}
-
-function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-function autoResizeTextarea(e) {
-  const textarea = e.target;
-  textarea.style.height = 'auto';
-  textarea.style.height = textarea.scrollHeight + 'px';
-}
-
+// Notification system
 function showNotification(message, type = 'info') {
-  // Remove existing notifications
-  const existingNotifications = document.querySelectorAll('.workshop-notification');
-  existingNotifications.forEach(notification => notification.remove());
-  
-  // Create notification element
-  const notification = document.createElement('div');
-  notification.className = `workshop-notification ${type}`;
-  notification.innerHTML = `
-    <div class="notification-content">
-      <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i>
-      <span>${message}</span>
-      <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-  `;
-  
-  // Add styles
-  notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10000;
-    max-width: 400px;
-    background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
-    color: white;
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    animation: slideInRight 0.3s ease-out;
-  `;
-  
-  // Add to page
-  document.body.appendChild(notification);
-  
-  // Auto-remove after 5 seconds
-  setTimeout(() => {
-    if (notification.parentNode) {
-      notification.style.animation = 'slideOutRight 0.3s ease-out';
-      setTimeout(() => notification.remove(), 300);
-    }
-  }, 5000);
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.workshop-notification');
+    existingNotifications.forEach(n => n.remove());
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `workshop-notification notification-${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+        max-width: 400px;
+        font-size: 14px;
+        line-height: 1.4;
+        animation: slideInRight 0.3s ease;
+    `;
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 5000);
 }
 
-// Add CSS for notifications
-const notificationStyles = document.createElement('style');
-notificationStyles.textContent = `
-  @keyframes slideInRight {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-  
-  @keyframes slideOutRight {
-    from { transform: translateX(0); opacity: 1; }
-    to { transform: translateX(100%); opacity: 0; }
-  }
-  
-  .notification-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .notification-close {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    padding: 4px;
-    margin-left: auto;
-    opacity: 0.8;
-    transition: opacity 0.2s;
-  }
-  
-  .notification-close:hover {
-    opacity: 1;
-  }
+// Add CSS for animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
 `;
-document.head.appendChild(notificationStyles);
+document.head.appendChild(style);
+
+// Expose functions globally for onclick handlers
+window.handleRegisterClick = handleRegisterClick;
+window.openRegisterModal = openRegisterModal;
+window.closeRegister = closeRegister;
+window.openOrganizeModal = openOrganizeModal;
+window.closeOrganizeModal = closeOrganizeModal;
+window.openGallery = openGallery;
+window.closeGallery = closeGallery;
+
+console.log('✅ Workshops JavaScript loaded successfully');

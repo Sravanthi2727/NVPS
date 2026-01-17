@@ -495,6 +495,13 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
         </section>
     <% } %>
     
+    <!-- DEBUG: Menu Items Check -->
+    <div style="display: none;">
+        Debug: typeof menuItems = <%= typeof menuItems %>
+        Debug: menuItems exists = <%= typeof menuItems !== 'undefined' %>
+        Debug: Object.keys length = <%= typeof menuItems !== 'undefined' ? Object.keys(menuItems).length : 'N/A' %>
+    </div>
+    
     <% if (typeof menuItems !== 'undefined' && Object.keys(menuItems).length > 0) { %>
         <% Object.keys(menuItems).forEach(category => { %>
             <section class="py-5 menu-section" style="background: var(--secondary);" data-category="<%= category %>">
@@ -796,10 +803,10 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
             return;
         }
         
-        const itemId = button.getAttribute('data-item-id') || button.dataset.itemId;
-        const itemName = button.getAttribute('data-item-name') || button.dataset.itemName;
-        const itemPrice = button.getAttribute('data-item-price') || button.dataset.itemPrice;
-        const itemImage = button.getAttribute('data-item-image') || button.dataset.itemImage;
+        const itemId = button.getAttribute('data-item-id') || button.dataset?.itemId;
+        const itemName = button.getAttribute('data-item-name') || button.dataset?.itemName;
+        const itemPrice = button.getAttribute('data-item-price') || button.dataset?.itemPrice;
+        const itemImage = button.getAttribute('data-item-image') || button.dataset?.itemImage;
         
         if (quantity > 0) {
             // Show quantity controls
@@ -1155,7 +1162,7 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
     function addToWishlistItem(itemId, itemName, price, image, buttonElement) {
         console.log('Adding to wishlist:', { itemId, itemName, price, image });
         
-        fetch('/api/wishlist', {
+        fetch('/api/wishlist/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1254,8 +1261,8 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
         }, 3000);
     }
 
+    // Update cart count in navbar if element exists
     function updateCartCount() {
-        // Update cart count in navbar if element exists
         fetch('/api/cart/count')
         .then(response => response.json())
         .then(data => {
@@ -1268,7 +1275,6 @@ const itemImage = item.image ? (item.image.startsWith('/') ? item.image : '/asse
     }
 
     function updateWishlistCount() {
-        // Update wishlist count in navbar if element exists
         fetch('/api/wishlist/count')
         .then(response => response.json())
         .then(data => {

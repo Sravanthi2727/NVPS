@@ -3,6 +3,9 @@
  * Handles home page and general site pages
  */
 
+const MenuItem = require('../../models/MenuItem');
+const Workshop = require('../../models/Workshop');
+
 const homeController = {
   // Home page
   getHome: (req, res) => {
@@ -39,19 +42,115 @@ const homeController = {
   },
 
   // Menu page
-  getMenu: (req, res) => {
-    res.render('menu', {
-      title: 'Menu - Rabuste Coffee',
-      description: 'Explore our premium Robusta coffee menu featuring bold flavors and artistic presentations.',
-      currentPage: '/menu',
-      keywords: 'coffee menu, robusta coffee drinks, premium coffee, café menu, Rabuste Coffee menu',
-      ogTitle: 'Menu - Rabuste Coffee',
-      ogDescription: 'Explore our premium Robusta coffee menu featuring bold flavors and artistic presentations.',
-      ogType: 'website',
-      ogUrl: 'https://rabustecoffee.com/menu',
-      ogImage: '/assets/coffee-bg.jpeg',
-      canonicalUrl: 'https://rabustecoffee.com/menu'
-    });
+  getMenu: async (req, res) => {
+    try {
+      console.log('🍽️ Menu route called via homeController');
+      
+      console.log('📦 MenuItem model loaded');
+      
+      const menuItems = await MenuItem.find({ isAvailable: true })
+        .sort({ category: 1, subCategory: 1, displayOrder: 1 });
+      
+      console.log('📊 Found menu items:', menuItems.length);
+      
+      if (menuItems.length === 0) {
+        console.log('⚠️ No menu items found in database');
+        // Check if any items exist at all
+        const allItems = await MenuItem.find({});
+        console.log('📋 Total items in database:', allItems.length);
+        
+        // If no items exist, try to initialize some basic items
+        if (allItems.length === 0) {
+          console.log('🔄 No menu items in database, creating sample items...');
+          const sampleItems = [
+            {
+              name: 'Robusta Espresso',
+              category: 'hot',
+              subCategory: 'robusta-hot-non-milk',
+              price: 120,
+              description: 'Strong and bold robusta espresso',
+              isAvailable: true,
+              displayOrder: 1
+            },
+            {
+              name: 'Robusta Cappuccino',
+              category: 'hot',
+              subCategory: 'robusta-hot-milk',
+              price: 150,
+              description: 'Creamy cappuccino with robusta coffee',
+              isAvailable: true,
+              displayOrder: 2
+            },
+            {
+              name: 'Cold Brew',
+              category: 'cold',
+              subCategory: 'robusta-cold-non-milk',
+              price: 180,
+              description: 'Smooth cold brew coffee',
+              isAvailable: true,
+              displayOrder: 3
+            }
+          ];
+          
+          await MenuItem.insertMany(sampleItems);
+          console.log('✅ Sample menu items created');
+          
+          // Refetch items
+          const newMenuItems = await MenuItem.find({ isAvailable: true })
+            .sort({ category: 1, subCategory: 1, displayOrder: 1 });
+          console.log('📊 Found menu items after creation:', newMenuItems.length);
+          
+          // Update menuItems variable
+          menuItems.splice(0, 0, ...newMenuItems);
+        }
+      }
+      
+      // Group items by category and subcategory
+      const groupedMenu = {};
+      menuItems.forEach(item => {
+        if (!groupedMenu[item.category]) {
+          groupedMenu[item.category] = {};
+        }
+        if (!groupedMenu[item.category][item.subCategory]) {
+          groupedMenu[item.category][item.subCategory] = [];
+        }
+        groupedMenu[item.category][item.subCategory].push(item);
+      });
+
+      console.log('🗂️ Grouped menu categories:', Object.keys(groupedMenu));
+      console.log('🔍 Sample grouped menu structure:', JSON.stringify(groupedMenu, null, 2).substring(0, 500) + '...');
+      console.log('🎯 About to render menu template with menuItems:', typeof groupedMenu, Object.keys(groupedMenu).length);
+
+      res.render('menu', {
+        title: 'Our Menu - Rabuste Coffee',
+        description: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
+        currentPage: '/menu',
+        keywords: 'coffee menu, robusta coffee, café menu, coffee drinks, food menu',
+        ogTitle: 'Our Menu - Rabuste Coffee',
+        ogDescription: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
+        ogType: 'website',
+        ogUrl: 'https://rabustecoffee.com/menu',
+        ogImage: '/assets/coffee-bg.jpeg',
+        canonicalUrl: 'https://rabustecoffee.com/menu',
+        menuItems: groupedMenu,
+        recommendedItems: [],
+        isLoggedIn: req.isAuthenticated ? req.isAuthenticated() : false,
+        currentUser: req.user || null
+      });
+    } catch (error) {
+      console.error('❌ Menu route error:', error);
+      console.error('📍 Error stack:', error.stack);
+      console.log('🚨 RENDERING ERROR TEMPLATE - menuItems will be empty');
+      res.render('menu', {
+        title: 'Our Menu - Rabuste Coffee',
+        description: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
+        currentPage: '/menu',
+        menuItems: {},
+        recommendedItems: [],
+        isLoggedIn: false,
+        currentUser: null
+      });
+    }
   },
 
   // Gallery page
@@ -67,16 +166,6 @@ const homeController = {
       ogUrl: 'https://rabustecoffee.com/gallery',
       ogImage: '/assets/coffee-bg.jpeg',
       canonicalUrl: 'https://rabustecoffee.com/gallery'
-    });
-  },
-
-  // Workshops page
-  getWorkshops: (req, res) => {
-    res.render('workshops', {
-      title: 'Workshops - Rabuste Coffee',
-      description: 'Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.',
-      currentPage: '/workshops',
-      layout: false // Use the workshops page without the main layout
     });
   },
 
@@ -131,22 +220,6 @@ const homeController = {
     });
   },
 
-  // Philosophy page
-  getPhilosophy: (req, res) => {
-    res.render('philosophy', {
-      title: 'Philosophy - The Robusta Rebellion | Rabuste Coffee',
-      description: 'Discover the philosophy behind Rabuste Coffee - our commitment to bold Robusta beans, art, and the rebellion against the ordinary.',
-      currentPage: '/philosophy',
-      keywords: 'robusta coffee philosophy, coffee rebellion, bold coffee, art and coffee, Rabuste philosophy',
-      ogTitle: 'Philosophy - The Robusta Rebellion | Rabuste Coffee',
-      ogDescription: 'Challenging the Arabica status quo. We curate strength, narrative, and the unapologetic pursuit of the bold.',
-      ogType: 'website',
-      ogUrl: 'https://rabustecoffee.com/philosophy',
-      ogImage: '/assets/coffee-bg.jpeg',
-      canonicalUrl: 'https://rabustecoffee.com/philosophy'
-    });
-  },
-
   // Workshop proposal submission
   submitWorkshopProposal: async (req, res) => {
     try {
@@ -164,7 +237,7 @@ const homeController = {
       }
       
       // Email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+₹/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(proposalData.organizerEmail)) {
         return res.status(400).json({
           success: false,
@@ -201,6 +274,49 @@ const homeController = {
       res.status(500).json({
         success: false,
         message: 'Failed to submit workshop proposal. Please try again later.'
+      });
+    }
+  },
+
+  // Workshops page
+  getWorkshops: async (req, res) => {
+    try {
+      console.log('Workshops route called via homeController');
+      
+      const upcomingWorkshops = await Workshop.find({ 
+        type: 'upcoming', 
+        isActive: true,
+        date: { $gte: new Date() }
+      }).sort({ date: 1, displayOrder: 1 });
+      
+      const pastWorkshops = await Workshop.find({ 
+        type: 'past', 
+        isActive: true 
+      }).sort({ date: -1, displayOrder: 1 });
+
+      console.log('Found workshops - upcoming:', upcomingWorkshops.length, 'past:', pastWorkshops.length);
+
+      res.render('workshops', {
+        title: 'Workshops - Rabuste Coffee',
+        description: 'Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.',
+        currentPage: '/workshops',
+        upcomingWorkshops: upcomingWorkshops,
+        pastWorkshops: pastWorkshops,
+        teamMembers: [],
+        layout: 'layouts/boilerplate',
+        additionalCSS: ['/css/workshops.css', '/css/gallery.css']
+      });
+    } catch (error) {
+      console.error('Workshops route error:', error);
+      res.render('workshops', {
+        title: 'Workshops - Rabuste Coffee',
+        description: 'Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.',
+        currentPage: '/workshops',
+        upcomingWorkshops: [],
+        pastWorkshops: [],
+        teamMembers: [],
+        layout: 'layouts/boilerplate',
+        additionalCSS: ['/css/workshops.css', '/css/gallery.css']
       });
     }
   }
