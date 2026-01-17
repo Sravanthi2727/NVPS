@@ -2,6 +2,16 @@ const User = require('../models/User');
 
 // Middleware to get user data from session
 const getUserData = async (req, res, next) => {
+  // Production debugging
+  if (process.env.NODE_ENV === 'production') {
+    console.log('🔍 getUserData middleware:', {
+      isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+      hasUser: !!req.user,
+      sessionID: req.sessionID,
+      userEmail: req.user ? req.user.email : 'No user'
+    });
+  }
+  
   if (req.isAuthenticated() && req.user) {
     try {
       console.log('Getting user data for:', req.user.email || req.user.googleId);
@@ -20,19 +30,26 @@ const getUserData = async (req, res, next) => {
       }
       
       if (user) {
-        console.log('User found:', user.email);
+        console.log('✅ User found:', user.email);
         res.locals.currentUser = user;
         res.locals.isLoggedIn = true;
+        
+        if (process.env.NODE_ENV === 'production') {
+          console.log('✅ Production: currentUser set for', user.email);
+        }
       } else {
-        console.log('User not found in database');
+        console.log('❌ User not found in database');
+        res.locals.currentUser = null;
         res.locals.isLoggedIn = false;
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('❌ Error fetching user data:', error);
+      res.locals.currentUser = null;
       res.locals.isLoggedIn = false;
     }
   } else {
-    console.log('User not authenticated');
+    console.log('❌ User not authenticated');
+    res.locals.currentUser = null;
     res.locals.isLoggedIn = false;
   }
   next();

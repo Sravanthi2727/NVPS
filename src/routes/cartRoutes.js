@@ -279,7 +279,7 @@ router.post('/add', async (req, res) => {
         _id: item._id,
         name: item.name,
         price: item.price,
-        image: item.image,
+        image: item.image ? (item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image) : '',
         category: item.category,
         description: item.description
       }))
