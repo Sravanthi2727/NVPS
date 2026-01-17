@@ -19,12 +19,6 @@ router.get('/menu', homeController.getMenu);
 // Gallery page
 router.get('/gallery', homeController.getGallery);
 
-// Workshops page
-router.get('/workshops', homeController.getWorkshops);
-
-// Franchise page
-router.get('/franchise', homeController.getFranchise);
-
 // Art request page
 router.get('/art-request', homeController.getArtRequest);
 
@@ -33,9 +27,6 @@ router.post('/submit-art-request', homeController.submitArtRequest);
 
 // User dashboard page
 router.get('/dashboard', homeController.getUserDashboard);
-
-// Philosophy page
-router.get('/philosophy', homeController.getPhilosophy);
 
 // Workshop proposal submission
 router.post('/submit-workshop-proposal', homeController.submitWorkshopProposal);

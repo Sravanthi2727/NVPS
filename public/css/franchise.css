@@ -811,9 +811,62 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .container {
+    padding: 0 30px;
+  }
+  
+  .opportunity-grid {
+    gap: 50px;
+  }
+}
+
+@media (max-width: 992px) {
+  .hero-title {
+    font-size: 3rem;
+  }
+  
+  .section-title {
+    font-size: 2.2rem;
+  }
+  
+  .opportunity-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .investment-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .qualification-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+  
+  .franchise-hero {
+    height: auto;
+    min-height: 100vh;
+    padding: 80px 0 60px;
+  }
+  
   .hero-title {
     font-size: 2.5rem;
+    line-height: 1.2;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .hero-description {
+    font-size: 1rem;
   }
   
   .hero-stats {
@@ -821,9 +874,35 @@
     gap: 1.5rem;
   }
   
+  .stat-number {
+    font-size: 2rem;
+  }
+  
   .hero-cta {
     flex-direction: column;
-    align-items: center;
+    width: 100%;
+  }
+  
+  .hero-cta .btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .opportunity-section,
+  .investment-section,
+  .qualification-section,
+  .form-section {
+    padding: 60px 0;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    line-height: 1.3;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+    margin-bottom: 2rem;
   }
   
   .opportunity-grid,
@@ -832,12 +911,60 @@
     gap: 2rem;
   }
   
+  .feature-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .feature-icon {
+    margin: 0 auto;
+  }
+  
   .investment-grid {
     grid-template-columns: 1fr;
   }
   
+  .investment-card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-header {
+    padding: 1.5rem;
+  }
+  
+  .investment-amount {
+    font-size: 2rem;
+  }
+  
+  .card-content {
+    padding: 1.5rem;
+  }
+  
+  .qualification-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .qualification-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .qualification-item h3 {
+    font-size: 1.2rem;
+  }
+  
   .form-row {
     grid-template-columns: 1fr;
+    gap: 0;
+  }
+  
+  .franchise-form {
+    padding: 2rem 1.5rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.25rem;
   }
   
   .success-author {
@@ -845,12 +972,120 @@
     text-align: center;
   }
   
-  .section-title {
+  .timeline-item {
+    grid-template-columns: 60px 1fr;
+    gap: 1.5rem;
+  }
+  
+  .timeline-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .timeline-icon::after {
+    height: 40px;
+  }
+  
+  .step-number {
+    font-size: 1.2rem;
+  }
+  
+  .timeline-content {
+    padding: 1.5rem;
+  }
+  
+  .timeline-content h3 {
+    font-size: 1.3rem;
+  }
+  
+  .visual-item.secondary {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .btn {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+  }
+  
+  .btn-large {
+    padding: 14px 28px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-title {
     font-size: 2rem;
   }
   
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .section-title {
+    font-size: 1.75rem;
+  }
+  
+  .stat-number {
+    font-size: 1.75rem;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+  }
+  
   .franchise-form {
-    padding: 2rem;
+    padding: 1.5rem 1rem;
+  }
+  
+  .investment-amount {
+    font-size: 1.75rem;
+  }
+  
+  .feature-content h3,
+  .qualification-item h3 {
+    font-size: 1.1rem;
+  }
+  
+  .timeline-item {
+    grid-template-columns: 50px 1fr;
+    gap: 1rem;
+  }
+  
+  .timeline-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .step-number {
+    font-size: 1rem;
+  }
+  
+  .timeline-content {
+    padding: 1.25rem;
+  }
+  
+  .timeline-content h3 {
+    font-size: 1.2rem;
+  }
+  
+  .auth-required {
+    padding: 2rem 1.5rem !important;
+  }
+  
+  .auth-icon i {
+    font-size: 2.5rem !important;
+  }
+  
+  .auth-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .auth-buttons .btn {
+    width: 100%;
+    margin: 0 0 0.75rem 0 !important;
   }
 }
 

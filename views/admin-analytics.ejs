@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Rabuste Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gold: #d6a45a;
+            --soft-gold: #e3b873;
+            --dark-bg: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border: rgba(214, 164, 90, 0.3);
+            --text: #f5f2ee;
+            --muted: rgba(245, 242, 238, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            background: linear-gradient(90deg, var(--gold), var(--soft-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            padding: 10px 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(214, 164, 90, 0.1);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--soft-gold));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(214, 164, 90, 0.2);
+            border-color: var(--gold);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(214, 164, 90, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 20px;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .stat-trend.up {
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .stat-trend.down {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 40px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 20px;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .time-filter {
+            display: flex;
+            gap: 8px;
+        }
+
+        .time-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .time-btn:hover, .time-btn.active {
+            background: rgba(214, 164, 90, 0.1);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .analytics-embed {
+            width: 100%;
+            height: 600px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .info-box {
+            background: rgba(214, 164, 90, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+
+        .info-box h3 {
+            color: var(--gold);
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .info-box p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-box a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .info-box a:hover {
+            text-decoration: underline;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .popular-items-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .popular-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .item-rank {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gold);
+            min-width: 40px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-details h4 {
+            color: var(--text);
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .item-details p {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .item-progress {
+            width: 100px;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--soft-gold));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .status-card {
+            text-align: center;
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 24px;
+        }
+
+        .status-icon.pending {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+        }
+
+        .status-icon.completed {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .status-icon.cancelled {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .status-count {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .status-label {
+            color: var(--muted);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .time-filter {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-chart-line"></i>
+                Analytics Dashboard
+            </h1>
+            <a href="/admin" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Admin
+            </a>
+        </div>
+
+        <% if (error) { %>
+        <!-- Error Message -->
+        <div class="chart-section" style="text-align: center; padding: 60px 32px;">
+            <div style="color: #ef4444; font-size: 48px; margin-bottom: 20px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="color: #ef4444; margin-bottom: 12px;">Analytics Error</h3>
+            <p style="color: var(--muted); margin-bottom: 24px;"><%= error %></p>
+            <button onclick="window.location.reload()" class="back-btn">
+                <i class="fas fa-refresh"></i>
+                Retry
+            </button>
+        </div>
+        <% } else if (!analytics) { %>
+        <!-- Loading State -->
+        <div class="chart-section" style="text-align: center; padding: 60px 32px;">
+            <div style="color: var(--gold); font-size: 48px; margin-bottom: 20px;">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <h3 style="color: var(--gold); margin-bottom: 12px;">Loading Analytics...</h3>
+            <p style="color: var(--muted);">Please wait while we fetch your data</p>
+        </div>
+        <% } else { %>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-trend <%= userGrowth > 0 ? 'up' : 'down' %>">
+                        <i class="fas fa-arrow-<%= userGrowth > 0 ? 'up' : 'down' %>"></i>
+                        <%= userGrowth %>%
+                    </div>
+                </div>
+                <div class="stat-value" id="totalUsers"><%= analytics ? analytics.totalUsers.toLocaleString() : '-' %></div>
+                <div class="stat-label">Total Users</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-trend <%= orderGrowth > 0 ? 'up' : 'down' %>">
+                        <i class="fas fa-arrow-<%= orderGrowth > 0 ? 'up' : 'down' %>"></i>
+                        <%= orderGrowth %>%
+                    </div>
+                </div>
+                <div class="stat-value" id="totalOrders"><%= analytics ? analytics.totalOrders.toLocaleString() : '-' %></div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="stat-trend <%= revenueGrowth > 0 ? 'up' : 'down' %>">
+                        <i class="fas fa-arrow-<%= revenueGrowth > 0 ? 'up' : 'down' %>"></i>
+                        <%= revenueGrowth %>%
+                    </div>
+                </div>
+                <div class="stat-value" id="totalRevenue">₹<%= analytics ? analytics.totalRevenue.toLocaleString() : '-' %></div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <%= analytics ? ((analytics.workshopRegistrationsLast7Days / Math.max(analytics.totalWorkshopRegistrations - analytics.workshopRegistrationsLast7Days, 1)) * 100).toFixed(1) : 0 %>%
+                    </div>
+                </div>
+                <div class="stat-value" id="workshopRegistrations"><%= analytics ? analytics.totalWorkshopRegistrations.toLocaleString() : '-' %></div>
+                <div class="stat-label">Workshop Registrations</div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2 class="chart-title">Daily Orders (Last 30 Days)</h2>
+                <div class="time-filter">
+                    <button class="time-btn active" onclick="showChart('orders')">Orders</button>
+                    <button class="time-btn" onclick="showChart('revenue')">Revenue</button>
+                    <button class="time-btn" onclick="showChart('users')">New Users</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="analyticsChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Popular Items Section -->
+        <% if (analytics && analytics.popularItems && analytics.popularItems.length > 0) { %>
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2 class="chart-title">
+                    <i class="fas fa-fire"></i>
+                    Popular Menu Items
+                </h2>
+            </div>
+            <div class="popular-items-grid">
+                <% analytics.popularItems.forEach((item, index) => { %>
+                <div class="popular-item">
+                    <div class="item-rank">#<%= index + 1 %></div>
+                    <div class="item-details">
+                        <h4><%= item._id %></h4>
+                        <p><%= item.count %> orders • ₹<%= item.revenue.toLocaleString() %> revenue</p>
+                    </div>
+                    <div class="item-progress">
+                        <div class="progress-bar" style="width: <%= (item.count / analytics.popularItems[0].count) * 100 %>%"></div>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- Order Status Breakdown -->
+        <% if (analytics && analytics.ordersByStatus && analytics.ordersByStatus.length > 0) { %>
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2 class="chart-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Order Status Breakdown
+                </h2>
+            </div>
+            <div class="status-grid">
+                <% analytics.ordersByStatus.forEach(status => { %>
+                <div class="status-card">
+                    <div class="status-icon <%= status._id %>">
+                        <i class="fas fa-<%= status._id === 'pending' ? 'clock' : status._id === 'completed' ? 'check-circle' : 'times-circle' %>"></i>
+                    </div>
+                    <div class="status-count"><%= status.count %></div>
+                    <div class="status-label"><%= status._id.charAt(0).toUpperCase() + status._id.slice(1) %></div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- Google Analytics Embed -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2 class="chart-title">
+                    <i class="fab fa-google"></i>
+                    Google Analytics Dashboard
+                </h2>
+            </div>
+            <iframe 
+                class="analytics-embed"
+                src="https://analytics.google.com/analytics/web/#/p<%= analyticsPropertyId || '' %>/reports/intelligenthome"
+                frameborder="0"
+            ></iframe>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i> Setup Instructions</h3>
+            <p>
+                To view full analytics data, you need to:
+                <br>1. Set up Google Analytics 4 property
+                <br>2. Add your Property ID to the .env file
+                <br>3. Configure Google Analytics API credentials
+                <br><br>
+                <a href="https://analytics.google.com/" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> Open Google Analytics
+                </a>
+            </p>
+        </div>
+
+        <% } %> <!-- End analytics conditional -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Analytics data from server
+        const analyticsData = <%- JSON.stringify(analytics || {}) %>;
+        
+        console.log('📊 Analytics data loaded:', analyticsData);
+
+        // Chart configuration
+        let currentChart = null;
+        const ctx = document.getElementById('analyticsChart');
+
+        // Chart data preparation
+        const chartData = {
+            orders: {
+                labels: analyticsData.dailyOrders ? analyticsData.dailyOrders.map(d => {
+                    const date = new Date(d._id);
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }) : [],
+                data: analyticsData.dailyOrders ? analyticsData.dailyOrders.map(d => d.count) : [],
+                label: 'Daily Orders',
+                color: '#d6a45a'
+            },
+            revenue: {
+                labels: analyticsData.dailyOrders ? analyticsData.dailyOrders.map(d => {
+                    const date = new Date(d._id);
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }) : [],
+                data: analyticsData.dailyOrders ? analyticsData.dailyOrders.map(d => d.revenue) : [],
+                label: 'Daily Revenue (₹)',
+                color: '#e3b873'
+            },
+            users: {
+                labels: analyticsData.userRegistrationTrend ? analyticsData.userRegistrationTrend.map(d => {
+                    const date = new Date(d._id);
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }) : [],
+                data: analyticsData.userRegistrationTrend ? analyticsData.userRegistrationTrend.map(d => d.count) : [],
+                label: 'New Users',
+                color: '#f59e0b'
+            }
+        };
+
+        // Show chart function
+        function showChart(type) {
+            // Update active button
+            document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Destroy existing chart
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            const data = chartData[type];
+            
+            // Create new chart
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: data.label,
+                        data: data.data,
+                        borderColor: data.color,
+                        backgroundColor: data.color + '20',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: data.color,
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(214, 164, 90, 0.1)',
+                                borderColor: 'rgba(214, 164, 90, 0.3)'
+                            },
+                            ticks: {
+                                color: '#f5f2ee'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(214, 164, 90, 0.1)',
+                                borderColor: 'rgba(214, 164, 90, 0.3)'
+                            },
+                            ticks: {
+                                color: '#f5f2ee',
+                                callback: function(value) {
+                                    if (type === 'revenue') {
+                                        return '₹' + value.toLocaleString();
+                                    }
+                                    return value;
+                                }
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverBackgroundColor: data.color
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize with orders chart
+        document.addEventListener('DOMContentLoaded', function() {
+            if (ctx && analyticsData.dailyOrders) {
+                showChart('orders');
+            }
+        });
+
+        // Real-time updates (every 30 seconds)
+        setInterval(async function() {
+            try {
+                const response = await fetch('/api/admin/analytics-update');
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update stat cards
+                    if (data.totalUsers !== undefined) {
+                        document.getElementById('totalUsers').textContent = data.totalUsers.toLocaleString();
+                    }
+                    if (data.totalOrders !== undefined) {
+                        document.getElementById('totalOrders').textContent = data.totalOrders.toLocaleString();
+                    }
+                    if (data.totalRevenue !== undefined) {
+                        document.getElementById('totalRevenue').textContent = '₹' + data.totalRevenue.toLocaleString();
+                    }
+                    if (data.totalWorkshopRegistrations !== undefined) {
+                        document.getElementById('workshopRegistrations').textContent = data.totalWorkshopRegistrations.toLocaleString();
+                    }
+                    
+                    console.log('📊 Analytics updated in real-time');
+                }
+            } catch (error) {
+                console.log('Real-time update failed:', error.message);
+            }
+        }, 30000); // Update every 30 seconds
+
+        // Export functionality
+        function exportAnalytics() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                analytics: analyticsData
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `rabuste-analytics-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Add export button functionality
+        document.querySelector('.header').insertAdjacentHTML('beforeend', `
+            <button onclick="exportAnalytics()" class="back-btn" style="margin-left: 12px;">
+                <i class="fas fa-download"></i>
+                Export Data
+            </button>
+        `);
+    </script>
+</body>
+</html>

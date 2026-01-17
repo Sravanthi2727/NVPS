@@ -5,6 +5,41 @@
   --muted: rgba(245, 242, 238, 0.7);
 }
 
+/* ================= CUSTOM SCROLLBAR ================= */
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-soft) 50%, #b8860b 100%);
+  border-radius: 6px;
+  border: 2px solid #000000;
+  box-shadow: 0 0 8px rgba(214, 164, 90, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--gold-soft) 0%, var(--gold) 50%, var(--gold-soft) 100%);
+  box-shadow: 0 0 12px rgba(214, 164, 90, 0.5);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--gold);
+  box-shadow: 0 0 15px rgba(214, 164, 90, 0.7);
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) #000000;
+}
+
 /* ================= GLOBAL ================= */
 
 * {
@@ -750,26 +785,6 @@ section {
   position: relative;
   padding: 6px 4px;
   transition: color 0.25s ease;
-}
-
-/* Gold underline hover */
-.navbar-nav .nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  width: 0%;
-  height: 2px;
-  background: var(--gold);
-  transition: width 0.3s ease;
-}
-
-.navbar-nav .nav-link:hover {
-  color: var(--gold) !important;
-}
-
-.navbar-nav .nav-link:hover::after {
-  width: 100%;
 }
 
 /* Franchise pill button */

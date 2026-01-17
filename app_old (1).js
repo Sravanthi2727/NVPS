@@ -1,6 +1,6 @@
 /**
  * Rabuste Coffee Application - MVC Structure
- * Main application file with proper MVC organization (includes Gemini chatbot).
+ * Main application file with proper MVC organization
  */
 
 const express = require("express");
@@ -8,90 +8,163 @@ const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const path = require("path");
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const compression = require('compression');
 const helmet = require('helmet');
+
 require("dotenv").config();
+const path = require("path");
 
 // Database connection
-const connectDB = require("./config/database");
-const User = require("./models/User");
-const MenuItem = require("./models/MenuItem");
-const Workshop = require("./models/Workshop");
-const WorkshopRegistration = require("./models/WorkshopRegistration");
-const Artwork = require("./models/Artwork");
-const Order = require("./models/Order");
-const Franchise = require("./models/Franchise");
+const connectDB = require('./config/database');
+const User = require('./models/User');
+const MenuItem = require('./models/MenuItem');
+const Artwork = require('./models/Artwork');
+const WorkshopModel = require('./models/Workshop');
+const WorkshopRegistration = require('./models/WorkshopRegistration');
 
-// Import middleware
-const { getUserData } = require('./middleware/auth');
+// Configure multer for file uploads
+const multer = require('multer');
+const fs = require('fs');
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'public/uploads/artworks');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  },
+  fileFilter: function (req, file, cb) {
+    // Allow only image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'), false);
+    }
+  }
+});
 
 // Connect to database
 connectDB();
 
 const app = express();
 
-// Passport configuration
+// Performance middleware
+app.use(compression()); // Compress all responses
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP for development
+  crossOriginEmbedderPolicy: false
+}));
+
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+
+ 
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Database Models
+const Wishlist = require('./models/Wishlist');
+const Cart = require('./models/Cart');
+const Request = require('./models/Request');
+const Order = require('./models/Order');
+const Franchise = require('./models/Franchise');
+
+// Controllers
+const adminController = require('./src/controllers/adminController');
+
+// Routes
+const adminRoutes = require('./src/routes/adminRoutes');
+
+// Admin middleware
+function ensureAdmin(req, res, next) {
+  // Simple admin check - in production, implement proper admin authentication
+  // For now, just check if user is authenticated
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ success: false, message: 'Admin access required' });
+}
+
 passport.serializeUser((user, done) => {
-  console.log("Serializing user:", user.email, "ID:", user._id || user.id);
-  done(null, user._id || user.id);
+  console.log('Serializing user:', user.email || user.googleId);
+  done(null, user);
 });
 
-passport.deserializeUser(async (id, done) => {
-  try {
-    console.log("Deserializing user with ID:", id);
-    const user = await User.findById(id);
-    if (user) {
-      console.log("User deserialized:", user.email);
-    } else {
-      console.log("User not found for ID:", id);
-    }
-    done(null, user);
-  } catch (error) {
-    console.error("Deserialization error:", error);
-    done(error, null);
-  }
+passport.deserializeUser((user, done) => {
+  console.log('Deserializing user:', user.email || user.googleId);
+  done(null, user);
 });
+ 
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log("Google OAuth profile received:", {
-          id: profile.id,
-          displayName: profile.displayName,
-          emails: profile.emails ? profile.emails.map((e) => e.value) : "No emails"
-        });
-
-        if (!profile.emails || !profile.emails[0]) {
-          console.error("No email found in Google profile");
-          return done(new Error("No email found in Google profile"), null);
+        // Wait for database connection
+        if (mongoose.connection.readyState !== 1) {
+          console.log('Database not connected, waiting...');
+          await new Promise(resolve => setTimeout(resolve, 2000));
         }
 
+        // Check again after waiting
+        if (mongoose.connection.readyState !== 1) {
+          return done(new Error('Database not connected'), null);
+        }
+
+        console.log('Google OAuth profile received:', {
+          id: profile.id,
+          displayName: profile.displayName,
+          emails: profile.emails ? profile.emails.map(e => e.value) : 'No emails'
+        });
+        
+        if (!profile.emails || !profile.emails[0]) {
+          console.error('No email found in Google profile');
+          return done(new Error('No email found in Google profile'), null);
+        }
+        
         const email = profile.emails[0].value.toLowerCase();
-        console.log("Looking for user with email:", email);
-
-        let user = await User.findOne({ email: email });
-
+        console.log('Looking for user with email:', email);
+        
+        let user = await User.findOne({ googleId: profile.id });
+        
         if (user) {
-          console.log("Existing user found:", user.email);
-          if (!user.isOAuthUser) {
-            user.isOAuthUser = true;
-            await user.save();
-            console.log("Updated user to OAuth user");
-          }
-          console.log("Returning user to passport:", user.email);
+          console.log('Existing user found:', user.email);
+          console.log('Returning user to passport:', user.email);
           return done(null, user);
         } else {
-          console.log("Creating new user from Google profile");
+          // Check if user exists with same email but different googleId
+          const existingEmailUser = await User.findOne({ email: email });
+          if (existingEmailUser) {
+            console.log('User with same email exists but different googleId');
+            return done(new Error('An account with this email already exists'), null);
+          }
+          console.log('Creating new user from Google profile');
+          // Create new user from Google profile with consistent field names
           user = new User({
-            name: profile.displayName || "User",
+            googleId: profile.id,
+            name: profile.displayName || 'User',
             email: email,
             isOAuthUser: true,
             cart: [],
@@ -99,12 +172,12 @@ passport.use(
             registered: []
           });
           await user.save();
-          console.log("New user created and saved:", user.email);
+          console.log('New user created and saved:', user.email);
           return done(null, user);
         }
       } catch (error) {
-        console.error("Google OAuth error:", error);
-        console.error("Error details:", {
+        console.error('Google OAuth error:', error);
+        console.error('Error details:', {
           message: error.message,
           stack: error.stack,
           name: error.name
@@ -137,13 +210,13 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static("public"));
 app.use(expressLayouts);
 
 app.set("layout", "layouts/boilerplate");
 
-// Serve static files from public directory
-app.use(express.static(path.join(__dirname, "public")));
+// Import auth middleware
+const { getUserData } = require('./middleware/auth');
+const { viewCacheMiddleware, cacheMiddleware } = require('./middleware/cache');
 
 // Middleware to make variables available to all views
 app.use((req, res, next) => {
@@ -152,226 +225,495 @@ app.use((req, res, next) => {
   next();
 });
 
-// Add user data middleware (must be before routes)
+// Add user data middleware after passport setup
 app.use(getUserData);
 
-// Import Routes
-const homeRoutes = require("./src/routes/homeRoutes");
-const authRoutes = require("./src/routes/authRoutes");
-const adminRoutes = require("./src/routes/adminRoutes");
-const geminiRoutes = require("./gemini/gemini.route");
-const philosophyRoutes = require("./src/routes/philosophyRoutes");
-const workshopRoutes = require("./src/routes/workshopRoutes");
-const franchiseRoutes = require("./src/routes/franchiseRoutes");
+// Mount admin routes
+app.use('/admin', adminRoutes);
 
-// Menu Management - Image Upload (must be before admin routes)
-const multer = require('multer');
-
-// Configure multer for image upload
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/uploads/menu/');
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'menu-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: function (req, file, cb) {
-    const filetypes = /jpeg|jpg|png|gif/;
-    const mimetype = filetypes.test(file.mimetype);
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    
-    if (mimetype && extname) {
-      return cb(null, true);
-    }
-    cb(new Error('Only image files are allowed!'));
-  }
-});
-
-// Image upload endpoint
-app.post('/api/upload-image', (req, res) => {
-  upload.single('image')(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      console.error('Multer error:', err);
-      return res.status(400).json({ success: false, error: err.message });
-    } else if (err) {
-      console.error('Upload error:', err);
-      return res.status(500).json({ success: false, error: err.message });
-    }
-    
-    try {
-      if (!req.file) {
-        return res.status(400).json({ success: false, error: 'No file uploaded' });
-      }
-      
-      const imageUrl = '/uploads/menu/' + req.file.filename;
-      console.log('Image uploaded successfully:', imageUrl);
-      res.json({ success: true, imageUrl: imageUrl });
-    } catch (error) {
-      console.error('Error processing upload:', error);
-      res.status(500).json({ success: false, error: error.message });
-    }
+// Home route - No cache because of user-specific content
+app.get("/", (req, res) => {
+  res.render("home", {
+    title: "Rabuste Coffee - Premium Robusta Coffee & Art",
+    description:
+      "Experience the bold taste of premium Robusta coffee in our art-filled café. Join us for workshops, exhibitions, and the best coffee in town.",
+    currentPage: "/",
+    keywords:
+      "premium robusta coffee, art café, coffee shop, coffee and art, Rabuste Coffee",
+    ogTitle: "Rabuste Coffee - Premium Robusta Coffee & Art",
+    ogDescription:
+      "Experience the bold taste of premium Robusta coffee in our art-filled café. Join us for workshops, exhibitions, and the best coffee in town.",
+    ogType: "website",
+    ogUrl: "https://rabustecoffee.com",
+    ogImage: "/assets/coffee-bg.jpeg",
+    canonicalUrl: "https://rabustecoffee.com",
+    user: req.user || null,
+    currentUser: req.user || null
   });
 });
 
-// Admin middleware
-function ensureAdmin(req, res, next) {
-  // For now, just allow all requests to admin routes for testing
-  return next();
-  
-  // Original code (commented out for testing):
-  // if (req.isAuthenticated()) {
-  //   return next();
-  // }
-  // res.redirect('/signin');
-}
-
-// Use Routes - Register API routes FIRST
-console.log("🤖 Registering Gemini routes at /api/gemini");
-app.use("/api/gemini", geminiRoutes);
-console.log("✅ Gemini routes registered");
-
-// Debug analytics data
-app.get('/admin/analytics-debug', async (req, res) => {
-  try {
-    console.log('🔍 Analytics debug route called');
-    const User = require('./models/User');
-    const Order = require('./models/Order');
-    
-    const debugData = {
-      totalUsers: await User.countDocuments(),
-      totalOrders: await Order.countDocuments(),
-      sampleUser: await User.findOne().select('name email'),
-      sampleOrder: await Order.findOne().select('customerName totalAmount status'),
-      timestamp: new Date()
-    };
-    
-    console.log('📊 Debug data:', debugData);
-    res.json(debugData);
-  } catch (error) {
-    console.error('❌ Debug error:', error);
-    res.json({ error: error.message });
-  }
+// Loading route - For showing loading screen during page transitions
+app.get("/loading", (req, res) => {
+  res.render("loading", {
+    title: "Loading... | Rabuste Coffee",
+    description: "Please wait while we prepare your Rabuste Coffee experience.",
+    currentPage: "/loading"
+  });
 });
 
-// Register admin routes FIRST to avoid conflicts
-console.log("🔧 Registering admin routes at /admin");
-app.use("/admin", adminRoutes);
-console.log("✅ Admin routes registered");
-
-// Test admin route directly in app.js
-app.get('/admin/direct-test', (req, res) => {
-  console.log('🧪 Direct admin test route called');
-  res.json({ message: 'Direct admin route working!', timestamp: new Date() });
-});
-
-// Debug analytics data
-app.get('/admin/analytics-debug', async (req, res) => {
+// Menu route - Dynamic
+app.get('/menu', async (req, res) => {
   try {
-    console.log('🔍 Analytics debug route called');
-    const User = require('./models/User');
-    const Order = require('./models/Order');
+    console.log('Menu route called, database state:', mongoose.connection.readyState);
     
-    const debugData = {
-      totalUsers: await User.countDocuments(),
-      totalOrders: await Order.countDocuments(),
-      sampleUser: await User.findOne().select('name email'),
-      sampleOrder: await Order.findOne().select('customerName totalAmount status'),
-      timestamp: new Date()
-    };
+    const menuItems = await MenuItem.find({ isAvailable: true })
+      .sort({ category: 1, subCategory: 1, displayOrder: 1 });
     
-    console.log('📊 Debug data:', debugData);
-    res.json(debugData);
-  } catch (error) {
-    console.error('❌ Debug error:', error);
-    res.json({ error: error.message });
-  }
-});
-
-// WORKING GALLERY ROUTE - Replace homeController
-app.get('/gallery', async (req, res) => {
-  try {
-    console.log('🎨 DIRECT GALLERY ROUTE CALLED');
-    const Artwork = require('./models/Artwork');
-    const artworks = await Artwork.find({ isAvailable: true })
-      .sort({ category: 1, displayOrder: 1 });
-    console.log('🎨 DIRECT: Found', artworks.length, 'artworks');
+    console.log('Found menu items:', menuItems.length);
     
-    // Get purchased art IDs for current user (if logged in)
-    let purchasedArtIds = [];
-    if (req.isAuthenticated && req.isAuthenticated() && req.user) {
-      try {
-        const Order = require('./models/Order');
-        const completedArtOrders = await Order.find({
-          userId: req.user._id || req.user.id,
-          orderType: 'art',
-          status: 'completed'
-        });
-        
-        completedArtOrders.forEach(order => {
-          order.items.forEach(item => {
-            if (item.type === 'art' && item.itemId) {
-              purchasedArtIds.push(String(item.itemId));
-            }
-          });
-        });
-        
-        // Remove duplicates
-        purchasedArtIds = [...new Set(purchasedArtIds)];
-        console.log('🛒 DIRECT: Found', purchasedArtIds.length, 'purchased art items for user');
-      } catch (orderError) {
-        console.log('⚠️ DIRECT: Could not fetch purchased art items:', orderError.message);
+    // Group items by category and subcategory
+    const groupedMenu = {};
+    menuItems.forEach(item => {
+      if (!groupedMenu[item.category]) {
+        groupedMenu[item.category] = {};
       }
+      if (!groupedMenu[item.category][item.subCategory]) {
+        groupedMenu[item.category][item.subCategory] = [];
+      }
+      groupedMenu[item.category][item.subCategory].push(item);
+    });
+
+    console.log('Grouped menu structure:', Object.keys(groupedMenu));
+
+    // Get AI recommendations based on user's cart
+    let recommendedItems = [];
+    try {
+      // Check if user is logged in and has cart items
+      if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+        const User = require('./models/User');
+        const user = await User.findById(req.user._id || req.user.id);
+        
+        if (user && user.cart && user.cart.length > 0) {
+          console.log('🛒 User has', user.cart.length, 'items in cart');
+          
+          // Get last added item from cart
+          const lastCartItem = user.cart[user.cart.length - 1];
+          console.log('🤖 Getting AI recommendations for:', lastCartItem.name);
+          
+          try {
+            const aiUrl = `https://nvps-ixb0.onrender.com/recommend?drink=${encodeURIComponent(lastCartItem.name)}`;
+            const aiResponse = await fetch(aiUrl);
+            
+            if (aiResponse.ok) {
+              const aiData = await aiResponse.json();
+              console.log('AI response:', aiData);
+              
+              if (aiData.recommendations && aiData.recommendations.length > 0) {
+                // Get recommended items from database based on AI suggestions
+                recommendedItems = await MenuItem.find({
+                  name: { $in: aiData.recommendations },
+                  isAvailable: true
+                }).limit(6);
+                
+                console.log('✨ Found', recommendedItems.length, 'AI-based recommendations');
+              }
+            }
+          } catch (aiError) {
+            console.log('AI API error:', aiError.message);
+          }
+        }
+      }
+      
+      // If no AI recommendations (empty cart or AI failed), show random popular items
+      if (recommendedItems.length === 0) {
+        console.log('📊 No AI recommendations, showing popular items');
+        recommendedItems = await MenuItem.aggregate([
+          { $match: { isAvailable: true } },
+          { $sample: { size: 6 } }
+        ]);
+        console.log('✨ Loaded', recommendedItems.length, 'popular items');
+      }
+    } catch (recError) {
+      console.log('Error loading recommendations:', recError.message);
     }
-    
-    console.log('🎨 DIRECT: Artworks by category:', artworks.reduce((acc, art) => {
-      acc[art.category] = (acc[art.category] || 0) + 1;
-      return acc;
-    }, {}));
-    
-    res.render('gallery', {
-      title: 'Gallery - Rabuste Coffee',
-      description: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
-      currentPage: '/gallery',
-      keywords: 'art gallery, coffee shop art, artwork for sale, Rabuste Coffee gallery',
-      ogTitle: 'Gallery - Rabuste Coffee',
-      ogDescription: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+
+    res.render('menu', {
+      title: 'Our Menu - Rabuste Coffee',
+      description: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
+      currentPage: '/menu',
+      keywords: 'coffee menu, robusta coffee, café menu, coffee drinks, food menu',
+      ogTitle: 'Our Menu - Rabuste Coffee',
+      ogDescription: 'Explore our premium Robusta coffee menu, artisanal drinks, and delicious food pairings at Rabuste Coffee.',
       ogType: 'website',
-      ogUrl: 'https://rabustecoffee.com/gallery',
+      ogUrl: 'https://rabustecoffee.com/menu',
       ogImage: '/assets/coffee-bg.jpeg',
-      canonicalUrl: 'https://rabustecoffee.com/gallery',
-      artworks: artworks,
-      purchasedArtIds: purchasedArtIds,
+      canonicalUrl: 'https://rabustecoffee.com/menu',
+      menuItems: groupedMenu,
+      recommendedItems: recommendedItems,
       isLoggedIn: req.isAuthenticated ? req.isAuthenticated() : false,
       currentUser: req.user || null
     });
   } catch (error) {
-    console.error('🎨 DIRECT GALLERY ERROR:', error);
+    console.error('Menu route error:', error);
+    res.status(500).send('Error loading menu: ' + error.message);
+  }
+});
+
+// Gallery route - Dynamic
+app.get('/gallery', async (req, res) => {
+  try {
+    console.log('Gallery route called, database state:', mongoose.connection.readyState);
+    
+    const artworks = await Artwork.find({ isAvailable: true })
+      .sort({ displayOrder: 1, createdAt: -1 });
+    
+    console.log('Found artworks:', artworks.length);
+    
+    // Get ALL purchased art IDs (from all completed orders, not just current user)
+    let purchasedArtIds = [];
+    try {
+      const completedArtOrders = await Order.find({
+        orderType: 'art',
+        status: 'completed'
+      });
+      
+      completedArtOrders.forEach(order => {
+        order.items.forEach(item => {
+          if (item.type === 'art' && item.itemId) {
+            purchasedArtIds.push(String(item.itemId));
+          }
+        });
+      });
+      
+      purchasedArtIds = [...new Set(purchasedArtIds)];
+      console.log(`Found ${purchasedArtIds.length} purchased art items (all users)`);
+    } catch (error) {
+      console.error('Error fetching purchased arts:', error);
+    }
+    
     res.render('gallery', {
-      title: 'Gallery - Rabuste Coffee',
-      description: 'Browse our curated collection of artwork available for purchase at Rabuste Coffee.',
+      title: 'Art Gallery - Rabuste Coffee',
+      description: 'Discover the vibrant art collection at Rabuste Coffee, where coffee culture meets contemporary art.',
       currentPage: '/gallery',
-      artworks: [],
-      purchasedArtIds: [],
-      isLoggedIn: false,
-      currentUser: null
+      keywords: 'art gallery, coffee art, contemporary art, café art collection',
+      ogTitle: 'Art Gallery - Rabuste Coffee',
+      ogDescription: 'Discover the vibrant art collection at Rabuste Coffee, where coffee culture meets contemporary art.',
+      ogType: 'website',
+      ogUrl: 'https://rabustecoffee.com/gallery',
+      ogImage: '/assets/photowall.jpeg',
+      canonicalUrl: 'https://rabustecoffee.com/gallery',
+      artworks: artworks,
+      purchasedArtIds: purchasedArtIds
+    });
+  } catch (error) {
+    console.error('Gallery route error:', error);
+    res.status(500).send('Error loading gallery: ' + error.message);
+  }
+});
+
+// API route for individual artwork details
+app.get('/api/artwork/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('Looking for artwork with ID:', id);
+    
+    let artwork;
+    
+    // Try to find by ObjectId first
+    try {
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        artwork = await Artwork.findById(id);
+        console.log('Tried ObjectId lookup, found:', !!artwork);
+      }
+    } catch (error) {
+      console.log('ObjectId lookup failed:', error.message);
+    }
+    
+    // If not found, try to find by displayOrder (for numeric IDs)
+    if (!artwork && !isNaN(parseInt(id))) {
+      artwork = await Artwork.findOne({ displayOrder: parseInt(id) });
+      console.log('Tried displayOrder lookup, found:', !!artwork);
+    }
+    
+    // If still not found, try to find by title as fallback
+    if (!artwork) {
+      artwork = await Artwork.findOne({ title: { $regex: id, $options: 'i' } });
+      console.log('Tried title lookup, found:', !!artwork);
+    }
+    
+    if (!artwork) {
+      console.log('Artwork not found for ID:', id);
+      return res.status(404).json({ error: 'Artwork not found' });
+    }
+    
+    console.log('Found artwork:', artwork.title, 'ID:', artwork._id);
+    res.json(artwork);
+  } catch (error) {
+    console.error('Error fetching artwork details:', error);
+    res.status(500).json({ error: 'Error fetching artwork details' });
+  }
+});
+
+// About Us route
+app.get("/about", (req, res) => {
+  res.render("about", {
+    title: "About Us - Rabuste Coffee",
+    description:
+      "Learn about Rabuste Coffee - our story, leadership team, and our passion for Robusta coffee and art.",
+    currentPage: "/about",
+    keywords:
+      "about Rabuste Coffee, our story, coffee passion, Robusta coffee, café team",
+    ogTitle: "About Us - Rabuste Coffee",
+    ogDescription:
+      "Learn about Rabuste Coffee - our story, leadership team, and our passion for Robusta coffee and art.",
+    ogType: "website",
+    ogUrl: "https://rabustecoffee.com/about",
+    ogImage: "/assets/coffee-bg.jpeg",
+    canonicalUrl: "https://rabustecoffee.com/about",
+    additionalCSS: '<link rel="stylesheet" href="/css/about.css">',
+    additionalJS: '<script src="/js/about-animations.js"></script>',
+  });
+});
+
+// Franchise route
+app.get("/franchise", (req, res) => {
+  res.render("franchise", {
+    title: "Franchise Opportunities - Partner with Rabuste Coffee",
+    description:
+      "Join the Rabuste Coffee franchise revolution. Premium Robusta-only café concept with comprehensive support and proven business model. Investment range ₹75K-₹150K.",
+    currentPage: "/franchise",
+    keywords:
+      "coffee franchise, robusta coffee franchise, café franchise opportunities, premium coffee business, franchise investment, coffee shop franchise",
+    ogTitle: "Franchise Opportunities - Partner with Rabuste Coffee",
+    ogDescription:
+      "Join the bold coffee revolution. Premium Robusta-only franchise with proven business model, comprehensive support, and strong ROI potential.",
+    ogType: "website",
+    ogUrl: "https://rabustecoffee.com/franchise",
+    ogImage: "/assets/coffee-bg.jpeg",
+    canonicalUrl: "https://rabustecoffee.com/franchise",
+    investmentRanges: [
+      "₹50K - ₹75K",
+      "₹75K - ₹100K",
+      "₹100K - ₹150K",
+      "₹150K - ₹200K",
+      "₹200K+",
+    ],
+    isLoggedIn: res.locals.isLoggedIn || false,
+    currentUser: res.locals.currentUser || null
+  });
+});
+
+// Franchise application submission
+app.post("/franchise", ensureAuthenticated, async (req, res) => {
+  try {
+    const {
+      fullName,
+      phoneNumber,
+      city,
+      investmentRange,
+      expectedTimeline,
+      businessExperience
+    } = req.body;
+
+    // Use the authenticated user's email
+    const email = req.user.email;
+
+    // Validate required fields
+    if (!fullName || !phoneNumber || !city || !investmentRange || !expectedTimeline) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please fill in all required fields'
+      });
+    }
+
+    // Check if application already exists for this user
+    const existingApplication = await Franchise.findOne({ 
+      $or: [
+        { userId: req.user._id || req.user.id },
+        { email: email.toLowerCase() }
+      ]
+    });
+    
+    if (existingApplication) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have already submitted a franchise application. Check your dashboard for status updates.'
+      });
+    }
+
+    // Create new franchise application
+    const franchiseApplication = new Franchise({
+      userId: req.user._id || req.user.id,
+      fullName: fullName.trim(),
+      email: email.toLowerCase().trim(),
+      phoneNumber: phoneNumber.trim(),
+      city: city.trim(),
+      investmentRange,
+      expectedTimeline,
+      businessExperience: businessExperience ? businessExperience.trim() : '',
+      status: 'pending'
+    });
+
+    await franchiseApplication.save();
+
+    console.log('New franchise application submitted:', {
+      id: franchiseApplication._id,
+      name: franchiseApplication.fullName,
+      email: franchiseApplication.email,
+      city: franchiseApplication.city,
+      investmentRange: franchiseApplication.investmentRange,
+      userId: franchiseApplication.userId
+    });
+
+    res.json({
+      success: true,
+      message: 'Your franchise application has been submitted successfully! You can track its status in your dashboard.',
+      applicationId: franchiseApplication._id
+    });
+
+  } catch (error) {
+    console.error('Franchise application error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'An error occurred while submitting your application. Please try again.'
     });
   }
 });
 
-app.use("/", homeRoutes);
-app.use("/", philosophyRoutes);
-app.use("/", workshopRoutes);
-app.use("/", franchiseRoutes);
-app.use("/", authRoutes);
+app.get("/workshops", async (req, res) => {
+  console.log("Workshops route accessed - fetching dynamic data from database");
+  
+  try {
+    let upcomingWorkshops = [];
+    let pastWorkshops = [];
+    let teamMembers = [];
 
+    // Always try to fetch from database first - make it truly dynamic
+    if (mongoose.connection.readyState === 1) {
+      console.log("Database connected, fetching dynamic workshop data");
+      
+      try {
+        // Fetch workshops from database - dynamic data only
+        upcomingWorkshops = await WorkshopModel.find({ 
+          type: 'upcoming', 
+          isActive: true,
+          date: { $gte: new Date() } // Only show future workshops
+        }).sort({ date: 1, displayOrder: 1 });
+        
+        pastWorkshops = await WorkshopModel.find({ 
+          type: 'past', 
+          isActive: true 
+        }).sort({ date: -1, displayOrder: 1 });
 
+        // Fetch team members from database if TeamModel exists
+        try {
+          const TeamModel = require('./models/Team');
+          teamMembers = await TeamModel.find({ 
+            isActive: true 
+          }).sort({ displayOrder: 1 });
+        } catch (teamError) {
+          console.log("Team model not available, skipping team members");
+          teamMembers = [];
+        }
 
+        console.log("Dynamic database results - upcoming:", upcomingWorkshops.length, "past:", pastWorkshops.length, "team:", teamMembers.length);
+
+        // Convert Mongoose documents to plain objects to ensure _id is properly serialized
+        const ensureId = (doc) => {
+          const plain = doc?.toObject ? doc.toObject() : doc || {};
+          if (plain._id) {
+            plain._id = String(plain._id);
+          } else if (plain.id) {
+            plain._id = String(plain.id);
+          } else {
+            // Fallback: generate an id so front-end registration never breaks
+            console.warn('Workshop missing _id, generating temporary ID:', plain.title || 'Unknown');
+            plain._id = new mongoose.Types.ObjectId().toString();
+          }
+          // Ensure _id is never empty or undefined
+          if (!plain._id || plain._id === 'undefined' || plain._id === 'null') {
+            console.error('Workshop _id is invalid after processing:', plain.title || 'Unknown', plain._id);
+            plain._id = new mongoose.Types.ObjectId().toString();
+          }
+          return plain;
+        };
+
+        upcomingWorkshops = upcomingWorkshops.map(ensureId);
+        pastWorkshops = pastWorkshops.map(ensureId);
+        
+        // Debug: Log first workshop to verify _id is set
+        if (upcomingWorkshops.length > 0) {
+          console.log('Sample upcoming workshop:', {
+            title: upcomingWorkshops[0].title,
+            _id: upcomingWorkshops[0]._id,
+            _idType: typeof upcomingWorkshops[0]._id,
+            _idLength: upcomingWorkshops[0]._id ? upcomingWorkshops[0]._id.length : 0
+          });
+        }
+
+      } catch (dbError) {
+        console.error('Database query error:', dbError);
+        // On error, return empty arrays - no static fallback to force dynamic data
+        upcomingWorkshops = [];
+        pastWorkshops = [];
+        teamMembers = [];
+      }
+    } else {
+      console.log("Database not connected - returning empty arrays. Please ensure database is connected for dynamic workshop data.");
+      // Return empty arrays if database is not connected - no static fallback
+      upcomingWorkshops = [];
+      pastWorkshops = [];
+      teamMembers = [];
+    }
+
+    res.render("workshops", {
+      title: "Workshops - Rabuste Coffee",
+      description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
+      currentPage: "/workshops",
+      upcomingWorkshops: upcomingWorkshops,
+      pastWorkshops: pastWorkshops,
+      teamMembers: teamMembers,
+      additionalCSS: `
+        <link rel="stylesheet" href="/css/workshops.css">
+        <link rel="stylesheet" href="/css/gallery.css">
+      `,
+      additionalJS: `
+        <script src="/js/workshops.js"></script>
+      `
+    });
+  } catch (error) {
+    console.error('Workshops route error:', error);
+    // On any error, return empty arrays - truly dynamic approach
+    res.render("workshops", {
+      title: "Workshops - Rabuste Coffee",
+      description: "Join our creative workshops at Rabuste Coffee - where creativity meets caffeine.",
+      currentPage: "/workshops",
+      upcomingWorkshops: [],
+      pastWorkshops: [],
+      teamMembers: [],
+      additionalCSS: `
+        <link rel="stylesheet" href="/css/workshops.css">
+        <link rel="stylesheet" href="/css/gallery.css">
+      `,
+      additionalJS: `
+        <script src="/js/workshops.js"></script>
+      `
+    });
+  }
+});
+
+app.get("/philosophy", (req, res) => {
+  res.render("philosophy", {
+    title: "The Robusta Philosophy Experience | Rabuste",
+    currentPage: "/philosophy",
+    additionalCSS: `
+      <link rel="stylesheet" href="/css/philosophy.css">
+    `,
+    additionalJS: `
+      <script src="/js/philosophy.js"></script>
+    `
+  });
+});
 
 app.get("/signin", (req, res) => {
   let error = null;
@@ -544,6 +886,62 @@ app.get('/user-dashboard', ensureAuthenticated, (req, res) => {
 
 // API Routes for dynamic data
 
+// Test endpoint to add sample data
+app.post('/api/debug/add-test-data', ensureAuthenticated, async (req, res) => {
+  try {
+    const User = require('./models/User');
+    const user = await User.findById(req.user._id || req.user.id);
+    
+    if (!user) {
+      return res.json({ error: 'User not found' });
+    }
+    
+    // Add test cart items (using simple string IDs for testing)
+    const testCartItem = {
+      itemId: '507f1f77bcf86cd799439011',
+      name: 'Test Coffee',
+      price: 150,
+      image: '/assets/menu_images/coffee.jpg',
+      quantity: 2,
+      type: 'menu'
+    };
+    
+    const testArtItem = {
+      itemId: '507f1f77bcf86cd799439012',
+      name: 'Test Artwork by Artist',
+      price: 5000,
+      image: '/assets/gallery/test-art.jpg',
+      quantity: 1,
+      type: 'art'
+    };
+    
+    // Add test wishlist items
+    const testWishlistItem = {
+      itemId: '507f1f77bcf86cd799439013',
+      name: 'Test Wishlist Item',
+      price: 200,
+      image: '/assets/menu_images/test.jpg'
+    };
+    
+    // Clear existing data and add test data
+    user.cart = [testCartItem, testArtItem];
+    user.wishlist = [testWishlistItem];
+    
+    user.markModified('cart');
+    user.markModified('wishlist');
+    await user.save();
+    
+    res.json({
+      success: true,
+      message: 'Test data added',
+      cartCount: user.cart.length,
+      wishlistCount: user.wishlist.length
+    });
+  } catch (error) {
+    console.error('Error adding test data:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Debug endpoint to check user data
 app.get('/api/debug/user', ensureAuthenticated, async (req, res) => {
@@ -2323,30 +2721,6 @@ app.get('/api/debug/menu-items', async (req, res) => {
   }
 });
 
-// Debug: Check artworks in database
-app.get('/api/debug/artworks', async (req, res) => {
-  try {
-    const Artwork = require('./models/Artwork');
-    const artworks = await Artwork.find();
-    console.log('Total artworks in database:', artworks.length);
-    res.json({
-      total: artworks.length,
-      items: artworks.map(item => ({
-        id: item._id,
-        title: item.title,
-        artist: item.artist,
-        category: item.category,
-        price: item.price,
-        isAvailable: item.isAvailable,
-        image: item.image
-      }))
-    });
-  } catch (error) {
-    console.error('Error fetching artworks:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Debug: Get all orders (temporary for testing)
 app.get('/api/debug/orders', async (req, res) => {
   try {
@@ -2372,78 +2746,6 @@ app.get('/api/debug/orders', async (req, res) => {
 // Test endpoint to check if routes are working
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!', timestamp: new Date() });
-});
-
-// Menu Management API Routes
-// Get all menu items
-app.get('/api/menu-items', async (req, res) => {
-  try {
-    const menuItems = await MenuItem.find().sort({ category: 1, name: 1 });
-    res.json({ success: true, items: menuItems });
-  } catch (error) {
-    console.error('Error fetching menu items:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Add new menu item
-app.post('/api/menu-items', ensureAdmin, async (req, res) => {
-  try {
-    const { category, name, description, price, image, available } = req.body;
-    
-    const newItem = new MenuItem({
-      category,
-      name,
-      description,
-      price,
-      image,
-      available: available !== false
-    });
-    
-    await newItem.save();
-    res.json({ success: true, item: newItem });
-  } catch (error) {
-    console.error('Error adding menu item:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Update menu item
-app.put('/api/menu-items/:id', ensureAdmin, async (req, res) => {
-  try {
-    const { category, name, description, price, image, available } = req.body;
-    
-    const updatedItem = await MenuItem.findByIdAndUpdate(
-      req.params.id,
-      { category, name, description, price, image, available },
-      { new: true }
-    );
-    
-    if (!updatedItem) {
-      return res.status(404).json({ success: false, error: 'Item not found' });
-    }
-    
-    res.json({ success: true, item: updatedItem });
-  } catch (error) {
-    console.error('Error updating menu item:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Delete menu item
-app.delete('/api/menu-items/:id', ensureAdmin, async (req, res) => {
-  try {
-    const deletedItem = await MenuItem.findByIdAndDelete(req.params.id);
-    
-    if (!deletedItem) {
-      return res.status(404).json({ success: false, error: 'Item not found' });
-    }
-    
-    res.json({ success: true, message: 'Item deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting menu item:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
 });
 
 // Debug: Create test franchise application
@@ -2629,51 +2931,6 @@ app.post('/api/admin/franchise/:id/status', ensureAdmin, async (req, res) => {
   }
 });
 
-// Real-time analytics update endpoint
-app.get('/api/admin/analytics-update', async (req, res) => {
-  try {
-    const User = require('./models/User');
-    const Order = require('./models/Order');
-    const WorkshopRegistration = require('./models/WorkshopRegistration');
-
-    const quickStats = {
-      totalUsers: await User.countDocuments(),
-      totalOrders: await Order.countDocuments(),
-      totalRevenue: await Order.aggregate([
-        { $group: { _id: null, total: { $sum: '$totalAmount' } } }
-      ]).then(result => result[0]?.total || 0),
-      totalWorkshopRegistrations: await WorkshopRegistration.countDocuments()
-    };
-
-    res.json(quickStats);
-  } catch (error) {
-    console.error('Analytics update error:', error);
-    res.status(500).json({ error: 'Failed to fetch analytics update' });
-  }
-});
-
-// Test analytics data endpoint
-app.get('/api/admin/analytics-test', async (req, res) => {
-  try {
-    const User = require('./models/User');
-    const Order = require('./models/Order');
-    
-    const testData = {
-      usersCount: await User.countDocuments(),
-      ordersCount: await Order.countDocuments(),
-      sampleUsers: await User.find().limit(3).select('name email createdAt'),
-      sampleOrders: await Order.find().limit(3).select('customerName totalAmount orderDate status'),
-      timestamp: new Date().toISOString()
-    };
-
-    console.log('📊 Analytics test data:', testData);
-    res.json(testData);
-  } catch (error) {
-    console.error('Analytics test error:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 app.delete('/api/wishlist/remove/:itemId', async (req, res) => {
   try {
     if (!req.isAuthenticated()) {
@@ -2729,32 +2986,32 @@ app.get("/logout", (req, res, next) => {
 });
 
 // Use admin routes - All admin routes are now handled by MVC structure
-// app.use('/admin', adminRoutes); // Already registered above
+// (Already mounted above)
 
-// 404 Handler
+// 404 Handler - Must be after all other routes
+// app.use((req, res) => {
+//   res.status(404).send('Page Not Found');
+// });
 app.use((req, res) => {
   console.log("404 HIT:", req.method, req.originalUrl);
   res.status(404).send("404: " + req.originalUrl);
 });
 
 // Error handling middleware
-app.use(function (err, req, res, next) {
-  console.error("Error stack:", err.stack);
-  console.error("Error details:", {
+app.use(function(err, req, res, next) {
+  console.error('Error stack:', err.stack);
+  console.error('Error details:', {
     message: err.message,
     name: err.name,
     path: req.path
   });
-
+  
   // If it's an OAuth error, redirect to signin
-  if (req.path && req.path.includes("/auth/google")) {
-    return res.redirect(
-      "/signin?error=google_auth_failed&message=" +
-        encodeURIComponent(err.message || "Authentication failed")
-    );
+  if (req.path && req.path.includes('/auth/google')) {
+    return res.redirect("/signin?error=google_auth_failed&message=" + encodeURIComponent(err.message || 'Authentication failed'));
   }
-
-  res.status(500).send("Something went wrong");
+  
+  res.status(500).send('Something went wrong');
 });
 
 const port = process.env.PORT || 3001;

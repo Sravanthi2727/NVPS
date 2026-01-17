@@ -1,0 +1,24 @@
+<!-- Floating Toggle Button -->
+<div id="gemini-toggle" onclick="toggleGemini()">🤖</div>
+
+<!-- Chat Window -->
+<div id="gemini-chat">
+  <div id="gemini-header">
+    <span>Gemini Assistant</span>
+    <button onclick="toggleGemini()">✖</button>
+  </div>
+
+  <div id="chatArea">
+    <p class="system-message">
+      Ask me anything about Rabuste coffee, our menu, or workshops.
+    </p>
+  </div>
+
+  <div id="gemini-input">
+    <input id="msg" placeholder="Ask something..." />
+    <button onclick="sendGemini()">Send</button>
+  </div>
+</div>
+
+<link rel="stylesheet" href="/css/geminiChat.css">
+<script src="/js/geminiChat.js"></script>

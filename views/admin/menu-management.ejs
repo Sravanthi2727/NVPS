@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Management - Admin Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="/css/admin-mobile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+        }
+        
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+            background: #000 !important;
+            color: #fff !important;
+            overflow-x: hidden !important;
+        }
+        
+        .admin-wrapper {
+            display: flex !important;
+            min-height: 100vh !important;
+            background: #000 !important;
+        }
+        
+        .admin-sidebar {
+            width: 250px !important;
+            background: #111 !important;
+            border-right: 2px solid #d6a45a !important;
+            position: fixed !important;
+            height: 100vh !important;
+            overflow-y: auto !important;
+            z-index: 9999 !important;
+        }
+        
+        .admin-logo {
+            padding: 2rem 1.5rem !important;
+            text-align: center !important;
+            border-bottom: 1px solid #333 !important;
+        }
+        
+        .admin-logo h4 {
+            color: #d6a45a !important;
+            margin: 0 !important;
+            font-weight: 700 !important;
+        }
+        
+        .admin-nav {
+            padding: 1rem 0 !important;
+        }
+        
+        .admin-nav a {
+            display: block !important;
+            padding: 1rem 1.5rem !important;
+            color: #fff !important;
+            text-decoration: none !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .admin-nav a:hover {
+            background: rgba(214, 164, 90, 0.1) !important;
+            color: #d6a45a !important;
+        }
+        
+        .admin-nav a.active {
+            background: #d6a45a !important;
+            color: #000 !important;
+        }
+        
+        .admin-nav i {
+            width: 20px !important;
+            margin-right: 10px !important;
+        }
+        
+        .admin-main {
+            flex: 1 !important;
+            margin-left: 250px !important;
+            background: #000 !important;
+        }
+        
+        .admin-header {
+            background: #1a1a1a !important;
+            padding: 1rem 2rem !important;
+            border-bottom: 1px solid #333 !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 100 !important;
+        }
+        
+        .admin-header h2 {
+            color: #d6a45a !important;
+            margin: 0 !important;
+        }
+        
+        .admin-content {
+            padding: 2rem !important;
+        }
+        
+        .category-section {
+            background: #1a1a1a !important;
+            border: 1px solid #333 !important;
+            border-radius: 12px !important;
+            padding: 1.5rem !important;
+            margin-bottom: 2rem !important;
+        }
+        
+        .category-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 1.5rem !important;
+            padding-bottom: 1rem !important;
+            border-bottom: 2px solid #d6a45a !important;
+        }
+        
+        .category-title {
+            color: #d6a45a !important;
+            font-size: 1.5rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+        }
+        
+        .btn-add {
+            background: #d6a45a !important;
+            color: #000 !important;
+            border: none !important;
+            padding: 0.5rem 1.5rem !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .btn-add:hover {
+            background: #e3b873 !important;
+            transform: translateY(-2px) !important;
+        }
+        
+        .menu-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+            gap: 1.5rem !important;
+        }
+        
+        .menu-card {
+            background: #0a0a0a !important;
+            border: 1px solid #333 !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-5px) !important;
+            border-color: #d6a45a !important;
+            box-shadow: 0 10px 30px rgba(214, 164, 90, 0.2) !important;
+        }
+        
+        .menu-image {
+            width: 100% !important;
+            height: 200px !important;
+            object-fit: cover !important;
+            border-bottom: 1px solid #333 !important;
+        }
+        
+        .menu-details {
+            padding: 1.5rem !important;
+        }
+        
+        .menu-name {
+            color: #d6a45a !important;
+            font-size: 1.2rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.5rem !important;
+        }
+        
+        .menu-description {
+            color: #ccc !important;
+            font-size: 0.9rem !important;
+            margin-bottom: 1rem !important;
+            line-height: 1.5 !important;
+        }
+        
+        .menu-price {
+            color: #fff !important;
+            font-size: 1.3rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        .menu-actions {
+            display: flex !important;
+            gap: 0.5rem !important;
+        }
+        
+        .btn-edit {
+            flex: 1 !important;
+            background: #d6a45a !important;
+            color: #000 !important;
+            border: none !important;
+            padding: 0.5rem !important;
+            border-radius: 6px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .btn-edit:hover {
+            background: #e3b873 !important;
+        }
+        
+        .btn-delete {
+            flex: 1 !important;
+            background: #dc3545 !important;
+            color: #fff !important;
+            border: none !important;
+            padding: 0.5rem !important;
+            border-radius: 6px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333 !important;
+        }
+        
+        .modal-content {
+            background: #1a1a1a !important;
+            border: 1px solid #d6a45a !important;
+            border-radius: 12px !important;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #333 !important;
+            background: #0a0a0a !important;
+        }
+        
+        .modal-title {
+            color: #d6a45a !important;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #333 !important;
+        }
+        
+        .form-label {
+            color: #d6a45a !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+        }
+        
+        .form-control, .form-select {
+            background: #0a0a0a !important;
+            border: 1px solid #333 !important;
+            color: #fff !important;
+            padding: 0.75rem !important;
+            border-radius: 8px !important;
+            width: 100% !important;
+            margin-bottom: 0 !important;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: #0a0a0a !important;
+            border-color: #d6a45a !important;
+            color: #fff !important;
+            box-shadow: 0 0 0 0.2rem rgba(214, 164, 90, 0.25) !important;
+            outline: none !important;
+        }
+        
+        .mb-3 {
+            margin-bottom: 1.5rem !important;
+        }
+        
+        .form-check {
+            padding-left: 1.5rem !important;
+        }
+        
+        .form-check-input {
+            margin-top: 0.25rem !important;
+            margin-right: 0.5rem !important;
+        }
+        
+        .form-check-label {
+            margin-bottom: 0 !important;
+        }
+        
+        .btn-close {
+            filter: invert(1) !important;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            z-index: 10000 !important;
+        }
+        
+        .modal-backdrop {
+            z-index: 9999 !important;
+        }
+        
+        .modal-content {
+            background: #1a1a1a !important;
+            border: 1px solid #d6a45a !important;
+            border-radius: 12px !important;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #333 !important;
+            background: #0a0a0a !important;
+            padding: 1.5rem !important;
+        }
+        
+        .modal-body {
+            padding: 1.5rem !important;
+            max-height: 70vh !important;
+            overflow-y: auto !important;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #333 !important;
+            padding: 1rem 1.5rem !important;
+        }
+        
+        .btn-secondary {
+            background: #333 !important;
+            border: 1px solid #555 !important;
+            color: #fff !important;
+            padding: 0.5rem 1.5rem !important;
+            border-radius: 8px !important;
+        }
+        
+        /* Image Upload Styles */
+        .image-upload-section {
+            background: #0a0a0a !important;
+            border: 1px solid #333 !important;
+            border-radius: 8px !important;
+            padding: 1rem !important;
+            margin-bottom: 0 !important;
+        }
+        
+        .upload-tabs {
+            display: flex !important;
+            gap: 0.5rem !important;
+            border-bottom: 2px solid #333 !important;
+            padding-bottom: 0.5rem !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        .upload-tab {
+            flex: 1 !important;
+            background: transparent !important;
+            border: 1px solid #333 !important;
+            color: #ccc !important;
+            padding: 0.75rem !important;
+            border-radius: 6px !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            font-weight: 500 !important;
+            margin: 0 !important;
+        }
+        
+        .upload-tab:hover {
+            background: rgba(214, 164, 90, 0.1) !important;
+            border-color: #d6a45a !important;
+            color: #d6a45a !important;
+        }
+        
+        .upload-tab.active {
+            background: #d6a45a !important;
+            border-color: #d6a45a !important;
+            color: #000 !important;
+        }
+        
+        .tab-content {
+            display: none !important;
+            padding-top: 1rem !important;
+            margin: 0 !important;
+        }
+        
+        .tab-content.active {
+            display: block !important;
+        }
+        
+        .upload-area {
+            min-height: 200px !important;
+            position: relative !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .upload-placeholder {
+            border: 2px dashed #333 !important;
+            border-radius: 8px !important;
+            padding: 2rem !important;
+            text-align: center !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            color: #ccc !important;
+            margin: 0 !important;
+        }
+        
+        .upload-placeholder p {
+            margin: 0.5rem 0 !important;
+        }
+        
+        .upload-placeholder small {
+            display: block !important;
+            margin-top: 0.5rem !important;
+        }
+        
+        .upload-placeholder:hover {
+            border-color: #d6a45a !important;
+            background: rgba(214, 164, 90, 0.05) !important;
+        }
+        
+        .upload-placeholder i {
+            color: #d6a45a !important;
+            margin-bottom: 1rem !important;
+            display: block !important;
+        }
+        
+        .image-preview {
+            position: relative !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .image-preview img {
+            width: 100% !important;
+            max-height: 300px !important;
+            object-fit: contain !important;
+            background: #000 !important;
+            border-radius: 8px !important;
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .btn-remove-image {
+            position: absolute !important;
+            top: 10px !important;
+            right: 10px !important;
+            background: #dc3545 !important;
+            color: #fff !important;
+            border: none !important;
+            width: 35px !important;
+            height: 35px !important;
+            border-radius: 50% !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.3s ease !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        .btn-remove-image:hover {
+            background: #c82333 !important;
+            transform: scale(1.1) !important;
+        }
+        
+        .modal-body {
+            max-height: 70vh !important;
+            overflow-y: auto !important;
+        }
+        
+        .modal-body::-webkit-scrollbar {
+            width: 8px !important;
+        }
+        
+        .modal-body::-webkit-scrollbar-track {
+            background: #0a0a0a !important;
+        }
+        
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #d6a45a !important;
+            border-radius: 4px !important;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%) !important;
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0) !important;
+            }
+            
+            .admin-main {
+                margin-left: 0 !important;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .category-header {
+                flex-direction: column !important;
+                gap: 1rem !important;
+            }
+            
+            .btn-add {
+                width: 100% !important;
+            }
+        }
+        
+        .mobile-toggle {
+            display: none !important;
+            background: #d6a45a !important;
+            border: none !important;
+            color: #000 !important;
+            padding: 0.5rem !important;
+            border-radius: 4px !important;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: inline-block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <nav class="admin-sidebar" id="adminSidebar">
+            <div class="admin-logo">
+                <h4><i class="fas fa-coffee me-2"></i>Rabuste Admin</h4>
+            </div>
+            
+            <div class="admin-nav">
+                <a href="/admin">
+                    <i class="fas fa-tachometer-alt"></i>Dashboard
+                </a>
+                <a href="/admin/cart-requests">
+                    <i class="fas fa-shopping-cart"></i>Cart Requests
+                </a>
+                <a href="/admin/art-requests">
+                    <i class="fas fa-palette"></i>Art Requests
+                </a>
+                <a href="/admin/workshop-requests">
+                    <i class="fas fa-calendar-alt"></i>Workshop Requests
+                </a>
+                <a href="/admin/menu-management" class="active">
+                    <i class="fas fa-utensils"></i>Menu Management
+                </a>
+                
+                <hr style="border-color: #333; margin: 1rem 1.5rem;">
+                <a href="/admin/franchise">
+                    <i class="fas fa-handshake"></i>Franchise Applications
+                </a>
+                
+                <a href="/" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>View Website
+                </a>
+                <a href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <button class="mobile-toggle me-3" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2>Menu Management</h2>
+                </div>
+                <div>
+                    <span style="color: #ccc;">Welcome, Admin</span>
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <!-- Salads Section -->
+                <div class="category-section">
+                    <div class="category-header">
+                        <h3 class="category-title"><i class="fas fa-leaf me-2"></i>Salads</h3>
+                        <button class="btn-add" onclick="openAddModal('Salads')">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="menu-grid" id="salads-grid">
+                        <!-- Items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Burgers Section -->
+                <div class="category-section">
+                    <div class="category-header">
+                        <h3 class="category-title"><i class="fas fa-hamburger me-2"></i>Burgers</h3>
+                        <button class="btn-add" onclick="openAddModal('Burgers')">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="menu-grid" id="burgers-grid">
+                        <!-- Items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Sandwiches Section -->
+                <div class="category-section">
+                    <div class="category-header">
+                        <h3 class="category-title"><i class="fas fa-bread-slice me-2"></i>Sandwiches</h3>
+                        <button class="btn-add" onclick="openAddModal('Sandwiches')">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="menu-grid" id="sandwiches-grid">
+                        <!-- Items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Pizza Section -->
+                <div class="category-section">
+                    <div class="category-header">
+                        <h3 class="category-title"><i class="fas fa-pizza-slice me-2"></i>Pizza</h3>
+                        <button class="btn-add" onclick="openAddModal('Pizza')">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="menu-grid" id="pizza-grid">
+                        <!-- Items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Mocktails Section -->
+                <div class="category-section">
+                    <div class="category-header">
+                        <h3 class="category-title"><i class="fas fa-cocktail me-2"></i>Mocktails</h3>
+                        <button class="btn-add" onclick="openAddModal('Mocktails')">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="menu-grid" id="mocktails-grid">
+                        <!-- Items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Hot Beverages Section -->
+                <div class="category-section">
+                    <div class="category-header">
+                        <h3 class="category-title"><i class="fas fa-mug-hot me-2"></i>Hot Beverages</h3>
+                        <button class="btn-add" onclick="openAddModal('Hot Beverages')">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="menu-grid" id="hot-beverages-grid">
+                        <!-- Items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Cold Beverages Section -->
+                <div class="category-section">
+                    <div class="category-header">
+                        <h3 class="category-title"><i class="fas fa-glass-whiskey me-2"></i>Cold Beverages</h3>
+                        <button class="btn-add" onclick="openAddModal('Cold Beverages')">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="menu-grid" id="cold-beverages-grid">
+                        <!-- Items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Desserts Section -->
+                <div class="category-section">
+                    <div class="category-header">
+                        <h3 class="category-title"><i class="fas fa-ice-cream me-2"></i>Desserts</h3>
+                        <button class="btn-add" onclick="openAddModal('Desserts')">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="menu-grid" id="desserts-grid">
+                        <!-- Items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal fade" id="menuModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Add Menu Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="menuForm" enctype="multipart/form-data">
+                        <input type="hidden" id="itemId">
+                        <input type="hidden" id="itemCategory">
+                        
+                        <div class="mb-3">
+                            <label for="itemName" class="form-label">Item Name *</label>
+                            <input type="text" class="form-control" id="itemName" placeholder="Enter item name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="itemDescription" class="form-label">Description *</label>
+                            <textarea class="form-control" id="itemDescription" rows="3" placeholder="Enter item description" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="itemPrice" class="form-label">Price (₹) *</label>
+                            <input type="number" class="form-control" id="itemPrice" placeholder="Enter price" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Image *</label>
+                            <div class="image-upload-section">
+                                <!-- Tab buttons -->
+                                <div class="upload-tabs mb-3">
+                                    <button type="button" class="upload-tab active" onclick="switchTab('upload')">
+                                        <i class="fas fa-upload me-2"></i>Upload Image
+                                    </button>
+                                    <button type="button" class="upload-tab" onclick="switchTab('url')">
+                                        <i class="fas fa-link me-2"></i>Image URL
+                                    </button>
+                                </div>
+                                
+                                <!-- Upload tab content -->
+                                <div id="uploadTab" class="tab-content active">
+                                    <div class="upload-area" id="uploadArea">
+                                        <input type="file" id="itemImageFile" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                                        <div class="upload-placeholder" onclick="document.getElementById('itemImageFile').click()">
+                                            <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                                            <p>Click to upload or drag and drop</p>
+                                            <small>PNG, JPG, JPEG (Max 5MB)</small>
+                                        </div>
+                                        <div class="image-preview" id="imagePreview" style="display: none;">
+                                            <img id="previewImg" src="" alt="Preview">
+                                            <button type="button" class="btn-remove-image" onclick="removeImage()">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- URL tab content -->
+                                <div id="urlTab" class="tab-content">
+                                    <input type="text" class="form-control" id="itemImageUrl" placeholder="Enter image URL">
+                                    <small style="color: #ccc; display: block; margin-top: 0.5rem;">
+                                        Example: https://example.com/image.jpg
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="itemAvailable" checked>
+                                <label class="form-check-label" for="itemAvailable" style="color: #fff;">
+                                    Item is available
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-add" onclick="saveMenuItem()">
+                        <i class="fas fa-save me-2"></i>Save Item
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let selectedFile = null;
+        let currentTab = 'upload';
+
+        function toggleSidebar() {
+            document.getElementById('adminSidebar').classList.toggle('show');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab buttons
+            document.querySelectorAll('.upload-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.upload-tab').classList.add('active');
+            
+            // Update tab content
+            document.getElementById('uploadTab').classList.remove('active');
+            document.getElementById('urlTab').classList.remove('active');
+            
+            if (tab === 'upload') {
+                document.getElementById('uploadTab').classList.add('active');
+            } else {
+                document.getElementById('urlTab').classList.add('active');
+            }
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showNotification('Please select an image file', 'error');
+                return;
+            }
+            
+            // Validate file size (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification('Image size should be less than 5MB', 'error');
+                return;
+            }
+            
+            selectedFile = file;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImg').src = e.target.result;
+                document.querySelector('.upload-placeholder').style.display = 'none';
+                document.getElementById('imagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage() {
+            selectedFile = null;
+            document.getElementById('itemImageFile').value = '';
+            document.querySelector('.upload-placeholder').style.display = 'block';
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+
+        // Drag and drop functionality
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#d6a45a';
+        });
+        
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#333';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#333';
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const input = document.getElementById('itemImageFile');
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                input.files = dataTransfer.files;
+                handleFileSelect({ target: input });
+            }
+        });
+
+        // Load menu items on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMenuItems();
+        });
+
+        async function loadMenuItems() {
+            try {
+                const response = await fetch('/api/menu-items');
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderMenuItems(data.items);
+                }
+            } catch (error) {
+                console.error('Error loading menu items:', error);
+            }
+        }
+
+        function renderMenuItems(items) {
+            const categories = {
+                'Salads': 'salads-grid',
+                'Burgers': 'burgers-grid',
+                'Sandwiches': 'sandwiches-grid',
+                'Pizza': 'pizza-grid',
+                'Mocktails': 'mocktails-grid',
+                'Hot Beverages': 'hot-beverages-grid',
+                'Cold Beverages': 'cold-beverages-grid',
+                'Desserts': 'desserts-grid'
+            };
+
+            // Clear all grids
+            Object.values(categories).forEach(gridId => {
+                document.getElementById(gridId).innerHTML = '';
+            });
+
+            // Render items
+            items.forEach(item => {
+                const gridId = categories[item.category];
+                if (gridId) {
+                    const grid = document.getElementById(gridId);
+                    grid.innerHTML += createMenuCard(item);
+                }
+            });
+        }
+
+        function createMenuCard(item) {
+            return `
+                <div class="menu-card">
+                    <img src="${item.image}" alt="${item.name}" class="menu-image" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                    <div class="menu-details">
+                        <h4 class="menu-name">${item.name}</h4>
+                        <p class="menu-description">${item.description}</p>
+                        <div class="menu-price">₹${item.price}</div>
+                        <div class="menu-actions">
+                            <button class="btn-edit" onclick='editMenuItem(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </button>
+                            <button class="btn-delete" onclick="deleteMenuItem('${item._id}')">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openAddModal(category) {
+            document.getElementById('modalTitle').textContent = `Add ${category} Item`;
+            document.getElementById('itemCategory').value = category;
+            document.getElementById('menuForm').reset();
+            document.getElementById('itemId').value = '';
+            selectedFile = null;
+            removeImage();
+            currentTab = 'upload';
+            document.querySelectorAll('.upload-tab').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.upload-tab')[0].classList.add('active');
+            document.getElementById('uploadTab').classList.add('active');
+            document.getElementById('urlTab').classList.remove('active');
+            new bootstrap.Modal(document.getElementById('menuModal')).show();
+        }
+
+        function editMenuItem(item) {
+            document.getElementById('modalTitle').textContent = 'Edit Menu Item';
+            document.getElementById('itemId').value = item._id;
+            document.getElementById('itemCategory').value = item.category;
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemDescription').value = item.description;
+            document.getElementById('itemPrice').value = item.price;
+            document.getElementById('itemImageUrl').value = item.image;
+            document.getElementById('itemAvailable').checked = item.available !== false;
+            
+            // Switch to URL tab and show existing image
+            currentTab = 'url';
+            document.querySelectorAll('.upload-tab').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.upload-tab')[1].classList.add('active');
+            document.getElementById('uploadTab').classList.remove('active');
+            document.getElementById('urlTab').classList.add('active');
+            
+            new bootstrap.Modal(document.getElementById('menuModal')).show();
+        }
+
+        async function saveMenuItem() {
+            const itemId = document.getElementById('itemId').value;
+            let imageUrl = '';
+            
+            // Get image based on current tab
+            if (currentTab === 'upload' && selectedFile) {
+                // Upload image to server
+                const formData = new FormData();
+                formData.append('image', selectedFile);
+                
+                try {
+                    const uploadResponse = await fetch('/api/upload-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const uploadData = await uploadResponse.json();
+                    if (uploadData.success) {
+                        imageUrl = uploadData.imageUrl;
+                    } else {
+                        showNotification('Failed to upload image', 'error');
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                    showNotification('Error uploading image', 'error');
+                    return;
+                }
+            } else if (currentTab === 'url') {
+                imageUrl = document.getElementById('itemImageUrl').value;
+            } else if (itemId) {
+                // Editing without changing image
+                imageUrl = document.getElementById('itemImageUrl').value;
+            } else {
+                showNotification('Please provide an image', 'error');
+                return;
+            }
+            
+            const itemData = {
+                category: document.getElementById('itemCategory').value,
+                name: document.getElementById('itemName').value,
+                description: document.getElementById('itemDescription').value,
+                price: document.getElementById('itemPrice').value,
+                image: imageUrl,
+                available: document.getElementById('itemAvailable').checked
+            };
+
+            try {
+                const url = itemId ? `/api/menu-items/${itemId}` : '/api/menu-items';
+                const method = itemId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(itemData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('menuModal')).hide();
+                    loadMenuItems();
+                    showNotification('Menu item saved successfully!', 'success');
+                } else {
+                    showNotification('Failed to save menu item', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving menu item:', error);
+                showNotification('Error saving menu item', 'error');
+            }
+        }
+
+        async function deleteMenuItem(itemId) {
+            if (!confirm('Are you sure you want to delete this item?')) return;
+
+            try {
+                const response = await fetch(`/api/menu-items/${itemId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadMenuItems();
+                    showNotification('Menu item deleted successfully!', 'success');
+                } else {
+                    showNotification('Failed to delete menu item', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting menu item:', error);
+                showNotification('Error deleting menu item', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 300px; padding: 1rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
