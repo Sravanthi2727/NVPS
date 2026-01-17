@@ -1,34 +1,26 @@
 /**
  * Home Routes
- * Routes for main website pages
+ * Routes for home page only
  */
 
 const express = require('express');
 const router = express.Router();
-const homeController = require('../controllers/homeController');
 
 // Home page
-router.get('/', homeController.getHome);
-
-// About page
-router.get('/about', homeController.getAbout);
-
-// Menu page
-router.get('/menu', homeController.getMenu);
-
-// Gallery page
-router.get('/gallery', homeController.getGallery);
-
-// Art request page
-router.get('/art-request', homeController.getArtRequest);
-
-// Handle art request submission
-router.post('/submit-art-request', homeController.submitArtRequest);
-
-// User dashboard page
-router.get('/dashboard', homeController.getUserDashboard);
-
-// Workshop proposal submission
-router.post('/submit-workshop-proposal', homeController.submitWorkshopProposal);
+router.get('/', (req, res) => {
+  console.log('🏠 HOME ROUTE CALLED');
+  res.render('home', { 
+    title: 'Rabuste Coffee - Premium Robusta Coffee & Art',
+    description: 'Experience the bold taste of premium Robusta coffee in our art-filled café. Join us for workshops, exhibitions, and the best coffee in town.',
+    currentPage: '/',
+    keywords: 'premium robusta coffee, art café, coffee shop, coffee and art, Rabuste Coffee',
+    ogTitle: 'Rabuste Coffee - Premium Robusta Coffee & Art',
+    ogDescription: 'Experience the bold taste of premium Robusta coffee in our art-filled café. Join us for workshops, exhibitions, and the best coffee in town.',
+    ogType: 'website',
+    ogUrl: 'https://rabustecoffee.com',
+    ogImage: '/assets/coffee-bg.jpeg',
+    canonicalUrl: 'https://rabustecoffee.com'
+  });
+});
 
 module.exports = router;
