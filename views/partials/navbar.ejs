@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark px-3 py-3">
   <div class="container">
-    <a class="navbar-brand fw-bold" style="font-size: 1.5rem; font-weight: 700; color: var(--gold) !important; font-family: 'Playfair Display', serif; text-shadow: 0 0 15px rgba(214, 164, 90, 0.5); letter-spacing: 2px; text-transform: uppercase;"  href="/">RABUSTE</a>
+    <a class="navbar-brand fw-bold" href="/">RABUSTE</a>
 
     <button
       class="navbar-toggler"
@@ -15,7 +15,7 @@
     </button>
 
     <div class="collapse navbar-collapse justify-content-end" id="rabusteNav">
-      <ul class="navbar-nav gap-3 align-items-center">
+      <ul class="navbar-nav align-items-center">
         <li class="nav-item">
           <a class="nav-link" href="/">Home</a>
         </li>
@@ -35,37 +35,69 @@
           <a class="nav-link" href="/about">About Us</a>
         </li>
         <% if (typeof currentUser !== 'undefined' && currentUser) { %>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-user me-1"></i><%= currentUser.name %>
+          <!-- Desktop: Dropdown, Mobile: Inline items -->
+          <li class="nav-item dropdown d-none d-lg-block">
+            <a class="nav-link dropdown-toggle user-dropdown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-circle me-1"></i><%= currentUser.name %>
             </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="/user-dashboard">
+                <i class="fas fa-tachometer-alt me-2"></i>My Dashboard
+              </a></li>
+              <li><a class="dropdown-item" href="/profile">
                 <i class="fas fa-user me-2"></i>My Profile
               </a></li>
               <% if (currentUser.role === 'admin') { %>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="/admin">
+                <li><a class="dropdown-item admin-link" href="/admin">
                   <i class="fas fa-cog me-2"></i>Admin Panel
                 </a></li>
               <% } %>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="/logout">
+              <li><a class="dropdown-item logout-link" href="/logout">
                 <i class="fas fa-sign-out-alt me-2"></i>Sign Out
               </a></li>
             </ul>
           </li>
+          
+          <!-- Mobile: Inline items -->
+          <li class="nav-item d-lg-none">
+            <span class="nav-link user-info">
+              <i class="fas fa-user-circle me-1"></i><%= currentUser.name %>
+            </span>
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="/user-dashboard">
+              <i class="fas fa-tachometer-alt me-2"></i>My Dashboard
+            </a>
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="/profile">
+              <i class="fas fa-user me-2"></i>My Profile
+            </a>
+          </li>
+          <% if (currentUser.role === 'admin') { %>
+            <li class="nav-item d-lg-none">
+              <a class="nav-link admin-link" href="/admin">
+                <i class="fas fa-cog me-2"></i>Admin Panel
+              </a>
+            </li>
+          <% } %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link logout-link" href="/logout">
+              <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+            </a>
+          </li>
         <% } else { %>
           <li class="nav-item">
-            <a class="nav-link" href="/signin">Sign In</a>
+            <a class="nav-link signin-btn" href="/signin">
+              <i class="fas fa-sign-in-alt me-1"></i>Sign In
+            </a>
           </li>
         <% } %>
         <li class="nav-item">
-          <a
-            class="nav-link btn btn-outline-light px-3 rounded-pill"
-            href="/franchise"
-          >
-            Franchise
+          <a class="nav-link btn btn-outline-light px-3 rounded-pill franchise-btn" href="/franchise">
+            <i class="fas fa-handshake me-1"></i>Franchise
           </a>
         </li>
       </ul>

@@ -188,22 +188,9 @@ body {
     scroll-behavior: smooth !important;
   }
   
-  /* Section Scroll Indicators */
+  /* Section Scroll Indicators - REMOVED */
   section {
     position: relative !important;
-  }
-  
-  section::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30px;
-    height: 3px;
-    background: var(--gold);
-    border-radius: 2px;
-    opacity: 0.3;
   }
   
   /* Scroll to Top Button */
@@ -557,8 +544,8 @@ section {
   );
 }
 
-/* Divider */
-.section-soft::after {
+/* Divider - REMOVED for cleaner look */
+/* .section-soft::after {
   content: "";
   position: absolute;
   left: 10%;
@@ -571,7 +558,7 @@ section {
     rgba(214, 164, 90, 0.35),
     transparent
   );
-}
+} */
 
 .section-title {
   font-family: "Playfair Display", serif;
