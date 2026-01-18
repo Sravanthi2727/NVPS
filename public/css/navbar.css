@@ -27,6 +27,7 @@
 
 .navbar-nav {
     position: relative;
+    gap: 0.5rem; /* Reduced spacing between nav items */
 }
 
 .nav-item {
@@ -38,9 +39,10 @@
     font-weight: 500;
     transition: all 0.3s ease;
     position: relative;
-    padding: 0.5rem 1rem !important;
+    padding: 0.5rem 0.75rem !important; /* Reduced horizontal padding */
     display: inline-block;
     overflow: hidden;
+    font-size: 0.9rem; /* Slightly smaller font */
 }
 
 .nav-link::after {
@@ -64,6 +66,44 @@
     width: 80%;
 }
 
+/* User Dropdown Styles */
+.user-dropdown {
+    background: rgba(214, 164, 90, 0.1) !important;
+    border-radius: 20px !important;
+    padding: 0.4rem 0.8rem !important;
+    border: 1px solid rgba(214, 164, 90, 0.3) !important;
+}
+
+.user-dropdown:hover {
+    background: rgba(214, 164, 90, 0.2) !important;
+    border-color: #d6a45a !important;
+}
+
+.user-dropdown i {
+    color: #d6a45a !important;
+    font-size: 1.1rem;
+}
+
+/* Sign In Button */
+.signin-btn {
+    background: rgba(214, 164, 90, 0.1) !important;
+    border-radius: 20px !important;
+    padding: 0.4rem 0.8rem !important;
+    border: 1px solid rgba(214, 164, 90, 0.3) !important;
+}
+
+.signin-btn:hover {
+    background: rgba(214, 164, 90, 0.2) !important;
+    border-color: #d6a45a !important;
+}
+
+/* Franchise Button */
+.franchise-btn {
+    margin-left: 0.5rem !important;
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.85rem !important;
+}
+
 /* Active Link */
 .nav-link.active {
     color: #d6a45a !important;
@@ -72,11 +112,14 @@
 .nav-link.active::after {
     width: 80%;
 }
+
+/* Improved Hamburger Menu */
 .navbar-toggler {
     border: 2px solid #d6a45a !important;
-    padding: 0.5rem 0.75rem !important;
+    padding: 0.4rem 0.6rem !important;
     border-radius: 8px !important;
     transition: all 0.3s ease;
+    background: rgba(214, 164, 90, 0.1) !important;
 }
 
 .navbar-toggler:focus {
@@ -85,15 +128,16 @@
 }
 
 .navbar-toggler:hover {
-    background: rgba(214, 164, 90, 0.1) !important;
+    background: rgba(214, 164, 90, 0.2) !important;
     border-color: #e3b873 !important;
+    transform: scale(1.05);
 }
 
 /* Custom Hamburger Icon */
 .navbar-toggler-icon {
     background-image: none !important;
-    width: 24px;
-    height: 20px;
+    width: 22px;
+    height: 18px;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -101,25 +145,32 @@
 }
 
 .navbar-toggler-icon::before,
-.navbar-toggler-icon::after,
-.navbar-toggler-icon {
+.navbar-toggler-icon::after {
     content: '';
     display: block;
     width: 100%;
-    height: 3px;
+    height: 2px;
     background: #d6a45a;
     border-radius: 2px;
     transition: all 0.3s ease;
+    position: absolute;
 }
 
 .navbar-toggler-icon::before {
-    position: absolute;
     top: 0;
 }
 
 .navbar-toggler-icon::after {
-    position: absolute;
     bottom: 0;
+}
+
+.navbar-toggler-icon {
+    background: #d6a45a;
+    height: 2px;
+    border-radius: 2px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 /* Animated Hamburger */
@@ -129,14 +180,78 @@
 
 .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
     transform: rotate(45deg);
-    top: 50%;
-    margin-top: -1.5px;
+    top: 8px;
 }
 
 .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
     transform: rotate(-45deg);
-    bottom: 50%;
-    margin-bottom: -1.5px;
+    bottom: 8px;
+}
+
+/* Dropdown Styles */
+.dropdown-menu {
+    background: rgba(0, 0, 0, 0.95) !important;
+    border: 1px solid rgba(214, 164, 90, 0.3) !important;
+    border-radius: 12px !important;
+    padding: 0.5rem !important;
+    margin-top: 0.5rem !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    min-width: 200px !important;
+}
+
+.dropdown-menu-end {
+    right: 0 !important;
+    left: auto !important;
+}
+
+.dropdown-item {
+    color: #f5f2ee !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.dropdown-item:hover {
+    background: rgba(214, 164, 90, 0.1) !important;
+    color: #d6a45a !important;
+    transform: translateX(3px);
+}
+
+.dropdown-item i {
+    color: #d6a45a;
+    width: 20px;
+}
+
+.admin-link:hover {
+    background: rgba(255, 193, 7, 0.1) !important;
+    color: #ffc107 !important;
+}
+
+.logout-link:hover {
+    background: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+}
+
+.dropdown-divider {
+    border-color: rgba(214, 164, 90, 0.3) !important;
+    margin: 0.5rem 0 !important;
+}
+
+/* Button Styles */
+.btn-outline-light {
+    border: 2px solid #d6a45a !important;
+    color: #d6a45a !important;
+    background: transparent !important;
+    transition: all 0.3s ease;
+    font-size: 0.85rem !important;
+}
+
+.btn-outline-light:hover {
+    background: #d6a45a !important;
+    color: #000 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(214, 164, 90, 0.3);
 }
 
 /* Mobile Menu Styles */
@@ -145,23 +260,25 @@
         background: rgba(0, 0, 0, 0.98);
         padding: 1.5rem;
         margin-top: 1rem;
-        border-radius: 12px;
+        border-radius: 15px;
         border: 1px solid rgba(214, 164, 90, 0.3);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
     }
     
     .navbar-nav {
-        gap: 0 !important;
+        gap: 0.3rem !important;
     }
     
     .nav-item {
-        margin: 0.5rem 0;
+        margin: 0.3rem 0;
     }
     
     .nav-link {
         padding: 0.75rem 1rem !important;
-        border-radius: 8px;
+        border-radius: 10px;
         transition: all 0.3s ease;
+        font-size: 0.95rem !important;
     }
     
     .nav-link:hover {
@@ -173,10 +290,20 @@
         display: none;
     }
     
+    .user-dropdown,
+    .signin-btn {
+        background: rgba(214, 164, 90, 0.15) !important;
+        border: 1px solid rgba(214, 164, 90, 0.4) !important;
+        margin: 0.5rem 0 !important;
+    }
+    
     .dropdown-menu {
         background: rgba(26, 26, 26, 0.95) !important;
         border: 1px solid rgba(214, 164, 90, 0.3) !important;
         margin-top: 0.5rem !important;
+        position: static !important;
+        transform: none !important;
+        box-shadow: inset 0 0 10px rgba(214, 164, 90, 0.1) !important;
     }
     
     .dropdown-item {
@@ -194,49 +321,8 @@
         width: 100%;
         text-align: center;
         margin-top: 0.5rem;
+        padding: 0.75rem !important;
     }
-}
-
-/* Dropdown Styles */
-.dropdown-menu {
-    background: rgba(0, 0, 0, 0.95) !important;
-    border: 1px solid rgba(214, 164, 90, 0.3) !important;
-    border-radius: 8px !important;
-    padding: 0.5rem !important;
-    margin-top: 0.5rem !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
-}
-
-.dropdown-item {
-    color: #f5f2ee !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 6px !important;
-    transition: all 0.3s ease;
-}
-
-.dropdown-item:hover {
-    background: rgba(214, 164, 90, 0.1) !important;
-    color: #d6a45a !important;
-}
-
-.dropdown-item i {
-    color: #d6a45a;
-    width: 20px;
-}
-
-/* Button Styles */
-.btn-outline-light {
-    border: 2px solid #d6a45a !important;
-    color: #d6a45a !important;
-    background: transparent !important;
-    transition: all 0.3s ease;
-}
-
-.btn-outline-light:hover {
-    background: #d6a45a !important;
-    color: #000 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(214, 164, 90, 0.3);
 }
 
 /* Scrolled Navbar */
@@ -292,6 +378,10 @@
     
     .navbar-collapse {
         padding: 1rem;
+    }
+    
+    .nav-link {
+        font-size: 0.9rem !important;
     }
 }
 
