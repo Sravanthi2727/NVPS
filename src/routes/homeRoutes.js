@@ -47,7 +47,8 @@ router.get('/virtual-tour', (req, res) => {
     ogType: 'website',
     ogUrl: 'https://rabustecoffee.com/virtual-tour',
     ogImage: '/assets/coffee-bg.jpeg',
-    canonicalUrl: 'https://rabustecoffee.com/virtual-tour'
+    canonicalUrl: 'https://rabustecoffee.com/virtual-tour',
+    layout: false // Disable layout for full-screen experience
   });
 });
 

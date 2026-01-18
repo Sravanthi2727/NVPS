@@ -1,85 +1,232 @@
-<!-- VIRTUAL TOUR PAGE -->
-<section class="virtual-tour-section vh-100">
-  <div class="container-fluid h-100">
-    <div class="row h-100">
-      <!-- Tour Header -->
-      <div class="col-12 p-0">
-        <div class="tour-header text-center py-3" style="background: rgba(0,0,0,0.8); color: white; position: relative; z-index: 10;">
-          <h1 class="mb-2">Virtual Tour - Rabuste Coffee</h1>
-          <p class="mb-0">Explore our café space in 360°</p>
-        </div>
-      </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="<%= description %>">
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <!-- Custom CSS for Virtual Tour -->
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .virtual-tour-section {
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+    }
+
+    .tour-header {
+      background: linear-gradient(135deg, rgba(0,0,0,0.95), rgba(20,20,20,0.9));
+      color: white;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 30px;
+      border-bottom: 3px solid #D4AF37;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .tour-header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #D4AF37;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      letter-spacing: 1px;
+      background: linear-gradient(45deg, #D4AF37, #F4D03F, #D4AF37);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: goldShine 3s ease-in-out infinite;
+    }
+
+    @keyframes goldShine {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .tour-header p {
+      margin: 8px 0 0 0;
+      opacity: 0.9;
+      font-size: 1rem;
+      color: #E8E8E8;
+      font-weight: 400;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    }
+
+    .tour-iframe {
+      width: 100%;
+      height: 100vh;
+      border: none;
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .back-button {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: #D4AF37;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .back-button:hover {
+      background: #B8941F;
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+      text-decoration: none;
+    }
+
+    .back-button i {
+      margin-right: 8px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .tour-header {
+        padding: 15px 20px;
+      }
       
-      <!-- Virtual Tour Iframe -->
-      <div class="col-12 p-0" style="height: calc(100vh - 120px);">
-        <iframe 
-          src="https://app.lapentor.com/sphere/rabuste-coffee-2" 
-          width="100%" 
-          height="100%" 
-          frameborder="0" 
-          allowfullscreen
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          title="Rabuste Coffee Virtual Tour">
-        </iframe>
-      </div>
+      .tour-header h1 {
+        font-size: 1.6rem;
+        letter-spacing: 0.5px;
+      }
+      
+      .tour-header p {
+        font-size: 0.85rem;
+      }
+      
+      .back-button {
+        bottom: 15px;
+        left: 15px;
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .tour-header h1 {
+        font-size: 1.4rem;
+      }
+      
+      .tour-header p {
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Loading animation */
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      color: #D4AF37;
+    }
+
+    .loading-spinner {
+      border: 3px solid rgba(212, 175, 55, 0.3);
+      border-top: 3px solid #D4AF37;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- VIRTUAL TOUR PAGE -->
+<section class="virtual-tour-section">
+  <!-- Tour Header - Hidden for clean experience -->
+  <div class="tour-header text-center" style="display: none;">
+    <h1>Virtual Tour - Rabuste Coffee</h1>
+    <p>Explore our café space in 360°</p>
+  </div>
+  
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="text-center">
+      <div class="loading-spinner"></div>
+      <p>Loading Virtual Tour...</p>
     </div>
   </div>
   
+  <!-- Virtual Tour Iframe -->
+  <iframe 
+    id="tourIframe"
+    class="tour-iframe"
+    src="https://app.lapentor.com/sphere/rabuste-coffee-2" 
+    frameborder="0" 
+    allowfullscreen
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    title="Rabuste Coffee Virtual Tour"
+    onload="hideLoading()">
+  </iframe>
+  
   <!-- Back to Home Button -->
-  <div class="position-fixed" style="bottom: 20px; left: 20px; z-index: 1000;">
-    <a href="/" class="btn btn-gold">
-      <i class="fas fa-arrow-left me-2"></i>Back to Home
-    </a>
-  </div>
+  <a href="/" class="back-button">
+    <i class="fas fa-arrow-left"></i>Back to Home
+  </a>
 </section>
 
-<!-- Custom CSS for Virtual Tour -->
-<style>
-.virtual-tour-section {
-  background: #000;
-  overflow: hidden;
-}
-
-.tour-header {
-  border-bottom: 2px solid #D4AF37;
-}
-
-.btn-gold {
-  background: #D4AF37;
-  color: #000;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.btn-gold:hover {
-  background: #B8941F;
-  color: #000;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .tour-header h1 {
-    font-size: 1.5rem;
+<script>
+  // Hide loading overlay when iframe loads
+  function hideLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+      loadingOverlay.style.display = 'none';
+    }
   }
-  
-  .tour-header p {
-    font-size: 0.9rem;
-  }
-  
-  .position-fixed {
-    bottom: 10px !important;
-    left: 10px !important;
-  }
-  
-  .btn-gold {
-    padding: 8px 16px;
-    font-size: 0.9rem;
-  }
-}
-</style>
+
+  // Fallback to hide loading after 5 seconds
+  setTimeout(hideLoading, 5000);
+
+  // Handle escape key to go back
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      window.location.href = '/';
+    }
+  });
+</script>
+
+</body>
+</html>
