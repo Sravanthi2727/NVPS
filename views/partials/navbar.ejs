@@ -72,3 +72,78 @@
     </div>
   </div>
 </nav>
+
+<style>
+/* Mobile Navbar Improvements */
+@media (max-width: 991.98px) {
+  .navbar-brand {
+    font-size: 1.3rem !important;
+  }
+  
+  .navbar-collapse {
+    background-color: rgba(0, 0, 0, 0.95) !important;
+    border-radius: 10px !important;
+    margin-top: 1rem !important;
+    padding: 1rem !important;
+    border: 1px solid #d6a45a !important;
+  }
+  
+  .navbar-nav {
+    gap: 0.5rem !important;
+  }
+  
+  .nav-link {
+    padding: 0.7rem 1rem !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  .nav-link:hover {
+    background-color: rgba(214, 164, 90, 0.1) !important;
+    color: #d6a45a !important;
+  }
+  
+  .dropdown-menu {
+    background-color: rgba(0, 0, 0, 0.95) !important;
+    border: 1px solid #d6a45a !important;
+    border-radius: 8px !important;
+  }
+  
+  .dropdown-item {
+    color: #f5f2ee !important;
+    padding: 0.5rem 1rem !important;
+  }
+  
+  .dropdown-item:hover {
+    background-color: rgba(214, 164, 90, 0.1) !important;
+    color: #d6a45a !important;
+  }
+  
+  .btn-outline-light {
+    margin-top: 0.5rem !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar-brand {
+    font-size: 1.1rem !important;
+    letter-spacing: 1px !important;
+  }
+  
+  .navbar-toggler {
+    padding: 0.3rem 0.5rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .nav-link {
+    font-size: 0.9rem !important;
+    padding: 0.6rem 0.8rem !important;
+  }
+  
+  .dropdown-item {
+    font-size: 0.9rem !important;
+  }
+}
+</style>

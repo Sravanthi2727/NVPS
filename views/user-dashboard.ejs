@@ -278,6 +278,7 @@
             border: 1px solid #17a2b8;
         }
 
+        /* Mobile Responsive Styles */
         @media (max-width: 767.98px) {
             .sidebar {
                 position: relative;
@@ -285,6 +286,12 @@
                 padding: 0;
                 background-color: #0a0a0a;
                 border-right: 1px solid #d6a45a;
+                margin-bottom: 1rem;
+            }
+            
+            .sidebar .nav-link {
+                padding: 0.5rem 1rem !important;
+                font-size: 0.9rem !important;
             }
             
             main {
@@ -292,6 +299,181 @@
                 padding-top: 20px;
                 background-color: #0a0a0a;
                 color: #f5f2ee;
+            }
+            
+            .dashboard-title {
+                font-size: 1.8rem !important;
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+            
+            .tab-pane {
+                padding: 15px !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .card {
+                margin-bottom: 1rem !important;
+            }
+            
+            .card-body {
+                padding: 1rem !important;
+            }
+            
+            .card-title {
+                font-size: 1.1rem !important;
+            }
+            
+            .btn {
+                font-size: 0.9rem !important;
+                padding: 0.5rem 1rem !important;
+            }
+            
+            .btn-sm {
+                font-size: 0.8rem !important;
+                padding: 0.3rem 0.6rem !important;
+            }
+            
+            /* Cart items mobile */
+            .row.align-items-center {
+                flex-direction: column !important;
+                text-align: center !important;
+            }
+            
+            .row.align-items-center .col-md-2,
+            .row.align-items-center .col-md-4,
+            .row.align-items-center .col-md-6 {
+                width: 100% !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .row.align-items-center img {
+                width: 80px !important;
+                height: 80px !important;
+                margin: 0 auto 0.5rem auto !important;
+            }
+            
+            /* Form controls mobile */
+            .form-control,
+            .form-select {
+                font-size: 1rem !important;
+            }
+            
+            /* Modal mobile */
+            .modal-dialog {
+                margin: 1rem !important;
+            }
+            
+            .modal-content {
+                border-radius: 10px !important;
+            }
+            
+            .modal-body {
+                padding: 1rem !important;
+            }
+            
+            /* Calendar mobile */
+            .fc-toolbar {
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+            }
+            
+            .fc-toolbar-title {
+                font-size: 1.2rem !important;
+            }
+            
+            .fc-button {
+                font-size: 0.8rem !important;
+                padding: 0.3rem 0.6rem !important;
+            }
+            
+            /* Workshop calendar mobile */
+            #workshopCalendarContainer {
+                height: 400px !important;
+            }
+            
+            /* User profile section mobile */
+            .text-center h5 {
+                font-size: 1.2rem !important;
+            }
+            
+            .text-center p {
+                font-size: 0.9rem !important;
+            }
+            
+            .badge {
+                font-size: 0.8rem !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-title {
+                font-size: 1.5rem !important;
+            }
+            
+            .sidebar .nav-link {
+                padding: 0.4rem 0.8rem !important;
+                font-size: 0.85rem !important;
+            }
+            
+            .tab-pane {
+                padding: 10px !important;
+            }
+            
+            .card-body {
+                padding: 0.8rem !important;
+            }
+            
+            .btn {
+                font-size: 0.8rem !important;
+                padding: 0.4rem 0.8rem !important;
+            }
+            
+            .btn-sm {
+                font-size: 0.75rem !important;
+                padding: 0.25rem 0.5rem !important;
+            }
+            
+            /* Very small screens - stack everything */
+            .row.align-items-center img {
+                width: 60px !important;
+                height: 60px !important;
+            }
+            
+            .card-title {
+                font-size: 1rem !important;
+            }
+            
+            .card-text {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Calendar very small */
+            .fc-toolbar-title {
+                font-size: 1rem !important;
+            }
+            
+            .fc-button {
+                font-size: 0.7rem !important;
+                padding: 0.2rem 0.4rem !important;
+            }
+            
+            #workshopCalendarContainer {
+                height: 300px !important;
+            }
+            
+            /* Modal very small */
+            .modal-dialog {
+                margin: 0.5rem !important;
+            }
+            
+            .modal-body {
+                padding: 0.8rem !important;
+            }
+            
+            .form-control,
+            .form-select {
+                font-size: 0.9rem !important;
             }
         }
 
