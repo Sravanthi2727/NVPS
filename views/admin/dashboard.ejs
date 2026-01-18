@@ -105,6 +105,18 @@
     <div class="col-md-6 col-lg-3">
         <div class="admin-card text-center">
             <div class="stat-icon mx-auto mb-3">
+                <i class="fas fa-image"></i>
+            </div>
+            <h5 class="text-gold mb-3">Background Images</h5>
+            <button class="btn btn-primary" onclick="openBackgroundManager()">
+                <i class="fas fa-photo-video me-2"></i>Manage Backgrounds
+            </button>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="admin-card text-center">
+            <div class="stat-icon mx-auto mb-3">
                 <i class="fas fa-chart-bar"></i>
             </div>
             <h5 class="text-gold mb-3">View Analytics</h5>
@@ -190,3 +202,221 @@
         </table>
     </div>
 </div>
+
+<!-- Background Manager Modal -->
+<div class="modal fade" id="backgroundManagerModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title text-gold">
+                    <i class="fas fa-image me-2"></i>Background Image Manager
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Upload Section -->
+                <div class="admin-card mb-4">
+                    <h6 class="text-gold mb-3">
+                        <i class="fas fa-upload me-2"></i>Upload New Background
+                    </h6>
+                    <form id="backgroundUploadForm" enctype="multipart/form-data">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Image File</label>
+                                <input type="file" class="form-control" id="backgroundFile" name="image" accept="image/*" required>
+                                <small class="text-muted">Max size: 10MB. Formats: JPG, PNG, GIF, WebP</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Page</label>
+                                <select class="form-select" id="backgroundPage" name="page" required>
+                                    <option value="">Select Page</option>
+                                    <option value="menu">Menu</option>
+                                    <option value="home">Home</option>
+                                    <option value="about">About</option>
+                                    <option value="gallery">Gallery</option>
+                                    <option value="philosophy">Philosophy</option>
+                                    <option value="workshops">Workshops</option>
+                                    <option value="franchise">Franchise</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" id="backgroundName" name="name" placeholder="Background name">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Description</label>
+                                <input type="text" class="form-control" id="backgroundDescription" name="description" placeholder="Optional description">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="setActive" name="isActive" value="true">
+                                    <label class="form-check-label" for="setActive">
+                                        Set as active background for this page
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-upload me-2"></i>Upload Background
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing Backgrounds -->
+                <div class="admin-card">
+                    <h6 class="text-gold mb-3">
+                        <i class="fas fa-images me-2"></i>Existing Backgrounds
+                    </h6>
+                    <div class="row g-3" id="backgroundsList">
+                        <!-- Backgrounds will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Background Manager Functions
+function openBackgroundManager() {
+    const modal = new bootstrap.Modal(document.getElementById('backgroundManagerModal'));
+    modal.show();
+    loadBackgrounds();
+}
+
+function loadBackgrounds() {
+    fetch('/api/backgrounds')
+        .then(response => response.json())
+        .then(backgrounds => {
+            const container = document.getElementById('backgroundsList');
+            if (backgrounds.length === 0) {
+                container.innerHTML = '<div class="col-12 text-center text-muted py-4">No backgrounds uploaded yet</div>';
+                return;
+            }
+
+            container.innerHTML = backgrounds.map(bg => `
+                <div class="col-md-4 col-lg-3">
+                    <div class="card bg-secondary border-secondary">
+                        <img src="${bg.imageUrl}" class="card-img-top" style="height: 150px; object-fit: cover;" alt="${bg.name}">
+                        <div class="card-body p-2">
+                            <h6 class="card-title text-gold mb-1" style="font-size: 0.9rem;">${bg.name}</h6>
+                            <p class="card-text text-muted mb-2" style="font-size: 0.8rem;">
+                                <i class="fas fa-tag me-1"></i>${bg.page}
+                                ${bg.isActive ? '<span class="badge bg-success ms-2">Active</span>' : ''}
+                            </p>
+                            <div class="btn-group w-100" role="group">
+                                ${!bg.isActive ? `<button class="btn btn-outline-primary btn-sm" onclick="activateBackground('${bg._id}')">
+                                    <i class="fas fa-check"></i>
+                                </button>` : ''}
+                                <button class="btn btn-outline-danger btn-sm" onclick="deleteBackground('${bg._id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        })
+        .catch(error => {
+            console.error('Error loading backgrounds:', error);
+            showNotification('Failed to load backgrounds', 'error');
+        });
+}
+
+// Upload background
+document.getElementById('backgroundUploadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+    submitBtn.disabled = true;
+    
+    fetch('/api/upload-background', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Background uploaded successfully!', 'success');
+            this.reset();
+            loadBackgrounds();
+        } else {
+            showNotification(data.error || 'Upload failed', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Upload error:', error);
+        showNotification('Upload failed', 'error');
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+function activateBackground(id) {
+    fetch(`/api/background/${id}/activate`, {
+        method: 'PUT'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Background activated successfully!', 'success');
+            loadBackgrounds();
+        } else {
+            showNotification(data.error || 'Failed to activate background', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error activating background:', error);
+        showNotification('Failed to activate background', 'error');
+    });
+}
+
+function deleteBackground(id) {
+    if (!confirm('Are you sure you want to delete this background?')) return;
+    
+    fetch(`/api/background/${id}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Background deleted successfully!', 'success');
+            loadBackgrounds();
+        } else {
+            showNotification(data.error || 'Failed to delete background', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting background:', error);
+        showNotification('Failed to delete background', 'error');
+    });
+}
+
+function showNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+</script>

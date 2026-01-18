@@ -11,9 +11,16 @@ router.get('/menu', async (req, res) => {
   try {
     console.log('🍽️ MENU ROUTE CALLED');
     const MenuItem = require('../../models/MenuItem');
+    const BackgroundImage = require('../../models/BackgroundImage');
+    
+    // Fetch menu items
     const menuItems = await MenuItem.find({ isAvailable: true })
       .sort({ category: 1, subCategory: 1, displayOrder: 1 });
     console.log('🍽️ Found', menuItems.length, 'menu items');
+    
+    // Fetch active background for menu page
+    const backgroundImage = await BackgroundImage.findOne({ page: 'menu', isActive: true });
+    console.log('🖼️ Menu background:', backgroundImage ? backgroundImage.imageUrl : 'none');
     
     const groupedMenu = {};
     menuItems.forEach(item => {
@@ -41,6 +48,7 @@ router.get('/menu', async (req, res) => {
       canonicalUrl: 'https://rabustecoffee.com/menu',
       menuItems: groupedMenu,
       recommendedItems: [],
+      backgroundImage: backgroundImage,
       isLoggedIn: req.isAuthenticated ? req.isAuthenticated() : false,
       currentUser: req.user || null
     });
@@ -52,6 +60,7 @@ router.get('/menu', async (req, res) => {
       currentPage: '/menu',
       menuItems: {},
       recommendedItems: [],
+      backgroundImage: null,
       isLoggedIn: false,
       currentUser: null
     });

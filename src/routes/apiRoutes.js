@@ -281,4 +281,153 @@ router.post('/upload-image', (req, res) => {
   });
 });
 
+// Background Image Management
+const BackgroundImage = require('../../models/BackgroundImage');
+const fs = require('fs');
+
+// Background image upload with different storage
+const backgroundStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const dir = 'public/uploads/backgrounds/';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'bg-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const backgroundUpload = multer({
+  storage: backgroundStorage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit for backgrounds
+  fileFilter: function (req, file, cb) {
+    const filetypes = /jpeg|jpg|png|gif|webp/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    cb(new Error('Only image files are allowed!'));
+  }
+});
+
+// Upload background image
+router.post('/upload-background', ensureAuthenticated, (req, res) => {
+  backgroundUpload.single('image')(req, res, async function (err) {
+    if (err instanceof multer.MulterError) {
+      console.error('Multer error:', err);
+      return res.status(400).json({ success: false, error: err.message });
+    } else if (err) {
+      console.error('Upload error:', err);
+      return res.status(400).json({ success: false, error: err.message });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'No file uploaded' });
+    }
+
+    try {
+      const { name, description, page, isActive } = req.body;
+      
+      const backgroundImage = new BackgroundImage({
+        name: name || `Background for ${page}`,
+        description: description || '',
+        imagePath: req.file.path,
+        imageUrl: `/uploads/backgrounds/${req.file.filename}`,
+        page: page,
+        isActive: isActive === 'true',
+        uploadedBy: req.user._id
+      });
+
+      await backgroundImage.save();
+
+      res.json({
+        success: true,
+        message: 'Background image uploaded successfully',
+        image: backgroundImage
+      });
+    } catch (error) {
+      console.error('Database error:', error);
+      res.status(500).json({ success: false, error: 'Failed to save image to database' });
+    }
+  });
+});
+
+// Get background images
+router.get('/backgrounds', async (req, res) => {
+  try {
+    const { page } = req.query;
+    const query = page ? { page } : {};
+    
+    const backgrounds = await BackgroundImage.find(query)
+      .populate('uploadedBy', 'name email')
+      .sort({ createdAt: -1 });
+    
+    res.json(backgrounds);
+  } catch (error) {
+    console.error('Error fetching backgrounds:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch backgrounds' });
+  }
+});
+
+// Get active background for a page
+router.get('/background/:page', async (req, res) => {
+  try {
+    const { page } = req.params;
+    const background = await BackgroundImage.findOne({ page, isActive: true });
+    
+    if (background) {
+      res.json({ success: true, background });
+    } else {
+      res.json({ success: false, message: 'No active background found' });
+    }
+  } catch (error) {
+    console.error('Error fetching background:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch background' });
+  }
+});
+
+// Set active background
+router.put('/background/:id/activate', ensureAuthenticated, async (req, res) => {
+  try {
+    const background = await BackgroundImage.findById(req.params.id);
+    if (!background) {
+      return res.status(404).json({ success: false, error: 'Background not found' });
+    }
+
+    background.isActive = true;
+    await background.save();
+
+    res.json({ success: true, message: 'Background activated successfully' });
+  } catch (error) {
+    console.error('Error activating background:', error);
+    res.status(500).json({ success: false, error: 'Failed to activate background' });
+  }
+});
+
+// Delete background
+router.delete('/background/:id', ensureAuthenticated, async (req, res) => {
+  try {
+    const background = await BackgroundImage.findById(req.params.id);
+    if (!background) {
+      return res.status(404).json({ success: false, error: 'Background not found' });
+    }
+
+    // Delete file from filesystem
+    if (fs.existsSync(background.imagePath)) {
+      fs.unlinkSync(background.imagePath);
+    }
+
+    await BackgroundImage.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Background deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting background:', error);
+    res.status(500).json({ success: false, error: 'Failed to delete background' });
+  }
+});
+
 module.exports = router;
