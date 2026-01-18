@@ -35,7 +35,8 @@
           <a class="nav-link" href="/about">About Us</a>
         </li>
         <% if (typeof currentUser !== 'undefined' && currentUser) { %>
-          <li class="nav-item dropdown">
+          <!-- Desktop: Dropdown, Mobile: Inline items -->
+          <li class="nav-item dropdown d-none d-lg-block">
             <a class="nav-link dropdown-toggle user-dropdown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fas fa-user-circle me-1"></i><%= currentUser.name %>
             </a>
@@ -57,6 +58,35 @@
                 <i class="fas fa-sign-out-alt me-2"></i>Sign Out
               </a></li>
             </ul>
+          </li>
+          
+          <!-- Mobile: Inline items -->
+          <li class="nav-item d-lg-none">
+            <span class="nav-link user-info">
+              <i class="fas fa-user-circle me-1"></i><%= currentUser.name %>
+            </span>
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="/user-dashboard">
+              <i class="fas fa-tachometer-alt me-2"></i>My Dashboard
+            </a>
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="/profile">
+              <i class="fas fa-user me-2"></i>My Profile
+            </a>
+          </li>
+          <% if (currentUser.role === 'admin') { %>
+            <li class="nav-item d-lg-none">
+              <a class="nav-link admin-link" href="/admin">
+                <i class="fas fa-cog me-2"></i>Admin Panel
+              </a>
+            </li>
+          <% } %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link logout-link" href="/logout">
+              <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+            </a>
           </li>
         <% } else { %>
           <li class="nav-item">
