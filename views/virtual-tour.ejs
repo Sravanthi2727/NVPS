@@ -10,64 +10,31 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
   
   <!-- Custom CSS for Virtual Tour -->
   <style>
+    :root {
+      --gold: #d6a45a;
+      --cream: #f5f2ee;
+      --dark: #0a0a0a;
+      --muted: #ccc;
+    }
+
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
       overflow: hidden;
       background: #000;
-      font-family: 'Arial', sans-serif;
+      font-family: 'Montserrat', sans-serif;
     }
 
     .virtual-tour-section {
       height: 100vh;
       width: 100vw;
       position: relative;
-    }
-
-    .tour-header {
-      background: linear-gradient(135deg, rgba(0,0,0,0.95), rgba(20,20,20,0.9));
-      color: white;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      padding: 20px 30px;
-      border-bottom: 3px solid #D4AF37;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    }
-
-    .tour-header h1 {
-      margin: 0;
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: #D4AF37;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-      letter-spacing: 1px;
-      background: linear-gradient(45deg, #D4AF37, #F4D03F, #D4AF37);
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: goldShine 3s ease-in-out infinite;
-    }
-
-    @keyframes goldShine {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-
-    .tour-header p {
-      margin: 8px 0 0 0;
-      opacity: 0.9;
-      font-size: 1rem;
-      color: #E8E8E8;
-      font-weight: 400;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
     }
 
     .tour-iframe {
@@ -78,6 +45,12 @@
       position: absolute;
       top: 0;
       left: 0;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .tour-iframe.loaded {
+      opacity: 1;
     }
 
     .back-button {
@@ -108,42 +81,9 @@
       margin-right: 8px;
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .tour-header {
-        padding: 15px 20px;
-      }
-      
-      .tour-header h1 {
-        font-size: 1.6rem;
-        letter-spacing: 0.5px;
-      }
-      
-      .tour-header p {
-        font-size: 0.85rem;
-      }
-      
-      .back-button {
-        bottom: 15px;
-        left: 15px;
-        padding: 10px 20px;
-        font-size: 0.9rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .tour-header h1 {
-        font-size: 1.4rem;
-      }
-      
-      .tour-header p {
-        font-size: 0.8rem;
-      }
-    }
-
-    /* Loading animation */
+    /* Loading Screen Styles - Same as other pages */
     .loading-overlay {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
@@ -152,44 +92,379 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 999;
-      color: #D4AF37;
+      z-index: 9999;
+      transition: opacity 1s ease-out, visibility 1s ease-out;
     }
 
-    .loading-spinner {
-      border: 3px solid rgba(212, 175, 55, 0.3);
-      border-top: 3px solid #D4AF37;
+    .loading-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loading-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .loading-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(214, 164, 90, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(214, 164, 90, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(214, 164, 90, 0.05) 0%, transparent 70%),
+        linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.95));
+      animation: pulseGlow 4s ease-in-out infinite alternate;
+      z-index: 1;
+    }
+
+    .coffee-bean {
+      position: absolute;
+      width: 60px;
+      height: 40px;
+      background: linear-gradient(135deg, #6B4423 0%, #8B5A2B 25%, #A0522D 50%, #8B5A2B 75%, #6B4423 100%);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      opacity: 0.3;
+      z-index: 1;
+      box-shadow: 
+        inset 0 2px 4px rgba(0,0,0,0.3),
+        inset 0 -2px 4px rgba(255,255,255,0.1),
+        0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .coffee-bean::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 2px;
+      background: rgba(0,0,0,0.2);
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
+      transform: translate(-50%, -50%) rotate(-45deg);
     }
 
-    @keyframes spin {
+    .coffee-bean-1 {
+      top: 20%;
+      left: 10%;
+      transform: rotate(-30deg);
+      animation: floatBean1 8s ease-in-out infinite;
+    }
+
+    .coffee-bean-2 {
+      top: 60%;
+      right: 15%;
+      transform: rotate(45deg);
+      animation: floatBean2 10s ease-in-out infinite;
+    }
+
+    .coffee-bean-3 {
+      bottom: 25%;
+      left: 20%;
+      transform: rotate(15deg);
+      animation: floatBean3 12s ease-in-out infinite;
+    }
+
+    .coffee-steam {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.1) 100%);
+      border-radius: 50%;
+      filter: blur(2px);
+      opacity: 0;
+      animation: steamRise 4s ease-out infinite;
+    }
+
+    .coffee-steam-1 {
+      top: 15%;
+      left: 25%;
+      width: 20px;
+      height: 40px;
+      animation-delay: 0s;
+    }
+
+    .coffee-steam-2 {
+      top: 10%;
+      right: 30%;
+      width: 25px;
+      height: 50px;
+      animation-delay: 1s;
+    }
+
+    .coffee-steam-3 {
+      top: 20%;
+      left: 50%;
+      width: 18px;
+      height: 35px;
+      animation-delay: 2s;
+    }
+
+    .loading-content {
+      text-align: center;
+      z-index: 3;
+      position: relative;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .loading-logo {
+      margin-bottom: 2rem;
+      animation: logoFloat 6s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 20px rgba(214, 164, 90, 0.3));
+    }
+
+    .coffee-cup-icon {
+      font-size: 4rem;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(214, 164, 90, 0.8);
+      animation: cupGlow 3s ease-in-out infinite alternate;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .brand-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--cream);
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 25px rgba(214, 164, 90, 0.6);
+      animation: titleGlow 3s ease-in-out infinite alternate;
+      background: linear-gradient(45deg, #d6a45a, #f5f2ee, #d6a45a);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .loading-message {
+      font-size: 1.1rem;
+      color: #e8dcc0;
+      margin-bottom: 1rem;
+      font-weight: 300;
+      animation: fadeInOut 2s ease-in-out infinite;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .loading-subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 2.5rem;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .coffee-spinner {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 2rem;
+      position: relative;
+      animation: spinnerRotate 2s linear infinite;
+    }
+
+    .coffee-spinner::before {
+      content: '☕';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      color: var(--gold);
+      text-shadow: 0 0 15px rgba(214, 164, 90, 0.6);
+    }
+
+    .coffee-spinner::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 3px solid rgba(214, 164, 90, 0.2);
+      border-radius: 50%;
+      border-top: 3px solid var(--gold);
+      animation: spinnerPulse 1.5s ease-in-out infinite;
+    }
+
+    .loading-progress {
+      width: 280px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin: 0 auto;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), #f5f2ee, var(--gold));
+      border-radius: 2px;
+      animation: progressAnimation 2.5s ease-in-out infinite;
+      box-shadow: 0 0 8px rgba(214, 164, 90, 0.4);
+    }
+
+    /* All the animations from loading.ejs */
+    @keyframes pulseGlow {
+      0% { opacity: 0.3; transform: scale(1); }
+      100% { opacity: 0.7; transform: scale(1.1); }
+    }
+
+    @keyframes floatBean1 {
+      0%, 100% { transform: rotate(-30deg) translate(0, 0); }
+      25% { transform: rotate(-20deg) translate(15px, -10px); }
+      50% { transform: rotate(-40deg) translate(-8px, -15px); }
+      75% { transform: rotate(-25deg) translate(10px, 8px); }
+    }
+
+    @keyframes floatBean2 {
+      0%, 100% { transform: rotate(45deg) translate(0, 0); }
+      33% { transform: rotate(60deg) translate(-15px, 10px); }
+      66% { transform: rotate(30deg) translate(18px, -12px); }
+    }
+
+    @keyframes floatBean3 {
+      0%, 100% { transform: rotate(15deg) translate(0, 0); }
+      40% { transform: rotate(25deg) translate(-10px, -15px); }
+      80% { transform: rotate(5deg) translate(12px, 10px); }
+    }
+
+    @keyframes titleGlow {
+      0% { text-shadow: 0 0 20px rgba(214, 164, 90, 0.5); filter: brightness(1); }
+      100% { text-shadow: 0 0 40px rgba(214, 164, 90, 0.8), 0 0 60px rgba(214, 164, 90, 0.4); filter: brightness(1.2); }
+    }
+
+    @keyframes cupGlow {
+      0% { text-shadow: 0 0 15px rgba(214, 164, 90, 0.6); filter: brightness(1); }
+      50% { text-shadow: 0 0 25px rgba(214, 164, 90, 0.8), 0 0 35px rgba(214, 164, 90, 0.4); filter: brightness(1.2); }
+      100% { text-shadow: 0 0 20px rgba(214, 164, 90, 0.6), 0 0 40px rgba(214, 164, 90, 0.5); filter: brightness(1); }
+    }
+
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-15px) scale(1.05); }
+    }
+
+    @keyframes spinnerRotate {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
+    }
+
+    @keyframes steamRise {
+      0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+      50% { opacity: 0.6; transform: translateY(0px) scale(1); }
+      100% { opacity: 0; transform: translateY(-30px) scale(0.8); }
+    }
+
+    @keyframes progressAnimation {
+      0% { width: 0%; opacity: 0.7; }
+      50% { width: 70%; opacity: 1; }
+      100% { width: 100%; opacity: 0.7; }
+    }
+
+    @keyframes spinnerPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .back-button {
+        bottom: 15px;
+        left: 15px;
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+
+      .loading-title {
+        font-size: 2rem;
+      }
+      
+      .loading-message {
+        font-size: 1rem;
+      }
+      
+      .loading-progress {
+        width: 250px;
+      }
+      
+      .coffee-bean {
+        width: 40px;
+        height: 30px;
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- VIRTUAL TOUR PAGE -->
-<section class="virtual-tour-section">
-  <!-- Tour Header - Hidden for clean experience -->
-  <div class="tour-header text-center" style="display: none;">
-    <h1>Virtual Tour - Rabuste Coffee</h1>
-    <p>Explore our café space in 360°</p>
-  </div>
+<!-- Loading Screen - Same as other pages -->
+<div class="loading-overlay" id="loadingOverlay">
+  <!-- Animated Background Elements -->
+  <div class="coffee-bean coffee-bean-1"></div>
+  <div class="coffee-bean coffee-bean-2"></div>
+  <div class="coffee-bean coffee-bean-3"></div>
   
-  <!-- Loading Overlay -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="text-center">
-      <div class="loading-spinner"></div>
-      <p>Loading Virtual Tour...</p>
+  <!-- Coffee Steam/Vapor Effects -->
+  <div class="coffee-steam coffee-steam-1"></div>
+  <div class="coffee-steam coffee-steam-2"></div>
+  <div class="coffee-steam coffee-steam-3"></div>
+  
+  <!-- Main Loading Container -->
+  <div class="loading-container">
+    <div class="loading-content">
+      <!-- Logo -->
+      <div class="loading-logo">
+        <div class="coffee-cup-icon">☕</div>
+        <div class="brand-text">Rabuste Coffee</div>
+      </div>
+      
+      <!-- Title -->
+      <h1 class="loading-title">Virtual Tour</h1>
+      
+      <!-- Loading Message -->
+      <p class="loading-message" id="loadingMessage">Preparing your virtual tour...</p>
+      <p class="loading-subtitle" id="loadingSubtitle">Loading 360° café experience</p>
+      
+      <!-- Coffee Spinner -->
+      <div class="coffee-spinner"></div>
+      
+      <!-- Progress Bar -->
+      <div class="loading-progress">
+        <div class="progress-fill"></div>
+      </div>
     </div>
   </div>
-  
+</div>
+
+<!-- VIRTUAL TOUR PAGE -->
+<section class="virtual-tour-section">
   <!-- Virtual Tour Iframe -->
   <iframe 
     id="tourIframe"
@@ -209,22 +484,83 @@
 </section>
 
 <script>
+  // Dynamic loading messages for virtual tour
+  const loadingMessages = [
+    "Preparing your virtual tour...",
+    "Loading 360° café experience...",
+    "Setting up immersive view...",
+    "Almost ready to explore...",
+    "Initializing virtual space...",
+    "Loading Rabuste Coffee tour..."
+  ];
+
+  const subtitles = [
+    "Loading 360° café experience",
+    "Preparing immersive tour",
+    "Setting up virtual space",
+    "Ready to explore our café"
+  ];
+
+  let messageIndex = 0;
+  let subtitleIndex = 0;
+
+  // Rotate messages every 2 seconds
+  const messageInterval = setInterval(() => {
+    messageIndex = (messageIndex + 1) % loadingMessages.length;
+    subtitleIndex = (subtitleIndex + 1) % subtitles.length;
+    
+    const messageElement = document.getElementById('loadingMessage');
+    const subtitleElement = document.getElementById('loadingSubtitle');
+    
+    if (messageElement) {
+      messageElement.style.opacity = '0';
+      setTimeout(() => {
+        messageElement.textContent = loadingMessages[messageIndex];
+        messageElement.style.opacity = '1';
+      }, 300);
+    }
+    
+    if (subtitleElement) {
+      subtitleElement.style.opacity = '0';
+      setTimeout(() => {
+        subtitleElement.textContent = subtitles[subtitleIndex];
+        subtitleElement.style.opacity = '1';
+      }, 300);
+    }
+  }, 2000);
+
   // Hide loading overlay when iframe loads
   function hideLoading() {
     const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-      loadingOverlay.style.display = 'none';
+    const tourIframe = document.getElementById('tourIframe');
+    
+    if (loadingOverlay && tourIframe) {
+      clearInterval(messageInterval);
+      
+      setTimeout(() => {
+        loadingOverlay.classList.add('hidden');
+        tourIframe.classList.add('loaded');
+      }, 1000); // Small delay for smooth transition
     }
   }
 
-  // Fallback to hide loading after 5 seconds
-  setTimeout(hideLoading, 5000);
+  // Fallback to hide loading after 8 seconds
+  setTimeout(() => {
+    hideLoading();
+  }, 8000);
 
   // Handle escape key to go back
   document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
       window.location.href = '/';
     }
+  });
+
+  // Add smooth transitions for text changes
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#loadingMessage, #loadingSubtitle').forEach(element => {
+      element.style.transition = 'opacity 0.3s ease-in-out';
+    });
   });
 </script>
 
