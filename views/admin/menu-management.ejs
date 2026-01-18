@@ -144,7 +144,11 @@
                             data-price="<%= item.price %>">
                             <td>
                                 <% if (item.image) { %>
-                                    <img src="<%= item.image %>" alt="<%= item.name %>" class="menu-item-image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(214, 164, 90, 0.3);">
+                                    <img src="<%= item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image %>" 
+                                         alt="<%= item.name %>" 
+                                         class="menu-item-image" 
+                                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(214, 164, 90, 0.3);"
+                                         onerror="this.src='/assets/placeholder.jpg';">
                                 <% } else { %>
                                     <div style="width: 60px; height: 60px; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
                                         <i class="fas fa-utensils text-muted"></i>
@@ -308,7 +312,7 @@ function renderMenuItems(items) {
         <tr>
             <td>
                 ${item.image ? 
-                    `<img src="${item.image}" alt="${item.name}" class="menu-item-image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(214, 164, 90, 0.3);">` :
+                    `<img src="${item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image}" alt="${item.name}" class="menu-item-image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(214, 164, 90, 0.3);" onerror="this.src='/assets/placeholder.jpg';">` :
                     `<div style="width: 60px; height: 60px; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-utensils text-muted"></i>
                     </div>`
@@ -403,7 +407,7 @@ async function editMenuItem(id) {
             if (item.image) {
                 imagePreview.innerHTML = `
                     <div class="d-flex align-items-center gap-2">
-                        <img src="${item.image}" alt="Current image" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #d6a45a;">
+                        <img src="${item.image.startsWith('/') ? item.image : '/assets/menu_images/' + item.image}" alt="Current image" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #d6a45a;" onerror="this.src='/assets/placeholder.jpg';">
                         <small class="text-muted">Current image</small>
                     </div>
                 `;

@@ -34,4 +34,22 @@ router.get('/', (req, res) => {
   });
 });
 
+// Virtual Tour page
+router.get('/virtual-tour', (req, res) => {
+  console.log('🏛️ VIRTUAL TOUR ROUTE CALLED');
+  res.render('virtual-tour', { 
+    title: 'Virtual Tour - Rabuste Coffee',
+    description: 'Take a virtual tour of our Rabuste Coffee café and explore our space from the comfort of your home.',
+    currentPage: '/virtual-tour',
+    keywords: 'virtual tour, rabuste coffee, café tour, 360 tour, coffee shop tour',
+    ogTitle: 'Virtual Tour - Rabuste Coffee',
+    ogDescription: 'Take a virtual tour of our Rabuste Coffee café and explore our space from the comfort of your home.',
+    ogType: 'website',
+    ogUrl: 'https://rabustecoffee.com/virtual-tour',
+    ogImage: '/assets/coffee-bg.jpeg',
+    canonicalUrl: 'https://rabustecoffee.com/virtual-tour',
+    layout: false // Disable layout for full-screen experience
+  });
+});
+
 module.exports = router;
