@@ -39,7 +39,9 @@
         <a href="/admin/users" class="<%= typeof currentPage !== 'undefined' && (currentPage === '/admin/users' || currentPage.startsWith('/admin/users/')) ? 'active' : '' %>">
             <i class="fas fa-users"></i>Users
         </a>
-        
+        <a href="/" class="<%= typeof currentPage !== 'undefined' && (currentPage === '/admin/users' || currentPage.startsWith('/admin/users/')) ? 'active' : '' %>">
+            <i class="fas fa-tachometer-alt"></i>Back To Home
+        </a>
         <div style="border-top: 1px solid #333; margin-top: 1rem; padding-top: 1rem;">
             <a href="/logout">
                 <i class="fas fa-sign-out-alt"></i>Logout
