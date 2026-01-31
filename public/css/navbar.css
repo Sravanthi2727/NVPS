@@ -257,6 +257,7 @@
 
 /* Mobile Menu Styles - Grid Layout like Dashboard */
 @media (max-width: 991px) {
+    /* Force override Bootstrap navbar styles */
     .navbar-collapse {
         position: fixed !important;
         top: 0 !important;
@@ -273,11 +274,14 @@
         z-index: 10003 !important;
         display: none !important;
         overflow-y: auto !important;
+        flex-basis: auto !important;
+        flex-grow: 0 !important;
     }
     
     .navbar-collapse.show {
         display: block !important;
         padding-top: 2rem !important;
+        visibility: visible !important;
     }
     
     /* Remove conflicting pseudo-elements */
@@ -288,10 +292,13 @@
     
     .navbar-nav {
         display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
         grid-gap: 1rem !important;
         margin-bottom: 2rem !important;
         margin-top: 2rem !important;
+        width: 100% !important;
+        max-width: none !important;
+        flex-direction: unset !important;
     }
     
     .nav-item {
@@ -408,10 +415,10 @@
         color: #ffcd39 !important;
     }
     
-    /* Responsive adjustments */
+    /* Responsive adjustments - Flexible grid */
     @media (max-width: 767px) {
         .navbar-nav {
-            grid-template-columns: repeat(2, 1fr) !important;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
             grid-gap: 0.8rem !important;
         }
         
@@ -432,7 +439,7 @@
     
     @media (max-width: 576px) {
         .navbar-nav {
-            grid-template-columns: 1fr !important;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)) !important;
             grid-gap: 0.6rem !important;
         }
         
@@ -645,7 +652,7 @@
     background: rgba(220, 53, 69, 0.1) !important;
 }
 
-/* Mobile close button and header styles */
+/* Mobile close button and header styles - Show on ALL pages */
 @media (max-width: 991px) {
     .mobile-close-btn {
         position: fixed !important;
@@ -682,6 +689,7 @@
         margin-bottom: 2rem !important;
         padding-bottom: 1rem !important;
         border-bottom: 2px solid #d6a45a !important;
+        display: block !important;
     }
     
     .mobile-header h2 {
@@ -693,5 +701,27 @@
         letter-spacing: 3px !important;
         text-transform: uppercase !important;
         margin: 0 !important;
+    }
+}
+/* Force grid layout - Override any conflicting styles - FLEXIBLE */
+@media (max-width: 991px) {
+    .navbar-nav.align-items-center {
+        align-items: stretch !important;
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+    }
+    
+    /* Ensure nav items don't have conflicting flex properties */
+    .navbar-nav .nav-item {
+        display: block !important;
+        flex: none !important;
+        width: auto !important;
+    }
+    
+    /* Force the grid to show properly */
+    .navbar-collapse.show .navbar-nav {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+        grid-gap: 1rem !important;
     }
 }

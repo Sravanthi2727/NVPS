@@ -499,11 +499,6 @@ app.get("/profile", (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/signin");
   }
-  
-  res.render("profile", {
-    title: "My Profile - Rabuste Coffee",
-    user: res.locals.currentUser
-  });
 });
 
 app.get("/logout", (req, res, next) => {

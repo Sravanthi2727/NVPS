@@ -15,12 +15,12 @@
     </button>
 
     <div class="collapse navbar-collapse justify-content-end" id="rabusteNav">
-      <!-- Close button for mobile -->
+      <!-- Close button for mobile - Show on ALL pages -->
       <button class="mobile-close-btn d-lg-none" onclick="closeNavbarMenu()">
         ✕
       </button>
       
-      <!-- Header for mobile -->
+      <!-- Header for mobile - Show on ALL pages -->
       <div class="mobile-header d-lg-none">
         <h2>RABUSTE</h2>
       </div>
@@ -76,11 +76,6 @@
           <li class="nav-item d-lg-none">
             <a class="nav-link" href="/user-dashboard">
               <i class="fas fa-tachometer-alt"></i>My Dashboard
-            </a>
-          </li>
-          <li class="nav-item d-lg-none">
-            <a class="nav-link" href="/profile">
-              <i class="fas fa-user"></i>My Profile
             </a>
           </li>
           <% if (currentUser.role === 'admin') { %>
@@ -208,7 +203,41 @@ function closeNavbarMenu() {
     }
 }
 
+// Force grid layout on mobile - Flexible grid
+function forceGridLayout() {
+    const navbarNav = document.querySelector('.navbar-nav');
+    if (navbarNav && window.innerWidth <= 991) {
+        navbarNav.style.display = 'grid';
+        navbarNav.style.gridTemplateColumns = 'repeat(auto-fit, minmax(150px, 1fr))';
+        navbarNav.style.gridGap = '1rem';
+        navbarNav.style.width = '100%';
+        navbarNav.style.marginTop = '2rem';
+        navbarNav.style.marginBottom = '2rem';
+        
+        // Force each nav item to be a grid item
+        const navItems = navbarNav.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.style.margin = '0';
+            item.style.display = 'block';
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Force grid layout on load
+    forceGridLayout();
+    
+    // Force grid layout when navbar is shown
+    const navbarCollapse = document.getElementById('rabusteNav');
+    if (navbarCollapse) {
+        navbarCollapse.addEventListener('shown.bs.collapse', function() {
+            setTimeout(forceGridLayout, 100);
+        });
+    }
+    
+    // Force grid layout on window resize
+    window.addEventListener('resize', forceGridLayout);
+    
     // Close menu when clicking on a nav link
     document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
         link.addEventListener('click', function(e) {
