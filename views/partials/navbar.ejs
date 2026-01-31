@@ -11,7 +11,7 @@
       aria-expanded="false"
       aria-label="Toggle navigation"
     >
-      <span class="navbar-toggler-icon"></span>
+      <i class="bi bi-grid-3x3-gap" style="color: #d6a45a; font-size: 1.2rem;"></i>
     </button>
 
     <div class="collapse navbar-collapse justify-content-end" id="rabusteNav">
@@ -226,11 +226,37 @@ function closeNavbarMenu() {
         if (navbarToggler) {
             navbarToggler.setAttribute('aria-expanded', 'false');
             navbarToggler.classList.add('collapsed');
+            
+            // Reset icon to grid
+            const icon = navbarToggler.querySelector('i');
+            if (icon) {
+                icon.className = 'bi bi-grid-3x3-gap';
+            }
         }
     }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Handle navbar toggle icon change
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.getElementById('rabusteNav');
+    
+    if (navbarToggler && navbarCollapse) {
+        navbarCollapse.addEventListener('show.bs.collapse', function() {
+            const icon = navbarToggler.querySelector('i');
+            if (icon) {
+                icon.className = 'bi bi-x-lg';
+            }
+        });
+        
+        navbarCollapse.addEventListener('hide.bs.collapse', function() {
+            const icon = navbarToggler.querySelector('i');
+            if (icon) {
+                icon.className = 'bi bi-grid-3x3-gap';
+            }
+        });
+    }
+    
     // Close menu when clicking on a nav link
     document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
         link.addEventListener('click', function(e) {

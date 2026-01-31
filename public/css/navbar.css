@@ -133,59 +133,14 @@
     transform: scale(1.05);
 }
 
-/* Custom Hamburger Icon */
-.navbar-toggler-icon {
-    background-image: none !important;
-    width: 22px;
-    height: 18px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+/* Grid icon toggle animation */
+.navbar-toggler i {
+    transition: all 0.3s ease !important;
 }
 
-.navbar-toggler-icon::before,
-.navbar-toggler-icon::after {
-    content: '';
-    display: block;
-    width: 100%;
-    height: 2px;
-    background: #d6a45a;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-    position: absolute;
-}
-
-.navbar-toggler-icon::before {
-    top: 0;
-}
-
-.navbar-toggler-icon::after {
-    bottom: 0;
-}
-
-.navbar-toggler-icon {
-    background: #d6a45a;
-    height: 2px;
-    border-radius: 2px;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-/* Animated Hamburger */
-.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
-    background: transparent !important;
-}
-
-.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
-    transform: rotate(45deg);
-    top: 8px;
-}
-
-.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
-    transform: rotate(-45deg);
-    bottom: 8px;
+.navbar-toggler[aria-expanded="true"] i {
+    transform: rotate(90deg) !important;
+    color: #e3b873 !important;
 }
 
 /* Dropdown Styles */
@@ -265,7 +220,7 @@
         width: 100vw !important;
         height: 100vh !important;
         background: linear-gradient(135deg, #000000 0%, #111111 50%, #1a1208 100%) !important;
-        padding: 2rem 1rem !important;
+        padding: 1rem 1rem !important;
         margin: 0 !important;
         border: none !important;
         border-radius: 0 !important;
@@ -281,7 +236,7 @@
     .navbar-collapse.show {
         display: flex !important;
         flex-direction: column !important;
-        padding-top: 2rem !important;
+        padding-top: 1rem !important;
         visibility: visible !important;
     }
     
@@ -295,8 +250,8 @@
         display: flex !important;
         flex-direction: column !important;
         gap: 0.8rem !important;
-        margin-bottom: 1.5rem !important;
-        margin-top: 1.5rem !important;
+        margin-bottom: 1rem !important;
+        margin-top: 1rem !important;
         width: 100% !important;
         max-width: none !important;
         padding: 0 0.5rem !important;
@@ -449,7 +404,7 @@
         }
         
         .mobile-header h2 {
-            font-size: 1.8rem !important;
+            font-size: 1.6rem !important;
         }
     }
     
@@ -471,7 +426,7 @@
         }
         
         .mobile-header h2 {
-            font-size: 1.6rem !important;
+            font-size: 1.4rem !important;
             letter-spacing: 2px !important;
         }
     }
