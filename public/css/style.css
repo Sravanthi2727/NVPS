@@ -793,7 +793,7 @@ section {
 
 /* Links */
 .navbar-nav .nav-link {
-  color: rgba(255, 255, 255, 0.85) !important;
+  color: var(--gold) !important;
   font-size: 0.85rem;
   position: relative;
   padding: 6px 4px;

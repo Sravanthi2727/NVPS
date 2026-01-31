@@ -292,22 +292,6 @@
         }
         .mobile-nav-toggle {
             display: none;
-            position: fixed;
-            top: 12px; /* Aligned with navbar */
-            right: 75px; /* Perfect spacing from hamburger */
-            z-index: 10001;
-            background: linear-gradient(135deg, #d6a45a, #e3b873);
-            color: #000;
-            border: none;
-            border-radius: 6px;
-            width: 40px;
-            height: 32px;
-            font-size: 1rem;
-            box-shadow: 0 2px 8px rgba(214, 164, 90, 0.3);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         .mobile-nav-toggle:hover {
@@ -409,7 +393,25 @@
         }
         
         @media (max-width: 991.98px) {
-            /* Mobile nav toggle already handled above */
+            /* Show mobile nav toggle only on mobile */
+            .mobile-nav-toggle {
+                display: flex !important;
+                position: fixed;
+                top: 12px;
+                right: 60px;
+                z-index: 10001;
+                background: linear-gradient(135deg, #d6a45a, #e3b873);
+                color: #000;
+                border: none;
+                border-radius: 6px;
+                width: 40px;
+                height: 32px;
+                font-size: 1rem;
+                box-shadow: 0 2px 8px rgba(214, 164, 90, 0.3);
+                transition: all 0.2s ease;
+                align-items: center;
+                justify-content: center;
+            }
             
             /* Position relative to navbar */
             .navbar + * .mobile-nav-toggle {

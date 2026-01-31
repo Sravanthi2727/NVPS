@@ -210,8 +210,162 @@
     box-shadow: 0 5px 15px rgba(214, 164, 90, 0.3);
 }
 
+/* Desktop Navbar - Normal Bootstrap behavior */
+@media (min-width: 992px) {
+    .navbar-collapse {
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        z-index: auto !important;
+        display: flex !important;
+        flex-basis: auto !important;
+        flex-grow: 1 !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+    }
+    
+    .navbar-nav {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 0.5rem !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: auto !important;
+    }
+    
+    .nav-row {
+        display: contents !important;
+    }
+    
+    .nav-item {
+        margin: 0 !important;
+    }
+    
+    .nav-link {
+        display: inline-block !important;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        color: #f5f2ee !important;
+        font-size: 0.9rem !important;
+        font-weight: 500 !important;
+        min-height: auto !important;
+        text-align: left !important;
+        white-space: nowrap !important;
+        box-shadow: none !important;
+        width: auto !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .nav-link:hover {
+        background: transparent !important;
+        border: none !important;
+        color: #d6a45a !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    .nav-link::after {
+        display: block !important;
+    }
+    
+    /* Restore dropdown functionality */
+    .dropdown-menu {
+        display: block !important;
+        position: absolute !important;
+        background: rgba(0, 0, 0, 0.95) !important;
+        border: 1px solid rgba(214, 164, 90, 0.3) !important;
+        border-radius: 12px !important;
+        padding: 0.5rem !important;
+        margin-top: 0.5rem !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+        min-width: 200px !important;
+        z-index: 10003 !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        transform: translateY(-10px) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .dropdown:hover .dropdown-menu,
+    .dropdown.show .dropdown-menu {
+        visibility: visible !important;
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
+    
+    .dropdown-item {
+        color: #f5f2ee !important;
+        padding: 0.75rem 1rem !important;
+        border-radius: 8px !important;
+        transition: all 0.3s ease !important;
+        font-size: 0.9rem !important;
+        display: block !important;
+    }
+    
+    .dropdown-item:hover {
+        background: rgba(214, 164, 90, 0.1) !important;
+        color: #d6a45a !important;
+        transform: translateX(3px) !important;
+    }
+    
+    .dropdown-item i {
+        color: #d6a45a !important;
+        width: 20px !important;
+    }
+    
+    /* User dropdown styling */
+    .user-dropdown {
+        background: rgba(214, 164, 90, 0.1) !important;
+        border-radius: 20px !important;
+        padding: 0.4rem 0.8rem !important;
+        border: 1px solid rgba(214, 164, 90, 0.3) !important;
+        color: #d6a45a !important;
+        cursor: pointer !important;
+    }
+    
+    .user-dropdown:hover {
+        background: rgba(214, 164, 90, 0.2) !important;
+        border-color: #d6a45a !important;
+        color: #d6a45a !important;
+    }
+    
+    .user-dropdown i {
+        color: #d6a45a !important;
+        font-size: 1.1rem !important;
+    }
+    
+    /* Admin and logout link colors */
+    .admin-link {
+        color: #ffc107 !important;
+    }
+    
+    .admin-link:hover {
+        color: #ffcd39 !important;
+        background: rgba(255, 193, 7, 0.1) !important;
+    }
+    
+    .logout-link {
+        color: #dc3545 !important;
+    }
+    
+    .logout-link:hover {
+        color: #e55a5a !important;
+        background: rgba(220, 53, 69, 0.1) !important;
+    }
+    
+    .dropdown-divider {
+        border-color: rgba(214, 164, 90, 0.3) !important;
+        margin: 0.5rem 0 !important;
+    }
+}
+
 /* Mobile Menu Styles - Flex Layout */
-@media (max-width: 991px) {
+@media (max-width: 991.98px) {
     /* Force override Bootstrap navbar styles */
     .navbar-collapse {
         position: fixed !important;
