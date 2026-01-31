@@ -25,84 +25,111 @@
         <h2>RABUSTE</h2>
       </div>
       
-      <ul class="navbar-nav align-items-center">
-        <li class="nav-item">
-          <a class="nav-link" href="/"><i class="fas fa-home"></i>Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/philosophy"><i class="fas fa-lightbulb"></i>Philosophy</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/menu"><i class="fas fa-coffee"></i>Menu</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/gallery"><i class="fas fa-palette"></i>Art Gallery</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/workshops"><i class="fas fa-paint-brush"></i>Workshops</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/about"><i class="fas fa-info-circle"></i>About Us</a>
-        </li>
+      <div class="navbar-nav align-items-center">
+        <!-- Row 1: Home, Gallery, Menu -->
+        <div class="nav-row">
+          <div class="nav-item">
+            <a class="nav-link" href="/"><i class="fas fa-home"></i>Home</a>
+          </div>
+          <div class="nav-item">
+            <a class="nav-link" href="/gallery"><i class="fas fa-palette"></i>Gallery</a>
+          </div>
+          <div class="nav-item">
+            <a class="nav-link" href="/menu"><i class="fas fa-coffee"></i>Menu</a>
+          </div>
+        </div>
+        
+        <!-- Row 2: About Us, Workshops, Philosophy -->
+        <div class="nav-row">
+          <div class="nav-item">
+            <a class="nav-link" href="/about"><i class="fas fa-info-circle"></i>About</a>
+          </div>
+          <div class="nav-item">
+            <a class="nav-link" href="/workshops"><i class="fas fa-paint-brush"></i>Workshops</a>
+          </div>
+          <div class="nav-item">
+            <a class="nav-link" href="/philosophy"><i class="fas fa-lightbulb"></i>Philosophy</a>
+          </div>
+        </div>
+        
         <% if (typeof currentUser !== 'undefined' && currentUser) { %>
-          <!-- Desktop: Dropdown, Mobile: Inline items -->
-          <li class="nav-item dropdown d-none d-lg-block">
-            <a class="nav-link dropdown-toggle user-dropdown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-user-circle me-1"></i><%= currentUser.name %>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="/user-dashboard">
-                <i class="fas fa-tachometer-alt me-2"></i>My Dashboard
-              </a></li>
-              <% if (currentUser.role === 'admin') { %>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item admin-link" href="/admin">
-                  <i class="fas fa-cog me-2"></i>Admin Panel
-                </a></li>
-              <% } %>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item logout-link" href="/logout">
-                <i class="fas fa-sign-out-alt me-2"></i>Sign Out
-              </a></li>
-            </ul>
-          </li>
+          <!-- Row 3: Dashboard, Sign Out, Franchise -->
+          <div class="nav-row">
+            <div class="nav-item d-lg-none">
+              <a class="nav-link" href="/user-dashboard">
+                <i class="fas fa-tachometer-alt"></i>Dashboard
+              </a>
+            </div>
+            <div class="nav-item d-lg-none">
+              <a class="nav-link logout-link" href="/logout">
+                <i class="fas fa-sign-out-alt"></i>Sign Out
+              </a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link franchise-btn" href="/franchise">
+                <i class="fas fa-handshake"></i>Franchise
+              </a>
+            </div>
+          </div>
           
-          <!-- Mobile: Inline items -->
-          <li class="nav-item d-lg-none">
-            <span class="nav-link user-info">
-              <i class="fas fa-user-circle me-1"></i><%= currentUser.name %>
-            </span>
-          </li>
-          <li class="nav-item d-lg-none">
-            <a class="nav-link" href="/user-dashboard">
-              <i class="fas fa-tachometer-alt"></i>My Dashboard
-            </a>
-          </li>
+          <!-- Row 4: User Name -->
+          <div class="nav-row">
+            <div class="nav-item dropdown d-none d-lg-block">
+              <span class="nav-link user-dropdown">
+                <i class="fas fa-user-circle"></i><%= currentUser.name %>
+              </span>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/user-dashboard">
+                  <i class="fas fa-tachometer-alt me-2"></i>My Dashboard
+                </a></li>
+                <% if (currentUser.role === 'admin') { %>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item admin-link" href="/admin">
+                    <i class="fas fa-cog me-2"></i>Admin Panel
+                  </a></li>
+                <% } %>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item logout-link" href="/logout">
+                  <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                </a></li>
+              </ul>
+            </div>
+            <div class="nav-item d-lg-none">
+              <span class="nav-link user-dropdown">
+                <i class="fas fa-user-circle"></i><%= currentUser.name %>
+              </span>
+            </div>
+            <div class="nav-item empty">
+              <!-- Empty space -->
+            </div>
+          </div>
+          
           <% if (currentUser.role === 'admin') { %>
-            <li class="nav-item d-lg-none">
+            <div class="nav-item d-lg-none" style="display: none;">
               <a class="nav-link admin-link" href="/admin">
                 <i class="fas fa-cog"></i>Admin Panel
               </a>
-            </li>
+            </div>
           <% } %>
-          <li class="nav-item d-lg-none">
-            <a class="nav-link logout-link" href="/logout">
-              <i class="fas fa-sign-out-alt"></i>Sign Out
-            </a>
-          </li>
         <% } else { %>
-          <li class="nav-item">
-            <a class="nav-link signin-btn" href="/signin">
-              <i class="fas fa-sign-in-alt me-1"></i>Sign In
-            </a>
-          </li>
+          <!-- Row 3: Sign In, Franchise (when not logged in) -->
+          <div class="nav-row">
+            <div class="nav-item">
+              <a class="nav-link signin-btn" href="/signin">
+                <i class="fas fa-sign-in-alt"></i>Sign In
+              </a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link franchise-btn" href="/franchise">
+                <i class="fas fa-handshake"></i>Franchise
+              </a>
+            </div>
+            <div class="nav-item empty">
+              <!-- Empty space -->
+            </div>
+          </div>
         <% } %>
-        <li class="nav-item">
-          <a class="nav-link btn btn-outline-light px-3 rounded-pill franchise-btn" href="/franchise">
-            <i class="fas fa-handshake"></i>Franchise
-          </a>
-        </li>
-      </ul>
+      </div>
     </div>
   </div>
 </nav>
@@ -203,41 +230,7 @@ function closeNavbarMenu() {
     }
 }
 
-// Force grid layout on mobile - Flexible grid
-function forceGridLayout() {
-    const navbarNav = document.querySelector('.navbar-nav');
-    if (navbarNav && window.innerWidth <= 991) {
-        navbarNav.style.display = 'grid';
-        navbarNav.style.gridTemplateColumns = 'repeat(auto-fit, minmax(150px, 1fr))';
-        navbarNav.style.gridGap = '1rem';
-        navbarNav.style.width = '100%';
-        navbarNav.style.marginTop = '2rem';
-        navbarNav.style.marginBottom = '2rem';
-        
-        // Force each nav item to be a grid item
-        const navItems = navbarNav.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.style.margin = '0';
-            item.style.display = 'block';
-        });
-    }
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Force grid layout on load
-    forceGridLayout();
-    
-    // Force grid layout when navbar is shown
-    const navbarCollapse = document.getElementById('rabusteNav');
-    if (navbarCollapse) {
-        navbarCollapse.addEventListener('shown.bs.collapse', function() {
-            setTimeout(forceGridLayout, 100);
-        });
-    }
-    
-    // Force grid layout on window resize
-    window.addEventListener('resize', forceGridLayout);
-    
     // Close menu when clicking on a nav link
     document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
         link.addEventListener('click', function(e) {
